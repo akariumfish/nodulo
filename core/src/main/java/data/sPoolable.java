@@ -1,9 +1,8 @@
 package data;
 
-import app.nClearable;
-import app.nPool.Poolable;
-
 import data.sPool.State;
+import util.nClearable;
+import util.nPool.Poolable;
 
 public abstract class sPoolable {
 	public sPool.State state = State.FREE;

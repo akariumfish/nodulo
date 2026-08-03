@@ -8,8 +8,9 @@ public class Lwjgl3LauncherDouble {
 	
 	protected static Lwjgl3Application createApplication(
 			String title, String setting_file, boolean autol, boolean autob, boolean netmode, int x, int y) {
-		return new Lwjgl3Application(new Applet(title, setting_file, autol, autob, netmode), 
-				getDefaultConfiguration("app - "+title, x, y)); 
+//		return new Lwjgl3Application(new Applet(title, setting_file, autol, autob, netmode), 
+//				getDefaultConfiguration("app - "+title, x, y)); 
+		return null;
 	}
 
 	private static Lwjgl3ApplicationConfiguration getDefaultConfiguration(String t, int x, int y) {

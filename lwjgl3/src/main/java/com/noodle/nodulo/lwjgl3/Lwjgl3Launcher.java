@@ -4,20 +4,40 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.noodle.nodulo.Main;
 
+import app.Applet;
+import app.GdxApp;
+
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
 
 	public static void main(String[] args) {
+		
+		if (StartupHelper.startNewJvmIfRequired()) return;
+		new Lwjgl3Application(Applet.make(new GdxApp.AppConfig("nodulo", 1300, 960, false)), 
+				getConfiguration(610, 50, 1300, 960));
+		
 //		Lwjgl3Launcher_app.main(args);
 
-		if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
-		createApplication();
+//		if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
+//		createApplication();
 	}
 
 	private static Lwjgl3Application createApplication() {
 		return new Lwjgl3Application(new Main(), getDefaultConfiguration());
 	}
 
+	private static Lwjgl3ApplicationConfiguration getConfiguration(int px, int py, int sx, int sy) {
+		Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
+		configuration.setTitle("Applet");
+		configuration.useVsync(true);
+		configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
+//		configuration.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+		configuration.setWindowedMode(sx,sy);
+		configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
+		configuration.setWindowPosition(px,py);
+		return configuration;
+	}
+	
 	private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
 		Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
 		configuration.setTitle("nodulo");

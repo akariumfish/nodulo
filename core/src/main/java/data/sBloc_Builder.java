@@ -3,7 +3,8 @@ package data;
 import java.util.ArrayList;
 
 import app.Applet;
-import app.nRun;
+import util.Utl;
+import util.nRun;
 
 
 public class sBloc_Builder {
@@ -152,7 +153,7 @@ public class sBloc_Builder {
 //		public Class<?>[] args_class;
 
 		public RunDef(RunDef r) {
-			ref = Applet.copy(r.ref); 
+			ref = Utl.copy(r.ref); 
 //			return_class = r.return_class; 
 			run = r.run;
 //			args_ref = new String[r.args_ref.length];

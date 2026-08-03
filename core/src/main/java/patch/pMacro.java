@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nMap;
-import app.nRun;
 
+import app.Applet;
+import app.GdxApp;
 import plane.pBody;
 import plane.pPlane;
+import util.Utl;
+import util.nMap;
+import util.nRun;
 
 public class pMacro {
 
@@ -831,17 +833,17 @@ public class pMacro {
 			for (Map.Entry<String,MacroSet> ms : set.entrySet()) {
 				pInstance tr = list.get(ms.getKey());
 				if (tr == null) {
-					Applet.app.logn("ERROR : Macro.pop() : "
+					GdxApp.app.logn("ERROR : Macro.pop() : "
 							+ "set target <"+ms.getKey()+"> dont exist");
 					continue; }
 				tr.setVar(ms.getValue().var_ref, 
-						Applet.copy(ms.getValue().data));
+						Utl.copy(ms.getValue().data));
 			}
 			for (Map.Entry<String,MacroPop> me : pops.entrySet()) {
 				MacroPop ms = me.getValue();
 				pInstance n = list.get(me.getKey());
 				if (n == null) {
-					Applet.app.logn("ERROR : Macro.pop() : "
+					GdxApp.app.logn("ERROR : Macro.pop() : "
 							+ "pop target <"+me.getKey()+"> dont exist");
 					continue; }
 				String rf = me.getKey();
@@ -871,12 +873,12 @@ public class pMacro {
 							+ms.run_ref+"> with 4 args returned null. args : "+ms.args[0]+" "+ms.args[1]+" "+ms.args[2]+" "+ms.args[3]); }
 					list.put(rf+"_"+ms.pop_ref,pi);
 				} else {
-					Applet.app.logn("ERROR : Macro.pop() : too many args");
+					GdxApp.app.logn("ERROR : Macro.pop() : too many args");
 				}
 			}
 			for (Map.Entry<String,String> ms : scripts.entrySet()) {
 				pInstance tr = list.get(ms.getKey());
-				if (tr == null) Applet.app.logn("ERROR : Macro.pop() : "
+				if (tr == null) GdxApp.app.logn("ERROR : Macro.pop() : "
 						+ "script target <"+ms.getKey()+"> dont exist");
 				tile_pop_script(ms.getValue(),tr); }
 			for (MacroLink ml : macrolinks) {
@@ -886,7 +888,7 @@ public class pMacro {
 				link_brics_cos(list.get(ml.bric1), ml.co1, 
 						list.get(ml.bric2), ml.co2); }
 			for (nRun rn : runs) rn.do_run(list);
-			return Applet.duplic(list);
+			return Utl.duplic(list);
 		}
 	}
 	public static class MacroNode {
@@ -909,11 +911,11 @@ public class pMacro {
 			nMap<pInstance> list = new nMap<pInstance>();
 			pInstance n = p.newNode(model_ref);
 			if (n == null) {
-				Applet.app.logn("ERROR : MacroNode.pop() : model_ref <"+model_ref+"> dont exist ");
+				GdxApp.app.logn("ERROR : MacroNode.pop() : model_ref <"+model_ref+"> dont exist ");
 				return list;
 			}
 			list.put(ref,n);
-			for (MacroSet ms : set) n.setVar(ms.var_ref, Applet.copy(ms.data));
+			for (MacroSet ms : set) n.setVar(ms.var_ref, Utl.copy(ms.data));
 			for (MacroPop ms : pops) {
 				if (ms.args == null || ms.args.length == 0) {
 					pInstance pi = n.get(ms.run_ref, pInstance.class);
@@ -941,7 +943,7 @@ public class pMacro {
 							+ms.run_ref+"> with 4 args returned null. args : "+ms.args[0]+" "+ms.args[1]+" "+ms.args[2]+" "+ms.args[3]); }
 					list.put(ref+"_"+ms.pop_ref,pi);
 				} else {
-					Applet.app.logn("ERROR : MacroNode.pop() : too many args");
+					GdxApp.app.logn("ERROR : MacroNode.pop() : too many args");
 				}
 			}
 			for (String ms : scripts) {
@@ -978,7 +980,7 @@ public class pMacro {
 			return new MacroScriptCom(this, r, a); }
 		public MacroScript script(String r) {
 			if (all_scripts.hasKey(r)) for (MacroScriptCom ms : all_scripts.get(r).coms) {
-				new MacroScriptCom(this, ms.com_ref, Applet.duplic(ms.args)); } 
+				new MacroScriptCom(this, ms.com_ref, Utl.duplic(ms.args)); } 
 			return this; }
 		public void tile_pop(pInstance tile) {
 			if (tile == null) return;
@@ -998,7 +1000,7 @@ public class pMacro {
 					if (head.get_this(ms.com_ref, ms.args[0], ms.args[1], ms.args[2]) == null) 
 						Applet.loggn("ERROR : MacroScript.tile_pop() : "+ms.com_ref);
 				} else {
-					Applet.app.logn("ERROR : MacroScript.tile_pop() : too many args");
+					GdxApp.app.logn("ERROR : MacroScript.tile_pop() : too many args");
 				}
 			}
 		}

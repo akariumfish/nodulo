@@ -6,10 +6,8 @@ import java.util.Map;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nMap;
-import app.nRun;
 
+import app.Applet;
 import data.*;
 import gui.*;
 import patch.pTile.CT;
@@ -20,6 +18,9 @@ import plane.pProperty;
 import plane.pSpace;
 import plane.pTime;
 import plane.pView;
+import util.Utl;
+import util.nMap;
+import util.nRun;
 
 public class pNode {
 
@@ -734,7 +735,7 @@ public class pNode {
 			title.setSize(RS*2f,2f*RS/3f);
 			String title_txt = instance.getDataStr("ref");
 			if (hasParam("text", String.class)) {
-				title_txt = Applet.copy(getParam("text", String.class)); }
+				title_txt = Utl.copy(getParam("text", String.class)); }
 			if (title_txt.length() >= 7) title_txt = title_txt.substring(0, 7);
 			title.setText(title_txt);
 			if (instance.getData("side", String.class).equals("right"))
@@ -859,13 +860,13 @@ public class pNode {
 			if (instance.hasObject("co_widget"))
 				instance.object("co_widget", nWidget.class)
 				.setOutlineWeight(RS/3f)
-				.set_color_outline(app.color(255,200,0,255));
+				.set_color_outline(Utl.color(255,200,0,255));
 		}})
 		.newRun("light_down", new nRun() {public void run() {
 			if (instance.hasObject("co_widget"))
 				instance.object("co_widget", nWidget.class)
 				.setOutlineWeight(RS/10f)
-				.set_color_outline(app.color(120,180,255,255));
+				.set_color_outline(Utl.color(120,180,255,255));
 		}})
 		.newRun("co_is_compatible", Boolean.class, new nRun() {public Object get() {
 			pInstance c = arg(0, pInstance.class);
@@ -874,23 +875,23 @@ public class pNode {
 				int cml = c.getData("max_link", Integer.class);
 				if (instml > 0 && instml >= instance.collecInstAll("co_linked").size()) return false;
 				if (cml > 0 && cml >= c.collecInstAll("co_linked").size()) return false;
-				ArrayList<String> keys = Applet.duplic(instance.object("keys", ArrayList.class));
-				ArrayList<String> filters = Applet.duplic(instance.object("filters", ArrayList.class));
+				ArrayList<String> keys = Utl.duplic(instance.object("keys", ArrayList.class));
+				ArrayList<String> filters = Utl.duplic(instance.object("filters", ArrayList.class));
 				String key = instance.object("key", String.class);
 				String filter = instance.object("filter", String.class);
 				if (keys == null) keys = new ArrayList<String>();
 				if (filters == null) filters = new ArrayList<String>();
 				if (key != null) keys.add(key); if (filter != null) filters.add(filter);
-				ArrayList<String> keys2 = Applet.duplic(c.object("keys", ArrayList.class));
-				ArrayList<String> filters2 = Applet.duplic(c.object("filters", ArrayList.class));
+				ArrayList<String> keys2 = Utl.duplic(c.object("keys", ArrayList.class));
+				ArrayList<String> filters2 = Utl.duplic(c.object("filters", ArrayList.class));
 				String key2 = c.object("key", String.class);
 				String filter2 = c.object("filter", String.class);
 				if (keys2 == null) keys2 = new ArrayList<String>();
 				if (filters2 == null) filters2 = new ArrayList<String>();
 				if (key2 != null) keys2.add(key2); if (filter2 != null) filters2.add(filter2);
 				boolean ok = true;
-				for (String f : filters) ok = ok && (Applet.contains(keys2, f) || Applet.contains(keys2, "all"));
-				for (String f : filters2) ok = ok && (Applet.contains(keys, f) || Applet.contains(keys, "all"));
+				for (String f : filters) ok = ok && (Utl.contains(keys2, f) || Utl.contains(keys2, "all"));
+				for (String f : filters2) ok = ok && (Utl.contains(keys, f) || Utl.contains(keys, "all"));
 				return ok;
 			}
 			return false;
@@ -965,15 +966,15 @@ public class pNode {
 			if (args == null || args.length == 0) { for (pInstance l : co_linked) {
 				l.run("receive"); } return; }
 			Object[] a = new Object[args.length];
-			for (int i = 0 ; i < args.length ; i++) a[i] = Applet.copy(args[i]);
+			for (int i = 0 ; i < args.length ; i++) a[i] = Utl.copy(args[i]);
 			for (pInstance l : co_linked) l.run("receive", a);
 		}}).runArgs("send", Object.class)
 		.newRun("receive", new nRun() {public void run() {
 			instance.run("highlight_self");
 			if (instance.hasObject("event_receive")) {
 				if (args.length == 0)// || c == null)
-					instance.object("event_receive", nRun.class).do_run(instance, param, Applet.duplic(args));
-				else instance.object("event_receive", nRun.class).do_run(instance, param, Applet.duplic(args));//c);
+					instance.object("event_receive", nRun.class).do_run(instance, param, Utl.duplic(args));
+				else instance.object("event_receive", nRun.class).do_run(instance, param, Utl.duplic(args));//c);
 			}
 		}}).runArgs("received", Object.class)
 		.newRun("obtain", Object.class, new nRun() {public Object get() {
@@ -995,7 +996,7 @@ public class pNode {
 		.newRun("provide", Object.class, new nRun() {public Object get() {
 			instance.run("highlight_self");
 			if (instance.hasObject("offer")) 
-				return Applet.copy(instance.object("offer", nRun.class).do_get(instance, param));
+				return Utl.copy(instance.object("offer", nRun.class).do_get(instance, param));
 			return null;
 		}})
 		.newRun("obtain_node", pInstance.class, new nRun() {public Object get() {
@@ -1177,7 +1178,7 @@ public class pNode {
 //				app.circle(pos.x, pos.y, 5);
 //				app.circle(pos2.x, pos2.y, 5); }
 			
-			float d = Applet.distanceSegmentPoint(pos, pos2, mouse);
+			float d = Utl.distanceSegmentPoint(pos, pos2, mouse);
 			
 			if (d <= 18) { app.stroke(255,155,0,255, 12f); } 
 			else if (instance.getDataInt("hightlight_count") > 0) 
@@ -1276,7 +1277,7 @@ public class pNode {
 			if (hasParam("hide") && getParam("hide", Boolean.class)) {
 				w.setPassif()
 				.setOutline(false)
-				.set_color_background(app.color(0,0));
+				.set_color_background(Utl.color(0,0));
 				instance.setData("hide", true);
 			}
 			
@@ -1429,14 +1430,14 @@ public class pNode {
 			if (args == null || args.length == 0) { plugged.run("receive"); }
 			else {
 				Object[] a = new Object[args.length];
-				for (int i = 0 ; i < args.length ; i++) a[i] = Applet.copy(args[i]);
+				for (int i = 0 ; i < args.length ; i++) a[i] = Utl.copy(args[i]);
 				plugged.run("receive", a); }
 		}}).runArgs("send", Object.class)
 		.newRun("receive", new nRun() {public void run() {
 			if (instance.hasObject("event_receive")) {
 				instance.run("highlight_self");
 				instance.object("event_receive", nRun.class)
-					.do_run(instance, param, Applet.duplic(args)); }
+					.do_run(instance, param, Utl.duplic(args)); }
 		}})
 		.newRun("obtain", Object.class, new nRun() {public Object get() {
 			pInstance plugged = instance.getInst("plugged");
@@ -1448,7 +1449,7 @@ public class pNode {
 		.newRun("provide", Object.class, new nRun() {public Object get() {
 			if (instance.hasObject("offer")) {
 				instance.run("highlight_self");
-				return Applet.copy( instance.object("offer", nRun.class)
+				return Utl.copy( instance.object("offer", nRun.class)
 						.do_get(instance, param) ); }
 			return null;
 		}})
@@ -1465,9 +1466,9 @@ public class pNode {
 			String[] keys2, String[] filters2) {
 		boolean ok = true;
 		for (String f : filters) if (!f.equals("all")) ok = ok && 
-				(Applet.contains(keys2, f) || Applet.contains(keys2, "all"));
+				(Utl.contains(keys2, f) || Utl.contains(keys2, "all"));
 		for (String f : filters2) if (!f.equals("all")) ok = ok && 
-				(Applet.contains(keys, f) || Applet.contains(keys, "all"));
+				(Utl.contains(keys, f) || Utl.contains(keys, "all"));
 		return ok;
 	}
 	
@@ -1779,8 +1780,8 @@ public class pNode {
 				String[] k = getParam("filters", String[].class);
 				for (String s : k) filters.add(s); }
 
-			if (!Applet.contains(keys, "out")) keys.add("out");
-			if (!Applet.contains(filters, "in")) filters.add("in");
+			if (!Utl.contains(keys, "out")) keys.add("out");
+			if (!Utl.contains(filters, "in")) filters.add("in");
 			
 			String[] keys_arr = new String[keys.size()];
 			String[] filters_arr = new String[filters.size()];
@@ -1819,8 +1820,8 @@ public class pNode {
 				String[] k = getParam("filters", String[].class);
 				for (String s : k) filters.add(s); }
 
-			if (!Applet.contains(keys, "in")) keys.add("in");
-			if (!Applet.contains(filters, "out")) filters.add("out");
+			if (!Utl.contains(keys, "in")) keys.add("in");
+			if (!Utl.contains(filters, "out")) filters.add("out");
 			
 			String[] keys_arr = new String[keys.size()];
 			String[] filters_arr = new String[filters.size()];
@@ -1863,8 +1864,8 @@ public class pNode {
 				String[] k = getParam("filters", String[].class);
 				for (String s : k) filters.add(s); }
 
-			if (!Applet.contains(keys, "chain")) keys.add("chain");
-			if (!Applet.contains(filters, "chain")) filters.add("chain");
+			if (!Utl.contains(keys, "chain")) keys.add("chain");
+			if (!Utl.contains(filters, "chain")) filters.add("chain");
 			
 			String[] keys_arr2 = new String[keys.size() + 1];
 			String[] filters_arr2 = new String[filters.size() + 1];
@@ -1950,8 +1951,8 @@ public class pNode {
 				String[] k = getParam("filters", String[].class);
 				for (String s : k) filters.add(s); }
 
-			if (!Applet.contains(keys, "chain")) keys.add("chain");
-			if (!Applet.contains(filters, "chain")) filters.add("chain");
+			if (!Utl.contains(keys, "chain")) keys.add("chain");
+			if (!Utl.contains(filters, "chain")) filters.add("chain");
 			
 			String[] keys_arr1 = new String[keys.size() + 1];
 			String[] filters_arr1 = new String[filters.size() + 1];
@@ -2043,8 +2044,8 @@ public class pNode {
 				String[] k = getParam("filters", String[].class);
 				for (String s : k) filters.add(s); }
 
-			if (!Applet.contains(keys, "obtain")) keys.add("obtain");
-			if (!Applet.contains(filters, "offer")) filters.add("offer");
+			if (!Utl.contains(keys, "obtain")) keys.add("obtain");
+			if (!Utl.contains(filters, "offer")) filters.add("offer");
 			
 			String[] keys_arr = new String[keys.size()];
 			String[] filters_arr = new String[filters.size()];
@@ -2077,8 +2078,8 @@ public class pNode {
 				String[] k = getParam("filters", String[].class);
 				for (String s : k) filters.add(s); }
 
-			if (!Applet.contains(keys, "offer")) keys.add("offer");
-			if (!Applet.contains(filters, "obtain")) filters.add("obtain");
+			if (!Utl.contains(keys, "offer")) keys.add("offer");
+			if (!Utl.contains(filters, "obtain")) filters.add("obtain");
 			
 			String[] keys_arr = new String[keys.size()];
 			String[] filters_arr = new String[filters.size()];
@@ -2202,7 +2203,7 @@ public class pNode {
 			w.setInfo(info);
 			w.setSX(w.getLocalSX()*width/2f);
 			w.setSY(w.getLocalSY()*height);
-//			w.set_color_background(app.color((int)(255*w.color_background.r), 
+//			w.set_color_background(Utl.color((int)(255*w.color_background.r), 
 //					(int)(255*w.color_background.g), 
 //					(int)(255*w.color_background.b),
 //					(int)255));
@@ -2283,14 +2284,14 @@ public class pNode {
 				w.addEventFieldChange(new nRun(instance) {public void run() {
 					pInstance target = (pInstance)builder;
 					if (var_cls.equals(Float.class.getName())) {
-						target.setVar(var_ref, Applet.tofloat(w.getText()));
+						target.setVar(var_ref, Utl.tofloat(w.getText()));
 					} else if (var_cls.equals(Integer.class.getName())) {
-						target.setVar(var_ref, Applet.toint(w.getText()));
+						target.setVar(var_ref, Utl.toint(w.getText()));
 					} else if (var_cls.equals(String.class.getName())) {
 						target.setVar(var_ref, w.getText());
 					} else if (var_cls.equals(Vector2.class.getName()) && var_axe != null) {
 						Vector2 v = new Vector2(target.getVar( var_ref, Vector2.class));
-						float n = Applet.tofloat(w.getText());
+						float n = Utl.tofloat(w.getText());
 						if (var_axe.equals("x"))
 							v.x = n; else v.y = n;
 						target.setVar(var_ref, v);
@@ -2302,15 +2303,15 @@ public class pNode {
 					String text = w.getText();
 //					if (hasParam("text")) text = getParam("text", String.class);
 					if (var_cls.equals(Float.class.getName())) {
-						text = "" + Applet.trimFlt(target.getVar(var_ref, Float.class), frez);
+						text = "" + Utl.trimFlt(target.getVar(var_ref, Float.class), frez);
 					} else if (var_cls.equals(Integer.class.getName())) {
 						text = "" + target.getVar(var_ref, Integer.class);
 					} else if (var_cls.equals(String.class.getName())) {
 						text = "" + target.getVar(var_ref, String.class);
 					} else if (var_cls.equals(Vector2.class.getName()) && var_axe != null) {
 						Vector2 v = new Vector2(target.getVar(var_ref, Vector2.class));
-						if (var_axe.equals("x")) text = "" + Applet.trimFlt(v.x, frez); 
-						else text = "" + Applet.trimFlt(v.y, frez);
+						if (var_axe.equals("x")) text = "" + Utl.trimFlt(v.x, frez); 
+						else text = "" + Utl.trimFlt(v.y, frez);
 					} 
 					if (
 						//!w.isSelected && 
@@ -2346,9 +2347,9 @@ public class pNode {
 					pInstance target = (pInstance)args[0];
 					int frez = (int)args[1];
 					String text = "";
-					if (var_txt != null) text = Applet.copy(var_txt);
+					if (var_txt != null) text = Utl.copy(var_txt);
 					if (var_cls.equals(Float.class.getName())) {
-						text += Applet.trimFlt(target.getVar(var_ref, Float.class), frez);
+						text += Utl.trimFlt(target.getVar(var_ref, Float.class), frez);
 					} else if (var_cls.equals(Integer.class.getName())) {
 						text += target.getVar(var_ref, Integer.class);
 					} else if (var_cls.equals(Boolean.class.getName())) {
@@ -2356,7 +2357,7 @@ public class pNode {
 					} else if (var_cls.equals(String.class.getName())) {
 						text += target.getVar(var_ref, String.class);
 					} else if (var_cls.equals(Vector2.class.getName())) {
-						text += Applet.tostr(target.getData(var_ref, Vector2.class));
+						text += Utl.tostr(target.getData(var_ref, Vector2.class));
 					}
 					w.setText(text);
 				}};
@@ -2385,7 +2386,7 @@ public class pNode {
 			w.setSX(w.getLocalSX()*width/2f);
 			w.setSY(w.getLocalSY()*height);
 			w.setScaleLimitNoDraw(scale_min, scale_max);
-//			w.set_color_background(app.color((int)(255*w.color_background.r), 
+//			w.set_color_background(Utl.color((int)(255*w.color_background.r), 
 //					(int)(255*w.color_background.g), 
 //					(int)(255*w.color_background.b),
 //					(int)255));
@@ -2416,7 +2417,7 @@ public class pNode {
 					if (var_cls.equals(Float.class.getName())) {
 						target.setVar(var_ref, w.getSliderValInMinMax());
 					} else if (var_cls.equals(Integer.class.getName())) {
-						target.setVar(var_ref, Applet.toint(w.getSliderValInMinMax()));
+						target.setVar(var_ref, Utl.toint(w.getSliderValInMinMax()));
 					} else if (var_cls.equals(Vector2.class.getName()) && var_axe != null) {
 						Vector2 v = new Vector2(target.getVar(var_ref, Vector2.class));
 						float n = w.getSliderValInMinMax();
@@ -2589,10 +2590,10 @@ public class pNode {
 		.setStacked(true)
 		.setOutline(true)
 		.setOutlineWeight(RS/10f)
-		.set_color_pressed(app.color(20,20,255,255))
-		.set_color_hovered(app.color(0,0,210,255))
-		.set_color_standby(app.color(0,0,120,255))
-		.set_color_outline(app.color(120,180,255,255))
+		.set_color_pressed(Utl.color(20,20,255,255))
+		.set_color_hovered(Utl.color(0,0,210,255))
+		.set_color_standby(Utl.color(0,0,120,255))
+		.set_color_outline(Utl.color(120,180,255,255))
 		.setShape(nModel.Shape.CIRCLE)
 		;
 		book.newModel("NC_title")
@@ -2600,13 +2601,13 @@ public class pNode {
 		.setOutline(true)
 		.setOutlineWeight(RS/8f)
 //		.setOutlineConstant(true)
-		.set_color_outline(app.color(0))
+		.set_color_outline(Utl.color(0))
 //		.setOutline(true)
 //		.setOutlineWeight(RS/10f)
-//		.set_color_pressed(app.color(20,20,255,255))
-//		.set_color_hovered(app.color(0,0,210,255))
-//		.set_color_standby(app.color(0,0,120,255))
-//		.set_color_outline(app.color(120,180,255,255))
+//		.set_color_pressed(Utl.color(20,20,255,255))
+//		.set_color_hovered(Utl.color(0,0,210,255))
+//		.set_color_standby(Utl.color(0,0,120,255))
+//		.set_color_outline(Utl.color(120,180,255,255))
 		;
 		
 
@@ -2615,10 +2616,10 @@ public class pNode {
 		.setStacked(true)
 		.setOutline(true)
 		.setOutlineWeight(RS/10f)
-		.set_color_pressed(app.color(20,20,255,255))
-		.set_color_hovered(app.color(0,0,210,255))
-		.set_color_standby(app.color(0,0,120,255))
-		.set_color_outline(app.color(120,180,255,255))
+		.set_color_pressed(Utl.color(20,20,255,255))
+		.set_color_hovered(Utl.color(0,0,210,255))
+		.set_color_standby(Utl.color(0,0,120,255))
+		.set_color_outline(Utl.color(120,180,255,255))
 		.setShape(nModel.Shape.DIAMOND)
 		;
 		
@@ -2636,9 +2637,9 @@ public class pNode {
 		.setStackSpacing(0)
 //		.setOutline(true)
 //		.setOutlineWeight(2)
-//		.set_color_outline(app.color(20,20,120))
+//		.set_color_outline(Utl.color(20,20,120))
 //		.setOutlineAfterChild(true)
-		.set_color_background(app.color(0,0))
+		.set_color_background(Utl.color(0,0))
 		.setDraw(false)
 		;
 
@@ -2648,8 +2649,8 @@ public class pNode {
 		.setOutline(false)
 		.setOutlineWeight(RS/15f)
 		.setOutlineConstant(true)
-		.set_color_outline(app.color(200,100,0))
-		.set_color_background(app.color(0,0))
+		.set_color_outline(Utl.color(200,100,0))
+		.set_color_background(Utl.color(0,0))
 		;
 
 		nModel PN_back = book.newModel("PN_back")
@@ -2672,14 +2673,14 @@ public class pNode {
 		;
 		if (app.getPref("RELEASE", Boolean.class)) 
 			PN_back.setOutline(true)
-			.set_color_outline(app.color(0));
+			.set_color_outline(Utl.color(0));
 		
 
 		book.newModel("PN_costack")
 		.setBoundChild(true)
 		.setBoundOutspace(0)
 		.setStackSpacing(0)
-		.set_color_background(app.color(0,0))
+		.set_color_background(Utl.color(0,0))
 		.setDraw(false)
 		.setPassif()
 		;
@@ -2851,7 +2852,7 @@ public class pNode {
 									patch.pop_close_user(node.sheet.bloc.ref+
 											"_"+node.pool_ref));
 							if (new_over && !over) {
-								patch.pop_close_user = Applet.copy(node.sheet.bloc.ref+
+								patch.pop_close_user = Utl.copy(node.sheet.bloc.ref+
 										"_"+node.pool_ref);
 								patch.patch_pop_close.setParent(back)
 								.addEventTrigger(pop_close_run);
@@ -2913,7 +2914,7 @@ public class pNode {
 //							r2.x = ref2.getLocalX(); r2.y = ref2.getLocalY();
 //							r2.width = ref2.boundedSize.x; r2.height = ref2.boundedSize.y;
 							
-							if (Applet.intersect(r1,r2)) {
+							if (Utl.intersect(r1,r2)) {
 								found = false; 
 								break;
 							}

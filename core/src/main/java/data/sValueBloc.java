@@ -7,17 +7,18 @@ import java.util.Map;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool.Poolable;
-import app.Applet;
-import app.MetodeMap;
-import app.nClearable;
-import app.nLauncher;
-import app.nMap;
-import app.nRun;
 
+import app.Applet;
+import app.GdxApp;
+import app.nLauncher;
 import gui.nWidget;
 import gui.nWidgetGroup;
 import patch.pPar;
 import patch.pStandard;
+import util.Utl;
+import util.nClearable;
+import util.nMap;
+import util.nRun;
 
 
 
@@ -376,9 +377,9 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 		
 		int pref_id = data.autoid.find_id(r);
 		if (pref_id == -1) {
-			base_ref = Applet.copy(r);
+			base_ref = Utl.copy(r);
 			if (b.blocs.get(r) == null) {
-				ref = Applet.copy(r);
+				ref = Utl.copy(r);
 				id = -1;
 			} else {
 				id = data.autoid.get_new_id();
@@ -400,7 +401,7 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 		}
 		if (b.blocs.get(ref) != null) {
 			app.logn("ERROR : bloc naming bug "+ref+" allready exist");
-			app.crash();
+			GdxApp.crash();
 		}
 		
 //		base_ref = r;

@@ -5,19 +5,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nMap;
 
+import app.Applet;
 import data.*;
 import patch.pStandard.ObjDef;
 import plane.*;
+import util.Utl;
+import util.nMap;
 
 public class pInstance extends sPoolable {
 	
 	public boolean isStandard(String r) { return (stand != null && stand.ref.equals(r)); }
 	
 	public pInstance(pSheet s) {
-		sheet = s; patch = s.patch; data_used = new int[Applet.data_type_nb]; }
+		sheet = s; patch = s.patch; data_used = new int[Utl.data_type_nb]; }
 
 	public pPatch patch;	
 	public pSheet sheet;	
@@ -112,8 +113,8 @@ public class pInstance extends sPoolable {
 	
 	public void init_arrays() { 
 		
-		for (int i = 0 ; i < Applet.data_type_nb ; i++) {
-			data_used[i] = stand.getDataUsed(Applet.data_type[i]); }
+		for (int i = 0 ; i < Utl.data_type_nb ; i++) {
+			data_used[i] = stand.getDataUsed(Utl.data_type[i]); }
 
 		collec_used = stand.getCollecUsed();
 		collecs = new String[collec_used];
@@ -123,34 +124,34 @@ public class pInstance extends sPoolable {
 		insts = new String[inst_used];
 		for (int i = 0 ; i < inst_used ; i++) insts[i] = "";
 		
-		datas = new Object[Applet.data_type_nb][];
+		datas = new Object[Utl.data_type_nb][];
 		
-		int u = Applet.type_class_index.get(Vector2.class);
+		int u = Utl.type_class_index.get(Vector2.class);
 		datas[u] = new Vector2[data_used[u]];
 		for (int i = 0 ; i < data_used[u] ; i++) datas[u][i] = new Vector2();
 		
-		u = Applet.type_class_index.get(Float.class);
+		u = Utl.type_class_index.get(Float.class);
 		datas[u] = new Float[data_used[u]];
 		for (int i = 0 ; i < data_used[u] ; i++) datas[u][i] = 0f;
 		
-		u = Applet.type_class_index.get(Integer.class);
+		u = Utl.type_class_index.get(Integer.class);
 		datas[u] = new Integer[data_used[u]];
 		for (int i = 0 ; i < data_used[u] ; i++) datas[u][i] = (int)0;
 		
-		u = Applet.type_class_index.get(Boolean.class);
+		u = Utl.type_class_index.get(Boolean.class);
 		datas[u] = new Boolean[data_used[u]];
 		for (int i = 0 ; i < data_used[u] ; i++) datas[u][i] = false;
 		
-		u = Applet.type_class_index.get(String.class);
+		u = Utl.type_class_index.get(String.class);
 		datas[u] = new String[data_used[u]];
 		for (int i = 0 ; i < data_used[u] ; i++) datas[u][i] = "";
 		
-		for (int i = 0 ; i < Applet.data_type_nb ; i++) {
-			if (stand != null && stand.data_vals.get(Applet.data_type[i]) != null)
+		for (int i = 0 ; i < Utl.data_type_nb ; i++) {
+			if (stand != null && stand.data_vals.get(Utl.data_type[i]) != null)
 				for (Map.Entry<String, Integer> me : 
-					stand.data_vals.get(Applet.data_type[i]).entrySet()) {
-					Object o = getDef(me.getKey(), Applet.data_type[i]);
-					if (o != null) setData(me.getKey(), Applet.copy(o));
+					stand.data_vals.get(Utl.data_type[i]).entrySet()) {
+					Object o = getDef(me.getKey(), Utl.data_type[i]);
+					if (o != null) setData(me.getKey(), Utl.copy(o));
 				}
 		}
 
@@ -164,7 +165,7 @@ public class pInstance extends sPoolable {
 
 	public static final int start_data_nb = 1;
 	public String get_convert_str(String s, HashMap<String,String> map) {
-		if (map != null && map.get(s) != null) s = Applet.copy(map.get(s)); return s; }
+		if (map != null && map.get(s) != null) s = Utl.copy(map.get(s)); return s; }
 	public void from_tab(sTab t, int c) { from_tab(t, c, null); }
 	public void from_tab(sTab t, int c, HashMap<String,String> map) {
 		
@@ -188,22 +189,22 @@ public class pInstance extends sPoolable {
 
 		cnt++;
 		
-		for (int i = 0 ; i < Applet.data_type_nb ; i++) {
+		for (int i = 0 ; i < Utl.data_type_nb ; i++) {
 			for (int j = 0 ; j < data_used[i] ; j++) {
-				if (i == Applet.type_class_index.get(Vector2.class)) { 
+				if (i == Utl.type_class_index.get(Vector2.class)) { 
 					((Vector2)datas[i][j]).x = t.getFloat(c, cnt+(j*2));
 					((Vector2)datas[i][j]).y = t.getFloat(c, cnt+(j*2)+1);
-				} else if (i == Applet.type_class_index.get(Float.class)) { 
+				} else if (i == Utl.type_class_index.get(Float.class)) { 
 					datas[i][j] = t.getFloat(c, cnt+j);
-				} else if (i == Applet.type_class_index.get(Integer.class)) { 
+				} else if (i == Utl.type_class_index.get(Integer.class)) { 
 					datas[i][j] = t.getInt(c, cnt+j);
-				} else if (i == Applet.type_class_index.get(Boolean.class)) { 
+				} else if (i == Utl.type_class_index.get(Boolean.class)) { 
 					datas[i][j] = t.getBool(c, cnt+j);
-				} else if (i == Applet.type_class_index.get(String.class)) { 
+				} else if (i == Utl.type_class_index.get(String.class)) { 
 					datas[i][j] = get_convert_str(t.getStr(c, cnt+j), map);
 				}
 			}
-			cnt += data_used[i] * Applet.type_data_size.get(Applet.data_type[i]);
+			cnt += data_used[i] * Utl.type_data_size.get(Utl.data_type[i]);
 		}
 		
 
@@ -230,13 +231,13 @@ public class pInstance extends sPoolable {
 			String ct = t.getStr(c, cnt+(j*3)+1);
 			String so = t.getStr(c, cnt+(j*3)+2);
 			if (ct.equals(Float.class.getName())) 
-				var_vals.put(ref, Applet.from_string(so, Float.class));
+				var_vals.put(ref, Utl.from_string(so, Float.class));
 			else if (ct.equals(Integer.class.getName())) 
-				var_vals.put(ref, Applet.from_string(so, Integer.class));
+				var_vals.put(ref, Utl.from_string(so, Integer.class));
 			else if (ct.equals(Boolean.class.getName())) 
-				var_vals.put(ref, Applet.from_string(so, Boolean.class));
+				var_vals.put(ref, Utl.from_string(so, Boolean.class));
 			else if (ct.equals(Vector2.class.getName())) 
-				var_vals.put(ref, Applet.from_string(so, Vector2.class));
+				var_vals.put(ref, Utl.from_string(so, Vector2.class));
 			else if (ct.equals(String.class.getName())) 
 				var_vals.put(ref, get_convert_str(so, map));
 		}
@@ -264,27 +265,27 @@ public class pInstance extends sPoolable {
 
 		cnt++;
 		
-		for (int i = 0 ; i < Applet.data_type_nb ; i++) {
+		for (int i = 0 ; i < Utl.data_type_nb ; i++) {
 			for (int j = 0 ; j < data_used[i] ; j++) {
-				if (i == Applet.type_class_index.get(Vector2.class)) { 
+				if (i == Utl.type_class_index.get(Vector2.class)) { 
 					Vector2 v = (Vector2)datas[i][j];
 					t.set(c, cnt+(j*2), v.x);
 					t.set(c, cnt+(j*2)+1, v.y);
-				} else if (i == Applet.type_class_index.get(Float.class)) { 
+				} else if (i == Utl.type_class_index.get(Float.class)) { 
 					float v = (float)datas[i][j];
 					t.set(c, cnt+j, v);
-				} else if (i == Applet.type_class_index.get(Integer.class)) { 
+				} else if (i == Utl.type_class_index.get(Integer.class)) { 
 					int v = (int)datas[i][j];
 					t.set(c, cnt+j, v);
-				} else if (i == Applet.type_class_index.get(Boolean.class)) { 
+				} else if (i == Utl.type_class_index.get(Boolean.class)) { 
 					boolean v = (boolean)datas[i][j];
 					t.set(c, cnt+j, v);
-				} else if (i == Applet.type_class_index.get(String.class)) { 
+				} else if (i == Utl.type_class_index.get(String.class)) { 
 					String v = (String)datas[i][j];
 					t.set(c, cnt+j, v);
 				}
 			}
-			cnt += data_used[i] * Applet.type_data_size.get(Applet.data_type[i]);
+			cnt += data_used[i] * Utl.type_data_size.get(Utl.data_type[i]);
 		}
 
 		for (int j = 0 ; j < collec_used ; j++) {
@@ -302,7 +303,7 @@ public class pInstance extends sPoolable {
 		for (Map.Entry<String,Object> me : var_vals.entrySet()) {
 			t.set(c, cnt+(j*3), me.getKey());
 			t.set(c, cnt+(j*3)+1, me.getValue().getClass().getName());
-			t.set(c, cnt+(j*3)+2, Applet.to_string(me.getValue()));
+			t.set(c, cnt+(j*3)+2, Utl.to_string(me.getValue()));
 			j++;
 		}
 		cnt += j * 3;
@@ -311,8 +312,8 @@ public class pInstance extends sPoolable {
 	public int data_size() {
 		int cnt = start_data_nb;
 		cnt++;
-		for (int i = 0 ; i < Applet.data_type_nb ; i++) 
-			cnt += data_used[i] * Applet.type_data_size.get(Applet.data_type[i]);
+		for (int i = 0 ; i < Utl.data_type_nb ; i++) 
+			cnt += data_used[i] * Utl.type_data_size.get(Utl.data_type[i]);
 		cnt += collec_used;
 		cnt += inst_used;
 		cnt += 1 + var_vals.size() * 3;
@@ -348,12 +349,12 @@ public class pInstance extends sPoolable {
 	public void setAllDef() {
 		if (stand == null) return;
 		
-		for (int i = 0 ; i < Applet.data_type_nb ; i++) {
-			if (stand != null && stand.data_vals.get(Applet.data_type[i]) != null)
+		for (int i = 0 ; i < Utl.data_type_nb ; i++) {
+			if (stand != null && stand.data_vals.get(Utl.data_type[i]) != null)
 				for (Map.Entry<String, Integer> me : 
-					stand.data_vals.get(Applet.data_type[i]).entrySet()) {
-					Object o = getDef(me.getKey(), Applet.data_type[i]);
-					if (o != null) setData(me.getKey(), Applet.copy(o));
+					stand.data_vals.get(Utl.data_type[i]).entrySet()) {
+					Object o = getDef(me.getKey(), Utl.data_type[i]);
+					if (o != null) setData(me.getKey(), Utl.copy(o));
 				}
 		}
 
@@ -377,7 +378,7 @@ public class pInstance extends sPoolable {
 	
 	
 	public void unpoint_this() {
-		for (Point p : Applet.duplic(point_this)) {
+		for (Point p : Utl.duplic(point_this)) {
 			if (p.in_collec) p.point_by.collecInstRemove(p.ref,this);
 			else p.point_by.setInst(p.ref,""); }
 		point_this.clear();
@@ -392,7 +393,7 @@ public class pInstance extends sPoolable {
 		Point p = new Point(); p.point_by = t; p.ref = r; p.in_collec = collec; 
 		point_this.add(p); }
 	public void unpointed_by(String r, boolean collec, pInstance t) {
-		for (Point p : Applet.duplic(point_this)) 
+		for (Point p : Utl.duplic(point_this)) 
 			if (p.point_by == t && p.ref.equals(r) && p.in_collec == collec)
 				point_this.remove(p); }
 	
@@ -408,33 +409,33 @@ public class pInstance extends sPoolable {
 		if (var_vals.hasKey(ref)) {
 			stand.app.logn("ERROR : cInstance "+this.pool_ref+" has allready the key "+ref);
 			return this; }
-		var_vals.put(ref,Applet.copy(var)); return this; }
+		var_vals.put(ref,Utl.copy(var)); return this; }
 	public pInstance removeVar(String ref) { var_vals.remove(ref); return this; }
 	public boolean hasVar(String ref) { return var_vals.hasKey(ref); }
 	
 	public pInstance setVar(String r, Object o) { 
-		var_vals.remove(r); var_vals.put(r,Applet.copy(o)); return this; }
+		var_vals.remove(r); var_vals.put(r,Utl.copy(o)); return this; }
 	public <T> T getVar(String r, Class<T> ct) { 
-		if (var_vals.get(r) == null) return null; return Applet.copy((T)var_vals.get(r)); }
+		if (var_vals.get(r) == null) return null; return Utl.copy((T)var_vals.get(r)); }
 	public Object getVar(String r) { 
-		if (var_vals.get(r) == null) return null; return Applet.copy(var_vals.get(r)); }
+		if (var_vals.get(r) == null) return null; return Utl.copy(var_vals.get(r)); }
 
 	
 	public pInstance setData(String r, Object o) { 
 		if (stand == null) return this;
 		int val_id = stand.getDataValId(r, o.getClass());
 		if (val_id == -1) return this;
-		int data_id = Applet.type_class_index.get(o.getClass());
-		datas[data_id][val_id] = Applet.copy(o);
+		int data_id = Utl.type_class_index.get(o.getClass());
+		datas[data_id][val_id] = Utl.copy(o);
 		return this; 
 	}
 	public <T> T getData(String r, Class<T> ct) { 
 		if (stand == null) return null;
 		int val_id = stand.getDataValId(r, ct);
 		if (val_id == -1) return null;
-		int data_id = Applet.type_class_index.get(ct);
+		int data_id = Utl.type_class_index.get(ct);
 		if (datas[data_id][val_id] == null) return null;
-		return Applet.copy((T)datas[data_id][val_id]); 
+		return Utl.copy((T)datas[data_id][val_id]); 
 	}
 	
 //	// FOR DEBUG ONLY !!! 
@@ -444,7 +445,7 @@ public class pInstance extends sPoolable {
 ////		if (stand == null) return false;
 ////		int val_id = stand.getDataValId(r, ct);
 ////		if (val_id == -1) return false;
-////		int data_id = Applet.type_class_index.get(ct);
+////		int data_id = Utl.type_class_index.get(ct);
 ////		if (datas[data_id][val_id] == null) return false;
 ////		return true; 
 //	}
@@ -486,46 +487,46 @@ public class pInstance extends sPoolable {
 		if (stand == null) return null;
 		pColl col = getCollec(r);
 		if (col == null) return this;
-		if (!Applet.type_is_used(o.getClass())) return null;
-		String s = Applet.to_string(o);
+		if (!Utl.type_is_used(o.getClass())) return null;
+		String s = Utl.to_string(o);
 		col.set(i,s); 
 		return this; }
 
 	public <T> T collecGet(String r, int i, Class<T> ct) {
-		if (!Applet.type_is_used(ct)) return null;
+		if (!Utl.type_is_used(ct)) return null;
 		pColl col = getCollec(r);
 		if (col == null) return null;
 		String dt = stand.getCollecData(r);
 		if (dt == null || !dt.equals(ct.getName())) return null;
-		return Applet.from_string(col.get(i), ct);
+		return Utl.from_string(col.get(i), ct);
 	}
 	
 	public pInstance collecRemove(String r, Object o) { 
 		if (stand == null) return null;
 		pColl col = getCollec(r);
 		if (col == null) return this;
-		if (!Applet.type_is_used(o.getClass())) return null;
-		String s = Applet.to_string(o);
+		if (!Utl.type_is_used(o.getClass())) return null;
+		String s = Utl.to_string(o);
 		col.remove(s); 
 		return this; }
 	public pInstance collecAdd(String r, Object o) { 
 		if (stand == null) return null;
 		pColl col = getCollec(r);
 		if (col == null) return this;
-		if (!Applet.type_is_used(o.getClass())) return null;
-		String s = Applet.to_string(o);
+		if (!Utl.type_is_used(o.getClass())) return null;
+		String s = Utl.to_string(o);
 		col.add(s); 
 		return this; }
 	
 	public <T> ArrayList<T> collecAll(String r, Class<T> ct) {
 		ArrayList<T> arr = new ArrayList<T>();
 		if (stand == null) return arr;
-		if (!Applet.type_is_used(ct)) return null;
+		if (!Utl.type_is_used(ct)) return null;
 		pColl col = getCollec(r);
 		if (col == null) return null;
 		String dt = stand.getCollecData(r);
 		if (dt == null || !dt.equals(ct.getName())) return null;
-		for (String s : col.get()) arr.add(Applet.from_string(s, ct)); 
+		for (String s : col.get()) arr.add(Utl.from_string(s, ct)); 
 		return arr;
 	}
 	
@@ -666,7 +667,7 @@ public class pInstance extends sPoolable {
 					+ " instance "+pool_ref+" stand "+stand.ref);
 			return; }
 //		if (!rd.test_args(v)) return;
-//		if (v != null) Applet.app.log("inst.run() : v length = "+v.length);
+//		if (v != null) Utl.app.log("inst.run() : v length = "+v.length);
 		rd.run.do_run(this,rd.param,v); }
 	
 	public void run(String ref, pPar par, Object ... v) {

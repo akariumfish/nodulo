@@ -8,16 +8,17 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
-import app.Applet;
-import app.nMap;
-import app.nRun;
 
+import app.Applet;
 import data.*;
 import gui.nAlign;
 import gui.nInterface;
 import gui.nWidget;
 import gui.nWidgetGroup;
 import plane.pTime;
+import util.Utl;
+import util.nMap;
+import util.nRun;
 
 public class nNetwork {
 	
@@ -354,13 +355,13 @@ public class nNetwork {
 	
 	static public class UpdateValue {
 		public HashMap<String,String> data;
-		public void put(String k, boolean b) { data.put(k, Applet.tostr(b)); }
-		public void put(String k, int b) { data.put(k, Applet.tostr(b)); }
-		public void put(String k, float b) { data.put(k, Applet.tostr(b)); }
+		public void put(String k, boolean b) { data.put(k, Utl.tostr(b)); }
+		public void put(String k, int b) { data.put(k, Utl.tostr(b)); }
+		public void put(String k, float b) { data.put(k, Utl.tostr(b)); }
 		public void put(String k, String b) { data.put(k, b); }
-		public boolean getBoo(String k) { return Applet.tobool(data.get(k)); }
-		public int getInt(String k) { return Applet.toint(data.get(k)); }
-		public float getFlt(String k) { return Applet.tofloat(data.get(k)); }
+		public boolean getBoo(String k) { return Utl.tobool(data.get(k)); }
+		public int getInt(String k) { return Utl.toint(data.get(k)); }
+		public float getFlt(String k) { return Utl.tofloat(data.get(k)); }
 		public String getStr(String k) { return data.get(k); }
 	}
 	

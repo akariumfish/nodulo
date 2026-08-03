@@ -1,9 +1,11 @@
-package app;
+package data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import util.nRun;
 
 public class MetodeMap {
 	HashMap<String, nRun> metodes = new HashMap<String, nRun>();

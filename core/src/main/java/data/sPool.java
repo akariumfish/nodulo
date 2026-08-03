@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.Set;
 
 import app.Applet;
-import app.nMap;
-
 import data.sPool.State;
+import util.Utl;
+import util.nMap;
 
 public abstract class sPool <T extends sPoolable> {
 	
@@ -70,9 +70,9 @@ public abstract class sPool <T extends sPoolable> {
 	}
 
 	public void freeAll() {
-		for (T b : Applet.duplic(all_used.all())) b.clear();
+		for (T b : Utl.duplic(all_used.all())) b.clear();
 		if (all_used.size() > 0) {
-			for (T b : Applet.duplic(all_used.all())) b.clear();
+			for (T b : Utl.duplic(all_used.all())) b.clear();
 			if (all_used.size() > 0)
 				app.logn("ERROR: sPool freeAll did not free all objects");
 		}

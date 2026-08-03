@@ -1,4 +1,4 @@
-package app;
+package util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,6 +6,8 @@ import java.util.Map;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+
+import app.Applet;
 
 public abstract class nQuickPool<T> {
 
@@ -59,7 +61,7 @@ public abstract class nQuickPool<T> {
 	}
 	
 	public void freeAll() {
-		for (T t : Applet.duplic(allObjects)) {
+		for (T t : Utl.duplic(allObjects)) {
 			reset(t); freeObjects.add(t); }
 		allObjects.clear();
 	}

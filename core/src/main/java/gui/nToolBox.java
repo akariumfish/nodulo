@@ -3,12 +3,14 @@ package gui;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nMenu;
-import app.nRun;
 
+import app.Applet;
+import app.GdxApp;
+import app.nMenu;
 import data.*;
 import plane.pSpace;
+import util.Utl;
+import util.nRun;
 
 public class nToolBox {
 
@@ -113,8 +115,8 @@ public class nToolBox {
 		
 		
 
-		app.addEventScreen(new nRun() { public void run() {
-			tool_group.get("back").setRect(0,40,RS*12,app.getscreenheight() - 80); 
+		app.gdx.addEventScreen(new nRun() { public void run() {
+			tool_group.get("back").setRect(0,40,RS*12,app.gdx.getscreenheight() - 80); 
 			tool_group.getGroup("list").get("space").setSize(tool_group.get("back").getLocalSX() - RS, 
 					tool_group.get("back").getLocalSY());
 			tool_group.getGroup("list").get("slider").setSize(RS,tool_group.get("back").getLocalSY());
@@ -202,7 +204,7 @@ public class nToolBox {
 		.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM) // TOP   BOTTOM
 		.setBoundOutspace(5)
 		.setStackSpacing(5)
-		.set_color_background(app.color(0, 0))
+		.set_color_background(Utl.color(0, 0))
 		;
 
 		book.newModel("taskbar_entry")
@@ -220,7 +222,7 @@ public class nToolBox {
 		book.newModel("tool_back")
 		.copyFrom(book.getModel("ref"))
 		.setBackground()
-		.setRect(0,40,RS*12,Applet.HEIGHT - 80)
+		.setRect(0,40,RS*12,GdxApp.HEIGHT - 80)
 		;
 		
 		book.newModel("toolbox_section_space")
@@ -229,10 +231,10 @@ public class nToolBox {
 		.setBoundParent(true)
 		.setBoundChild(true)
 		.setBoundOutspace(0)
-		.set_color_background(app.color(0,0,0,0))
+		.set_color_background(Utl.color(0,0,0,0))
 		.setOutline(true)
 		.setOutlineWeight(3f)
-//		.set_color_outline(app.color(180,180,180,255))
+//		.set_color_outline(Utl.color(180,180,180,255))
 		.setOutlineAfterChild(true)
 		;
 		book.newModel("toolbox_section_back")
@@ -243,13 +245,13 @@ public class nToolBox {
 		.setBoundChild(true)
 		.setBoundOutspace(RS/6f)
 		.setStackSpacing(0)
-		.set_color_background(app.color(0,0,0,0))
+		.set_color_background(Utl.color(0,0,0,0))
 		;
 		book.newModel("toolbox_section_head")
 		.copyFrom(book.getModel("CW_head_color"))
 		.setRect(0,0,RS*11 - 10,RS)
 		.setBoundParent(true)
-//		.set_color_background(app.color(40,40,40,255))
+//		.set_color_background(Utl.color(40,40,40,255))
 		;
 		book.newModel("toolbox_section_collapse")
 		.copyFrom(book.getModel("CW_head_color"))
@@ -259,14 +261,14 @@ public class nToolBox {
 		.setTrigger()
 		.setOutline(true)
 		.setOutlineWeight(1)
-		.set_color_outline(app.color(0,0,200,255))
+		.set_color_outline(Utl.color(0,0,200,255))
 		;
 		
 		book.newModel("toolbox_separator")
 		.copyFrom(book.getModel("ref"))
 		.setStacked(true)
 		.setBoundParent(true)
-		.set_color_background(app.color(0,0,0,0))
+		.set_color_background(Utl.color(0,0,0,0))
 		.setRect(0,0,RS*11f - 1,RS/6f)
 		;
 		
@@ -284,7 +286,7 @@ public class nToolBox {
 		book.newModel("toolbox_section_separator")
 		.copyFrom(book.getModel("toolbox_section_entry"))
 		.setSY(RS/4f)
-		.set_color_background(app.color(0,0,0,0))
+		.set_color_background(Utl.color(0,0,0,0))
 		;
 		
 		book.newModel("toolbox_section_trigg")

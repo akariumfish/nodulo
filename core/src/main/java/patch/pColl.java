@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import app.Applet;
-
 import data.*;
 import plane.pPlane;
+import util.Utl;
 
 public class pColl extends sPoolable {
 	
 	private static final int start_data_nb = 4;
 	
 	public String get_convert_str(String s, HashMap<String,String> map) {
-		if (map != null && map.get(s) != null) s = Applet.copy(map.get(s)); return s; }
+		if (map != null && map.get(s) != null) s = Utl.copy(map.get(s)); return s; }
 	public void from_tab(sTab t, int c) { from_tab(t, c, null); }
 	public void from_tab(sTab t, int c, HashMap<String,String> map) {
 		
@@ -119,7 +119,7 @@ public class pColl extends sPoolable {
 			if (so != null && so instanceof Integer) fill = (int)so;
 			String type = stand.getCollecData(ref_in_stand);
 			if (type != null) for (int j = 0 ; j < fill ; j++) {
-				String a = Applet.to_string(Applet.new_object(Applet.type_name_class.get(type)));
+				String a = Utl.to_string(Utl.new_object(Utl.type_name_class.get(type)));
 				add(a);
 			}
 		}
@@ -134,13 +134,13 @@ public class pColl extends sPoolable {
 	
 	public int size() { return datas.size(); }
 
-	public boolean contains(String s) { return Applet.contains(datas, s); }
+	public boolean contains(String s) { return Utl.contains(datas, s); }
 
 	public pColl add(String s) {
-		datas.add(Applet.copy(s)); length++; return this; }
+		datas.add(Utl.copy(s)); length++; return this; }
 
 	public pColl set(int i, String s) {
-		datas.set(i,Applet.copy(s)); return this; }
+		datas.set(i,Utl.copy(s)); return this; }
 	
 	public pColl remove(String s) {
 		for (int i = 0 ; i < datas.size() ; i++) { 
@@ -158,10 +158,10 @@ public class pColl extends sPoolable {
 		if (i >= length) {
 //			plane.app.log("ERROR : cCollec "+pool_ref+" .get(int) : "+i+" >= length: "+length);
 			return ""; }
-		return Applet.copy(datas.get(i)); }
+		return Utl.copy(datas.get(i)); }
 	public ArrayList<String> get() { 
 		ArrayList<String> arr = new ArrayList<String>();
-		for (String s : datas) arr.add(Applet.copy(s));
+		for (String s : datas) arr.add(Utl.copy(s));
 		return arr; }
 	
 	

@@ -3,8 +3,8 @@ package patch;
 import java.util.ArrayList;
 
 import app.Applet;
-import app.nMap;
-import app.nRun;
+import util.nMap;
+import util.nRun;
 
 public class pProcess {
 

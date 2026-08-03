@@ -5,9 +5,8 @@ import java.util.Map;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nRun;
 
+import app.Applet;
 import gui.nInterface;
 import gui.nWidget;
 import gui.nWidgetGroup;
@@ -22,6 +21,8 @@ import plane.pBody;
 import plane.pParam;
 import plane.pSpace;
 import plane.pTime;
+import util.Utl;
+import util.nRun;
 
 public class pFuncBook {
 	
@@ -50,7 +51,7 @@ public class pFuncBook {
 			return null; }}).addArg("in", Integer.class);
 
 		new Operator("to_int", "F>I", C.FtI, Integer.class, new nRun() {public Object get() {
-			Float o1 = ask("in", Float.class); if (o1 != null) { return Applet.toint(o1); } 
+			Float o1 = ask("in", Float.class); if (o1 != null) { return Utl.toint(o1); } 
 			return null; }}).addArg("in", Float.class);
 
 		new Operator("not", "!", C.NOT, Boolean.class, new nRun() {public Object get() {
@@ -165,22 +166,22 @@ public class pFuncBook {
 		
 
 		int cnt = 0;
-		for (String tp : Applet.type_short_names) {
-			new Operator(tp, Applet.type_type_maj.get(tp), pFunc.types_codes[cnt], 
+		for (String tp : Utl.type_short_names) {
+			new Operator(tp, Utl.type_type_maj.get(tp), pFunc.types_codes[cnt], 
 					new nRun() {public Object get() {
-				return ask("value", Applet.type_type_class.get(tp));
+				return ask("value", Utl.type_type_class.get(tp));
 			}})
 			.addVar("value")
 			.setStandRun(new nRun() {public void run() {
 				pStandard stand = arg(0,pStandard.class);
 				pProcess proc = stand.process()
 				.run(pTile.getRun(CT.OBTAIN_VAR), "value", 
-						Applet.new_object(Applet.type_type_class.get(tp)));
-				if (Applet.type_type_class.get(tp) == Boolean.class) {
+						Utl.new_object(Utl.type_type_class.get(tp)));
+				if (Utl.type_type_class.get(tp) == Boolean.class) {
 					proc.openSec().param("ref", "value_switch", "var_link_ref", "value", 
 							"var_link_class", Boolean.class.getName(), "width", (int)8)
 					.commande(pTile.getCom(CT.ADD_SWITCH)).closeSec();
-				} else if (Applet.type_type_class.get(tp) == Vector2.class) {
+				} else if (Utl.type_type_class.get(tp) == Vector2.class) {
 					proc.openSec().param("ref", "value_field_x", "var_link_ref", "value", 
 							"var_link_class", Vector2.class.getName(), 
 							"var_link_vec_axe", "x", "width", (int)6)
@@ -191,7 +192,7 @@ public class pFuncBook {
 					.commande(pTile.getCom(CT.ADD_FIELD)).closeSec();
 				} else {
 					proc.openSec().param("ref", "value_field", "var_link_ref", "value", 
-							"var_link_class", Applet.type_type_class.get(tp).getName(), 
+							"var_link_class", Utl.type_type_class.get(tp).getName(), 
 							"width", (int)8)
 					.commande(pTile.getCom(CT.ADD_FIELD)).closeSec();
 				}
@@ -393,7 +394,7 @@ public class pFuncBook {
 					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
 							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
 					w1.addEventTrigger(new nRun(instance) { public void run() {
-						((pInstance)builder).setVar("index", Applet.toint(par)); }}); }
+						((pInstance)builder).setVar("index", Utl.toint(par)); }}); }
 				instance.patch.patch_dropmenu.metode("open", triggP_w); 
 			}})
 			.param("ref", "index_watch", "var_link_ref", "index", 
@@ -422,12 +423,12 @@ public class pFuncBook {
 			} else if (arr != null && entry == null) { return arr; 
 			} else if (arr == null && entry != null) {
 				Object[] r = new Object[1]; 
-				r[0] = Applet.copy(entry); 
+				r[0] = Utl.copy(entry); 
 				return r; 
 			} else {
 				Object[] r = new Object[arr.length + 1];
-				for (int i = 0 ; i < arr.length ; i++) r[i+1] = Applet.copy(arr[i]);
-				r[0] = Applet.copy(entry);
+				for (int i = 0 ; i < arr.length ; i++) r[i+1] = Utl.copy(arr[i]);
+				r[0] = Utl.copy(entry);
 				return r;
 			}
 			}}).addArg("array", Object[].class).addArg("entry", null);
@@ -459,7 +460,7 @@ public class pFuncBook {
 					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
 							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
 					w1.addEventTrigger(new nRun(instance) { public void run() {
-						((pInstance)builder).setVar("ind", Applet.toint(par)); }}); }
+						((pInstance)builder).setVar("ind", Utl.toint(par)); }}); }
 				instance.patch.patch_dropmenu.metode("open", triggP_w); 
 			}})
 			.param("ref", "index_watch", "var_link_ref", "ind", 
@@ -494,7 +495,7 @@ public class pFuncBook {
 			int tot_size = pFunc.pop(scr, Integer.class);
 			ArrayList<Object> as = new ArrayList<Object>();
 			pFunc.pop(scr, tot_size - 2, as);
-			return pFunc.branch_script_obtain(tile_node, as, Applet.duplic(arg)); 
+			return pFunc.branch_script_obtain(tile_node, as, Utl.duplic(arg)); 
 			
 //			return null;
 		}})
@@ -611,7 +612,7 @@ public class pFuncBook {
 			if (func == null) return null;
 			Object[] script = func.get("get_instruction_script", Object[].class);
 			if (script == null) return null;
-			pFunc.func_script_run(tile_node, script, Applet.duplic(arg)); 
+			pFunc.func_script_run(tile_node, script, Utl.duplic(arg)); 
 			return pFunc.C.NEXT;
 		}})
 		.addVar("func_ref").addArg("arg", Object[].class)
@@ -654,7 +655,7 @@ public class pFuncBook {
 			Object r = ask("data");
 			if (r != null && out != null) { 
 				if (ask("exec_in_instance", Boolean.class)) 
-					instance.setVar("watch", Applet.to_string(r)); 
+					instance.setVar("watch", Utl.to_string(r)); 
 				out.do_run(r); } 
 			return pFunc.C.NEXT;
 		}})
@@ -700,7 +701,7 @@ public class pFuncBook {
 			Object r = ask("data");
 			if (r == null) return pFunc.C.NEXT;
 			if (ask("exec_in_instance", Boolean.class)) 
-				instance.setVar("watch", Applet.to_string(r));
+				instance.setVar("watch", Utl.to_string(r));
 			reg_out_co.run("send", r);
 			return pFunc.C.NEXT;
 		}})
@@ -765,7 +766,7 @@ public class pFuncBook {
 			Boolean active = ask("active", Boolean.class);
 			if (active == null || !active) test = false;
 			if (ask("exec_in_instance", Boolean.class)) 
-				instance.setVar("watch", Applet.to_string(test));
+				instance.setVar("watch", Utl.to_string(test));
 			if (test) return pFunc.C.NEXT;
 			else return pFunc.C.JUMP;
 		}})
@@ -794,7 +795,7 @@ public class pFuncBook {
 				pParam par = bod.param(param_ref);
 				if (par != null && par.has(data_ref, o1.getClass())) {
 					if (ask("exec_in_instance", Boolean.class)) 
-						instance.setVar("watch", Applet.to_string(o1));
+						instance.setVar("watch", Utl.to_string(o1));
 					par.set(data_ref, o1);
 				}
 			}

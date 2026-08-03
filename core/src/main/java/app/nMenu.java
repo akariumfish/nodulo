@@ -11,6 +11,9 @@ import com.badlogic.gdx.graphics.Color;
 import data.*;
 import gui.*;
 import plane.pPlane;
+import util.Utl;
+import util.nMap;
+import util.nRun;
 
 public class nMenu {
 
@@ -42,7 +45,7 @@ public class nMenu {
 		float RS = gui.book.RS;
 		
 		menu_back = gui.addWidget("menu_back")
-				.setRect(0,Applet.HEIGHT - 4f*RS/3f,Applet.WIDTH,4f*RS/3f)
+				.setRect(0,GdxApp.HEIGHT - 4f*RS/3f,GdxApp.WIDTH,4f*RS/3f)
 				.asWidget()
 				;
 		
@@ -52,18 +55,18 @@ public class nMenu {
 				;
 		
 		close = gui.addWidget("ref")
-				.setRect(Applet.WIDTH - 7f*RS/6f, RS/6f, RS, RS)
+				.setRect(GdxApp.WIDTH - 7f*RS/6f, RS/6f, RS, RS)
 				.setFont(20)
 				.setTrigger()
 				.setText("X")
 				.asWidget()
 				.setParent(menu_back)
 				.addEventTrigger(new nRun() { public void run() {
-					app.close_app();  }})
+					app.gdx.close_app();  }})
 				;
 
 		fullscreen = gui.addWidget("ref")
-				.setRect(Applet.WIDTH - 14f*RS/6f, RS/6f, RS, RS)
+				.setRect(GdxApp.WIDTH - 14f*RS/6f, RS/6f, RS, RS)
 				.setFont(20)
 				.setSwitch()
 				.setText("Fs")
@@ -75,7 +78,7 @@ public class nMenu {
 		val_hide_bar = app.data.setting_bloc.newBoo("val_hide_bar", false);
 
 		hidebar = gui.addWidget("ref")
-				.setRect(Applet.WIDTH - 21f*RS/6f, RS/6f, RS, RS)
+				.setRect(GdxApp.WIDTH - 21f*RS/6f, RS/6f, RS, RS)
 				.setFont(20)
 				.setSwitch()
 				.setText("M")
@@ -87,7 +90,7 @@ public class nMenu {
 		val_hide_info = app.data.setting_bloc.newBoo("val_hide_info", false);
 
 		hideinfo = gui.addWidget("ref")
-				.setRect(Applet.WIDTH - 28f*RS/6f, RS/6f, RS, RS)
+				.setRect(GdxApp.WIDTH - 28f*RS/6f, RS/6f, RS, RS)
 				.setFont(20)
 				.setSwitch()
 				.setText("I")
@@ -101,7 +104,7 @@ public class nMenu {
 			app.USE_FX = val_fx.get(); }});
 		
 		fx = gui.addWidget("ref")
-				.setRect(Applet.WIDTH - 35f*RS/6f, RS/6f, RS, RS)
+				.setRect(GdxApp.WIDTH - 35f*RS/6f, RS/6f, RS, RS)
 				.setFont(20)
 				.setSwitch()
 				.setText("FX")
@@ -111,9 +114,9 @@ public class nMenu {
 				;
 		
 		save_path_viewer = gui.addWidget("ref")
-				.setRect(Applet.WIDTH - RS*13f, RS/6f, RS*10f, RS)
+				.setRect(GdxApp.WIDTH - RS*13f, RS/6f, RS*10f, RS)
 				.setPassif()
-				.set_color_background(app.color(0,0))
+				.set_color_background(Utl.color(0,0))
 				.asWidget()
 				.setParent(menu_back)
 				.setLink(app.data.val_root_savepath)
@@ -121,7 +124,7 @@ public class nMenu {
 				;
 
 		info_back = gui.addWidget("info_back")
-				.setPos(Applet.WIDTH - 190,4f*RS/3f)
+				.setPos(GdxApp.WIDTH - 190,4f*RS/3f)
 				.asWidget()
 				;
 
@@ -149,7 +152,7 @@ public class nMenu {
 		bar_entrys = new ArrayList<nWidget>();
 		
 		bar_back = gui.addWidget("taskbar_back")
-				.setRect(0,0,Applet.WIDTH,RS+10)
+				.setRect(0,0,GdxApp.WIDTH,RS+10)
 				.setDrawstackPriority(true)
 				.asWidget()
 				;
@@ -180,18 +183,18 @@ public class nMenu {
 		}};
 		nRun run_h = new nRun() { public void run() {
 			if (val_hide_bar.get()) {
-				if (!app.eventsFrame.contains(run_hb_frame))
-					app.addEventFrame(run_hb_frame);
+				if (!app.runFrameStart.contains(run_hb_frame))
+					app.addRunFrameStart(run_hb_frame);
 			} else {
-				app.removeEventFrame(run_hb_frame);
+				app.removeRunFrameStart(run_hb_frame);
 				menu_back.show();
 				bar_back.show();
 			}
 			if (val_hide_info.get()) {
-				if (!app.eventsFrame.contains(run_hi_frame))
-					app.addEventFrame(run_hi_frame);
+				if (!app.runFrameStart.contains(run_hi_frame))
+					app.addRunFrameStart(run_hi_frame);
 			} else {
-				app.removeEventFrame(run_hi_frame);
+				app.removeRunFrameStart(run_hi_frame);
 				info_back.show();
 			}
 		}};
@@ -200,21 +203,21 @@ public class nMenu {
 			val_hide_bar.addEventChangeLastFrame(run_h);
 			val_hide_info.addEventChangeLastFrame(run_h); }});
 
-		app.addEventScreen(new nRun() { public void run() {
-			menu_back.setRect(0,app.getscreenheight() - 4f*RS/3f,app.getscreenwidth(),4f*RS/3f); 
-			info_back.setPos(app.getscreenwidth() - 190,4f*RS/3f); 
-			close.setRect(app.getscreenwidth() - 7f*RS/6f, RS/6f, RS, RS);
-			fullscreen.setRect(app.getscreenwidth() - 14f*RS/6f, RS/6f, RS, RS);
-			save_path_viewer.setRect(app.getscreenwidth() - RS*13f, RS/6f, RS*10f, RS);
-			hidebar.setRect(app.getscreenwidth() - 21f*RS/6f, RS/6f, RS, RS);
-			hideinfo.setRect(app.getscreenwidth() - 28f*RS/6f, RS/6f, RS, RS);
-			fx.setRect(app.getscreenwidth() - 35f*RS/6f, RS/6f, RS, RS);
-			bar_back.setRect(0,0,app.getscreenwidth(),RS+10); 
-			if (app.isfullscreen()) close.show(); else close.hide();
+		app.gdx.addEventScreen(new nRun() { public void run() {
+			menu_back.setRect(0,app.gdx.getscreenheight() - 4f*RS/3f,app.gdx.getscreenwidth(),4f*RS/3f); 
+			info_back.setPos(app.gdx.getscreenwidth() - 190,4f*RS/3f); 
+			close.setRect(app.gdx.getscreenwidth() - 7f*RS/6f, RS/6f, RS, RS);
+			fullscreen.setRect(app.gdx.getscreenwidth() - 14f*RS/6f, RS/6f, RS, RS);
+			save_path_viewer.setRect(app.gdx.getscreenwidth() - RS*13f, RS/6f, RS*10f, RS);
+			hidebar.setRect(app.gdx.getscreenwidth() - 21f*RS/6f, RS/6f, RS, RS);
+			hideinfo.setRect(app.gdx.getscreenwidth() - 28f*RS/6f, RS/6f, RS, RS);
+			fx.setRect(app.gdx.getscreenwidth() - 35f*RS/6f, RS/6f, RS, RS);
+			bar_back.setRect(0,0,app.gdx.getscreenwidth(),RS+10); 
+			if (app.gdx.isfullscreen()) close.show(); else close.hide();
 		}});
 		
 		add_shortcut_target("Fullscreen", 'M', new nRun() { public void run() {
-			app.switchscreen(); }});
+			app.gdx.switchscreen(); }});
 		
 		
 //		nWidget testw = gui.addWidget("info_text")
@@ -251,12 +254,12 @@ public class nMenu {
 		add_file_menu_separator();
 		
 		add_file_menu_trigg("Exit", new nRun() { public void run() {
-			app.close_app(); }});
+			app.gdx.close_app(); }});
 
 		add_tool_menu_trigg("Book Explo", new nRun() { public void run() {
 			pop_book_explo(); }});
 
-		app.addEventFrame(new nRun() { public void run() {
+		app.addRunFrameStart(new nRun() { public void run() {
 			update_shortcut(); }});
 		
 	}
@@ -594,7 +597,7 @@ public class nMenu {
 				txt_w.setTextAutoReturn(true)
 				.setTextAlignment(nAlign.LEFT, nAlign.BOTTOM);
 				txt_w.setTrigger();
-				txt_w.addEventTrigger(new nRun(Applet.copy(link_targ)) {public void run() {
+				txt_w.addEventTrigger(new nRun(Utl.copy(link_targ)) {public void run() {
 					popHelp((String)builder); }});
 				txt_w.force_calc();
 				txt_w = interf.add_list_entry("");
@@ -685,14 +688,14 @@ public class nMenu {
 			app = a;
 			drawable = new nDrawable() {public void drawing() {
 				draw(); }};
-			w = (int)(app.getscreenwidth() / scale);
-			h = (int)(app.getscreenheight() / scale);
+			w = (int)(app.gdx.getscreenwidth() / scale);
+			h = (int)(app.gdx.getscreenheight() / scale);
 			sx = w; sy = h;
 			world = new int[sx][sy][2];
 			pic = new Color[sx][sy];
 			for (int x = 0; x < sx; x++) 
 				for (int y = 0; y < sy; y++) {
-					pic[x][y] = app.color(0); }
+					pic[x][y] = Utl.color(0); }
 			reset();
 		}
 		void reset() {
@@ -710,9 +713,9 @@ public class nMenu {
 		}
 
 		void draw() {
-			if (app.frame_counter%100 == 0) reset();
+			if (app.gdx.frame_counter%100 == 0) reset();
 			app.fill(0); app.noStroke();
-			app.rect(0,0,app.getscreenwidth(),app.getscreenheight());
+			app.rect(0,0,app.gdx.getscreenwidth(),app.gdx.getscreenheight());
 			conway_up();
 			hue = (hue+10)%210;
 			for (int x = 0; x < sx; x=x+1) for (int y = 0; y < sy; y=y+1) {
@@ -732,7 +735,7 @@ public class nMenu {
 				int count = neighbors(x, y);
 				if ((count == 1 || count == 2) && world[x][y][0] == 0) {
 					world[x][y][1] = 1;
-					pic[x][y].set(app.color(40+hue));
+					pic[x][y].set(Utl.color(40+hue));
 				}
 			}
 		}
@@ -758,34 +761,34 @@ public class nMenu {
 		val_title.addEventChangeLastFrame(new nRun() { public void run() {
 			if (val_title.get()) title_screen_back.show(); else title_screen_back.hide(); }});
 		
-		app.addEventScreen(new nRun() { public void run() {
-			title_screen_back.setRect(0,0,app.getscreenwidth(),app.getscreenheight()); 
-			title_screen_stack.setPos(app.getscreenwidth() / 2f, app.getscreenheight() / 2f);
-			title_screen_new_stack.setPos(app.getscreenwidth() / 2f, app.getscreenheight() / 2f);
+		app.gdx.addEventScreen(new nRun() { public void run() {
+			title_screen_back.setRect(0,0,app.gdx.getscreenwidth(),app.gdx.getscreenheight()); 
+			title_screen_stack.setPos(app.gdx.getscreenwidth() / 2f, app.gdx.getscreenheight() / 2f);
+			title_screen_new_stack.setPos(app.gdx.getscreenwidth() / 2f, app.gdx.getscreenheight() / 2f);
 		}});
 
 		title_effect = new TitleEffect(app);
 		
 		title_screen_back = gui.addWidget("title_screen_back")
-				.setRect(0,0,app.getscreenwidth(),app.getscreenheight())
+				.setRect(0,0,app.gdx.getscreenwidth(),app.gdx.getscreenheight())
 				.asWidget()
 				.setCustomDrawer(title_effect.drawable);
 				;
 		title_screen_stack = gui.addWidget("title_screen_stack")
 				.setParent(title_screen_back)
-				.setPos(app.getscreenwidth() / 2f, app.getscreenheight() / 2f)
+				.setPos(app.gdx.getscreenwidth() / 2f, app.gdx.getscreenheight() / 2f)
 				.asWidget()
 				;
 		title_screen_new_stack = gui.addWidget("title_screen_stack")
 				.setParent(title_screen_back)
-				.setPos(app.getscreenwidth() / 2f, app.getscreenheight() / 2f)
+				.setPos(app.gdx.getscreenwidth() / 2f, app.gdx.getscreenheight() / 2f)
 				.hide()
 				.asWidget()
 				;
 		
 		add_title_text("-- NODULO --", title_screen_stack);
 		add_title_text("", title_screen_stack)
-		.set_color_background(app.color(0,0))
+		.set_color_background(Utl.color(0,0))
 		.setOutline(false);
 		add_title_trigg("New", title_screen_stack, new nRun() { public void run() {
 			title_screen_stack.hide();
@@ -797,7 +800,7 @@ public class nMenu {
 //			app.startup();
 		}});
 		add_title_trigg("Exit", title_screen_stack, new nRun() { public void run() {
-			app.close_app(); }});
+			app.gdx.close_app(); }});
 
 //		add_title_trigg("Empty", title_screen_new_stack, new nRun() { public void run() {
 //			val_title.set(false);
@@ -853,7 +856,7 @@ public class nMenu {
 		book.newModel("title_screen_stack")
 		.copyFrom(book.getModel("ref"))
 		.setPassif()
-		.set_color_background(app.color(0,0,0,0))
+		.set_color_background(Utl.color(0,0,0,0))
 		.setBoundChild(true)
 		.setStackAxis(nAlign.VERTICAL) // HORIZONTAL   VERTICAL
 		.setStackDirection(nAlign.DOWN) // RIGHT   LEFT   UP   DOWN
@@ -868,9 +871,9 @@ public class nMenu {
 		.setBoundParent(true)
 		.setStacked(true)
 		.setFont(90)
-		.set_color_text(app.color(220,220,218))
-		.set_color_background(app.color(12,10,10))
-		.set_color_outline(app.color(200))
+		.set_color_text(Utl.color(220,220,218))
+		.set_color_background(Utl.color(12,10,10))
+		.set_color_outline(Utl.color(200))
 		.setOutline(true)
 		.setOutlineWeight(RS/4f)
 		;
@@ -901,13 +904,13 @@ public class nMenu {
 		.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM) // TOP   BOTTOM
 		.setBoundOutspace(5)
 		.setStackSpacing(5)
-		.set_color_background(app.color(0, 0))
+		.set_color_background(Utl.color(0, 0))
 		;
 		
 		book.newModel("info_back")
 		.copyFrom(book.getModel("ref"))
 		.setPassif()
-		.set_color_background(app.color(0,0,0,0))
+		.set_color_background(Utl.color(0,0,0,0))
 		.setBoundChild(true)
 		.setOutline(true)
 		.setStackAxis(nAlign.VERTICAL) // HORIZONTAL   VERTICAL
@@ -930,7 +933,7 @@ public class nMenu {
 		book.newModel("info_text")
 		.copyFrom(book.getModel("ref"))
 		.setRect(0,0,6f*RS,2f*RS/3f)
-		.set_color_background(app.color(0,0,0,0))
+		.set_color_background(Utl.color(0,0,0,0))
 		.setOutline(false)
 		.setBoundParent(true)
 		.setStacked(true)

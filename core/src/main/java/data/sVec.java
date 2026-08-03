@@ -1,14 +1,15 @@
 package data;
 
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
 
+import app.Applet;
 import net.nNetwork;
+import util.Utl;
 
 public class sVec extends sValue {
 	public Vector2 asVec() { return new Vector2(val.x, val.y); }
 	public String getString() { 
-		return Applet.trimFlt(val.x) + "," + Applet.trimFlt(val.y); }
+		return Utl.trimFlt(val.x) + "," + Utl.trimFlt(val.y); }
 	
 	private Vector2 val = new Vector2(), def = new Vector2();
 	

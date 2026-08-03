@@ -5,10 +5,8 @@ import java.util.Map;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nMap;
-import app.nRun;
 
+import app.Applet;
 import data.sBloc_Builder;
 import data.sPool;
 import data.sValueBloc;
@@ -23,6 +21,9 @@ import plane.pParam;
 import plane.pProperty;
 import plane.pSpace;
 import plane.pTime;
+import util.Utl;
+import util.nMap;
+import util.nRun;
 
 public class pNodeSpace {
 	
@@ -72,7 +73,7 @@ public class pNodeSpace {
 //				for (pProperty prop : pProperty.body_propertys.all()) 
 //						if (prop.mode_common) {
 //					sPool<pParam> pool = space.param_pools.get(prop.ref);
-//					if (pool != null) for (pParam par : Applet.duplic(pool.all())) {
+//					if (pool != null) for (pParam par : Utl.duplic(pool.all())) {
 //						boolean found = false;
 //						ArrayList<pInstance> toclr = new ArrayList<pInstance>();
 //						for (pInstance n : sheet.nodes) {
@@ -98,7 +99,7 @@ public class pNodeSpace {
 //					sPool<pParam> pool = space.param_pools.get(prop.ref);
 //					if (pool != null) {
 //						ArrayList<pInstance> member = new ArrayList<pInstance>();
-//						for (pParam par : Applet.duplic(pool.all())) {
+//						for (pParam par : Utl.duplic(pool.all())) {
 //							for (pInstance n : sheet.nodes) {
 //								if (pNode.node_group.get(pNode.stand_to_ref.get(n.stand))
 //										.equals("prop") && n.hasObject("param") && 
@@ -519,11 +520,11 @@ public class pNodeSpace {
 			if (par == null) return; 
 			instance.setObject("param", par);
 			instance.setVar("param_used", par.pool_ref);
-//			for (int i = 0 ; i < Applet.data_type_nb ; i++) {
-//				nMap<Integer> map = prop.data_vals.get(Applet.data_type[i]);
+//			for (int i = 0 ; i < Utl.data_type_nb ; i++) {
+//				nMap<Integer> map = prop.data_vals.get(Utl.data_type[i]);
 //				if (map != null) for (Map.Entry<String, Integer> mr : map.entrySet()) {
 //					String dt_ref = mr.getKey();
-//					Object dt = par.get(dt_ref, Applet.data_type[i]);
+//					Object dt = par.get(dt_ref, Utl.data_type[i]);
 //					instance.setVar(dt_ref, dt);
 //				}
 //			}
@@ -539,12 +540,12 @@ public class pNodeSpace {
 //			} 
 //			if (par != null) {
 //				instance.addObject("param", par); }
-			for (int i = 0 ; i < Applet.data_type_nb ; i++) {
-				nMap<Integer> map = prop.data_vals.get(Applet.data_type[i]);
+			for (int i = 0 ; i < Utl.data_type_nb ; i++) {
+				nMap<Integer> map = prop.data_vals.get(Utl.data_type[i]);
 				if (map != null) for (Map.Entry<String, Integer> mr : map.entrySet()) {
 					String dt_ref = mr.getKey();
-					Object dt_def = prop.getDataValDef(dt_ref, Applet.data_type[i]);
-					if (dt_def == null) dt_def = Applet.new_object(Applet.data_type[i]);
+					Object dt_def = prop.getDataValDef(dt_ref, Utl.data_type[i]);
+					if (dt_def == null) dt_def = Utl.new_object(Utl.data_type[i]);
 					if (!instance.hasVar(dt_ref)) instance.addVar(dt_ref, dt_def);
 				}
 			}
@@ -552,11 +553,11 @@ public class pNodeSpace {
 				pInstance inst = (pInstance)builder;
 				pParam par = inst.object("param", pParam.class);
 				if (par == null) return;
-				for (int i = 0 ; i < Applet.data_type_nb ; i++) {
-					nMap<Integer> map = prop.data_vals.get(Applet.data_type[i]);
+				for (int i = 0 ; i < Utl.data_type_nb ; i++) {
+					nMap<Integer> map = prop.data_vals.get(Utl.data_type[i]);
 					if (map != null) for (Map.Entry<String, Integer> mr : map.entrySet()) {
 						String dt_ref = mr.getKey();
-						par.set(dt_ref, inst.getVar(dt_ref, Applet.data_type[i]));
+						par.set(dt_ref, inst.getVar(dt_ref, Utl.data_type[i]));
 					}
 				}
 			}};
@@ -572,11 +573,11 @@ public class pNodeSpace {
 					par = space.new_param(prop.ref);
 					inst.run("defParam", par.pool_ref);
 					
-					for (int i = 0 ; i < Applet.data_type_nb ; i++) {
-						nMap<Integer> map = prop.data_vals.get(Applet.data_type[i]);
+					for (int i = 0 ; i < Utl.data_type_nb ; i++) {
+						nMap<Integer> map = prop.data_vals.get(Utl.data_type[i]);
 						if (map != null) for (Map.Entry<String, Integer> mr : map.entrySet()) {
 							String dt_ref = mr.getKey();
-							par.set(dt_ref, inst.getVar(dt_ref, Applet.data_type[i]));
+							par.set(dt_ref, inst.getVar(dt_ref, Utl.data_type[i]));
 						}
 					}
 					
@@ -586,12 +587,12 @@ public class pNodeSpace {
 //					inst.run("defParam", par.pool_ref); }
 //				if (par != null) {
 //					inst.addObject("param", par); }
-//				for (int i = 0 ; i < Applet.data_type_nb ; i++) {
-//					nMap<Integer> map = prop.data_vals.get(Applet.data_type[i]);
+//				for (int i = 0 ; i < Utl.data_type_nb ; i++) {
+//					nMap<Integer> map = prop.data_vals.get(Utl.data_type[i]);
 //					if (map != null) for (Map.Entry<String, Integer> mr : map.entrySet()) {
 //						String dt_ref = mr.getKey();
-//						Object dt_def = prop.getDataValDef(dt_ref, Applet.data_type[i]);
-//						if (dt_def == null) dt_def = Applet.new_object(Applet.data_type[i]);
+//						Object dt_def = prop.getDataValDef(dt_ref, Utl.data_type[i]);
+//						if (dt_def == null) dt_def = Utl.new_object(Utl.data_type[i]);
 //						if (!inst.hasVar(dt_ref)) inst.addVar(dt_ref, dt_def);
 //					}
 //				}
@@ -651,8 +652,8 @@ public class pNodeSpace {
 				pParam par = instance.object("param", pParam.class);
 				if (par == null) return;
 				
-				for (int i = 0 ; i < Applet.data_type_nb ; i++) {
-					nMap<Integer> map = par.prop.data_vals.get(Applet.data_type[i]);
+				for (int i = 0 ; i < Utl.data_type_nb ; i++) {
+					nMap<Integer> map = par.prop.data_vals.get(Utl.data_type[i]);
 					if (map != null) for (Map.Entry<String, Integer> mr : map.entrySet()) {
 						String dt_ref = mr.getKey();
 						nWidget w1 = (nWidget)instance.patch.patch_dropmenu
@@ -801,12 +802,12 @@ public class pNodeSpace {
 				int float_rez = (int)(1.2f * w.getLocalSX() / w.getFont()) - 3;
 				w.addEventFieldChange(new nRun(head) {public void run() {
 					pInstance target = (pInstance)builder;
-						target.setVar(data_ref, Applet.tofloat(w.getText()));
+						target.setVar(data_ref, Utl.tofloat(w.getText()));
 				}});
 				nRun sl_run = new nRun(head, float_rez) {public void run() {
 					pInstance target = (pInstance)args[0];
 					int frez = (int)args[1];
-					String text = "" + Applet.trimFlt(target.getVar(data_ref, Float.class), frez);
+					String text = "" + Utl.trimFlt(target.getVar(data_ref, Float.class), frez);
 					if (
 						//!w.isSelected && 
 						!text.equals(w.getText())) w.setText(text);
@@ -843,7 +844,7 @@ public class pNodeSpace {
 				int float_rez = (int)(1.2f * w.getLocalSX() / w.getFont()) - 3;
 				w.addEventFieldChange(new nRun(head) {public void run() {
 					pInstance target = (pInstance)builder;
-					float x = Applet.tofloat(w.getText());
+					float x = Utl.tofloat(w.getText());
 					Vector2 v = target.getVar(data_ref, Vector2.class);
 					v.x = x;
 					target.setVar(data_ref, v);
@@ -851,7 +852,7 @@ public class pNodeSpace {
 				nRun sl_x_run = new nRun(head, float_rez) {public void run() {
 					pInstance target = (pInstance)args[0];
 					int frez = (int)args[1];
-					String text = "" + Applet.trimFlt(
+					String text = "" + Utl.trimFlt(
 							target.getVar(data_ref, Vector2.class).x, frez);
 					if (
 						//!w.isSelected && 
@@ -891,7 +892,7 @@ public class pNodeSpace {
 				.copyLookFrom(app.gui.book.getModel("text_field"));
 				w2.addEventFieldChange(new nRun(head) {public void run() {
 					pInstance target = (pInstance)builder;
-					float y = Applet.tofloat(w2.getText());
+					float y = Utl.tofloat(w2.getText());
 					Vector2 v = target.getVar(data_ref, Vector2.class);
 					v.y = y;
 					target.setVar(data_ref, v);
@@ -899,7 +900,7 @@ public class pNodeSpace {
 				nRun sl_y_run = new nRun(head, float_rez) {public void run() {
 					pInstance target = (pInstance)args[0];
 					int frez = (int)args[1];
-					String text = "" + Applet.trimFlt(
+					String text = "" + Utl.trimFlt(
 							target.getVar(data_ref, Vector2.class).y, frez);
 					if (
 						//!w.isSelected && 
@@ -933,7 +934,7 @@ public class pNodeSpace {
 				.copyLookFrom(app.gui.book.getModel("text_field"));
 				w.addEventFieldChange(new nRun(head) {public void run() {
 					pInstance target = (pInstance)builder;
-						target.setVar(data_ref, Applet.toint(w.getText()));
+						target.setVar(data_ref, Utl.toint(w.getText()));
 				}});
 				nRun sl_run = new nRun(head) {public void run() {
 					pInstance target = (pInstance)builder;

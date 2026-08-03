@@ -12,11 +12,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nMap;
-import app.nPool;
-import app.nRun;
 
+import app.Applet;
 import data.sBloc_Builder;
 import data.sBoo;
 import data.sFlt;
@@ -31,6 +28,10 @@ import patch.pPar;
 import patch.pProcess;
 import patch.pStandard;
 import patch.pNode.CT;
+import util.Utl;
+import util.nMap;
+import util.nPool;
+import util.nRun;
 import patch.pNodeSpace;
 
 public class pGeom extends pSystem {
@@ -840,9 +841,9 @@ public class pGeom extends pSystem {
 		pGeom geo = bod.space.plane.getSystem(pGeom.class);
 		float rot = bod.getFlt("ref","rot");
 		float rot_speed = bod.getFlt("var_move", "rot_speed");
-		float m = Applet.mapToCircularValuesDist(rot, trg_rot, max_rot, 
+		float m = Utl.mapToCircularValuesDist(rot, trg_rot, max_rot, 
 				-((float)Math.PI), ((float)Math.PI));
-		m *= Applet.mapToCircularValuesDir(rot, trg_rot, max_rot, 
+		m *= Utl.mapToCircularValuesDir(rot, trg_rot, max_rot, 
 				-((float)Math.PI), ((float)Math.PI)); 
 		geo.speed_body(bod,0,0,m);
 		if (rot_speed > max_rot || rot_speed < -max_rot || 
@@ -914,20 +915,20 @@ public class pGeom extends pSystem {
 					pParam par = me.getValue();
 					interf.add_list_entry(me.getKey() + " : " + par.pool_ref);
 					
-					for (int i = 0 ; i < Applet.data_type_nb ; i++) {
-						nMap<Integer> map = par.prop.data_vals.get(Applet.data_type[i]);
+					for (int i = 0 ; i < Utl.data_type_nb ; i++) {
+						nMap<Integer> map = par.prop.data_vals.get(Utl.data_type[i]);
 						if (map != null)
 								for (Map.Entry<String, Integer> mr : 
 								map.entrySet()) {
 							String dt_ref = mr.getKey();
-							String dt = Applet.to_string(par.get(dt_ref, Applet.data_type[i]));
-							nWidget w = interf.add_list_entry("   "+Applet.type_short_names[i]+" " + dt_ref + " = " +dt);
+							String dt = Utl.to_string(par.get(dt_ref, Utl.data_type[i]));
+							nWidget w = interf.add_list_entry("   "+Utl.type_short_names[i]+" " + dt_ref + " = " +dt);
 							w.addEventLogic(new nRun(i, dt_ref, par) { public void run() {
 								int i = (int)args[0];
 								String dt_ref = (String)args[1];
 								pParam par = (pParam)args[2];
-								String dt = Applet.to_string(par.get(dt_ref, Applet.data_type[i]));
-								w.setText("   "+Applet.type_short_names[i]+" " + dt_ref + " = " +dt);
+								String dt = Utl.to_string(par.get(dt_ref, Utl.data_type[i]));
+								w.setText("   "+Utl.type_short_names[i]+" " + dt_ref + " = " +dt);
 							}});
 							interf.go_up_tree();
 						}
@@ -1135,7 +1136,7 @@ public class pGeom extends pSystem {
 		calc_ref();
 		if (val_do_ctrl.get()) {
 			for (String ref : control_props.allKey()) {
-				for (pBody b : Applet.duplic(space.familyMember("ctrl_"+ref))) {
+				for (pBody b : Utl.duplic(space.familyMember("ctrl_"+ref))) {
 					control_ticks.get(ref).run(b);
 				}
 			}
@@ -1188,7 +1189,7 @@ public class pGeom extends pSystem {
 
 	public void init_body(pBody b) {
 		if (b.param("ref") == null || b.param("var_move") == null) return;
-		b.setVec("var_move", "prev_pos", Applet.copy(b.getVec("ref", "pos")));
+		b.setVec("var_move", "prev_pos", Utl.copy(b.getVec("ref", "pos")));
 		b.setFlt("var_move", "prev_rot", b.getFlt("ref", "rot"));
 		b.setVec("var_move", "pos_move", new Vector2());
 		b.setFlt("var_move", "rot_move", 0f);
@@ -1213,9 +1214,9 @@ public class pGeom extends pSystem {
 			for (pBody b : space.familyMember("aabb")) calc_info_shape(b);
 		
 		for (pBody b : space.familyMember("movable")) {
-			Vector2 prevpos = Applet.copy(b.getVec("var_move", "prev_pos"));
-			b.setVec("var_move", "pos_move", Applet.copy(b.getVec("ref", "pos")).sub(prevpos));
-			b.setVec("var_move", "prev_pos", Applet.copy(b.getVec("ref", "pos")));
+			Vector2 prevpos = Utl.copy(b.getVec("var_move", "prev_pos"));
+			b.setVec("var_move", "pos_move", Utl.copy(b.getVec("ref", "pos")).sub(prevpos));
+			b.setVec("var_move", "prev_pos", Utl.copy(b.getVec("ref", "pos")));
 			b.setFlt("var_move", "pos_speed", b.getVec("var_move", "pos_move").len());
 			float pi = (float)Math.PI;
 			float rot = b.getFlt("ref", "rot"); 
@@ -1312,7 +1313,7 @@ public class pGeom extends pSystem {
 		Vector2 p2 = b2.getVec("info_shape", "aabb_pos");
 		Vector2 s2 = b2.getVec("info_shape", "aabb_size");
 		Rectangle aabb2 = new Rectangle(p2.x, p2.y, s2.x, s2.y);
-		if (Applet.intersect(aabb1, aabb2)) {
+		if (Utl.intersect(aabb1, aabb2)) {
 			ArrayList<Polygon> polys1 = get_geom_polys(b1);
 			ArrayList<Polygon> polys2 = get_geom_polys(b2);
 //			app.log(b1.pool_ref+" "+polys1.size()+" "+b2.pool_ref+" "+polys2.size());
@@ -1394,7 +1395,7 @@ public class pGeom extends pSystem {
 		}
 		boolean fill = graph.getBoo("fill");
 		if (fill) {
-			Color col_fill = app.color(
+			Color col_fill = Utl.color(
 					graph.getInt("fill_r"), 
 					graph.getInt("fill_g"), 
 					graph.getInt("fill_b"), 
@@ -1415,7 +1416,7 @@ public class pGeom extends pSystem {
 		boolean line = graph.getBoo("line");
 		if (line) {
 			float thick = graph.getFlt("thick");
-			Color col_line = app.color(
+			Color col_line = Utl.color(
 					graph.getInt("line_r"), 
 					graph.getInt("line_g"), 
 					graph.getInt("line_b"), 

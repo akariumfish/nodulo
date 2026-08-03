@@ -1,8 +1,8 @@
 package patch;
 
 import app.Applet;
-import app.nMap;
-import app.nRun;
+import util.nMap;
+import util.nRun;
 
 
 //import plane2.cStandard.RunDef;

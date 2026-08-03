@@ -3,10 +3,9 @@ package net;
 import java.util.HashMap;
 
 import app.Applet;
-import app.nRun;
-
 import data.*;
 import net.nNetwork.*;
+import util.nRun;
 
 public abstract class nNetEntity {
 	

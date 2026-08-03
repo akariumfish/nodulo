@@ -1,15 +1,16 @@
 package data;
 
 import net.nNetwork;
+import util.Utl;
 
 public class sStr extends sValue {
-	public String asStr() { return app.copy(val); }
+	public String asStr() { return Utl.copy(val); }
 	boolean limited; int max;
 	sStr set_limit(int ma) { limited = true; max = ma; return this; }
 	sStr clear_limit() { limited = false; return this; }
-	public String getString() { return app.copy(val); }
+	public String getString() { return Utl.copy(val); }
 	public void clear() { 
-		super.clear(); val = app.copy(def); 
+		super.clear(); val = Utl.copy(def); 
 		data.str_pool.free(this);
 	}
 	String val = null, def = null;
@@ -19,7 +20,7 @@ public class sStr extends sValue {
 	//called when obtained from pool
 	public sStr init(sValueBloc b, String v, String n, String s) {
 		super.init(b, "str", n, s); 
-		val = app.copy(v); def = app.copy(val); return this; }
+		val = Utl.copy(v); def = Utl.copy(val); return this; }
 		
 	//called when freed by pool
 	@Override
@@ -30,12 +31,12 @@ public class sStr extends sValue {
 		limited = false; max = 0;
 	}
 
-	public String get() { return app.copy(val); }
+	public String get() { return Utl.copy(val); }
 	public boolean equals(String v) { return val.equals(v); }
 	public void set(String v) { 
 		run_events_allset(); 
 		if (!v.equals(val)) { 
-			if (limited && v.length() > max) val = v.substring(0, max); else val = app.copy(v); 
+			if (limited && v.length() > max) val = v.substring(0, max); else val = Utl.copy(v); 
 
 			//filter line return
 			for (int i = val.length() - 1 ; i >= 0  ; i--)

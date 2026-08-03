@@ -3,9 +3,10 @@ package plane;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.math.Vector2;
+
 import app.Applet;
-import app.nMap;
-import app.nRun;
+import util.nMap;
+import util.nRun;
 
 public class pFamily {
 

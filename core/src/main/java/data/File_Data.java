@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.badlogic.gdx.math.Vector2;
+
 import app.Applet;
+import util.Utl;
 
 public class File_Data {
 	
@@ -35,7 +37,7 @@ public class File_Data {
 		if (parent != null) parent.removeData(this);
 		parent = null;
 		
-		ref = Applet.copy(n); 
+		ref = Utl.copy(n); 
 		ref_byte = ref.getBytes();
 		ref_byte_nb = ref_byte.length;
 		ref_byte_nb_bytes = file.getBytes(ref_byte_nb);

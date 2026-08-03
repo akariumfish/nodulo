@@ -3,7 +3,7 @@ package data;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
-import app.nRun;
+import util.nRun;
 
 
 public class sSpace {

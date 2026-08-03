@@ -9,16 +9,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nMap;
-import app.nPool;
-import app.nRun;
 
+import app.Applet;
 import data.*;
 import gui.*;
 import patch.pInstance;
 import patch.pNode;
 import patch.pNode.CT;
+import util.Utl;
+import util.nMap;
+import util.nPool;
+import util.nRun;
 
 public class pView extends pSystem {
 
@@ -321,7 +322,7 @@ public class pView extends pSystem {
 
 		view.get("draw").setCustomDrawer(new nDrawable() { public void drawing() {
 			
-			ArrayList<nDrawable> alldraw = Applet.duplic(drawRun);
+			ArrayList<nDrawable> alldraw = Utl.duplic(drawRun);
 			
 			for (int prio = 0 ; prio <= max_prio ; prio++)
 				for (nDrawable d : drawRun) 

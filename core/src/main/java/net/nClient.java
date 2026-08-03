@@ -7,11 +7,11 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Listener.ThreadedListener;
-import app.Applet;
-import app.nRun;
 
+import app.Applet;
 import data.sValue;
 import net.nNetwork.*;
+import util.nRun;
 
 public class nClient extends nNetEntity {
 	

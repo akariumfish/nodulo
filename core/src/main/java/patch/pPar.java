@@ -3,7 +3,8 @@ package patch;
 import java.util.Map;
 
 import app.Applet;
-import app.nMap;
+import util.Utl;
+import util.nMap;
 
 public class pPar {
 
@@ -11,8 +12,8 @@ public class pPar {
 	public pPar() {}
 	public pPar(pPar p) { if (p == null) return;
 		for (Map.Entry<String,Object> me : p.params.entrySet()) {
-			params.put(me.getKey(),Applet.copy(me.getValue())); } }
-	public pPar set(String k, Object v) { remove(k); params.put(k, Applet.copy(v)); return this; }
+			params.put(me.getKey(),Utl.copy(me.getValue())); } }
+	public pPar set(String k, Object v) { remove(k); params.put(k, Utl.copy(v)); return this; }
 	public pPar set(pPar p) { 
 		if (p == null) return this;
 		params.clear(); for (Map.Entry<String,Object> me : p.params.entrySet()) {

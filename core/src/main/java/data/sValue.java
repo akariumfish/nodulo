@@ -5,15 +5,16 @@ import java.util.ArrayList;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool.Poolable;
-import app.Applet;
-import app.nClearable;
-import app.nLauncher;
-import app.nRun;
 
+import app.Applet;
+import app.nLauncher;
 import gui.nInterface;
 import gui.nWidget;
 import gui.nWidgetGroup;
 import net.nNetwork;
+import util.Utl;
+import util.nClearable;
+import util.nRun;
 
 
 public abstract class sValue extends nLauncher implements nClearable, Poolable {
@@ -180,7 +181,7 @@ public abstract class sValue extends nLauncher implements nClearable, Poolable {
 	public int asInt() { return 0; }
 	public float asFlt() { return 0; }
 	public Vector2 asVec() { return null; }
-	public Color asCol() { return app.color(0); }
+	public Color asCol() { return Utl.color(0); }
 	public String asStr() { return ""; }
 
 	public boolean isFlt()   { return type.equals("flt"); }

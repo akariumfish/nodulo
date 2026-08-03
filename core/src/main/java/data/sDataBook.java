@@ -7,9 +7,8 @@ import java.util.Map.Entry;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nRun;
 
+import app.Applet;
 import gui.nAlign;
 import gui.nGUI;
 import gui.nInterfCommand;
@@ -19,6 +18,8 @@ import gui.nModelBook;
 import gui.nModelGroup;
 import gui.nWidget;
 import gui.nWidgetGroup;
+import util.Utl;
+import util.nRun;
 
 public class sDataBook {
 	
@@ -2381,7 +2382,7 @@ public class sDataBook {
 								public void run() {
 								// b.parent will be null next frame
 								sValueBloc p = b.parent;
-								String pref = Applet.copy(p.ref);
+								String pref = Utl.copy(p.ref);
 								app.addDelayEvent(1, 
 									new nRun() { public void run() {
 										if (!p.clearing && p.ref.equals(pref)) 

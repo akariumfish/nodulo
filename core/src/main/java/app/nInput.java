@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector3;
 import data.sBoo;
 import data.sInt;
 import data.sVec;
+import util.nRun;
 
 public class nInput implements InputProcessor {
 
@@ -91,8 +92,8 @@ public class nInput implements InputProcessor {
 	    
 		val_fullscreen = app.data.setting_bloc.newBoo("val_fullscreen", false);
 		nRun run_fs = new nRun() { public void run() {
-			if (val_fullscreen.get()) app.fullscreen();
-			else app.window(); }};
+			if (val_fullscreen.get()) app.gdx.fullscreen();
+			else app.gdx.window(); }};
 
 		val_javaHeap = app.data.setting_bloc.newInt("val_javaHeap", 0);
 		val_nativeHeap = app.data.setting_bloc.newInt("val_nativeHeap", 0);
@@ -100,8 +101,8 @@ public class nInput implements InputProcessor {
 		app.addEventNextFrame(new nRun() { public void run() {
 			run_fs.run();
 			val_fullscreen.addEventChangeLastFrame(run_fs); 
-			app.addEventScreen(new nRun() { public void run() {
-				val_fullscreen.set(app.isfullscreen()); }}); }});
+			app.gdx.addEventScreen(new nRun() { public void run() {
+				val_fullscreen.set(app.gdx.isfullscreen()); }}); }});
 	}
 
 	public Applet app;
@@ -162,10 +163,10 @@ public class nInput implements InputProcessor {
 	private int heap_cnt = 0;
 	private long jheap_med = 0, nheap_med = 0;
 	
-	void frame_str() {
+	public void frame_str() {
 
-		jheaps[heap_cnt] = app.javaHeap;
-		nheaps[heap_cnt] = app.nativeHeap;
+		jheaps[heap_cnt] = app.gdx.javaHeap;
+		nheaps[heap_cnt] = app.gdx.nativeHeap;
 		heap_cnt++; if (heap_cnt >= heap_long) heap_cnt = 0;
 		jheap_med = 0; nheap_med = 0;
 		for (int i = 0 ; i < heap_long ; i++) {
@@ -180,7 +181,7 @@ public class nInput implements InputProcessor {
 		
 		Vector3 m = new Vector3(Gdx.input.getX(), 
 				Gdx.input.getY(), 0);
-		m = app.viewport.unproject(m);
+		m = app.gdx.viewport.unproject(m);
 		mouse.set(m.x, m.y);
 		
 		mmouse.x = mouse.x - pmouse.x; 
@@ -206,7 +207,7 @@ public class nInput implements InputProcessor {
 	private int fps_stack_count = 0, fps_med = 0;
 	private final int fps_stack_size = 60;
 	
-	void frame_end() {
+	public void frame_end() {
 		mouseWheelUp = false; 
 		mouseWheelDown = false;
 		for (nInput_Button b : buttons) {

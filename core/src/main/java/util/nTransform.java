@@ -1,10 +1,12 @@
-package app;
+package util;
 
 import java.util.ArrayList;
 
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+
+import app.Applet;
 
 public class nTransform {
 	
@@ -153,7 +155,7 @@ public class nTransform {
 			dirty = false;
 		}
 	}
-	public Vector2 getTranslation() { clean(); return Applet.copy(tot_translat); }
+	public Vector2 getTranslation() { clean(); return Utl.copy(tot_translat); }
 	public float getScale() { clean(); return tot_scale; }
 	public float getRotation() { clean(); return tot_rot; }
 	

@@ -1,6 +1,6 @@
 package com.noodle.nodulo.lwjgl3;
 
-import app.GDXApplet;
+import app.GdxApp;
 
 public class Lwjgl3LauncherDouble2 extends Lwjgl3LauncherDouble {
 	
@@ -17,8 +17,8 @@ public class Lwjgl3LauncherDouble2 extends Lwjgl3LauncherDouble {
 	public static int window_pos_y = 50;
 	
 	public static void main(String[] args) {
-		GDXApplet.WIDTH = Lwjgl3Launcher_app.WIN_DOUBLE_WIDTH;
-		GDXApplet.HEIGHT = Lwjgl3Launcher_app.WIN_DOUBLE_HEIGHT;
+		GdxApp.WIDTH = Lwjgl3Launcher_app.WIN_DOUBLE_WIDTH;
+		GdxApp.HEIGHT = Lwjgl3Launcher_app.WIN_DOUBLE_HEIGHT;
 
 		title = 				Lwjgl3Launcher_app.Lwjgl3LD2_title;
 		setting_file = 		Lwjgl3Launcher_app.Lwjgl3LD2_setting_file;

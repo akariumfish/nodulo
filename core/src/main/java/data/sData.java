@@ -10,18 +10,19 @@ import java.util.Map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nAutoID;
-import app.nInput;
-import app.nMap;
-import app.nMenu;
-import app.nPool;
-import app.nRun;
 
+import app.Applet;
+import app.GdxApp;
+import app.nInput;
+import app.nMenu;
 import gui.nAlign;
 import gui.nInterface;
 import gui.nWidget;
 import gui.nWidgetGroup;
+import util.Utl;
+import util.nMap;
+import util.nPool;
+import util.nRun;
 
 
 
@@ -90,7 +91,7 @@ public class sData extends sValueBloc {
 		.setParent(menu.menu_back)
 		.addEventTrigger(new nRun() { public void run() {
 			full_save(); }})
-		.setRect(Applet.WIDTH - 425, 5,80,30)
+		.setRect(GdxApp.WIDTH - 425, 5,80,30)
 		.setFont(20)
 		.setText("save")
 		.setTrigger()
@@ -266,9 +267,9 @@ public class sData extends sValueBloc {
 	    root_bloc.open_in_dataview = true;
 
 	    // file_init()
-		setting_savepath = Applet.copy(Applet.setting_file);
-		def_root_savepath = "root_" + app.window_title + file_extension;
-		def_db__savepath = "database_" + app.window_title + data_extension;
+		setting_savepath = Utl.copy(Applet.setting_file);
+		def_root_savepath = "root_" + app.gdx.window_title + file_extension;
+		def_db__savepath = "database_" + app.gdx.window_title + data_extension;
 		
 		file = new sFile(this);
 		val_datab_savepath = setting_bloc.obtainStr("val_datab_savepath", def_db__savepath);
@@ -359,7 +360,7 @@ public class sData extends sValueBloc {
 //	}
 
 	public void re_full_load() {
-		app.LOADING_SCREEN_DELAY = 30;
+		app.LOADING_SCREEN_FRAME = 30;
 		data.app.addDelayEvent(1, new nRun() { public void run() {
 //			empty_all();
 			full_load(); 
@@ -686,7 +687,7 @@ public class sData extends sValueBloc {
 		
 		nRun run_save_file = new nRun() { public void run() {
 			String file_name = (String)file_list.metodeGet("get_pick");
-			if (file_name.length() == 0 || !app.file_exist(file_name)) return;
+			if (file_name.length() == 0 || !Utl.file_exist(file_name)) return;
 			val_root_savepath.set(file_name);
 			full_save();
 			app.menu.close_popwindow();
@@ -731,7 +732,7 @@ public class sData extends sValueBloc {
 
 		nRun run_load_file = new nRun() { public void run() {
 			String file_name = (String)file_list.metodeGet("get_pick");
-			if (file_name.length() == 0 || !app.file_exist(file_name)) return;
+			if (file_name.length() == 0 || !Utl.file_exist(file_name)) return;
 			val_root_savepath.set(file_name);
 			setting_load();
 			app.menu.close_popwindow();
@@ -855,7 +856,7 @@ public class sData extends sValueBloc {
 
 		nRun run_pick_file = new nRun() { public void run(Object o) {
 			String file_name = (String)o;
-			if (file_name.length() == 0 || !app.file_exist(file_name)) return;
+			if (file_name.length() == 0 || !Utl.file_exist(file_name)) return;
 			run_pick.run(file_name);
 			app.menu.close_popwindow();
 		}};

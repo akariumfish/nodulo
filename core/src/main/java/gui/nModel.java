@@ -2,6 +2,8 @@ package gui;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+
+import util.Utl;
 import app.Applet;
 import app.nLauncher;
 
@@ -184,17 +186,17 @@ public class nModel extends nLauncher {
 		outlineWeight = 1;
 		cursorPos = 0; 
 		
-		color_background = app.color(80,80,80,255);
-		color_pressed = app.color(20,20,255,255);
-		color_hovered = app.color(0,0,210,255);
-		color_standby = app.color(0,0,120,255);
-		color_sliderback = app.color(50,50,50,255);
-		color_outline = app.color(200,200,200,255);
-		color_outline_selected = app.color(200,200,0,255);
-		color_shadow = app.color(0,0,0,100);
-		color_switch_on = app.color(0,70,255,255);
-		color_switch_off = app.color(0,0,40,255);
-		color_text = app.color(240);
+		color_background = Utl.color(80,80,80,255);
+		color_pressed = Utl.color(20,20,255,255);
+		color_hovered = Utl.color(0,0,210,255);
+		color_standby = Utl.color(0,0,120,255);
+		color_sliderback = Utl.color(50,50,50,255);
+		color_outline = Utl.color(200,200,200,255);
+		color_outline_selected = Utl.color(200,200,0,255);
+		color_shadow = Utl.color(0,0,0,100);
+		color_switch_on = Utl.color(0,70,255,255);
+		color_switch_off = Utl.color(0,0,40,255);
+		color_text = Utl.color(240);
 		
 		maskChildren = false;
 		
@@ -254,7 +256,7 @@ public class nModel extends nLauncher {
 		sliderMin = m.sliderMin; sliderMax = m.sliderMax;
 		slider_granulo = m.slider_granulo;
 		slider_log = m.slider_log;
-		text = Applet.copy(m.text); show_text = m.show_text; showCursor = m.showCursor;
+		text = Utl.copy(m.text); show_text = m.show_text; showCursor = m.showCursor;
 		
 		textAlignX = m.textAlignX; textAlignY = m.textAlignY;
 		auto_line_return = m.auto_line_return;
@@ -290,7 +292,7 @@ public class nModel extends nLauncher {
 		shadow_thick = m.shadow_thick;
 
 		has_info = m.has_info;
-		info_txt = Applet.copy(m.info_txt);
+		info_txt = Utl.copy(m.info_txt);
 		
 		float_rez = m.float_rez;
 		
@@ -382,7 +384,7 @@ public class nModel extends nLauncher {
 		sliderMin = m.sliderMin; sliderMax = m.sliderMax;
 		slider_granulo = m.slider_granulo;
 		slider_log = m.slider_log;
-		text = Applet.copy(m.text); show_text = m.show_text; showCursor = m.showCursor;
+		text = Utl.copy(m.text); show_text = m.show_text; showCursor = m.showCursor;
 		
 		textAlignX = m.textAlignX; textAlignY = m.textAlignY;
 		auto_line_return = m.auto_line_return;
@@ -404,7 +406,7 @@ public class nModel extends nLauncher {
 		shadow_thick = m.shadow_thick;
 
 		has_info = m.has_info;
-		info_txt = Applet.copy(m.info_txt);
+		info_txt = Utl.copy(m.info_txt);
 
 		float_rez = m.float_rez;
 		
@@ -430,7 +432,7 @@ public class nModel extends nLauncher {
 	public nModel setGlueSpace(float b) { glue_space = b; return this; }
 	public nModel setGlueAlign(nAlign b) { glue_align = b; return this; }
 
-	public Vector2 getLocalPos() { return Applet.copy(setPos); }
+	public Vector2 getLocalPos() { return Utl.copy(setPos); }
 	public float getLocalX() { return setPos.x; }
 	public float getLocalY() { return setPos.y; }
 	public float getLocalSX() { return setSize.x; }
@@ -590,7 +592,7 @@ public class nModel extends nLauncher {
 		if (v == 0.0f) return sliderMin;
 		else if (v == 1.0f) return sliderMax;
 		if (slider_log) {
-			v = Applet.linear_to_log(v, 3);
+			v = Utl.linear_to_log(v, 3);
 		}
 		float r = (sliderMax - sliderMin) * v;
 		if (slider_granulo > 0) r -= r % slider_granulo; 
@@ -599,7 +601,7 @@ public class nModel extends nLauncher {
 	protected float slideMinmaxToVal(float v) { 
 		v = (v - sliderMin) / (sliderMax - sliderMin);
 		if (slider_log) {
-			v = Applet.log_to_linear(v, 3);
+			v = Utl.log_to_linear(v, 3);
 		}
 		return v; }
 	

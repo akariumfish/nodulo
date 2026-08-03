@@ -6,12 +6,14 @@ import java.util.HashMap;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nMap;
-import app.nRun;
 
+import app.Applet;
+import app.GdxApp;
 import data.*;
 import patch.pNode;
+import util.Utl;
+import util.nMap;
+import util.nRun;
 
 public class nModelBook {
 	
@@ -60,18 +62,18 @@ public class nModelBook {
 		if (modelgroups.containsKey(ref)) 
 			app.logn("ERROR: book allready contains a modelGroup with key "+ref);
 		modelgroups.put(ref, g);
-		g.ref = Applet.copy(ref);
+		g.ref = Utl.copy(ref);
 	}
 
 	public nWidgetGroup buildGroup(String ref, nGUI gui) {
 		nWidgetGroup g = modelgroups.get(ref).build(gui);
-		g.model_ref = Applet.copy(ref);
+		g.model_ref = Utl.copy(ref);
 		return g;
 	}
 
 	public final float RS = 30; //ref size
 	public final float WINDOW_STACK_STRT_X = 400, 
-			WINDOW_STACK_STRT_Y = Applet.HEIGHT - 50, 
+			WINDOW_STACK_STRT_Y = GdxApp.HEIGHT - 50, 
 			WINDOW_STACK_SIZE = 10, WINDOW_STACK_INCR = 40;
 	public float WINDOW_STACK_CNT = 0; 
 	
@@ -93,49 +95,49 @@ public class nModelBook {
 		
 		
 		newModel("CL_def")
-		.set_color_background(app.color(80,80,80,255))
-		.set_color_pressed(app.color(20,20,255,255))
-		.set_color_hovered(app.color(0,0,210,255))
-		.set_color_standby(app.color(0,0,120,255))
-		.set_color_sliderback(app.color(50,50,50,255))
-		.set_color_outline(app.color(200,200,200,255))
-		.set_color_outline_selected(app.color(200,200,0,255))
-		.set_color_shadow(app.color(0,0,0,100))
-		.set_color_switch_on(app.color(0,70,255,255))
-		.set_color_switch_off(app.color(0,0,40,255))
-		.set_color_text(app.color(200,255))
+		.set_color_background(Utl.color(80,80,80,255))
+		.set_color_pressed(Utl.color(20,20,255,255))
+		.set_color_hovered(Utl.color(0,0,210,255))
+		.set_color_standby(Utl.color(0,0,120,255))
+		.set_color_sliderback(Utl.color(50,50,50,255))
+		.set_color_outline(Utl.color(200,200,200,255))
+		.set_color_outline_selected(Utl.color(200,200,0,255))
+		.set_color_shadow(Utl.color(0,0,0,100))
+		.set_color_switch_on(Utl.color(0,70,255,255))
+		.set_color_switch_off(Utl.color(0,0,40,255))
+		.set_color_text(Utl.color(200,255))
 		.setFont(18)
 		;
 
 		newModel("CL_release")
-		.set_color_background(app.color(230))
-		.set_color_pressed(app.color(20,20,255,255))
-		.set_color_hovered(app.color(230,230,180,255))
-		.set_color_standby(app.color(185,202,225))
-		.set_color_sliderback(app.color(220))
-		.set_color_outline(app.color(22,20,15,100))
-		.set_color_outline_selected(app.color(90,50,0,255))
-		.set_color_shadow(app.color(0,0,0,100))
-		.set_color_switch_on(app.color(0,170,255,255))
-		.set_color_switch_off(app.color(150,150,165))
-		.set_color_text(app.color(0))
+		.set_color_background(Utl.color(230))
+		.set_color_pressed(Utl.color(20,20,255,255))
+		.set_color_hovered(Utl.color(230,230,180,255))
+		.set_color_standby(Utl.color(185,202,225))
+		.set_color_sliderback(Utl.color(220))
+		.set_color_outline(Utl.color(22,20,15,100))
+		.set_color_outline_selected(Utl.color(90,50,0,255))
+		.set_color_shadow(Utl.color(0,0,0,100))
+		.set_color_switch_on(Utl.color(0,170,255,255))
+		.set_color_switch_off(Utl.color(150,150,165))
+		.set_color_text(Utl.color(0))
 		.setFont(18)
 		;
 
 		newModel("CL_def_VS_back")
 		.copyFrom(getModel("CL_def"))
-		.set_color_background(app.color(0))
-		.set_color_outline(app.color(150))
+		.set_color_background(Utl.color(0))
+		.set_color_outline(Utl.color(150))
 		;
 		newModel("CL_release_VS_back")
 		.copyFrom(getModel("CL_release"))
-		.set_color_background(app.color(235))
-		.set_color_outline(app.color(22,20,15,100))
+		.set_color_background(Utl.color(235))
+		.set_color_outline(Utl.color(22,20,15,100))
 		;
 
 		newModel("CL_def_DM_back")
 		.copyFrom(getModel("CL_def"))
-		.set_color_background(app.color(70))
+		.set_color_background(Utl.color(70))
 		.setOutline(false)
 		;
 		newModel("CL_release_DM_back")
@@ -145,15 +147,15 @@ public class nModelBook {
 
 		newModel("CL_def_DM_entry")
 		.copyFrom(getModel("CL_def"))
-		.set_color_pressed(app.color(50,255))
-		.set_color_hovered(app.color(140,255))
-		.set_color_standby(app.color(90,255))
+		.set_color_pressed(Utl.color(50,255))
+		.set_color_hovered(Utl.color(140,255))
+		.set_color_standby(Utl.color(90,255))
 		;
 		newModel("CL_release_DM_entry")
 		.copyFrom(getModel("CL_release"))
-		.set_color_pressed(app.color(20,20,255,255))
-		.set_color_hovered(app.color(200,190,10,255))
-		.set_color_standby(app.color(115,132,160))
+		.set_color_pressed(Utl.color(20,20,255,255))
+		.set_color_hovered(Utl.color(200,190,10,255))
+		.set_color_standby(Utl.color(115,132,160))
 		;
 		
 		newModel("CL_def_CW")
@@ -170,59 +172,59 @@ public class nModelBook {
 		.setFont(20)
 		.setOutline(true)
 		.setOutlineWeight(1)
-		.set_color_pressed(app.color(10))
-		.set_color_hovered(app.color(120))
-		.set_color_standby(app.color(40))
-		.set_color_outline(app.color(0,0,190))
+		.set_color_pressed(Utl.color(10))
+		.set_color_hovered(Utl.color(120))
+		.set_color_standby(Utl.color(40))
+		.set_color_outline(Utl.color(0,0,190))
 		;
 		newModel("CL_release_CW_head")
 		.copyFrom(getModel("CL_release"))
 		.setFont(20)
 		.setOutline(true)
 		.setOutlineWeight(1)
-		.set_color_pressed(app.color(120,120,255,255))
-		.set_color_hovered(app.color(250,230,180))
-		.set_color_standby(app.color(215,232,255))
+		.set_color_pressed(Utl.color(120,120,255,255))
+		.set_color_hovered(Utl.color(250,230,180))
+		.set_color_standby(Utl.color(215,232,255))
 		;
 
 		newModel("CL_def_FLD")
 		.copyFrom(getModel("CL_def"))
-		.set_color_background(app.color(10))
-		.set_color_outline(app.color(50,50,255))
-		.set_color_outline_selected(app.color(200,200,0))
+		.set_color_background(Utl.color(10))
+		.set_color_outline(Utl.color(50,50,255))
+		.set_color_outline_selected(Utl.color(200,200,0))
 		.setOutline(true)
 		.setOutlineWeight(2)
 		.setField(true)
 		;
 		newModel("CL_release_FLD")
 		.copyFrom(getModel("CL_release"))
-		.set_color_background(app.color(210,220,240))
-		.set_color_outline(app.color(50,50,255))
-		.set_color_outline_selected(app.color(200,200,0))
+		.set_color_background(Utl.color(210,220,240))
+		.set_color_outline(Utl.color(50,50,255))
+		.set_color_outline_selected(Utl.color(200,200,0))
 		.setOutline(true)
 		.setOutlineWeight(2)
 		.setField(true)
-		.set_color_text(app.color(0,0,90))
+		.set_color_text(Utl.color(0,0,90))
 		;
 
 
 		newModel("CL_def_RT")
-		.set_color_hovered(app.color(120,255))
-		.set_color_standby(app.color(70,255))
-		.set_color_outline(app.color(30,255))
-		.set_color_text(app.color(205,255))
+		.set_color_hovered(Utl.color(120,255))
+		.set_color_standby(Utl.color(70,255))
+		.set_color_outline(Utl.color(30,255))
+		.set_color_text(Utl.color(205,255))
 		.setOutline(true)
 		.setOutlineWeight(RS/10f)
 		;
 
 		newModel("CL_release_RT")
 		.copyFrom(getModel("CL_release_CW_head"))
-		.set_color_standby(app.color(255,232,215))
-//		.set_color_background(app.color(210,220,240))
-//		.set_color_hovered(app.color(120,255))
-//		.set_color_standby(app.color(70,255))
-//		.set_color_outline(app.color(30,255))
-//		.set_color_text(app.color(205,255))
+		.set_color_standby(Utl.color(255,232,215))
+//		.set_color_background(Utl.color(210,220,240))
+//		.set_color_hovered(Utl.color(120,255))
+//		.set_color_standby(Utl.color(70,255))
+//		.set_color_outline(Utl.color(30,255))
+//		.set_color_text(Utl.color(205,255))
 		.setOutline(true)
 		.setOutlineWeight(RS/10f)
 		;
@@ -233,13 +235,13 @@ public class nModelBook {
 		
 
 		newModel("CL_def_graph")
-		.set_color_background(app.color(0,0))
-		.set_color_outline(app.color(210))
+		.set_color_background(Utl.color(0,0))
+		.set_color_outline(Utl.color(210))
 		.setOutlineWeight(6)
 		;
 		newModel("CL_release_graph")
-		.set_color_background(app.color(0,20))
-		.set_color_outline(app.color(0,20,150))
+		.set_color_background(Utl.color(0,20))
+		.set_color_outline(Utl.color(0,20,150))
 		.setOutlineWeight(8)
 		;
 
@@ -253,10 +255,10 @@ public class nModelBook {
 //			app.DEF_PATCH_POS = new Vector2(0f,0f);
 //			app.PATCH_TOOL_AUTOCOLLAPSE = true;
 //			app.DEF_TICK_BY_SEC = 60f;
-			app.color_back = new Color(getModel("CL_release").color_background);
+			app.gdx.drawer.color_back = new Color(getModel("CL_release").color_background);
 			newModel("ref").copyFrom(getModel("CL_release"));
 			newModel("CL_VS_back").copyFrom(getModel("CL_release_VS_back"));
-			app.buffer_clear_color = new Color(getModel("CL_VS_back").color_background); 
+			app.gdx.drawer.buffer_clear_color = new Color(getModel("CL_VS_back").color_background); 
 			newModel("CL_DM_back").copyFrom(getModel("CL_release_DM_back"));
 			newModel("CL_DM_entry").copyFrom(getModel("CL_release_DM_entry"));
 			newModel("CL_CW").copyFrom(getModel("CL_release_CW"));
@@ -265,11 +267,11 @@ public class nModelBook {
 			newModel("CL_graph").copyFrom(getModel("CL_release_graph"));
 			newModel("CL_right_trigg").copyFrom(getModel("CL_release_RT"));
 		} else {
-//			app.color_back = getModel("CL_def").color_background;
-			app.color_back = app.color(70);
+//			app.gdx.drawer.color_back = getModel("CL_def").color_background;
+			app.gdx.drawer.color_back = Utl.color(70);
 			newModel("ref").copyFrom(getModel("CL_def"));
 			newModel("CL_VS_back").copyFrom(getModel("CL_def_VS_back"));
-			app.buffer_clear_color = new Color(getModel("CL_VS_back").color_background); 
+			app.gdx.drawer.buffer_clear_color = new Color(getModel("CL_VS_back").color_background); 
 			newModel("CL_DM_back").copyFrom(getModel("CL_def_DM_back"));
 			newModel("CL_DM_entry").copyFrom(getModel("CL_def_DM_entry"));
 			newModel("CL_CW").copyFrom(getModel("CL_def_CW"));
@@ -287,9 +289,9 @@ public class nModelBook {
 //
 //		newModel("text_field")
 //		.copyFrom(getModel("ref"))
-//		.set_color_background(app.color(10))
-//		.set_color_outline(app.color(50,50,255))
-//		.set_color_outline_selected(app.color(200,200,0))
+//		.set_color_background(Utl.color(10))
+//		.set_color_outline(Utl.color(50,50,255))
+//		.set_color_outline_selected(Utl.color(200,200,0))
 //		.setOutline(true)
 //		.setOutlineWeight(2)
 //		.setField(true)
@@ -312,7 +314,7 @@ public class nModelBook {
 //		.setStackSpacing(0)
 //		.setOutline(true)
 //		.setOutlineWeight(1)
-//		.set_color_outline(app.color(0,0,190))
+//		.set_color_outline(Utl.color(0,0,190))
 //		.setOutlineAfterChild(true)
 //		;
 //		
@@ -324,7 +326,7 @@ public class nModelBook {
 //		.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM) // TOP   BOTTOM
 //		.setOutline(true)
 //		.setOutlineWeight(1)
-//		.set_color_outline(app.color(0,0,190))
+//		.set_color_outline(Utl.color(0,0,190))
 //		;
 //		
 //		newModel("TW_back")
@@ -431,7 +433,7 @@ public class nModelBook {
 		//      -----  INFO POP  -----
 
 		newModel("IP_ref")
-		.set_color_background(app.color(100))
+		.set_color_background(Utl.color(100))
 		.setSize(RS * 6f, RS)
 //		.setHoverableZone(true)
 		.setRectOrigin(nAlign.LEFT,nAlign.CENTER) // TOP   BOTTOM
@@ -439,7 +441,7 @@ public class nModelBook {
 		.setStackSpacing(0)
 		.setOutline(true)
 		.setOutlineWeight(2)
-		.set_color_outline(app.color(80))
+		.set_color_outline(Utl.color(80))
 		.setOutlineAfterChild(true)
 		;
 
@@ -461,9 +463,9 @@ public class nModelBook {
 				nRun run_testfocus = new nRun() { public void run() {
 					if (ref.getVisibility()) { 
 						ref.setPos(app.input.mouse); 
-						if (app.input.mouse.x > Applet.WIDTH / 2f + RS) 
+						if (app.input.mouse.x > GdxApp.WIDTH / 2f + RS) 
 							ref.setRectOrigin(nAlign.RIGHT,nAlign.CENTER);
-						if (app.input.mouse.x < Applet.WIDTH / 2f - RS) 
+						if (app.input.mouse.x < GdxApp.WIDTH / 2f - RS) 
 							ref.setRectOrigin(nAlign.LEFT,nAlign.CENTER);
 						boolean over = false;
 						Object o = g.object("widg");
@@ -543,8 +545,8 @@ public class nModelBook {
 				g.addMetode("pop", new nRun() { public void run(Object o) {
 					String v = ((String)o); head.setText(v);
 					ref.force_calc();
-					ref.setPos(Applet.WIDTH / 2f - ref.getSX() / 2f, 
-							Applet.HEIGHT / 2f + ref.getSY() / 2f); 
+					ref.setPos(GdxApp.WIDTH / 2f - ref.getSX() / 2f, 
+							GdxApp.HEIGHT / 2f + ref.getSY() / 2f); 
 					run_tofront.run(); 
 				} });
 
@@ -595,7 +597,7 @@ public class nModelBook {
 		.setStackSpacing(0)
 		.setOutline(true)
 		.setOutlineWeight(1)
-//		.set_color_outline(app.color(0,0,190))
+//		.set_color_outline(Utl.color(0,0,190))
 		.setOutlineAfterChild(true)
 		;
 		newModel("CW_head")
@@ -781,9 +783,9 @@ public class nModelBook {
 
 		newModel("RW_space")
 		.setRect(0,RS,RS*15f,RS*10f)
-//		.set_color_background(app.color(0, 0, 0, 0))
-		.set_color_outline(app.color(100,150,100))
-		.set_color_outline_selected(app.color(200,200,0))
+//		.set_color_background(Utl.color(0, 0, 0, 0))
+		.set_color_outline(Utl.color(100,150,100))
+		.set_color_outline_selected(Utl.color(200,200,0))
 		.setOutline(true)
 		.setOutlineWeight(RS / 6f)
 		.setOutlineAfterChild(true)
@@ -797,9 +799,9 @@ public class nModelBook {
 		.copyFrom(getModel("ref"))
 		.setSize(2*RS/3,2*RS/3)
 		.setGrabbable()
-		.set_color_pressed(app.color(200,255,200,220))
-		.set_color_hovered(app.color(150,210,150,220))
-		.set_color_standby(app.color(100,150,100,220))
+		.set_color_pressed(Utl.color(200,255,200,220))
+		.set_color_hovered(Utl.color(150,210,150,220))
+		.set_color_standby(Utl.color(100,150,100,220))
 		;
 		
 		newModelGroup("resizable_window", new nModelGroup(app) { 
@@ -939,17 +941,17 @@ public class nModelBook {
 		//      -----  VIEWSPACE  -----
 		
 		newModel("VP_ref")
-		.set_color_background(app.color(0, 0, 0, 0))
+		.set_color_background(Utl.color(0, 0, 0, 0))
 		.setWarp(true)
 		;
 		newModel("VP_background")
-//		.set_color_background(app.color(0, 0, 0, 255))
+//		.set_color_background(Utl.color(0, 0, 0, 255))
 		.set_color_background(getModel("CL_VS_back").color_background) 
 		.setBackground()
 		.setHoverableZone(true)
 		;
 		newModel("VP_frontref")
-		.set_color_background(app.color(0, 0, 0, 0))
+		.set_color_background(Utl.color(0, 0, 0, 0))
 		.setBoundChild(true)
 		.setStack(nAlign.VERTICAL, nAlign.UP) //HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
 		.setStackSpacing(RS/2f)
@@ -958,7 +960,7 @@ public class nModelBook {
 
 		newModel("VP_fx")
 //		.setRect(0,0,RS*15f,RS*10f)
-		.set_color_background(app.color(0, 0, 0, 0))
+		.set_color_background(Utl.color(0, 0, 0, 0))
 		.setBoundParent(true)
 		.setBoundChild(true)
 		.setBoundOutspace(0f)
@@ -1010,7 +1012,7 @@ public class nModelBook {
 			}});
 			return w; 
 		}})
-//		.set_color_background(app.color(255,0,0,255))
+//		.set_color_background(Utl.color(255,0,0,255))
 //		.setRect(0,0,20,20)
 		;
 		
@@ -1027,23 +1029,23 @@ public class nModelBook {
 				nWidget wallpaper = g.addWidget("wallpaper", 
 						gui.addWidget("CW_header_button"));
 				wallpaper.setSwitchState(false).setSwitch().setText("F")
-				.set_color_pressed(app.color(80))
-				.set_color_hovered(app.color(120))
-				.set_color_standby(app.color(40));
+				.set_color_pressed(Utl.color(80))
+				.set_color_hovered(Utl.color(120))
+				.set_color_standby(Utl.color(40));
 
 				nWidget grid = g.addWidget("grid", 
 						gui.addWidget("CW_header_button"));
 				grid.setSwitchState(true).setSwitch().setText("G")
-				.set_color_pressed(app.color(80))
-				.set_color_hovered(app.color(120))
-				.set_color_standby(app.color(40));
+				.set_color_pressed(Utl.color(80))
+				.set_color_hovered(Utl.color(120))
+				.set_color_standby(Utl.color(40));
 
 				nWidget border = g.addWidget("border", 
 						gui.addWidget("CW_header_button"));
 				border.setSwitchState(true).setSwitch().setText("B")
-				.set_color_pressed(app.color(80))
-				.set_color_hovered(app.color(120))
-				.set_color_standby(app.color(40));
+				.set_color_pressed(Utl.color(80))
+				.set_color_hovered(Utl.color(120))
+				.set_color_standby(Utl.color(40));
 
 				g.get("head").setSizeCopyIncr(-5*RS);
 
@@ -1061,14 +1063,14 @@ public class nModelBook {
 						g.get("cornerTR").show();
 						g.get("cornerDL").show();
 						g.get("cornerDR").show();
-						space.set_color_outline(app.color(100,150,100))
+						space.set_color_outline(Utl.color(100,150,100))
 						.setOutlineWeight(RS / 6f);
 					} else {
 						g.get("cornerTL").hide();
 						g.get("cornerTR").hide();
 						g.get("cornerDL").hide();
 						g.get("cornerDR").hide();
-						space.set_color_outline(app.color(0,0,190))
+						space.set_color_outline(Utl.color(0,0,190))
 						.setOutlineWeight(RS / 15f);
 					}
 				}};
@@ -1203,12 +1205,12 @@ public class nModelBook {
 						sVec val_pos = g.object("val_pos", sVec.class);
 						Vector2 old_pos = new Vector2(val_pos.get());
 						g.addObject("old_pos", old_pos);
-						val_pos.set(0f,app.getscreenheight() - 4f*RS/3f);
+						val_pos.set(0f,app.gdx.getscreenheight() - 4f*RS/3f);
 						sVec val_view_size = g.object("val_view_size", sVec.class);
 						Vector2 old_size = new Vector2(val_view_size.get());
 						g.addObject("old_size", old_size);
-						g.metode("set_size", new Vector2(app.getscreenwidth(), 
-								app.getscreenheight() - 11f*RS/3f));
+						g.metode("set_size", new Vector2(app.gdx.getscreenwidth(), 
+								app.gdx.getscreenheight() - 11f*RS/3f));
 						g.metode("event_corner_drag");
 						sBoo val_border = g.object("val_border", sBoo.class);
 						val_border.set(false);
@@ -1390,7 +1392,7 @@ public class nModelBook {
 		.setStackSpacing(0)
 		.setOutline(true)
 		.setOutlineWeight(1)
-		.set_color_outline(app.color(0,0,190))
+		.set_color_outline(Utl.color(0,0,190))
 		.setOutlineAfterChild(true)
 		;
 		
@@ -1468,10 +1470,10 @@ public class nModelBook {
 						} else run_close.run(); 
 					}
 				}};
-				app.addEventFrame(run_frame);
+				app.addRunFrameStart(run_frame);
 
 				g.addEventClear(new nRun() { public void run() {
-						app.removeEventFrame(run_frame); }});
+						app.removeRunFrameStart(run_frame); }});
 				
 				g.addMetode("get_interf", new nRun() {
 					public Object get() { return interf; } });
@@ -1586,7 +1588,7 @@ public class nModelBook {
 		.setOutline(true)
 		.setOutlineAfterChild(true)
 		.setOutlineWeight(RS/30f)
-		.set_color_background(app.color(0,0,0,0))
+		.set_color_background(Utl.color(0,0,0,0))
 		.setMask(true)
 		;
 		newModel("list_back")
@@ -1598,7 +1600,7 @@ public class nModelBook {
 		.setBoundOutspace(0)
 		.setStack(nAlign.VERTICAL, nAlign.DOWN) //HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
 //		.setOutline(true)
-		.set_color_background(app.color(0,0,0,0))
+		.set_color_background(Utl.color(0,0,0,0))
 		;
 		newModel("list_entry")
 		.copyFrom(getModel("ref"))
@@ -1623,7 +1625,7 @@ public class nModelBook {
 		newModel("list_entry_label_1")
 		.copyFrom(getModel("list_entry_obj"))
 		.setSX(RS)
-		.set_color_background(app.color(0,0,0,0))
+		.set_color_background(Utl.color(0,0,0,0))
 		;
 		for (int i = 2 ; i <= 9 ; i++)
 			newModel("list_entry_label_"+i)
@@ -1931,11 +1933,11 @@ public class nModelBook {
 		newModel("DM_ref")
 //		.setRect(0,0,0,0)
 //		.setBackground()
-//		.set_color_background(app.color(0,0))
+//		.set_color_background(Utl.color(0,0))
 //		.setOutline(true)
 //		.setOutlineWeight(RS / 30f)
 //		.setOutlineAfterChild(true)
-//		.set_color_outline(app.color(180,255))
+//		.set_color_outline(Utl.color(180,255))
 //		.setBoundChild(true)
 //		.setStack(nAlign.HORIZONTAL, nAlign.RIGHT)
 //		.setRectOrigin(nAlign.LEFT,nAlign.TOP) // TOP   BOTTOM
@@ -1947,8 +1949,8 @@ public class nModelBook {
 		;
 		newModel("DM_back")
 //		.setRect(0,0,0,0)
-//		.set_color_background(app.color(0,0))
-//		.set_color_background(app.color(70,255)) 
+//		.set_color_background(Utl.color(0,0))
+//		.set_color_background(Utl.color(70,255)) 
 		.set_color_background(getModel("CL_DM_back").color_background) 
 		.set_color_outline(getModel("CL_DM_back").color_outline)
 		.setOutline(getModel("CL_DM_back").showOutline) 
@@ -1963,7 +1965,7 @@ public class nModelBook {
 
 		newModel("DM_zone")
 		.setRect(-2f*RS,2f*RS,0,0)
-		.set_color_background(app.color(0,0))
+		.set_color_background(Utl.color(0,0))
 		.setDraw(false)
 //		.setBoundParent(true)
 		.setBoundChild(true)
@@ -2062,7 +2064,7 @@ public class nModelBook {
 								Vector2 np = op.maskedrect
 										.getPosition(new Vector2());
 //								ref.toFront().setPos(np.x, np.y+5);
-								if (np.x > Applet.WIDTH / 2f) {
+								if (np.x > GdxApp.WIDTH / 2f) {
 									zone.setRectOrigin(nAlign.RIGHT,nAlign.TOP);
 									zone.setPos(2f*RS,2f*RS);
 									ref.toFront().setPos(np.x + op.maskedrect.width, 
@@ -2074,14 +2076,14 @@ public class nModelBook {
 									ref.toFront().setPos(np.x, np.y+5);
 									g.setObject("right_side", false); }
 									
-							app.addEventFrame(r);
+							app.addRunFrameStart(r);
 						}});
 					}
 				});
 				g.addMetode("close", new nRun() {
 					public void run() {
 
-						app.removeEventFrame(r);
+						app.removeRunFrameStart(r);
 						app.addEventNextFrame(new nRun() { public void run() {
 							ref.setVisibility(false);
 							g.removeWidget("openner");
@@ -2189,7 +2191,7 @@ public class nModelBook {
 //		.setGrabbable()
 //		.setOutline(true)
 //		.setOutlineWeight(2)
-//		.set_color_outline(app.color(0,0,150))
+//		.set_color_outline(Utl.color(0,0,150))
 //		;
 //		
 //		newModel("W_close")

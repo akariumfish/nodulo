@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nMap;
-import app.nRun;
 
+import app.Applet;
 import gui.*;
 import patch.pNode.CT;
 import plane.*;
+import util.Utl;
+import util.nMap;
+import util.nRun;
 
 public class pNodeAction {
 	
@@ -29,11 +30,11 @@ public class pNodeAction {
 			instance.setVar("ctrl_used", ctrl_ref);
 			instance.setVar("step", (int)0);
 			instance.setObject("ctrl", ctrl);
-			for (int i = 0 ; i < Applet.data_type_nb ; i++) {
-				nMap<Integer> map = ctrl.data_vals.get(Applet.data_type[i]);
+			for (int i = 0 ; i < Utl.data_type_nb ; i++) {
+				nMap<Integer> map = ctrl.data_vals.get(Utl.data_type[i]);
 				if (map != null) for (Map.Entry<String, Integer> mr : map.entrySet()) {
 					String dt_ref = mr.getKey();
-					Object dt = ctrl.getDataValDef(dt_ref, Applet.data_type[i]);
+					Object dt = ctrl.getDataValDef(dt_ref, Utl.data_type[i]);
 					instance.setVar(dt_ref, dt);
 					instance.setVar(dt_ref+"_key", false);
 				}
@@ -196,8 +197,8 @@ public class pNodeAction {
 
 				pProperty ctrl = instance.object("ctrl", pProperty.class);
 				if (ctrl == null) return;
-				for (int i = 0 ; i < Applet.data_type_nb ; i++) {
-					nMap<Integer> map = ctrl.data_vals.get(Applet.data_type[i]);
+				for (int i = 0 ; i < Utl.data_type_nb ; i++) {
+					nMap<Integer> map = ctrl.data_vals.get(Utl.data_type[i]);
 					if (map != null) for (Map.Entry<String, Integer> mr : map.entrySet()) {
 						String dt_ref = mr.getKey();
 						if (instance.getVar(dt_ref+"_key", Boolean.class)) continue;
@@ -236,7 +237,7 @@ public class pNodeAction {
 					if (data_used == null) return;
 					Class<?> dt_class = ctrl.data_class.get(data_used);
 					if (dt_class == null) continue;
-					txt += Applet.to_string(instance.getVar(
+					txt += Utl.to_string(instance.getVar(
 							data_used+"_last_data", dt_class)) + "\n";
 				} else { as_next = false; }
 				wcnt++;
@@ -462,7 +463,7 @@ public class pNodeAction {
 					if (dt_class == String.class || dt_class == Vector2.class) {
 						Object ov = last.getVar("val", dt_class);
 						app.textAlign(nAlign.CENTER, nAlign.CENTER);
-						app.text(Applet.to_string(ov), 
+						app.text(Utl.to_string(ov), 
 								sx * prev / period + (sx * len / period) / 2f, 
 								sy / 2f, 10f);
 					}

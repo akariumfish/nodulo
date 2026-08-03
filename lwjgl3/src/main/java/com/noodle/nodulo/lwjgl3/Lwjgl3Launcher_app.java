@@ -5,8 +5,9 @@ import java.util.LinkedList;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import app.Applet;
-import app.GDXApplet;
+
+import app.App;
+import app.GdxApp;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher_app {
@@ -57,14 +58,14 @@ public class Lwjgl3Launcher_app {
 		
 		// 		>>>  RUN SINGLE <<<
 		if (!solo_double) {
-			GDXApplet.WIDTH = Lwjgl3Launcher_app.WIN_SOLO_WIDTH;
-			GDXApplet.HEIGHT = Lwjgl3Launcher_app.WIN_SOLO_HEIGHT;
+			GdxApp.WIDTH = Lwjgl3Launcher_app.WIN_SOLO_WIDTH;
+			GdxApp.HEIGHT = Lwjgl3Launcher_app.WIN_SOLO_HEIGHT;
 		
 			// This handles macOS support and helps on Windows :
 			if (StartupHelper.startNewJvmIfRequired()) return; 
 			
-			new Lwjgl3Application(new Applet("solo", "setting_solo"), 
-					getDefaultConfiguration());
+//			new Lwjgl3Application(new Applet("solo", "setting_solo"), 
+//					getDefaultConfiguration());
 		}
 		
 		
@@ -131,7 +132,7 @@ public class Lwjgl3Launcher_app {
 
 //		configuration.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
 
-		configuration.setWindowedMode(Applet.WIDTH, Applet.HEIGHT);
+		configuration.setWindowedMode(GdxApp.WIDTH, GdxApp.HEIGHT);
 		
 		//// You can change these files; they are in lwjgl3/src/main/resources/ .
 		//// They can also be loaded from the root of assets/ .

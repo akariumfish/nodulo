@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
+
 import app.Applet;
-import app.nMap;
+import util.Utl;
+import util.nMap;
 
 
 public class File_Bloc {
@@ -38,7 +40,7 @@ public class File_Bloc {
 		empty();
 		is_clearing = false;
 		parent = null;
-		ref = Applet.copy(n); 
+		ref = Utl.copy(n); 
 		ref_byte = ref.getBytes();
 		ref_byte_nb = ref_byte.length; 
 		ref_byte_nb_bytes = file.getBytes(ref_byte_nb);
@@ -130,7 +132,7 @@ public class File_Bloc {
 
 //		file.app.log("File save_to path: "+path);
 		
-		if (add_absent_file && !file.app.file_exist(path)) {
+		if (add_absent_file && !Utl.file_exist(path)) {
 			FileHandle fl = Gdx.files.local(path);
 			if (!fl.exists()) fl.writeString(" ", false);
 		}

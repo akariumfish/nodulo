@@ -7,12 +7,12 @@ import java.util.Map.Entry;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool.Poolable;
-import app.Applet;
-import app.nClearable;
-import app.nMap;
-import app.nRun;
 
+import app.Applet;
 import data.sValueBloc;
+import util.nClearable;
+import util.nMap;
+import util.nRun;
 
 
 public class nWidgetGroup implements Poolable, nClearable {

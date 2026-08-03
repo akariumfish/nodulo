@@ -9,17 +9,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.Timer;
-import app.nMap;
-import app.nPool;
-import app.nRun;
 
+import app.Applet;
 import data.*;
 import gui.*;
 import patch.pAnk;
 import patch.pInstance;
 import patch.pNode;
+import util.Timer;
+import util.nMap;
+import util.nPool;
+import util.nRun;
 
 public class pTime extends pSystem {
 
@@ -361,7 +361,7 @@ public class pTime extends pSystem {
 		timer.start("tick");
 		
 		val_tick_cnt.add(1);
-		app.log_pref = ":"+val_tick_cnt.get();
+		app.gdx.log_pref = ":"+val_tick_cnt.get();
 
 		for (pInstance b : prev_tick_bric) b.run("do_prev_tick");
 		
@@ -384,7 +384,7 @@ public class pTime extends pSystem {
 		float tick_delta = (float)timer.stop("tick");
 		timer.start("tick");
 
-		app.log_pref = ":"+val_tick_cnt.get();
+		app.gdx.log_pref = ":"+val_tick_cnt.get();
 		
 		for (pInstance b : prev_tick_bric) b.run("do_prev_tick");
 		

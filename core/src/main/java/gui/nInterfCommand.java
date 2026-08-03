@@ -1,7 +1,7 @@
 package gui;
 
+import util.Utl;
 import app.Applet;
-
 import gui.nInterface.Code;
 
 public class nInterfCommand {
@@ -37,8 +37,8 @@ public class nInterfCommand {
 		args[0] = arg1; args[1] = arg2; args[2] = arg3; args[3] = arg4; }
 	
 	String arg(int i) { if (args != null && i < args.length) return args[i]; else return ""; }
-	int argInt(int i) { if (args != null && i < args.length) return Applet.toint(args[i]); else return 0; }
-	float argFlt(int i) { if (args != null && i < args.length) return Applet.tofloat(args[i]); else return 0; }
-	boolean argBoo(int i) { if (args != null && i < args.length) return Applet.tobool(args[i]); else return false; }
+	int argInt(int i) { if (args != null && i < args.length) return Utl.toint(args[i]); else return 0; }
+	float argFlt(int i) { if (args != null && i < args.length) return Utl.tofloat(args[i]); else return 0; }
+	boolean argBoo(int i) { if (args != null && i < args.length) return Utl.tobool(args[i]); else return false; }
 
 }

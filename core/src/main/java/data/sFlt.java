@@ -1,6 +1,7 @@
 package data;
 
 import net.nNetwork;
+import util.Utl;
 
 public class sFlt extends sValue {
 	public void set_resolution(int r) { resolution = r; apply_rez(); }
@@ -26,7 +27,7 @@ public class sFlt extends sValue {
 
 	public float asFloat() { return val; }
 
-	public String getString() { return app.trimFlt(val); }
+	public String getString() { return Utl.trimFlt(val); }
 	float val = 0, def;
 	public float ctrl_factor = 2;
 	

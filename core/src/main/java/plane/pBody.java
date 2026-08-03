@@ -6,10 +6,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nMap;
 
+import app.Applet;
 import data.*;
+import util.Utl;
+import util.nMap;
 
 public class pBody extends sPoolable {
 
@@ -114,7 +115,7 @@ public class pBody extends sPoolable {
 		update_families();
 		signalChange();
 	}
-	private void set(Object[] c, int i, Object data) { c[i] = Applet.copy(data); }
+	private void set(Object[] c, int i, Object data) { c[i] = Utl.copy(data); }
 	public void to_array(Object[] c) {
 		int cnt = 0;
 		
@@ -307,7 +308,7 @@ public class pBody extends sPoolable {
 		
 		empty();
 		
-		if (space != null && !Applet.has(space.delBodys, this)) space.delBodys.add(this);
+		if (space != null && !Utl.has(space.delBodys, this)) space.delBodys.add(this);
 	}
 	
 	

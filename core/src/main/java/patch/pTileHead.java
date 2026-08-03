@@ -5,9 +5,8 @@ import java.util.Map;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nRun;
 
+import app.Applet;
 import gui.nInterface;
 import gui.nWidget;
 import gui.nWidgetGroup;
@@ -15,6 +14,8 @@ import patch.pTile.CT;
 import patch.pTile.PlugDef;
 import plane.pSpace;
 import plane.pTime;
+import util.Utl;
+import util.nRun;
 
 public class pTileHead {
 	
@@ -50,7 +51,7 @@ public class pTileHead {
 								ArrayList.class, model_ref);
 						if (ak != null) {
 							for (String nk : ak) 
-								if (!Applet.contains(allkey, nk)) allkey.add(nk);
+								if (!Utl.contains(allkey, nk)) allkey.add(nk);
 						}
 					}
 				}
@@ -90,7 +91,7 @@ public class pTileHead {
 //				instance.addObject("all_temp_var_list", new ArrayList<String>()); }
 //			ArrayList<String> all_temp = instance.object("all_temp_var_list", 
 //					ArrayList.class);
-//			if (!Applet.contains(all_temp, r)) all_temp.add(r);
+//			if (!Utl.contains(all_temp, r)) all_temp.add(r);
 //			instance.setObject("all_temp_var_list", all_temp);
 //		}})
 //		.newRun("del_all_temp", new nRun() {public void run() { 
@@ -243,7 +244,7 @@ public class pTileHead {
 				instance.get("get_instruction_script");
 				ArrayList<pInstance> all_tile = 
 						head.get("get_all_tile", ArrayList.class);
-				for (pInstance s : Applet.duplic(all_tile)) s.clear(); }
+				for (pInstance s : Utl.duplic(all_tile)) s.clear(); }
 			head.setData("gui", gui);
 			instance.setObject("is_script", !gui);
 			instance.setVar("script", !gui);
@@ -263,14 +264,14 @@ public class pTileHead {
 				String str_arg_class3 = instance.collecGet("script_arg_class", (i*3)+2, String.class);
 				Object arg1 = null, arg2 = null, arg3 = null;
 				if (str_arg_class1 != null && str_arg_class1.length() > 0) {
-					Class<?> arg_class1 = Applet.type_ref_class.get(str_arg_class1);
-					arg1 = Applet.from_string(str_arg1, arg_class1); }
+					Class<?> arg_class1 = Utl.type_ref_class.get(str_arg_class1);
+					arg1 = Utl.from_string(str_arg1, arg_class1); }
 				if (str_arg_class2 != null && str_arg_class2.length() > 0) {
-					Class<?> arg_class2 = Applet.type_ref_class.get(str_arg_class2);
-					arg2 = Applet.from_string(str_arg2, arg_class2); }
+					Class<?> arg_class2 = Utl.type_ref_class.get(str_arg_class2);
+					arg2 = Utl.from_string(str_arg2, arg_class2); }
 				if (str_arg_class3 != null && str_arg_class3.length() > 0) {
-					Class<?> arg_class3 = Applet.type_ref_class.get(str_arg_class3);
-					arg3 = Applet.from_string(str_arg3, arg_class3); }
+					Class<?> arg_class3 = Utl.type_ref_class.get(str_arg_class3);
+					arg3 = Utl.from_string(str_arg3, arg_class3); }
 				if (arg3 != null) script.commande(com,arg1,arg2,arg3);
 				else if (arg2 != null) script.commande(com,arg1,arg2);
 				else if (arg1 != null) script.commande(com,arg1);
@@ -322,7 +323,7 @@ public class pTileHead {
 							.getRectRelativeToParent(inst.sheet.sheet_ref);
 					ArrayList<Rectangle> arr = new ArrayList<Rectangle>();
 					arr.add(this_rect); arr.add(stack_bb);
-					Rectangle bb = Applet.get_bounding_rect(arr);
+					Rectangle bb = Utl.get_bounding_rect(arr);
 					Vector2 r_pos = group.get("ref").getPosRelativeToParent(inst.sheet.sheet_ref);
 					Vector2 sl_pos = new Vector2(bb.x,bb.y).sub(r_pos);
 					group.get("selline").setRect(sl_pos.x,sl_pos.y,bb.width,bb.height);
@@ -343,19 +344,19 @@ public class pTileHead {
 					instance.getCollec("script_com").add(sc.com);
 					String arg = "", arg_class = "";
 					if (sc.arg1 != null) {
-						arg = Applet.to_string(sc.arg1);
+						arg = Utl.to_string(sc.arg1);
 						arg_class = sc.arg1.getClass().getName(); } 
 					instance.getCollec("script_arg").add(arg);
 					instance.getCollec("script_arg_class").add(arg_class);
 					arg = ""; arg_class = "";
 					if (sc.arg2 != null) {
-						arg = Applet.to_string(sc.arg2);
+						arg = Utl.to_string(sc.arg2);
 						arg_class = sc.arg2.getClass().getName(); }
 					instance.getCollec("script_arg").add(arg);
 					instance.getCollec("script_arg_class").add(arg_class);
 					arg = ""; arg_class = "";
 					if (sc.arg3 != null) {
-						arg = Applet.to_string(sc.arg3);
+						arg = Utl.to_string(sc.arg3);
 						arg_class = sc.arg3.getClass().getName(); }
 					instance.getCollec("script_arg").add(arg);
 					instance.getCollec("script_arg_class").add(arg_class);
@@ -369,7 +370,7 @@ public class pTileHead {
 			if (head == null) return;
 			ArrayList<pInstance> all_tile = 
 					head.get("get_all_tile", ArrayList.class);
-			for (pInstance s : Applet.duplic(all_tile)) s.clear();
+			for (pInstance s : Utl.duplic(all_tile)) s.clear();
 		}}).useInit()
 		.getStand()
 		;
@@ -506,7 +507,7 @@ public class pTileHead {
 								ArrayList.class, model_ref);
 						if (ak != null) {
 							for (String nk : ak) 
-								if (!Applet.contains(allkey, nk)) allkey.add(nk);
+								if (!Utl.contains(allkey, nk)) allkey.add(nk);
 						}
 					}
 				}
@@ -580,9 +581,9 @@ public class pTileHead {
 		public ScriptCom(String c, Object a1, Object a2) { com = c; arg1 = a1; arg2 = a2; }
 		public ScriptCom(String c, Object a1, Object a2, Object a3) { com = c; arg1 = a1; arg2 = a2; arg3 = a3; }
 		public String to_string() { 
-			String s = ""+com+" ( "+Applet.to_string(arg1)+
-					" , "+Applet.to_string(arg2)+
-					" , "+Applet.to_string(arg3)+" ) \n";
+			String s = ""+com+" ( "+Utl.to_string(arg1)+
+					" , "+Utl.to_string(arg2)+
+					" , "+Utl.to_string(arg3)+" ) \n";
 			return s; }
 	}
 	static class Script {
@@ -645,7 +646,7 @@ public class pTileHead {
 
 						for (Map.Entry<String,Object> me : n.var_vals.entrySet()) {
 							script.commande("set_var", me.getKey(), 
-									Applet.copy(me.getValue())); }
+									Utl.copy(me.getValue())); }
 						
 						instance.run("calc_script_iter", n);
 						script.commande("get_last");
@@ -683,7 +684,7 @@ public class pTileHead {
 			instance.run("get_all_tile_iter", instance);
 			added_tile = instance.object("added_tile", ArrayList.class);
 			added_tile.remove(instance); 
-			return Applet.duplic(added_tile);
+			return Utl.duplic(added_tile);
 		}})
 		.newRun("get_last", new nRun() {public Object get() {
 			ArrayList<pInstance> last_build = instance.object("last_build", ArrayList.class);
@@ -908,7 +909,7 @@ public class pTileHead {
 					if (out_pd == null) {
 						app.logn("ERROR plug run trigg r"); }
 					for (String tile_model : pTile.tile_models.allKey()) 
-						if (!Applet.contains(pTile.not_poppable_models, tile_model)) {
+						if (!Utl.contains(pTile.not_poppable_models, tile_model)) {
 						pStandard tile_model_stan = pTile.tile_models.get(tile_model);
 						for (PlugDef pd : pTile.getTileModelPlugs(tile_model_stan)) {
 							if (pTile.key_filter_compatibility(out_pd.keys, out_pd.filters, 
@@ -925,7 +926,7 @@ public class pTileHead {
 								.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
 						w1.addEventTrigger(new nRun(par) { public void run() {
 							String targ = arg(0, String.class);
-							String[] tg = Applet.split(targ, ' ');
+							String[] tg = Utl.split(targ, ' ');
 							if (!(tg.length == 2)) return;
 							add_at_mod_targ_w.setText(tg[0]);
 							add_at_in_targ_w.setText(tg[1]);

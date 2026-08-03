@@ -11,10 +11,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import app.Applet;
-import app.nMap;
-import app.nPool;
-import app.nRun;
-
 import data.*;
 import data.sPool.State;
 import gui.*;
@@ -28,6 +24,10 @@ import plane.pProperty;
 import plane.pSpace;
 import plane.pSystem;
 import plane.pView;
+import util.Utl;
+import util.nMap;
+import util.nPool;
+import util.nRun;
 
 public class pPatch extends pSystem {
 
@@ -242,16 +242,16 @@ public class pPatch extends pSystem {
 		for (pSheet s : sheets.all()) s.link_pool.load_3();
 
 		for (pSheet s : sheets.all()) 
-			for (pInstance b : Applet.duplic(s.inst_pool.all())) b.do_point_after_load();
+			for (pInstance b : Utl.duplic(s.inst_pool.all())) b.do_point_after_load();
 		for (pSheet s : sheets.all()) 
-			for (pInstance b : Applet.duplic(s.ent_pool.all())) b.do_point_after_load();
+			for (pInstance b : Utl.duplic(s.ent_pool.all())) b.do_point_after_load();
 		for (pSheet s : sheets.all()) 
-			for (pInstance b : Applet.duplic(s.link_pool.all())) b.do_point_after_load();
+			for (pInstance b : Utl.duplic(s.link_pool.all())) b.do_point_after_load();
 
 		app.addDelayEvent(1, new nRun() { public void run() {
-			for (pInstance b : Applet.duplic(cos)) b.run("run_event_link"); 
-			for (pInstance b : Applet.duplic(plugs)) b.run("run_event_link");
-			for (pInstance b : Applet.duplic(node_plugs)) b.run("run_event_link");  }});
+			for (pInstance b : Utl.duplic(cos)) b.run("run_event_link"); 
+			for (pInstance b : Utl.duplic(plugs)) b.run("run_event_link");
+			for (pInstance b : Utl.duplic(node_plugs)) b.run("run_event_link");  }});
 
 	}
 	
@@ -288,13 +288,13 @@ public class pPatch extends pSystem {
 	pSheet select_sheet = null;
 	
 	public void select_all() {
-		for (pInstance b : Applet.duplic(nodes)) b.run("select");
+		for (pInstance b : Utl.duplic(nodes)) b.run("select");
 	}
 	public void unselect_all() {
-		for (pInstance b : Applet.duplic(select_nodes)) b.run("unselect");
+		for (pInstance b : Utl.duplic(select_nodes)) b.run("unselect");
 	}
 	public void clear_select() {
-		for (pInstance b : Applet.duplic(select_nodes)) b.clear();
+		for (pInstance b : Utl.duplic(select_nodes)) b.clear();
 	}
 	
 	public boolean mouse_is_hover_view() {
@@ -708,7 +708,7 @@ public class pPatch extends pSystem {
 		ArrayList<String> grouplist = new ArrayList<String>();
 		
 		for (Map.Entry<String, pStandard> me : pNode.node_models.entrySet()) {
-			if (!Applet.contains(grouplist, pNode.node_group.get(me.getKey())))
+			if (!Utl.contains(grouplist, pNode.node_group.get(me.getKey())))
 				grouplist.add(pNode.node_group.get(me.getKey()));
 		}
 		for (String sg : grouplist) {
@@ -773,8 +773,8 @@ public class pPatch extends pSystem {
 		.setHoverableZone(true)
 		.setOutline(true)
 		.setOutlineWeight(RS/10f)
-		.set_color_outline(app.color(255,0,0,255))
-		.set_color_background(app.color(180,0,0,255))
+		.set_color_outline(Utl.color(255,0,0,255))
+		.set_color_background(Utl.color(180,0,0,255))
 		.setScaleLimit(pNode.DEF_SCALE_MIN, pNode.DEF_SCALE_MAX)
 		;
 
@@ -784,7 +784,7 @@ public class pPatch extends pSystem {
 		book.newModel("PP_ref")
 		.copyFrom(book.getModel("ref"))
 		.setPassif()
-		.set_color_background(app.color(0,0))
+		.set_color_background(Utl.color(0,0))
 		.setDraw(false)
 		.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM) // TOP CENTER  BOTTOM
 		.setBoundOutspace(0)
@@ -792,10 +792,10 @@ public class pPatch extends pSystem {
 		;
 
 		book.newModel("PP_selectzone")
-		.set_color_background(app.color(0,0))
+		.set_color_background(Utl.color(0,0))
 		.setPassif()
 		.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM) // TOP   BOTTOM
-		.set_color_outline(app.color(200,200,0,255))
+		.set_color_outline(Utl.color(200,200,0,255))
 		.setOutline(true)
 		.setOutlineWeight(RS/15f)
 		.setOutlineConstant(true)
@@ -811,10 +811,10 @@ public class pPatch extends pSystem {
 		.setOutline(true)
 		.setOutlineWeight(RS/6f)
 		.setOutlineConstant(true)
-		.set_color_pressed(app.color(255,80))
-		.set_color_hovered(app.color(255,180))
-		.set_color_standby(app.color(255,120))
-		.set_color_outline(app.color(0,240,230,255))
+		.set_color_pressed(Utl.color(255,80))
+		.set_color_hovered(Utl.color(255,180))
+		.set_color_standby(Utl.color(255,120))
+		.set_color_outline(Utl.color(0,240,230,255))
 		.setShape(nModel.Shape.DIAMOND)
 		;
 		
@@ -907,7 +907,7 @@ public class pPatch extends pSystem {
 										patch.select_sheet == br.sheet){
 								nWidget w = br.object("group", nWidgetGroup.class).get("selline");
 								Rectangle wr = new Rectangle(w.getRectRelativeToParent(ref));
-								if (Applet.intersect(wr, selzone)) {
+								if (Utl.intersect(wr, selzone)) {
 									br.run("select");
 								} else {
 									br.run("unselect");
@@ -1161,9 +1161,9 @@ public class pPatch extends pSystem {
 						del.setParent(ent).setText("x").setTrigger().setStacked(true);
 						
 						if (tab.getObj(row,i) == null) typ.setText("null");
-						else if (!Applet.type_is_used(tab.getObj(row,i).getClass())) 
+						else if (!Utl.type_is_used(tab.getObj(row,i).getClass())) 
 							typ.setText("??");
-						else typ.setText(Applet.type_class_type.get(
+						else typ.setText(Utl.type_class_type.get(
 								tab.getObj(row,i).getClass()));
 						
 						ent_arr.add(lab); ent_arr.add(fld); 
@@ -1189,7 +1189,7 @@ public class pPatch extends pSystem {
 								dm_arr.add(dm_type);
 							}
 							dm_type.metode("clear_entrys");
-							for (String sc : Applet.type_short_names) {
+							for (String sc : Utl.type_short_names) {
 								nWidget w1 = (nWidget)dm_type
 										.metodeGet("add_entry_custom", sc, 
 												RS*6f, RS*2f/3f);
@@ -1201,8 +1201,8 @@ public class pPatch extends pSystem {
 						
 						fld.addEventFieldChange(new nRun(i) { public void run() {
 							tab.set(row, (int)builder, 
-									Applet.from_string(fld.getText(), 
-									Applet.type_type_class.get(typ.getText()))); 
+									Utl.from_string(fld.getText(), 
+									Utl.type_type_class.get(typ.getText()))); 
 						}});
 
 						del.addEventTrigger(new nRun(i) { public void run() {
@@ -1210,8 +1210,8 @@ public class pPatch extends pSystem {
 						}});
 						
 						nRun tab_up = new nRun(i) { public void run() {
-							fld.setText(Applet.to_string(tab.get(row,(int)builder,
-									Applet.type_type_class.get(typ.getText())))); }};
+							fld.setText(Utl.to_string(tab.get(row,(int)builder,
+									Utl.type_type_class.get(typ.getText())))); }};
 						tab.addEventChangeLastFrame(tab_up);
 						tab_up.run();
 						run_arr.add(tab_up);

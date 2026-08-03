@@ -6,9 +6,6 @@ import java.util.Map;
 import java.util.Random;
 
 import app.Applet;
-import app.nMap;
-import app.nRun;
-
 import data.sBloc_Builder;
 import data.sBoo;
 import data.sInt;
@@ -22,6 +19,8 @@ import gui.nInterface;
 import gui.nWidget;
 import gui.nWidgetGroup;
 import patch.pStandard;
+import util.nMap;
+import util.nRun;
 
 public abstract class pSystem {
 	
@@ -61,7 +60,7 @@ public abstract class pSystem {
 			pPlane.builder.addEventInit(new nRun() { public void run(Object o) {
 				sValueBloc b = (sValueBloc)o; b.addBlocBuilder(new_builder); 
 				if (b.is_new_bloc) {
-					app.exec_nothrow("pPlane.bloc.buildBloc("+ref+")", 
+					app.gdx.exec_nothrow("pPlane.bloc.buildBloc("+ref+")", 
 							new nRun() { public void run() {	
 						b.buildBloc(ref, ref); }}); }
 			}});

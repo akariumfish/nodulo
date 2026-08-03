@@ -1,12 +1,13 @@
 package data;
 
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
 
+import app.Applet;
 import gui.nInterface;
 import gui.nWidget;
 import gui.nWidgetGroup;
 import net.nNetwork;
+import util.Utl;
 //import zz_dump.Save_Bloc;
 //import zz_plane2.cPlane;
 
@@ -34,7 +35,7 @@ public class sTab extends sValue {
 			
 			n[i] = new Object[val[i].length];
 			for (int j = 0 ; j < val[i].length ; j++)
-				n[i][j] = Applet.copy(val[i][j]);
+				n[i][j] = Utl.copy(val[i][j]);
 		}
 		for (int i = width ; i < w ; i++) n[i] = new Object[0];
 		width = w; val = n;
@@ -44,7 +45,7 @@ public class sTab extends sValue {
 		Object[] n = new Object[h];
 		
 		for (int j = 0 ; j < n.length && j < val[i].length ; j++)
-			n[j] = app.copy(val[i][j]);
+			n[j] = Utl.copy(val[i][j]);
 	
 		for (int j = val[i].length ; j < n.length ; j++) 
 			n[j] = "";
@@ -76,7 +77,7 @@ public class sTab extends sValue {
 		if ((val[w][h] == null && v != null) || 
 				(val[w][h] != null && v == null) || 
 				(val[w][h] != null && v != null && !v.equals(val[w][h]))) doChange();
-		val[w][h] = Applet.copy(v);
+		val[w][h] = Utl.copy(v);
 	}
 
 	public <T> T get(int w, int h, Class<T> ct) { 
@@ -100,7 +101,7 @@ public class sTab extends sValue {
 			for (int j = 0 ; j < val[i].length ; j++) {
 				Object v = val[i][j];
 //				if (v == null) v = "";
-				if (v != null && Applet.type_is_used(v.getClass())) {
+				if (v != null && Utl.type_is_used(v.getClass())) {
 					svb.newData("val"+i+"_"+j, v);
 					svb.newData("val"+i+"_"+j+"_class", v.getClass().getName());
 				} else {

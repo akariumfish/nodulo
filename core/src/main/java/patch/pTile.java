@@ -6,11 +6,8 @@ import java.util.Map;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nMap;
-import app.nRun;
-import app.nTransform;
 
+import app.Applet;
 import data.*;
 import gui.*;
 import patch.pNode.CT;
@@ -19,6 +16,10 @@ import plane.pParam;
 import plane.pProperty;
 import plane.pSpace;
 import plane.pTime;
+import util.Utl;
+import util.nMap;
+import util.nRun;
+import util.nTransform;
 
 public class pTile {
 	
@@ -91,7 +92,7 @@ public class pTile {
 			if (node != null) node.collecInstRemove("tiles", instance);
 			ArrayList<pInstance> plug_inst = instance.collecInstAll("plugs");
 			if (plug_inst != null) 
-				for (pInstance e : Applet.duplic(plug_inst)) e.clear(); 
+				for (pInstance e : Utl.duplic(plug_inst)) e.clear(); 
 			
 			pPatch patch = instance.patch;
 			patch.tiles.remove(instance);
@@ -178,7 +179,7 @@ public class pTile {
 				if (n == null) continue;
 				Rectangle r = n.get("get_bounding_box", Rectangle.class); 
 				if (r != null) arr.add(r); }
-			Rectangle bb = Applet.get_bounding_rect(arr);
+			Rectangle bb = Utl.get_bounding_rect(arr);
 			
 //			app.debugRect(bb);
 			
@@ -429,7 +430,7 @@ public class pTile {
 					app.logn("ERROR plug run trigg r");
 				}
 				for (String tile_model : tile_models.allKey()) 
-						if (!Applet.contains(not_poppable_models, tile_model)) {
+						if (!Utl.contains(not_poppable_models, tile_model)) {
 					pStandard tile_model_stan = tile_models.get(tile_model);
 					for (PlugDef pd : getTileModelPlugs(tile_model_stan)) {
 						if (key_filter_compatibility(this_pd.keys, this_pd.filters, 
@@ -472,7 +473,7 @@ public class pTile {
 				}
 			} else {
 				for (String tile_model : tile_models.allKey()) 
-					if (!Applet.contains(not_poppable_models, tile_model)) {
+					if (!Utl.contains(not_poppable_models, tile_model)) {
 					pStandard tile_model_stan = tile_models.get(tile_model);
 					for (PlugDef pd : getTileModelPlugs(tile_model_stan)) {
 						if (key_filter_compatibility(this_pd.keys, this_pd.filters, 
@@ -572,14 +573,14 @@ public class pTile {
 			if (args == null || args.length == 0) { plugged.run("receive"); }
 			else {
 				Object[] a = new Object[args.length];
-				for (int i = 0 ; i < args.length ; i++) a[i] = Applet.copy(args[i]);
+				for (int i = 0 ; i < args.length ; i++) a[i] = Utl.copy(args[i]);
 				plugged.run("receive", a); }
 		}}).runArgs("send", Object.class)
 		.newRun("receive", new nRun() {public void run() {
 			if (instance.hasObject("event_receive")) {
 				instance.run("highlight_self");
 				instance.object("event_receive", nRun.class)
-					.do_run(instance, param, Applet.duplic(args)); }
+					.do_run(instance, param, Utl.duplic(args)); }
 		}})
 		.newRun("obtain", Object.class, new nRun() {public Object get() {
 			pInstance plugged = instance.getInst("plugged");
@@ -588,7 +589,7 @@ public class pTile {
 //				if (instance.getDataBoo("gui")) {
 //					Object r = plugged.get("provide");
 //					String info = "";
-//					if (r != null) info += Applet.to_string(r);
+//					if (r != null) info += Utl.to_string(r);
 //					instance.object("plug_widget", nWidget.class).setInfo(info);
 //					return r;
 //				} else return plugged.get("provide");
@@ -599,11 +600,11 @@ public class pTile {
 		.newRun("provide", Object.class, new nRun() {public Object get() {
 			if (instance.hasObject("offer")) {
 				instance.run("highlight_self");
-				Object r = Applet.copy( instance.object("offer", nRun.class)
+				Object r = Utl.copy( instance.object("offer", nRun.class)
 						.do_get(instance, param) );
 				if (instance.getDataBoo("gui")) {
 					String info = "";
-					if (r != null) info += Applet.to_string(r);
+					if (r != null) info += Utl.to_string(r);
 					instance.object("plug_widget", nWidget.class).setInfo(info);
 				}
 				return r; }
@@ -620,9 +621,9 @@ public class pTile {
 			String[] keys2, String[] filters2) {
 		boolean ok = true;
 		for (String f : filters) if (!f.equals("all")) ok = ok && 
-				(Applet.contains(keys2, f) || Applet.contains(keys2, "all"));
+				(Utl.contains(keys2, f) || Utl.contains(keys2, "all"));
 		for (String f : filters2) if (!f.equals("all")) ok = ok && 
-				(Applet.contains(keys, f) || Applet.contains(keys, "all"));
+				(Utl.contains(keys, f) || Utl.contains(keys, "all"));
 		return ok;
 	}
 	
@@ -886,7 +887,7 @@ public class pTile {
 			w.setSX(w.getLocalSX()*width/2f);
 			w.setSY(w.getLocalSY()*height);
 			w.setScaleLimitNoDraw(scale_min, scale_max);
-//			w.set_color_background(app.color((int)(255*w.color_background.r), 
+//			w.set_color_background(Utl.color((int)(255*w.color_background.r), 
 //					(int)(255*w.color_background.g), 
 //					(int)(255*w.color_background.b),
 //					(int)255));
@@ -974,14 +975,14 @@ public class pTile {
 				w.addEventFieldChange(new nRun(instance) {public void run() {
 					pInstance target = (pInstance)builder;
 					if (var_cls.equals(Float.class.getName())) {
-						target.setVar(var_ref, Applet.tofloat(w.getText()));
+						target.setVar(var_ref, Utl.tofloat(w.getText()));
 					} else if (var_cls.equals(Integer.class.getName())) {
-						target.setVar(var_ref, Applet.toint(w.getText()));
+						target.setVar(var_ref, Utl.toint(w.getText()));
 					} else if (var_cls.equals(String.class.getName())) {
 						target.setVar(var_ref, w.getText());
 					} else if (var_cls.equals(Vector2.class.getName()) && var_axe != null) {
 						Vector2 v = new Vector2(target.getVar( var_ref, Vector2.class));
-						float n = Applet.tofloat(w.getText());
+						float n = Utl.tofloat(w.getText());
 						if (var_axe.equals("x"))
 							v.x = n; else v.y = n;
 						target.setVar(var_ref, v);
@@ -993,15 +994,15 @@ public class pTile {
 					String text = w.getText();
 //					if (hasParam("text")) text = getParam("text", String.class);
 					if (var_cls.equals(Float.class.getName())) {
-						text = "" + Applet.trimFlt(target.getVar(var_ref, Float.class), frez);
+						text = "" + Utl.trimFlt(target.getVar(var_ref, Float.class), frez);
 					} else if (var_cls.equals(Integer.class.getName())) {
 						text = "" + target.getVar(var_ref, Integer.class);
 					} else if (var_cls.equals(String.class.getName())) {
 						text = "" + target.getVar(var_ref, String.class);
 					} else if (var_cls.equals(Vector2.class.getName()) && var_axe != null) {
 						Vector2 v = new Vector2(target.getVar(var_ref, Vector2.class));
-						if (var_axe.equals("x")) text = "" + Applet.trimFlt(v.x, frez); 
-						else text = "" + Applet.trimFlt(v.y, frez);
+						if (var_axe.equals("x")) text = "" + Utl.trimFlt(v.x, frez); 
+						else text = "" + Utl.trimFlt(v.y, frez);
 					} 
 					if (
 						//!w.isSelected && 
@@ -1040,9 +1041,9 @@ public class pTile {
 					pInstance target = (pInstance)args[0];
 					int frez = (int)args[1];
 					String text = "";
-					if (var_txt != null) text = Applet.copy(var_txt);
+					if (var_txt != null) text = Utl.copy(var_txt);
 					if (var_cls.equals(Float.class.getName())) {
-						text += Applet.trimFlt(target.getVar(var_ref, Float.class), frez);
+						text += Utl.trimFlt(target.getVar(var_ref, Float.class), frez);
 					} else if (var_cls.equals(Integer.class.getName())) {
 						text += target.getVar(var_ref, Integer.class);
 					} else if (var_cls.equals(Boolean.class.getName())) {
@@ -1050,7 +1051,7 @@ public class pTile {
 					} else if (var_cls.equals(String.class.getName())) {
 						text += target.getVar(var_ref, String.class);
 					} else if (var_cls.equals(Vector2.class.getName())) {
-						text += Applet.tostr(target.getData(var_ref, Vector2.class));
+						text += Utl.tostr(target.getData(var_ref, Vector2.class));
 					}
 					w.setText(text);
 				}};
@@ -1085,7 +1086,7 @@ public class pTile {
 			w.setSX(w.getLocalSX()*width/2f);
 			w.setSY(w.getLocalSY()*height);
 			w.setScaleLimitNoDraw(scale_min, scale_max);
-//			w.set_color_background(app.color((int)(255*w.color_background.r), 
+//			w.set_color_background(Utl.color((int)(255*w.color_background.r), 
 //					(int)(255*w.color_background.g), 
 //					(int)(255*w.color_background.b),
 //					(int)255));
@@ -1104,7 +1105,7 @@ public class pTile {
 					if (var_cls.equals(Float.class.getName())) {
 						target.setVar(var_ref, w.getSliderValInMinMax());
 					} else if (var_cls.equals(Integer.class.getName())) {
-						target.setVar(var_ref, Applet.toint(w.getSliderValInMinMax()));
+						target.setVar(var_ref, Utl.toint(w.getSliderValInMinMax()));
 					} else if (var_cls.equals(Vector2.class.getName()) && var_axe != null) {
 						Vector2 v = new Vector2(target.getVar(var_ref, Vector2.class));
 						float n = w.getSliderValInMinMax();
@@ -1237,11 +1238,11 @@ public class pTile {
 		.setStacked(true)
 		.setOutline(true)
 		.setOutlineWeight(RS/10f)
-		.set_color_pressed(app.color(20,20,255,255))
-		.set_color_hovered(app.color(0,0,210,255))
-		.set_color_standby(app.color(0,0,120,255))
-		.set_color_outline(app.color(120,180,255,255))
-		.set_color_background(app.color(40))
+		.set_color_pressed(Utl.color(20,20,255,255))
+		.set_color_hovered(Utl.color(0,0,210,255))
+		.set_color_standby(Utl.color(0,0,120,255))
+		.set_color_outline(Utl.color(120,180,255,255))
+		.set_color_background(Utl.color(40))
 		.setShape(nModel.Shape.DIAMOND)
 		.setTrigger()
 		.setSize(RS,RS)
@@ -1251,11 +1252,11 @@ public class pTile {
 		.setStacked(true)
 		.setOutline(false)
 		.setOutlineWeight(0.1f)
-		.set_color_pressed(app.color(20,20,255,255))
-		.set_color_hovered(app.color(0,0,210,255))
-		.set_color_standby(app.color(0,0,120,255))
-		.set_color_outline(app.color(120,180,255,255))
-		.set_color_background(app.color(0,0))
+		.set_color_pressed(Utl.color(20,20,255,255))
+		.set_color_hovered(Utl.color(0,0,210,255))
+		.set_color_standby(Utl.color(0,0,120,255))
+		.set_color_outline(Utl.color(120,180,255,255))
+		.set_color_background(Utl.color(0,0))
 		.setShape(nModel.Shape.DIAMOND)
 		.setPassif()
 		;
@@ -1293,9 +1294,9 @@ public class pTile {
 		.setStackSpacing(0)
 //		.setOutline(true)
 //		.setOutlineWeight(2)
-//		.set_color_outline(app.color(20,20,120))
+//		.set_color_outline(Utl.color(20,20,120))
 //		.setOutlineAfterChild(true)
-		.set_color_background(app.color(0,0))
+		.set_color_background(Utl.color(0,0))
 		.setDraw(false)
 		;
 
@@ -1305,8 +1306,8 @@ public class pTile {
 		.setOutline(false)
 		.setOutlineWeight(RS/15f)
 		.setOutlineConstant(true)
-		.set_color_outline(app.color(200,200,0))
-		.set_color_background(app.color(0,0))
+		.set_color_outline(Utl.color(200,200,0))
+		.set_color_background(Utl.color(0,0))
 		;
 
 		nModel PT_back = book.newModel("PT_back")
@@ -1322,7 +1323,7 @@ public class pTile {
 ////		.setOutline(true)
 //		.setOutlineWeight(RS/30f)
 //		.setOutlineConstant(true)
-////		.set_color_background(app.color(50))
+////		.set_color_background(Utl.color(50))
 		
 		.setBoundOutspace(RS/4f)
 		.setStackSpacing(RS/15f)
@@ -1335,7 +1336,7 @@ public class pTile {
 		;
 		if (app.getPref("RELEASE", Boolean.class)) 
 			PT_back.setOutline(true)
-			.set_color_outline(app.color(0));
+			.set_color_outline(Utl.color(0));
 
 		book.newModel("PT_plugstack")
 		.setBoundChild(true)
@@ -1343,7 +1344,7 @@ public class pTile {
 //		.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM) // TOP   BOTTOM
 		.setBoundOutspace(0)
 		.setStackSpacing(0)
-		.set_color_background(app.color(0,0))
+		.set_color_background(Utl.color(0,0))
 		.setPassif()
 		;
 		book.newModelGroup("patch_tile", new nModelGroup(app) { 
@@ -1492,7 +1493,7 @@ public class pTile {
 									patch.pop_close_user(tile.sheet.bloc.ref+
 											"_"+tile.pool_ref));
 							if (new_over && !over) {
-								patch.pop_close_user = Applet.copy(tile.sheet.bloc.ref+
+								patch.pop_close_user = Utl.copy(tile.sheet.bloc.ref+
 										"_"+tile.pool_ref);
 								patch.patch_pop_close.setParent(back)
 								.addEventTrigger(pop_close_run);

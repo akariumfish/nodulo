@@ -6,16 +6,16 @@ import java.util.Map;
 import java.util.Random;
 
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nMap;
-import app.nPool;
-import app.nRun;
 
+import app.Applet;
 import data.*;
 import gui.*;
 import patch.pAnk;
 import patch.pInstance;
 import patch.pPatch;
+import util.nMap;
+import util.nPool;
+import util.nRun;
 
 public class pPlane {
 	
@@ -41,58 +41,58 @@ public class pPlane {
 //			pSystem.build(app);
 //		}});
 
-		app.exec_nothrow("pNet.build(app)", new nRun() { public void run() {	
+		app.gdx.exec_nothrow("pNet.build(app)", new nRun() { public void run() {	
 			pNet.build(app);
 		}});
 
-		app.exec_nothrow("pView.build(app)", new nRun() { public void run() {	
+		app.gdx.exec_nothrow("pView.build(app)", new nRun() { public void run() {	
 			pView.build(app);
 		}});
-		app.exec_nothrow("pTime.build(app)", new nRun() { public void run() {	
+		app.gdx.exec_nothrow("pTime.build(app)", new nRun() { public void run() {	
 			pTime.build(app);
 		}});
-		app.exec_nothrow("pSpace.build(app)", new nRun() { public void run() {	
+		app.gdx.exec_nothrow("pSpace.build(app)", new nRun() { public void run() {	
 			pSpace.build(app);
 		}});
 		
-		app.exec_nothrow("pBody.build(app)", new nRun() { public void run() {	
+		app.gdx.exec_nothrow("pBody.build(app)", new nRun() { public void run() {	
 			pBody.build(app);
 		}});
-		app.exec_nothrow("pProperty.build(app)", new nRun() { public void run() {	
+		app.gdx.exec_nothrow("pProperty.build(app)", new nRun() { public void run() {	
 			pProperty.build(app);
 		}});
-		app.exec_nothrow("pFamily.build(app)", new nRun() { public void run() {	
+		app.gdx.exec_nothrow("pFamily.build(app)", new nRun() { public void run() {	
 			pFamily.build(app);
 		}});
 
-		app.exec_nothrow("pGeom.build(app)", new nRun() { public void run() {	
+		app.gdx.exec_nothrow("pGeom.build(app)", new nRun() { public void run() {	
 			pGeom.build(app);
 		}});
 
-		app.exec_nothrow("pAtom.build(app)", new nRun() { public void run() {	
+		app.gdx.exec_nothrow("pAtom.build(app)", new nRun() { public void run() {	
 			pAtom.build(app);
 		}});
 
-		app.exec_nothrow("pBox2d.build(app)", new nRun() { public void run() {	
+		app.gdx.exec_nothrow("pBox2d.build(app)", new nRun() { public void run() {	
 			pBox2d.build(app);
 		}});
 
-		app.exec_nothrow("pPatch.build(app)", new nRun() { public void run() {	
+		app.gdx.exec_nothrow("pPatch.build(app)", new nRun() { public void run() {	
 			pPatch.build(app);
 		}});
 
-		app.exec_nothrow("pTime.build_node(app)", new nRun() { public void run() {	
+		app.gdx.exec_nothrow("pTime.build_node(app)", new nRun() { public void run() {	
 			pTime.build_node(app);
 		}});
-		app.exec_nothrow("pView.build_nodes(app)", new nRun() { public void run() {	
+		app.gdx.exec_nothrow("pView.build_nodes(app)", new nRun() { public void run() {	
 			pView.build_nodes(app);
 		}});
 
-		app.exec_nothrow("pBox2d.build_game(app)", new nRun() { public void run() {	
+		app.gdx.exec_nothrow("pBox2d.build_game(app)", new nRun() { public void run() {	
 			pBox2d.build_game(app);
 		}});
 
-		app.exec_nothrow("pAtom.build_game(app)", new nRun() { public void run() {	
+		app.gdx.exec_nothrow("pAtom.build_game(app)", new nRun() { public void run() {	
 			pAtom.build_game(app);
 		}});
  

@@ -3,6 +3,8 @@ package data;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 
+import util.Utl;
+
 public class sFile {
 	
 	public sData data;
@@ -21,11 +23,11 @@ public class sFile {
 	public void open(String p, boolean add_absent_file) {
 //		data.app.log("open "+p);
 //		if (isOpen) { close(); }
-		if (add_absent_file && !data.app.file_exist(p)) {
+		if (add_absent_file && !Utl.file_exist(p)) {
 			FileHandle fl = Gdx.files.local(p);
 			if (!fl.exists()) fl.writeString(" ", false);
 		}
-		if (data.app.file_exist(p)) {
+		if (Utl.file_exist(p)) {
 			path = p;
 			file_bloc.empty();
 //			file_bloc.load_from(path);

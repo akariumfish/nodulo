@@ -5,15 +5,16 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nPool;
-import app.nRun;
 
+import app.Applet;
 import data.*;
 import net.nNetwork;
 import net.nNetwork.ClientPacket;
 import net.nNetwork.ServerPacket;
 import patch.pInstance;
+import util.Utl;
+import util.nPool;
+import util.nRun;
 
 public class pNet extends pSystem {
 	
@@ -76,7 +77,7 @@ public class pNet extends pSystem {
 						app.getPref("AUTO_CONNECT", Boolean.class)) { init_client(); }
 			}});
 
-		app.addEventFrameEnd(run_frame_end);
+		app.addRunFrameEnd(run_frame_end);
 
 	}
 	public void system_load() {
@@ -84,7 +85,7 @@ public class pNet extends pSystem {
 	}
 	public void system_clear() {
 		net.dispose();
-		app.removeEventFrameEnd(run_frame_end);
+		app.removeRunFrameEnd(run_frame_end);
 		if (plane.getSystem(pTime.class) != null) 
 			plane.getSystem(pTime.class).removeEventTick(tick_run);
 	}
@@ -105,8 +106,8 @@ public class pNet extends pSystem {
 				}
 				tick_bang = 0;
 				
-				for (pCollec b : Applet.duplic(chgCollecs)) send_chg_collec(b);
-				for (pParam b : Applet.duplic(chgParams)) send_chg_param(b);
+				for (pCollec b : Utl.duplic(chgCollecs)) send_chg_collec(b);
+				for (pParam b : Utl.duplic(chgParams)) send_chg_param(b);
 				chgParams.clear(); chgCollecs.clear(); 
 		
 //				app.log("client pNet send client listening");
@@ -191,17 +192,17 @@ public class pNet extends pSystem {
 				cancel_change();
 			}
 	
-			for (pCollec b : Applet.duplic(delCollecs)) send_del_collec(b);
-			for (pParam b : Applet.duplic(delParams)) send_del_param(b);
-			for (pBody b : Applet.duplic(delBodys)) send_del_body(b);
+			for (pCollec b : Utl.duplic(delCollecs)) send_del_collec(b);
+			for (pParam b : Utl.duplic(delParams)) send_del_param(b);
+			for (pBody b : Utl.duplic(delBodys)) send_del_body(b);
 			delBodys.clear(); delParams.clear(); delCollecs.clear(); 
-			for (pCollec b : Applet.duplic(newCollecs)) send_new_collec(b);
-			for (pParam b : Applet.duplic(newParams)) send_new_param(b);
-			for (pBody b : Applet.duplic(newBodys)) send_new_body(b); 
+			for (pCollec b : Utl.duplic(newCollecs)) send_new_collec(b);
+			for (pParam b : Utl.duplic(newParams)) send_new_param(b);
+			for (pBody b : Utl.duplic(newBodys)) send_new_body(b); 
 			newBodys.clear(); newParams.clear(); newCollecs.clear(); 
-			for (pCollec b : Applet.duplic(chgCollecs)) send_chg_collec(b);
-			for (pParam b : Applet.duplic(chgParams)) send_chg_param(b);
-			for (pBody b : Applet.duplic(chgBodys)) send_chg_body(b);
+			for (pCollec b : Utl.duplic(chgCollecs)) send_chg_collec(b);
+			for (pParam b : Utl.duplic(chgParams)) send_chg_param(b);
+			for (pBody b : Utl.duplic(chgBodys)) send_chg_body(b);
 			chgBodys.clear(); chgParams.clear(); chgCollecs.clear(); 
 			
 //			app.log("server pNet send server listening");
@@ -397,7 +398,7 @@ public class pNet extends pSystem {
 		int cnt = 0;
 		while (cnt < data.length) {
 			byte tp = data[cnt]; cnt++;
-			Class<?> cl = Applet.type_id_class.get(tp);
+			Class<?> cl = Utl.type_id_class.get(tp);
 			byte[] lon = new byte[sData.BYTE_SIZE_INT];
 			for (int i = 0 ; i < sData.BYTE_SIZE_INT ; i++) {
 				lon[i] = data[cnt]; cnt++; }
@@ -827,7 +828,7 @@ public class pNet extends pSystem {
 	
 	private int obj_to_stack(ArrayList<byte[]> stack, Object o) {
 		int cnt = 0;
-		byte tp = Applet.type_class_id.get(o.getClass());
+		byte tp = Utl.type_class_id.get(o.getClass());
 		byte[] tpr = new byte[1]; tpr[0] = tp;
 		byte[] bt = sData.getBytes(o);
 		byte[] lon = sData.getBytes(bt.length);

@@ -1,7 +1,8 @@
-package app;
+package util;
 
 import java.util.ArrayList;
 
+import app.Applet;
 import patch.pInstance;
 import patch.pPar;
 
@@ -36,9 +37,9 @@ public abstract class nRun {
 	public boolean hasParam(String k) { if (param != null) return param.has(k); return false; }
 	public <T> boolean hasParam(String k, Class<T> cl) { 
 		return (param != null && param.has(k) && getParam(k, cl) != null); }
-	public Object getParam(String k) { if (param != null) return Applet.copy(param.get(k)); return null; }
-	public <T> T getParam(String k, Class<T> cl) { if (param != null) return Applet.copy(param.get(k, cl)); return null; }
-	public <T> T getParamOrDef(String k, Class<T> cl, T def) { if (param != null && param.has(k)) return Applet.copy(param.get(k, cl)); return def; }
+	public Object getParam(String k) { if (param != null) return Utl.copy(param.get(k)); return null; }
+	public <T> T getParam(String k, Class<T> cl) { if (param != null) return Utl.copy(param.get(k, cl)); return null; }
+	public <T> T getParamOrDef(String k, Class<T> cl, T def) { if (param != null && param.has(k)) return Utl.copy(param.get(k, cl)); return def; }
 	
 	
 	
@@ -129,13 +130,13 @@ public abstract class nRun {
 	
 
 	public static void runList(ArrayList<nRun> e, Object ... v) { 
-		for (nRun r : Applet.duplic(e)) r.do_run(v); }
+		for (nRun r : Utl.duplic(e)) r.do_run(v); }
 	public static void runList(ArrayList<nRun> e, pInstance cont, Object ... v) { 
-		for (nRun r : Applet.duplic(e)) r.do_run(cont,v); }
+		for (nRun r : Utl.duplic(e)) r.do_run(cont,v); }
 	public static void runList(ArrayList<nRun> e, pPar par, Object ... v) { 
-		for (nRun r : Applet.duplic(e)) r.do_run(par,v); }
+		for (nRun r : Utl.duplic(e)) r.do_run(par,v); }
 	public static void runList(ArrayList<nRun> e, pInstance cont, pPar par, Object ... v) { 
-		for (nRun r : Applet.duplic(e)) r.do_run(cont,par,v); }
+		for (nRun r : Utl.duplic(e)) r.do_run(cont,par,v); }
 	
 	
 	

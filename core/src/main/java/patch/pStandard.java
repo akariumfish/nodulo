@@ -5,14 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nMap;
-import app.nRun;
 
+import app.Applet;
 import data.*;
 import gui.nInterfCommand;
 import gui.nInterface.Code;
 import plane.pPlane;
+import util.Utl;
+import util.nMap;
+import util.nRun;
 
 public class pStandard {
 	
@@ -54,8 +55,8 @@ public class pStandard {
 		ref = r; 
 		pool_ref = pr; 
 		standards.put(r, this);
-		data_used = new int[Applet.data_type_nb];
-		for (int i = 0 ; i < Applet.data_type_nb ; i++) data_used[i] = 0;
+		data_used = new int[Utl.data_type_nb];
+		for (int i = 0 ; i < Utl.data_type_nb ; i++) data_used[i] = 0;
 		def_param = new pPar();
 		current_param = def_param;
 		current_sec = null;
@@ -285,12 +286,12 @@ public class pStandard {
 		public Class<?>[] args_class;
 
 		public RunDef(RunDef r) {
-			ref = Applet.copy(r.ref); return_class = r.return_class; run = r.run;
+			ref = Utl.copy(r.ref); return_class = r.return_class; run = r.run;
 			args_ref = new String[r.args_ref.length];
 			args_class = new Class<?>[r.args_class.length]; 
 			args_nb = r.args_nb;
 			for (int i = 0 ; i < args_nb ; i++) {
-				args_ref[i] = Applet.copy(r.args_ref[i]);
+				args_ref[i] = Utl.copy(r.args_ref[i]);
 				args_class[i] = r.args_class[i];
 			}
 			param = new pPar(r.param);
@@ -320,7 +321,7 @@ public class pStandard {
 		}
 		
 		public boolean test_args(Object ... v) {
-			Object[] args = v;//Applet.toArray(v);
+			Object[] args = v;//Utl.toArray(v);
 			if (args.length != args_nb) return false;
 			for (int i = 0 ; i < args_nb ; i++) {
 				if (args[i].getClass() != args_class[i]) return false;
@@ -355,7 +356,7 @@ public class pStandard {
 //		public Class<?> obj_class;
 		public nRun newobj;
 		public ObjDef(ObjDef o) { //, Class<?> ct
-			ref = Applet.copy(o.ref); newobj = o.newobj; //obj_class = ct; 
+			ref = Utl.copy(o.ref); newobj = o.newobj; //obj_class = ct; 
 			objdefs.add(this);
 			param = new pPar(o.param);
 		}
@@ -469,7 +470,7 @@ public class pStandard {
 		if (collec_vals.get(r) != null) return collec_vals.get(r); else return -1; }
 
 	public boolean isCollecInst(String r) {
-		return Applet.contains(collec_insts, r); }
+		return Utl.contains(collec_insts, r); }
 
 	public String getCollecData(String r) {
 		if (collec_datas.get(r) != null) return collec_datas.get(r); 
@@ -541,15 +542,15 @@ public class pStandard {
 			vals_id = new nMap<Integer>();
 			data_vals.put(ct, vals_id);
 		}
-		int du = data_used[Applet.type_class_index.get(ct)];
+		int du = data_used[Utl.type_class_index.get(ct)];
 		vals_id.put(ref, du);
-		du++; data_used[Applet.type_class_index.get(ct)] = du;
+		du++; data_used[Utl.type_class_index.get(ct)] = du;
 		data_pars.put(ref, new pPar(current_param));
 		return this;
 	}
 
 	public int getDataUsed(Class<?> ct) {
-		return data_used[Applet.type_class_index.get(ct)]; }
+		return data_used[Utl.type_class_index.get(ct)]; }
 	
 	public int getDataValId(String r, Class<?> ct) {
 		if (data_vals.get(ct) != null && data_vals.get(ct).get(r) != null)
@@ -653,11 +654,11 @@ public class pStandard {
 			Class<?> ct = me.getKey();
 			if (data_defs.get(ct) != null) {
 				for (Map.Entry<String,Object> map_me : me.getValue().entrySet()) 
-					data_defs.get(ct).put(map_me.getKey(), Applet.copy(map_me.getValue()));
+					data_defs.get(ct).put(map_me.getKey(), Utl.copy(map_me.getValue()));
 			} else {
 				nMap<Object> map = new nMap<Object>();
 				for (Map.Entry<String,Object> map_me : me.getValue().entrySet()) 
-					map.put(map_me.getKey(), Applet.copy(map_me.getValue()));
+					map.put(map_me.getKey(), Utl.copy(map_me.getValue()));
 				data_defs.put(ct,map);
 			}
 		}
@@ -732,7 +733,7 @@ public class pStandard {
 			Class<?> ct = me.getKey();
 			nMap<Object> map = new nMap<Object>();
 			for (Map.Entry<String,Object> map_me : me.getValue().entrySet()) 
-				map.put(map_me.getKey(), Applet.copy(map_me.getValue()));
+				map.put(map_me.getKey(), Utl.copy(map_me.getValue()));
 			data_defs.put(ct,map);
 		}
 		
@@ -773,8 +774,8 @@ public class pStandard {
 	public int data_size() {
 		int cnt = 2;
 //		cnt++;
-		for (int i = 0 ; i < Applet.data_type_nb ; i++) 
-			cnt += data_used[i] * Applet.type_data_size.get(Applet.data_type[i]);
+		for (int i = 0 ; i < Utl.data_type_nb ; i++) 
+			cnt += data_used[i] * Utl.type_data_size.get(Utl.data_type[i]);
 		cnt += collec_used;
 		cnt += inst_used;
 		cnt += 1;// + var_vals.size() * 3;
@@ -788,31 +789,31 @@ public class pStandard {
 		t.set(c, cnt, true); cnt++; 
 		t.set(c, cnt, ref); cnt++; 
 		
-		for (int i = 0 ; i < Applet.data_type_nb ; i++) {
+		for (int i = 0 ; i < Utl.data_type_nb ; i++) {
 			for (int j = 0 ; j < data_used[i] ; j++) {
 				String dtrf = null;
-				for (Map.Entry<String,Integer> me : data_vals.get(Applet.data_type[i]).entrySet()) {
+				for (Map.Entry<String,Integer> me : data_vals.get(Utl.data_type[i]).entrySet()) {
 					if (me.getValue() == j) dtrf = me.getKey(); }
 				if (dtrf == null) continue;
-				if (i == Applet.type_class_index.get(Vector2.class)) { 
-					Vector2 v = (Vector2)data_defs.get(Applet.data_type[i]).get(dtrf);
+				if (i == Utl.type_class_index.get(Vector2.class)) { 
+					Vector2 v = (Vector2)data_defs.get(Utl.data_type[i]).get(dtrf);
 					t.set(c, cnt+(j*2), v.x);
 					t.set(c, cnt+(j*2)+1, v.y);
-				} else if (i == Applet.type_class_index.get(Float.class)) {
-					float v = (float)data_defs.get(Applet.data_type[i]).get(dtrf);
+				} else if (i == Utl.type_class_index.get(Float.class)) {
+					float v = (float)data_defs.get(Utl.data_type[i]).get(dtrf);
 					t.set(c, cnt+j, v);
-				} else if (i == Applet.type_class_index.get(Integer.class)) {
-					int v = (int)data_defs.get(Applet.data_type[i]).get(dtrf);
+				} else if (i == Utl.type_class_index.get(Integer.class)) {
+					int v = (int)data_defs.get(Utl.data_type[i]).get(dtrf);
 					t.set(c, cnt+j, v);
-				} else if (i == Applet.type_class_index.get(Boolean.class)) {
-					boolean v = (boolean)data_defs.get(Applet.data_type[i]).get(dtrf);
+				} else if (i == Utl.type_class_index.get(Boolean.class)) {
+					boolean v = (boolean)data_defs.get(Utl.data_type[i]).get(dtrf);
 					t.set(c, cnt+j, v);
-				} else if (i == Applet.type_class_index.get(String.class)) { 
-					String v = (String)data_defs.get(Applet.data_type[i]).get(dtrf);
+				} else if (i == Utl.type_class_index.get(String.class)) { 
+					String v = (String)data_defs.get(Utl.data_type[i]).get(dtrf);
 					t.set(c, cnt+j, v);
 				}
 			}
-			cnt += data_used[i] * Applet.type_data_size.get(Applet.data_type[i]);
+			cnt += data_used[i] * Utl.type_data_size.get(Utl.data_type[i]);
 		}
 
 		for (int j = 0 ; j < collec_used ; j++) {

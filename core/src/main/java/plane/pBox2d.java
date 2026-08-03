@@ -23,18 +23,20 @@ import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
 import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer.Renderer;
-import app.Applet;
-import app.nMap;
-import app.nPool;
-import app.nRun;
-import app.nDrawer.PolygonSpriteBatchRendererAdapter;
 
+import app.Applet;
+import app.GdxApp;
+import app.nDrawer.PolygonSpriteBatchRendererAdapter;
 import box2dLight.*;
 import data.*;
 import gui.*;
 import patch.*;
 import patch.pMacro.Macro;
 import patch.pMacro.MacroScript;
+import util.Utl;
+import util.nMap;
+import util.nPool;
+import util.nRun;
 
 public class pBox2d extends pSystem {
 
@@ -303,7 +305,7 @@ public class pBox2d extends pSystem {
 		val_do_calc = bloc.obtainBoo("val_do_calc", true);
 
 		
-		cam = new OrthographicCamera(Applet.WIDTH, Applet.HEIGHT);
+		cam = new OrthographicCamera(GdxApp.WIDTH, GdxApp.HEIGHT);
 		
 		world = new World(new Vector2(0, 0), true);
 
@@ -339,7 +341,7 @@ public class pBox2d extends pSystem {
 		buffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);		        
 //		Renderer batchRenderer = new PolygonSpriteBatchRendererAdapter(spritebatch);
 //		buffer.addRenderer(batchRenderer);
-		buffer.initialize(Applet.WIDTH,Applet.HEIGHT);
+		buffer.initialize(GdxApp.WIDTH,GdxApp.HEIGHT);
 		
 		rayHandler = new RayHandler(world);
 		
@@ -434,15 +436,15 @@ public class pBox2d extends pSystem {
 			
 			if (val_do_ray.get()) {
 
-				app.pause_batch();
+				app.gdx.drawer.pause_batch();
 
-				cam.setToOrtho(false, (int)(app.getscreenwidth()), 
-						(int)(app.getscreenheight()));
+				cam.setToOrtho(false, (int)(app.gdx.getscreenwidth()), 
+						(int)(app.gdx.getscreenheight()));
 				Vector2 view_center = new Vector2(view.val_pos.get());
 				view_center.x += view.val_view_size.x() / 2.0f;
 				view_center.y -= view.val_view_size.y() / 2.0f + app.gui.book.RS;
 				Vector2 m = new Vector2(view_center)
-						.sub(app.getscreenwidth() / 2.0f, app.getscreenheight() / 2.0f);
+						.sub(app.gdx.getscreenwidth() / 2.0f, app.gdx.getscreenheight() / 2.0f);
 				m.scl(1/view.val_cam_scale.get()).rotateRad(-view.val_cam_rot.get());
 				m.add(view.val_cam_pos.get()).scl(-1f);
 				cam.zoom = 1 / view.val_cam_scale.get();
@@ -452,49 +454,49 @@ public class pBox2d extends pSystem {
 				cam.up.set(u.x, u.y, 0);
 				cam.update();
 
-				app.flush();
-				for (Rectangle r : Applet.duplic(app.gui.scissors)) {
+				app.gdx.drawer.flush();
+				for (Rectangle r : Utl.duplic(app.gui.scissors)) {
 					scissors.add(r); ScissorStack.popScissors(); }
 				app.gui.scissors.clear();
 				
 				rayHandler.setCombinedMatrix(cam.combined,
-						m.x, m.y, app.getscreenwidth(), app.getscreenheight()); 
+						m.x, m.y, app.gdx.getscreenwidth(), app.gdx.getscreenheight()); 
 				rayHandler.update();
 				rayHandler.prepareRender();
 
-				app.flush();
-				for (Rectangle r : Applet.duplic(scissors)) {
+				app.gdx.drawer.flush();
+				for (Rectangle r : Utl.duplic(scissors)) {
 					app.gui.scissors.add(r); ScissorStack.pushScissors(r); }
 				scissors.clear();
 
 				buffer.begin();
-				ScreenUtils.clear(app.buffer_clear_color);
+				ScreenUtils.clear(app.gdx.drawer.buffer_clear_color);
 				rayHandler.renderOnly();
 				buffer.end();
 
-		        app.drawer.spritebatch.begin();
-		        app.drawer.spritebatch.draw(buffer.getTexture(), 0, 0, 
-						Applet.WIDTH,Applet.HEIGHT, 
+		        app.gdx.drawer.spritebatch.begin();
+		        app.gdx.drawer.spritebatch.draw(buffer.getTexture(), 0, 0, 
+						GdxApp.WIDTH,GdxApp.HEIGHT, 
 						0, 0, 1, 1);
-		        app.drawer.spritebatch.end();
+		        app.gdx.drawer.spritebatch.end();
 
 				if (val_draw_debug.get()) 
 					debugRenderer.render(world, cam.combined);
 
-				app.restart_batch();
+				app.gdx.drawer.restart_batch();
 
 			}
 
 			if (val_draw_debug.get() && !val_do_ray.get()) {
-				app.pause_batch();
+				app.gdx.drawer.pause_batch();
 
-				cam.setToOrtho(false, (int)(app.getscreenwidth()), 
-						(int)(app.getscreenheight()));
+				cam.setToOrtho(false, (int)(app.gdx.getscreenwidth()), 
+						(int)(app.gdx.getscreenheight()));
 				Vector2 view_center = new Vector2(view.val_pos.get());
 				view_center.x += view.val_view_size.x() / 2.0f;
 				view_center.y -= view.val_view_size.y() / 2.0f + app.gui.book.RS;
 				Vector2 m = new Vector2(view_center)
-						.sub(app.getscreenwidth() / 2.0f, app.getscreenheight() / 2.0f);
+						.sub(app.gdx.getscreenwidth() / 2.0f, app.gdx.getscreenheight() / 2.0f);
 				m.scl(1/view.val_cam_scale.get()).rotateRad(-view.val_cam_rot.get());
 				m.add(view.val_cam_pos.get()).scl(-1f);
 				cam.zoom = 1 / view.val_cam_scale.get();
@@ -506,7 +508,7 @@ public class pBox2d extends pSystem {
 
 				debugRenderer.render(world, cam.combined);
 				
-				app.restart_batch();
+				app.gdx.drawer.restart_batch();
 			}
 
 		}

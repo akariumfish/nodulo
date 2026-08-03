@@ -7,15 +7,16 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+
 import app.Applet;
 import app.nInput;
-import app.nMap;
 import app.nMenu;
-import app.nPool;
-import app.nRun;
-
 import data.sInt;
 import data.sValueBloc;
+import util.Utl;
+import util.nMap;
+import util.nPool;
+import util.nRun;
 
 public class nGUI {
 	
@@ -176,12 +177,12 @@ public class nGUI {
 		mouse_vec = m;
 		viewrect = r;
 		
-		helper_light = app.color(240,230,220,150);
+		helper_light = Utl.color(240,230,220,150);
 
 		val_interf_nb = app.data.setting_bloc.newInt("val_interf_nb", "", 0);
 		val_free_interf_nb = app.data.setting_bloc.newInt("val_free_interf_nb", "", 0);
 		
-		app.addEventFrame(new nRun() { public void run() {
+		app.addRunFrameStart(new nRun() { public void run() {
 			val_interf_nb.set(interf_pool.all().size());
 			val_free_interf_nb.set(interf_pool.getFree());
 		}});
@@ -296,7 +297,7 @@ public class nGUI {
 			r.drawMasked();
 		}
 		
-		app.drawer.flush();
+		app.gdx.drawer.flush();
 		
 //		for (nWidget r : all_widgets) {
 //			r.draw_debug();
@@ -334,7 +335,7 @@ public class nGUI {
 		.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM)
 		.setBoundOutspace(0 * RS / 6f)
 		.setStackSpacing(RS / 15f)
-		.set_color_background(app.color(0,0))
+		.set_color_background(Utl.color(0,0))
 		.setDraw(false)
 		;
 		book.newModel("INT_col_line")
@@ -347,7 +348,7 @@ public class nGUI {
 		.setBoundOutspace(0)
 		.setStackSpacing(RS / 15f)
 		.setStack(nAlign.HORIZONTAL, nAlign.RIGHT) // HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
-		.set_color_background(app.color(0,0))
+		.set_color_background(Utl.color(0,0))
 		.setDraw(false)
 		;
 		book.newModel("INT_col")
@@ -360,7 +361,7 @@ public class nGUI {
 		.setBoundOutspace(0)
 		.setStackSpacing(RS / 15f)
 		.setStack(nAlign.VERTICAL, nAlign.DOWN) // HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
-		.set_color_background(app.color(0,0))
+		.set_color_background(Utl.color(0,0))
 		.setDraw(false)
 		;
 		book.newModel("INT_col_back") 
@@ -375,8 +376,8 @@ public class nGUI {
 		.setStack(nAlign.VERTICAL, nAlign.DOWN) // HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
 		.setOutline(true)
 		.setOutlineWeight(RS / 10f)
-		.set_color_outline(app.color(20))
-		.set_color_background(app.color(0,0))
+		.set_color_outline(Utl.color(20))
+		.set_color_background(Utl.color(0,0))
 		;
 
 		book.newModel("INT_col_head")
@@ -384,16 +385,16 @@ public class nGUI {
 		.setSize(RS*10f, RS/3f*2f)
 		.setBoundParent(true)
 		.setStacked(true)
-//		.set_color_pressed(app.color(20))
-//		.set_color_hovered(app.color(120))
-//		.set_color_standby(app.color(60))
+//		.set_color_pressed(Utl.color(20))
+//		.set_color_hovered(Utl.color(120))
+//		.set_color_standby(Utl.color(60))
 		.setSwitch()
 		;
 
 		book.newModel("INT_filler")
 		.copyFrom(book.getModel("INT_col"))
 		.setSize(RS*2,RS*2)
-		.set_color_background(app.color(0,0))
+		.set_color_background(Utl.color(0,0))
 		.setDraw(false)
 		;
 
@@ -409,7 +410,7 @@ public class nGUI {
 		.setBoundParent(true)
 		.setStacked(true)
 		.setBoundOutspace(0)
-		.set_color_background(app.color(0,0))
+		.set_color_background(Utl.color(0,0))
 		;
 
 		book.newModel("INT_col_separator")
@@ -426,7 +427,7 @@ public class nGUI {
 			.setBoundParent(true)
 			.setStacked(true)
 			.setBoundOutspace(0)
-			.set_color_background(app.color(0,0))
+			.set_color_background(Utl.color(0,0))
 			;
 		}
 		

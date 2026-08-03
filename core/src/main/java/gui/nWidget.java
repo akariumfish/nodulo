@@ -9,12 +9,13 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Pool.Poolable;
-import app.Applet;
-import app.nClearable;
-import app.nRun;
-import app.nTransform;
 
+import app.Applet;
 import data.*;
+import util.Utl;
+import util.nClearable;
+import util.nRun;
+import util.nTransform;
 
 public class nWidget extends nModel implements Poolable, nClearable {
 	
@@ -281,7 +282,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 		return new Vector2(parentPos.x + boundedSize.x / 2f, 
 				parentPos.y + boundedSize.y / 2f); 
 	}
-	public Vector2 getBoundedSize() { return Applet.copy(boundedSize); }
+	public Vector2 getBoundedSize() { return Utl.copy(boundedSize); }
 
 	public Vector2 getParentPos(nAlign x, nAlign y) { 
 		Vector2 pos = new Vector2(parentPos);
@@ -531,8 +532,8 @@ public class nWidget extends nModel implements Poolable, nClearable {
 				text = str + end;
 				cursorPos--;
 				if (vl_str != null) vl_str.set(text);
-				if (vlfld_flt != null) vlfld_flt.set(Applet.tofloat(text));
-				if (vlfld_int != null) vlfld_int.set(Applet.toint(text));
+				if (vlfld_flt != null) vlfld_flt.set(Utl.tofloat(text));
+				if (vlfld_int != null) vlfld_int.set(Utl.toint(text));
 				runEventList("eventFieldChangeRun");
 			}
 			else if (gui.in.getClick("Enter")) {
@@ -553,8 +554,8 @@ public class nWidget extends nModel implements Poolable, nClearable {
 				else text = str + end;
 				cursorPos++;
 				if (vl_str != null) vl_str.set(text);
-				if (vlfld_flt != null) vlfld_flt.set(Applet.tofloat(text));
-				if (vlfld_int != null) vlfld_int.set(Applet.toint(text));
+				if (vlfld_flt != null) vlfld_flt.set(Utl.tofloat(text));
+				if (vlfld_int != null) vlfld_int.set(Utl.toint(text));
 				runEventList("eventFieldChangeRun");
 			}
 		}
@@ -698,7 +699,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 		
 		if (isSlider) {
 			
-			app.fill(app.color(20));
+			app.fill(Utl.color(20));
 			app.noStroke();
 			if (sliderAxis == nAlign.HORIZONTAL) {
 				app.rect(drawrect.x, drawrect.y + drawrect.height / 3.0f,
@@ -875,24 +876,24 @@ public class nWidget extends nModel implements Poolable, nClearable {
 	public void draw_debug() {
 //		if (showOrigin) {
 //			float px = globalPos.x, py = globalPos.y;
-//			app.fill(app.color(255,0,0));
+//			app.fill(Utl.color(255,0,0));
 //			app.noStroke();
 //			app.rect(px-2,py-2,4,4);
 //		}
 		
-//		app.stroke(app.color(255));
+//		app.stroke(Utl.color(255));
 //		app.strokeWeight(2);
 //		app.rect(maskedrect);
 		
 //		float wf = 1.0F;
 //		if (mouseOver) {
-//			app.stroke(app.color(255));
+//			app.stroke(Utl.color(255));
 //			app.strokeWeight(4);
 //			app.rect(getX() + wf*outlineWeight/2, getY() + wf*outlineWeight/2, 
 //					getSX() - wf*outlineWeight, getSY() - wf*outlineWeight);
 //		}
 //		if (mouseOverZone) {
-//			app.stroke(app.color(255,0,0));
+//			app.stroke(Utl.color(255,0,0));
 //			app.strokeWeight(2);
 //			app.rect(getX() + wf*outlineWeight/2, getY() + wf*outlineWeight/2, 
 //					getSX() - wf*outlineWeight, getSY() - wf*outlineWeight);
@@ -903,7 +904,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 	}
 	
 	public void highlight_parent() {
-		app.stroke(app.color(255,0,0));
+		app.stroke(Utl.color(255,0,0));
 		app.strokeWeight(2);
 		app.rect(getX(), getY(), getSX(), getSY());
 		if (parent != null) parent.highlight_parent();
@@ -912,7 +913,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 	public nWidget buildDrawStackAndMask(ArrayList<nWidget> s, Rectangle mask) { 
 		if (visible) {
 			s.add(this);
-			boolean isInMask = Applet.intersect(mask, globalrect, maskedrect);
+			boolean isInMask = Utl.intersect(mask, globalrect, maskedrect);
 			if (!isInMask) maskedrect.set(0,0,0,0);
 			if (maskChildren)
 				for (nWidget w : childs) w.buildDrawStackAndMask(s, maskedrect);
@@ -932,7 +933,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 	
 	public nWidget drawMasked() {  
 
-		if (vfx) app.fx();
+		if (vfx) app.gdx.drawer.fx();
 		
 		
 		if (getVisibility()) { 
@@ -954,9 +955,9 @@ public class nWidget extends nModel implements Poolable, nClearable {
 			boolean pop = false;
 			if (maskChildren) {
 			    ScissorStack.calculateScissors(
-			    		gui.cam, app.getTransformMatrix(), 
+			    		gui.cam, app.gdx.drawer.getTransformMatrix(), 
 			    		maskedrect, maskingrect);
-				app.flush();
+				app.gdx.drawer.flush();
 				pop = ScissorStack.pushScissors(maskingrect); //return false if mask area =0
 				if (pop) gui.scissors.add(maskingrect);
 //				app.logn("a"+gui.scissors.size());
@@ -966,7 +967,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 				for (nWidget w : childs) w.drawMasked();
 
 			if (maskChildren) {
-				app.flush();
+				app.gdx.drawer.flush();
 				if (pop) ScissorStack.popScissors();
 				if (pop) gui.scissors.remove(gui.scissors.get(gui.scissors.size() - 1));
 //				app.logn("b"+gui.scissors.size());
@@ -976,7 +977,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 
 		}
 
-		if (vfx) app.noFx();
+		if (vfx) app.gdx.drawer.noFx();
 //		if (vfx) app.noFx((int)maskingrect.x, (int)maskingrect.y, 
 //				(int)maskingrect.width, (int)maskingrect.height);
 		
@@ -1305,7 +1306,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 	public float getSliderValInRange(float min, float max) { 
 		return min + sliderVal * (max - min); }
 	public int getSliderValInRangeInteger(int min, int max) { 
-		return Applet.toint(min + sliderVal * (max - min)); }
+		return Utl.toint(min + sliderVal * (max - min)); }
 	
 	public nWidget setSliderVal(float v) {   // between 0 and 1
 		sliderVal = MathUtils.clamp(v, 0f, 1f);
@@ -1562,7 +1563,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 	
 	public void svalue_linking_update() {
 		if (vw_int != null) { text = watcher_pre_text + vw_int.get() + watcher_post_text; }
-		if (vw_flt != null) { text = watcher_pre_text + Applet.trimFlt(vw_flt.get(), float_rez) + watcher_post_text; }
+		if (vw_flt != null) { text = watcher_pre_text + Utl.trimFlt(vw_flt.get(), float_rez) + watcher_post_text; }
 		if (vw_boo != null) { text = watcher_pre_text + vw_boo.get() + watcher_post_text; }
 		if (vw_str != null) { text = watcher_pre_text + vw_str.get() + watcher_post_text; }
 		if (vw_vec != null) { text = watcher_pre_text + vw_vec.x() + ":" + vw_vec.y() + watcher_post_text; }
@@ -1582,8 +1583,8 @@ public class nWidget extends nModel implements Poolable, nClearable {
 			runEventList("eventSliderChangeRun");
 		}
 		if (vl_str != null) { setText(vl_str.get()); }
-		if (vlfld_flt != null) { setText(Applet.trimFlt(vlfld_flt.get(), float_rez)); }
-		if (vlfld_int != null) { setText(Applet.tostr(vlfld_int.get())); }
+		if (vlfld_flt != null) { setText(Utl.trimFlt(vlfld_flt.get(), float_rez)); }
+		if (vlfld_int != null) { setText(Utl.tostr(vlfld_int.get())); }
 		if (vwp_stack_index != null && 
 				getSiblingIndex() != vwp_stack_index.get()) { 
 			setSiblingIndex(vwp_stack_index.get()); }

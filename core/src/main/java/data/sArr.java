@@ -4,6 +4,7 @@ import gui.nAlign;
 import gui.nInterface;
 import gui.nWidget;
 import net.nNetwork;
+import util.Utl;
 
 public class sArr extends sValue {
 	
@@ -26,7 +27,7 @@ public class sArr extends sValue {
 	
 	public void resize(int l) {
 		String[] n = new String[l];
-		for (int i = 0 ; i < len && i < l ; i++) n[i] = app.copy(val[i]);
+		for (int i = 0 ; i < len && i < l ; i++) n[i] = Utl.copy(val[i]);
 		for (int i = len ; i < l ; i++) n[i] = "";
 		len = l;
 		val = n;
@@ -50,7 +51,7 @@ public class sArr extends sValue {
 	public void set(int i, String v) {
 		if (i >= len) resize(i+1);
 		if (!v.equals(val[i])) doChange();
-		val[i] = app.copy(v);
+		val[i] = Utl.copy(v);
 	}
 	public void set(int i, int v) { set(i, ""+v); }
 	public void set(int i, float v) { set(i, ""+v); }
@@ -63,10 +64,10 @@ public class sArr extends sValue {
 	
 	public String get(int i) { if (i < len) return val[i]; else return ""; }
 	public int getInt(int i) {
-		if (i < len) return app.toint(val[i]);
+		if (i < len) return Utl.toint(val[i]);
 		return 0; }
 	public float getFloat(int i) {
-		if (i < len) return app.tofloat(val[i]);
+		if (i < len) return Utl.tofloat(val[i]);
 		return 0; }
 	public boolean getBool(int i) {
 		if (i < len) {

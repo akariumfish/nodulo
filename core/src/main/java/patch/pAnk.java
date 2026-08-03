@@ -4,9 +4,8 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nRun;
 
+import app.Applet;
 import data.*;
 import gui.*;
 import patch.pNode.CT;
@@ -15,6 +14,8 @@ import plane.pParam;
 import plane.pSpace;
 import plane.pTime;
 import plane.pView;
+import util.Utl;
+import util.nRun;
 
 public class pAnk {
 	
@@ -260,7 +261,7 @@ public class pAnk {
 		ANK_GRAB_BASE_SIZE = RS * 5f / 8f;
 
 		book.newModel("AN_ref")
-		.set_color_background(app.color(0,0))
+		.set_color_background(Utl.color(0,0))
 		.setDraw(false)
 		.setActAsRoot(true)
 		.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM) // TOP   BOTTOM
@@ -273,11 +274,11 @@ public class pAnk {
 		.setGrabbRoot(true)
 		.setHoverableZone(true)
 		.setRectOrigin(nAlign.CENTER,nAlign.CENTER) // TOP   BOTTOM
-		.set_color_background(app.color(0,0))
-		.set_color_pressed(app.color(210,60))
-		.set_color_hovered(app.color(210,120))
-		.set_color_standby(app.color(0,0))
-		.set_color_outline(app.color(200,200,0,255))
+		.set_color_background(Utl.color(0,0))
+		.set_color_pressed(Utl.color(210,60))
+		.set_color_hovered(Utl.color(210,120))
+		.set_color_standby(Utl.color(0,0))
+		.set_color_outline(Utl.color(200,200,0,255))
 		.setOutline(true)
 		.setOutlineConstant(true)
 		.setOutlineWeight(ANK_GRAB_BASE_SIZE/5f)

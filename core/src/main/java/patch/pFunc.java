@@ -5,18 +5,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nMap;
-import app.nPool;
-import app.nQuickPool;
-import app.nRun;
 
+import app.Applet;
 import data.sValueBloc;
 import gui.nWidget;
 import patch.pTile.CT;
 import plane.pBody;
 import plane.pParam;
 import plane.pSpace;
+import util.Utl;
+import util.nMap;
+import util.nPool;
+import util.nQuickPool;
+import util.nRun;
 
 public class pFunc {
 
@@ -57,7 +58,7 @@ public class pFunc {
 					stand.run(pTile.getRun(CT.ADD_OBTAIN_PLUG), ma.ref, "arr");
 				else if (ma.arg_class != null)
 					stand.run(pTile.getRun(CT.ADD_OBTAIN_PLUG), ma.ref, 
-						Applet.type_class_type.get(ma.arg_class)); 
+							Utl.type_class_type.get(ma.arg_class)); 
 				else stand.run(pTile.getRun(CT.ADD_OBTAIN_PLUG), ma.ref, "all"); }
 			
 			nRun ope_run = new nRun() {public Object get() {
@@ -100,7 +101,7 @@ public class pFunc {
 			
 			String filter = ope.ret_filter;
 			if (filter == null && ope.ret_class != null) 
-				filter = Applet.type_class_type.get(ope.ret_class);
+				filter = Utl.type_class_type.get(ope.ret_class);
 			if (filter != null) stand.openSec().param("offer", ope_run)
 				.run(pTile.getRun(CT.ADD_OFFER_PLUG), "out", filter).closeSec();
 			else stand.openSec().param("offer", ope_run)
@@ -135,7 +136,7 @@ public class pFunc {
 			if (args.length >= 2) {
 				Object ent = arg(1, Object.class);
 				instance.get("add_at", pInstance.class, "entry", 
-						Applet.type_class_type.get(ent.getClass()), "out");
+						Utl.type_class_type.get(ent.getClass()), "out");
 				instance.get("set_var", pInstance.class, "value", ent);
 				instance.get("get_last", pInstance.class);
 				int cnt = 2;
@@ -143,7 +144,7 @@ public class pFunc {
 					instance.get("add_at", pInstance.class, "array", "arr", "out");
 					Object nent = arg(cnt, Object.class);
 					instance.get("add_at", pInstance.class, "entry", 
-							Applet.type_class_type.get(nent.getClass()), "out");
+							Utl.type_class_type.get(nent.getClass()), "out");
 					instance.get("set_var", pInstance.class, "value", nent);
 					instance.get("get_last", pInstance.class);
 					cnt++;
@@ -164,7 +165,7 @@ public class pFunc {
 			if (args.length >= 2) {
 				Object ent = arg(1, Object.class);
 				instance.get("add_at", pInstance.class, "entry", 
-						Applet.type_class_type.get(ent.getClass()), "out");
+						Utl.type_class_type.get(ent.getClass()), "out");
 				instance.get("set_var", pInstance.class, "value", ent);
 				instance.get("get_last", pInstance.class);
 				int cnt = 2;
@@ -172,7 +173,7 @@ public class pFunc {
 					instance.get("add_at", pInstance.class, "array", "arr", "out");
 					Object nent = arg(cnt, Object.class);
 					instance.get("add_at", pInstance.class, "entry", 
-							Applet.type_class_type.get(nent.getClass()), "out");
+							Utl.type_class_type.get(nent.getClass()), "out");
 					instance.get("set_var", pInstance.class, "value", nent);
 					instance.get("get_last", pInstance.class);
 					cnt++;
@@ -218,7 +219,7 @@ public class pFunc {
 					stand.run(pTile.getRun(CT.ADD_OBTAIN_PLUG), ma.ref, "arr");
 				else if (ma.arg_class != null)
 				stand.run(pTile.getRun(CT.ADD_OBTAIN_PLUG), ma.ref, 
-						Applet.type_class_type.get(ma.arg_class)); 
+						Utl.type_class_type.get(ma.arg_class)); 
 				else stand.run(pTile.getRun(CT.ADD_OBTAIN_PLUG), ma.ref, "all"); }
 
 			if (ins.stand_run != null) {
@@ -387,7 +388,7 @@ public class pFunc {
 		
 		for (int i = 0 ; i < ins.arg_nb ; i++) {
 			script_builder.com(i);
-			String arg_ref = Applet.copy(ins.args[i].ref);
+			String arg_ref = Utl.copy(ins.args[i].ref);
 //			Data ma = ins.args[i];
 			if (instance.get("get_plug", pInstance.class, arg_ref) != null && 
 					instance.get("get_plug", pInstance.class, arg_ref)
@@ -442,7 +443,7 @@ public class pFunc {
 		
 		for (int i = 0 ; i < ope.arg_nb ; i++) {
 			script_builder.com(i);
-			String arg_ref = Applet.copy(ope.args[i].ref);
+			String arg_ref = Utl.copy(ope.args[i].ref);
 //			Data ma = ope.args[i];
 			if (instance.get("get_plug", pInstance.class, arg_ref) != null && 
 					instance.get("get_plug", pInstance.class, arg_ref)
@@ -483,7 +484,7 @@ public class pFunc {
 		if (popC(script) != C.START) return;
 
 		pInstance result_inst = inst;
-		Object[] result_passed_arg = Applet.duplic(passed_arg);
+		Object[] result_passed_arg = Utl.duplic(passed_arg);
 		
 		boolean pass = true; boolean run_script = true; int cnt = 0;
 
@@ -527,7 +528,7 @@ public class pFunc {
 		
 		C result = virt.execute(inst, C.class);
 		
-//		Applet.logg("instruc: "+code.name()+" "+ins_id);
+//		Utl.logg("instruc: "+code.name()+" "+ins_id);
 
 		pInstance parent_inst = virt.result_inst.patch.sheets.get("function")
 				.tile_pool.get(virt.inst_ref);
@@ -553,15 +554,15 @@ public class pFunc {
 				.tile_pool.get(virt.inst_ref);
 		if (parent_inst != null) parent_inst.run("highlight");
 		
-		if (parent_inst != null && result != null && Applet.type_is_used(result.getClass()) && 
+		if (parent_inst != null && result != null && Utl.type_is_used(result.getClass()) && 
 				parent_inst.get("get_plug", pInstance.class, "out")
 				.getInst("plugged") != null && 
 				parent_inst.get("get_plug", pInstance.class, "out")
 				.getInst("plugged").getInst("tile").hasVar("watch")) {
 			parent_inst.get("get_plug", pInstance.class, "out")
-			.getInst("plugged").getInst("tile").setVar("watch", Applet.to_string(result)); }
+			.getInst("plugged").getInst("tile").setVar("watch", Utl.to_string(result)); }
 
-//		Applet.logg(""+result); 
+//		Utl.logg(""+result); 
 		
 		virt.free();
 		return result;
@@ -686,7 +687,7 @@ public class pFunc {
 					if (arg_size > 2 && peekC(script) == C.INT) {
 						ArrayList<Object> l = new ArrayList<Object>();
 						pop(script, arg_size - 2, l);
-						script_args[i] = Applet.duplic(l);
+						script_args[i] = Utl.duplic(l);
 						pop_cnt++;
 					} else {
 						script_args[i] = null;
@@ -745,7 +746,7 @@ public class pFunc {
 				String r = arg(0, String.class);
 				if (r.equals("exec_in_instance")) return false;
 				if (r.equals("tile_node")) return result_inst;
-				if (r.equals("passed_arg")) return Applet.copy(result_passed_arg);
+				if (r.equals("passed_arg")) return Utl.copy(result_passed_arg);
 				if (scr == null || !scr.data_type.hasKey(r)) return null;
 				if (scr.data_type.get(r) == scr_data_type[0]) {
 					return result_vars[scr.data_index.get(r)];
@@ -764,7 +765,7 @@ public class pFunc {
 			return scr.run.do_get(inst, ct, get_answer()); }
 		
 		public void set_result_passed_arg(Object[] a) { if (a == null) return;
-			for (int i = 0 ; i < a.length ; i++) result_passed_arg[i] = Applet.copy(a[i]); }
+			for (int i = 0 ; i < a.length ; i++) result_passed_arg[i] = Utl.copy(a[i]); }
 		public void free() { virtual_pool.free(this); }
 		public void pool_init() { reset(); }
 		public void reset() {
@@ -817,7 +818,7 @@ public class pFunc {
 	
 	public enum C {
 		//primitive
-		FLT, INT, BOO, STR, VEC, // same order as GDWApplet.data_type
+		FLT, INT, BOO, STR, VEC, // same order as GDWUtl.data_type
 		
 		//flag
 		CODE, NULL, SCRIPT_END, 
@@ -844,7 +845,7 @@ public class pFunc {
 		NEXT, STOP, JUMP
 	}
 	
-	// same order as GDWApplet.data_type
+	// same order as GDWUtl.data_type
 	public static final C[] types_codes = new C[] { C.FLT, C.INT, C.BOO, C.STR, C.VEC };
 	
 	public static final HashMap<Integer,C> int_to_code = new HashMap<Integer,C>();
@@ -860,25 +861,25 @@ public class pFunc {
 		int cnt = 0;
 		for (C c : C.values()) { int_to_code.put(cnt,c); code_to_int.put(c,cnt); cnt++; }
 		cnt = 0;
-		for (Class<?> cl : Applet.data_type) { code_to_class.put(types_codes[cnt], cl); }
+		for (Class<?> cl : Utl.data_type) { code_to_class.put(types_codes[cnt], cl); }
 	}
 	
 	public static class ScriptBuilder {
 		ArrayList<Object[]> coms = new ArrayList<Object[]>();
 		public ScriptBuilder() {}
 		public ScriptBuilder com(Object d) {
-			if (!Applet.type_is_used(d.getClass())) return this;
+			if (!Utl.type_is_used(d.getClass())) return this;
 			Object[] l = new Object[2];
-			l[0] = code_to_int.get(types_codes[Applet.type_class_index.get(d.getClass())]);
-			l[1] = Applet.copy(d); 
+			l[0] = code_to_int.get(types_codes[Utl.type_class_index.get(d.getClass())]);
+			l[1] = Utl.copy(d); 
 			coms.add(l); return this; }
 		public ScriptBuilder com(C c) {
 			coms.add(new Object[] { code_to_int.get(C.CODE), code_to_int.get(c) }); return this; }
-		public ScriptBuilder com(Object[] d) { if (d != null) coms.add(Applet.duplic(d)); return this; }//if (d != null) 
+		public ScriptBuilder com(Object[] d) { if (d != null) coms.add(Utl.duplic(d)); return this; }//if (d != null) 
 		public Object[] get() {
 			int l = 2; for (Object[] ol : coms) l += ol.length;//if (ol != null) 
 			Object[] list = new Object[l];
-			list[0] = code_to_int.get(types_codes[Applet.type_class_index.get(Integer.class)]);
+			list[0] = code_to_int.get(types_codes[Utl.type_class_index.get(Integer.class)]);
 			list[1] = l;
 			l = 2; 
 			for (Object[] ol : coms) {//if (ol != null) 

@@ -6,9 +6,9 @@ import java.util.HashSet;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
-import app.nRun;
 
 import net.nNetwork.*;
+import util.nRun;
 
 
 public class nServer extends nNetEntity {

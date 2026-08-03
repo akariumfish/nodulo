@@ -5,10 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.utils.Pool.Poolable;
-import app.Applet;
-import app.nRun;
 
+import app.Applet;
 import data.*;
+import util.Utl;
+import util.nRun;
 
 public class nInterface  implements Poolable {
 	
@@ -439,7 +440,7 @@ public class nInterface  implements Poolable {
 
 	public nWidgetGroup add_treelist(int width, int height) {
 		if (current_row == null) { add_row(); }
-		newCommand(Code.TREELIST, Applet.tostr(width), Applet.tostr(height));
+		newCommand(Code.TREELIST, Utl.tostr(width), Utl.tostr(height));
 		if (is_pop && current_row != null) {
 			nWidget ent = add_row_entry(width);
 			ent.setSY(ent.getLocalSY() * height);
@@ -465,7 +466,7 @@ public class nInterface  implements Poolable {
 
 	public nWidgetGroup add_picklist(int width, int height) {
 		if (current_row == null) { add_row(); }
-		newCommand(Code.PICKLIST, Applet.tostr(width), Applet.tostr(height));
+		newCommand(Code.PICKLIST, Utl.tostr(width), Utl.tostr(height));
 		if (is_pop && current_row != null) {
 			nWidget ent = add_row_entry(width);
 			ent.setSY(ent.getLocalSY() * height);
@@ -491,7 +492,7 @@ public class nInterface  implements Poolable {
 
 	public nWidgetGroup add_scrollist(int width, int height) {
 		if (current_row == null) { add_row(); }
-		newCommand(Code.SCROLLIST, Applet.tostr(width), Applet.tostr(height));
+		newCommand(Code.SCROLLIST, Utl.tostr(width), Utl.tostr(height));
 		if (is_pop && current_row != null) {
 			nWidget ent = add_row_entry(width);
 			ent.setSY(ent.getLocalSY() * height);
@@ -520,7 +521,7 @@ public class nInterface  implements Poolable {
 		if (current_list != null) {
 			if (current_list.model_ref.equals("scrollist")) {
 				nWidget w = gui.addWidget("list_entry", txt);
-				float height = Applet.tofloat(params.get("entry_height"));
+				float height = Utl.tofloat(params.get("entry_height"));
 				w.setSY(w.getLocalSY() * height);
 				current_list.metodeGet("add_widget_as_entry", 
 						current_list.addWidget("list_entry_"+txt+"_"+list_ent_nb, w));
@@ -536,7 +537,7 @@ public class nInterface  implements Poolable {
 //					w.setSwitch();
 					nWidget wh = (nWidget)current_list.metodeGet("add_sub_entry", 
 							w, txt+" ");
-					wh.set_color_background(app.color(0,0));
+					wh.set_color_background(Utl.color(0,0));
 					wh.setPassif();
 					current_tree_entry = w;
 					return w;
@@ -547,7 +548,7 @@ public class nInterface  implements Poolable {
 //					w.setSwitch();
 					nWidget wh = (nWidget)current_list.metodeGet("add_sub_entry", 
 							w, txt+" ");
-					wh.set_color_background(app.color(0,0));
+					wh.set_color_background(Utl.color(0,0));
 					wh.setPassif();
 					current_tree_entry = w;
 					return w;
@@ -600,7 +601,7 @@ public class nInterface  implements Poolable {
 	}
 	
 	public nWidget get_row_entry_widget(int width) { 
-		width = (int)(width * Applet.tofloat(params.get("entry_width")));
+		width = (int)(width * Utl.tofloat(params.get("entry_width")));
 		
 		if (gui.book.getModel(params.get("row_entry_model")+width) == null) {
 			gui.book.newModel("INT_row_entry_"+width)
@@ -609,14 +610,14 @@ public class nInterface  implements Poolable {
 			.setBoundParent(true)
 			.setStacked(true)
 			.setBoundOutspace(0)
-			.set_color_background(app.color(0,0))
+			.set_color_background(Utl.color(0,0))
 			;
 		}
 		
 		nWidget ent = group.addWidget("ent_"+ent_nb, 
 				params.get("row_entry_model")+width);
 		ent_nb++;
-		float height = Applet.tofloat(params.get("entry_height"));
+		float height = Utl.tofloat(params.get("entry_height"));
 		ent.setSY(ent.getLocalSY() * height);
 		if (!params.get("entry_colors")
 				.equals(handler.params_def.get("entry_colors"))) {
@@ -632,7 +633,7 @@ public class nInterface  implements Poolable {
 	}
 
 	public nWidget get_row_button_widget(int width) { 
-		width = (int)(width * Applet.tofloat(params.get("entry_width")));
+		width = (int)(width * Utl.tofloat(params.get("entry_width")));
 		
 
 		if (gui.book.getModel(params.get("row_entry_button_model")+width) == null) {
@@ -642,14 +643,14 @@ public class nInterface  implements Poolable {
 			.setBoundParent(true)
 			.setStacked(true)
 			.setBoundOutspace(0)
-			.set_color_background(app.color(0,0))
+			.set_color_background(Utl.color(0,0))
 			;
 		}
 		
 		nWidget ent = group.addWidget("ent_"+ent_nb, 
 				params.get("row_entry_button_model")+width);
 		ent_nb++;
-		float height = Applet.tofloat(params.get("entry_height"));
+		float height = Utl.tofloat(params.get("entry_height"));
 		ent.setSY(ent.getLocalSY() * height);
 		if (!params.get("entry_colors")
 				.equals(handler.params_def.get("entry_colors"))) {
@@ -701,7 +702,7 @@ public class nInterface  implements Poolable {
 			
 			nWidget col = group.addWidget("col_"+col_nb, "INT_col");
 			col_nb++;
-			col.setStackSpacing(Applet.tofloat(params.get("spacing")));
+			col.setStackSpacing(Utl.tofloat(params.get("spacing")));
 
 			nWidget ent = group.addWidget("ent_"+ent_nb, "INT_col_back");
 			ent_nb++;
@@ -730,7 +731,7 @@ public class nInterface  implements Poolable {
 				group.get("filler").clear();
 			}
 			current_line = group.addWidget("line_"+line_nb, "INT_col_line");
-			current_line.setStackSpacing(Applet.tofloat(params.get("spacing")));
+			current_line.setStackSpacing(Utl.tofloat(params.get("spacing")));
 			line_nb++;
 			current_line.setParent(ref);
 		}
@@ -742,7 +743,7 @@ public class nInterface  implements Poolable {
 		newCommand(Code.COL);
 		if (is_pop && current_line != null) {
 			current_col = group.addWidget("col_"+col_nb, "INT_col");
-			current_col.setStackSpacing(Applet.tofloat(params.get("spacing")));
+			current_col.setStackSpacing(Utl.tofloat(params.get("spacing")));
 			col_nb++;
 			current_col.setParent(current_line);
 		}
@@ -754,7 +755,7 @@ public class nInterface  implements Poolable {
 		newCommand(Code.ROW);
 		if (is_pop && current_col != null) {
 			current_row = group.addWidget("row_"+row_nb, "INT_row");
-			current_row.setStackSpacing(Applet.tofloat(params.get("spacing")));
+			current_row.setStackSpacing(Utl.tofloat(params.get("spacing")));
 			row_nb++;
 			current_row.setParent(current_col);
 			return current_row;
@@ -850,7 +851,7 @@ public class nInterface  implements Poolable {
 
 	public nWidget add_row_label(int width, String text) {
 		if (current_row == null) { add_row(); }
-		newCommand(Code.ROW_LAB, Applet.tostr(width), text);
+		newCommand(Code.ROW_LAB, Utl.tostr(width), text);
 		if (is_pop && current_row != null) {
 			nWidget ent = add_row_entry(width);
 			ent.setText(text);
@@ -860,7 +861,7 @@ public class nInterface  implements Poolable {
 	}
 	public nWidget add_row_trigg(int width, String text) {
 		if (current_row == null) { add_row(); }
-		newCommand(Code.ROW_TRI, Applet.tostr(width), text);
+		newCommand(Code.ROW_TRI, Utl.tostr(width), text);
 		if (is_pop && current_row != null) {
 			nWidget ent = add_row_entry_button(width);
 			ent.setTrigger()
@@ -871,7 +872,7 @@ public class nInterface  implements Poolable {
 	}
 	public nWidget add_row_trigg(int width, String text, nRun r) {
 		if (current_row == null) { add_row(); }
-		newCommand(Code.ROW_TRI, Applet.tostr(width), text);
+		newCommand(Code.ROW_TRI, Utl.tostr(width), text);
 		if (is_pop && current_row != null) {
 			nWidget ent = add_row_entry_button(width);
 			ent.addEventTrigger(r)
@@ -883,7 +884,7 @@ public class nInterface  implements Poolable {
 	}
 	public nWidget add_row_trigg_build(int width, String text, String buildref) {
 		if (current_row == null) { add_row(); }
-		newCommand(Code.ROW_TRI_BLD, Applet.tostr(width), text, buildref);
+		newCommand(Code.ROW_TRI_BLD, Utl.tostr(width), text, buildref);
 		if (is_pop && current_row != null) {
 			nWidget ent = add_row_entry_button(width);
 			if (context_bloc != null) {
@@ -897,7 +898,7 @@ public class nInterface  implements Poolable {
 	}
 	public nWidget add_row_trigg_met(int width, String text, String metoderef) {
 		if (current_row == null) { add_row(); }
-		newCommand(Code.ROW_TRI_M, Applet.tostr(width), text, metoderef);
+		newCommand(Code.ROW_TRI_M, Utl.tostr(width), text, metoderef);
 		if (is_pop && current_row != null) {
 			nWidget ent = add_row_entry_button(width);
 			if (context_bloc != null) {
@@ -911,7 +912,7 @@ public class nInterface  implements Poolable {
 	}
 	public nWidget add_row_switch(int width, String text) {
 		if (current_row == null) { add_row(); }
-		newCommand(Code.ROW_SWT_R, Applet.tostr(width), text);
+		newCommand(Code.ROW_SWT_R, Utl.tostr(width), text);
 		if (is_pop && current_row != null) {
 			nWidget ent = add_row_entry_button(width);
 			ent.setSwitch()
@@ -922,7 +923,7 @@ public class nInterface  implements Poolable {
 	}
 	public nWidget add_row_switch_run(int width, String text, nRun r) {
 		if (current_row == null) { add_row(); }
-		newCommand(Code.ROW_SWT_R, Applet.tostr(width), text);
+		newCommand(Code.ROW_SWT_R, Utl.tostr(width), text);
 		if (is_pop && current_row != null) {
 			nWidget ent = add_row_entry_button(width);
 			ent.addEventSwitch(r)
@@ -936,7 +937,7 @@ public class nInterface  implements Poolable {
 
 	public nWidget add_row_switch_boo(int width, String text, String val_ref) {
 		if (current_row == null) { add_row(); }
-		newCommand(Code.ROW_SWT_B, Applet.tostr(width), text, val_ref);
+		newCommand(Code.ROW_SWT_B, Utl.tostr(width), text, val_ref);
 		if (is_pop && current_row != null) {
 			nWidget ent = add_row_entry_button(width);
 			ent.setSwitch()
@@ -967,7 +968,7 @@ public class nInterface  implements Poolable {
 	}
 	public nWidget add_row_field(int width, String text) {
 		if (current_row == null) { add_row(); }
-		if (current_row != null) newCommand(Code.ROW_FLD, Applet.tostr(width), text);
+		if (current_row != null) newCommand(Code.ROW_FLD, Utl.tostr(width), text);
 		if (is_pop && current_row != null) {
 			nWidget ent = add_row_entry(width);
 			ent.setField(true)
@@ -979,7 +980,7 @@ public class nInterface  implements Poolable {
 	}
 	public nWidget add_row_field_str(int width, String text, String val_ref) {
 		if (current_row == null) { add_row(); }
-		if (current_row != null) newCommand(Code.ROW_FLD_S, Applet.tostr(width), text, val_ref);
+		if (current_row != null) newCommand(Code.ROW_FLD_S, Utl.tostr(width), text, val_ref);
 		if (is_pop && current_row != null) {
 			nWidget ent = add_row_entry(width);
 			ent.setField(true)
@@ -995,7 +996,7 @@ public class nInterface  implements Poolable {
 	
 	public nWidget add_row_field_flt(int width, String text, String val_ref) {
 		if (current_row == null) { add_row(); }
-		if (current_row != null) newCommand(Code.ROW_FLD_F, Applet.tostr(width), text, val_ref);
+		if (current_row != null) newCommand(Code.ROW_FLD_F, Utl.tostr(width), text, val_ref);
 		if (is_pop && current_row != null) {
 			nWidget ent = add_row_entry(width);
 			ent.setField(true)
@@ -1011,7 +1012,7 @@ public class nInterface  implements Poolable {
 	
 	public nWidget add_row_watch(int width, String text, String val_ref) {
 		if (current_row == null) { add_row(); }
-		if (current_row != null) newCommand(Code.ROW_WTC, Applet.tostr(width), text, val_ref);
+		if (current_row != null) newCommand(Code.ROW_WTC, Utl.tostr(width), text, val_ref);
 		if (is_pop && current_row != null) {
 			nWidget ent = add_row_entry(width);
 			if (context_bloc != null) {
@@ -1025,7 +1026,7 @@ public class nInterface  implements Poolable {
 	
 
 	public nWidget add_col_incr_int(String text, String val_ref, int fact) {
-		return add_col_incr_int(text, val_ref, Applet.tostr(fact)); }
+		return add_col_incr_int(text, val_ref, Utl.tostr(fact)); }
 	public nWidget add_col_incr_int(String text, String val_ref, String inc_fact) {
 		if (current_col == null) { add_col(); }
 		if (current_col != null) newCommand(Code.COL_INC_I, text, val_ref, inc_fact);
@@ -1036,7 +1037,7 @@ public class nInterface  implements Poolable {
 			ent.setParent(current_col);
 			 
 			nWidget add2 = get_row_entry_widget(1);
-			add2.setParent(ent); add2.setTrigger().setText("+" + 10*Applet.tofloat(inc_fact));
+			add2.setParent(ent); add2.setTrigger().setText("+" + 10*Utl.tofloat(inc_fact));
 			nWidget add1 = get_row_entry_widget(1);
 			add1.setParent(ent); add1.setTrigger().setText("+" + inc_fact);
 			
@@ -1044,13 +1045,13 @@ public class nInterface  implements Poolable {
 			wtc.setParent(ent); wtc.setText(text);
 			
 			nWidget sub1 = get_row_entry_widget(1);
-			sub1.setParent(ent); sub1.setTrigger().setText("" + -1*Applet.tofloat(inc_fact));
+			sub1.setParent(ent); sub1.setTrigger().setText("" + -1*Utl.tofloat(inc_fact));
 			nWidget sub2 = get_row_entry_widget(1);
-			sub2.setParent(ent); sub2.setTrigger().setText("" + -10*Applet.tofloat(inc_fact));
+			sub2.setParent(ent); sub2.setTrigger().setText("" + -10*Utl.tofloat(inc_fact));
 			if (context_bloc != null) {
 				sValue v = context_bloc.getValue(val_ref);
 				if (v != null) {
-					int inc = Applet.toint(inc_fact);
+					int inc = Utl.toint(inc_fact);
 					add1.setLink((sInt)v, inc, 1); 
 					add2.setLink((sInt)v, 10*inc, 1); 
 					wtc.setWatcher(text, v);
@@ -1064,7 +1065,7 @@ public class nInterface  implements Poolable {
 	}
 	
 	public nWidget add_col_incr_flt(String text, String val_ref, float fact) {
-		return add_col_incr_flt(text, val_ref, Applet.tostr(fact)); }
+		return add_col_incr_flt(text, val_ref, Utl.tostr(fact)); }
 	public nWidget add_col_incr_flt(String text, String val_ref, String inc_fact) {
 		if (current_col == null) { add_col(); }
 		if (current_col != null) newCommand(Code.COL_INC_F, text, val_ref, inc_fact);
@@ -1075,7 +1076,7 @@ public class nInterface  implements Poolable {
 			ent.setParent(current_col);
 			
 			nWidget add2 = get_row_entry_widget(1);
-			add2.setParent(ent); add2.setTrigger().setText("+" + 10*Applet.tofloat(inc_fact));
+			add2.setParent(ent); add2.setTrigger().setText("+" + 10*Utl.tofloat(inc_fact));
 			nWidget add1 = get_row_entry_widget(1);
 			add1.setParent(ent); add1.setTrigger().setText("+" + inc_fact);
 			
@@ -1083,13 +1084,13 @@ public class nInterface  implements Poolable {
 			wtc.setParent(ent); wtc.setText(text);
 			
 			nWidget sub1 = get_row_entry_widget(1);
-			sub1.setParent(ent); sub1.setTrigger().setText("" + -1*Applet.tofloat(inc_fact));
+			sub1.setParent(ent); sub1.setTrigger().setText("" + -1*Utl.tofloat(inc_fact));
 			nWidget sub2 = get_row_entry_widget(1);
-			sub2.setParent(ent); sub2.setTrigger().setText("" + -10*Applet.tofloat(inc_fact));
+			sub2.setParent(ent); sub2.setTrigger().setText("" + -10*Utl.tofloat(inc_fact));
 			if (context_bloc != null) {
 				sValue v = context_bloc.getValue(val_ref);
 				if (v != null) {
-					float inc = Applet.tofloat(inc_fact);
+					float inc = Utl.tofloat(inc_fact);
 					add1.setLink((sFlt)v, inc, 1.0f); 
 					add2.setLink((sFlt)v, 10*inc, 1.0f); 
 					wtc.setWatcher(text, v);
@@ -1103,7 +1104,7 @@ public class nInterface  implements Poolable {
 	}
 	
 	public nWidget add_col_fact_flt(String text, String val_ref, float fact) {
-		return add_col_fact_flt(text, val_ref, Applet.tostr(fact)); }
+		return add_col_fact_flt(text, val_ref, Utl.tostr(fact)); }
 	public nWidget add_col_fact_flt(String text, String val_ref, String fact) {
 		if (current_col == null) { add_col(); }
 		if (current_col != null) newCommand(Code.COL_FAC_F, text, val_ref, fact);
@@ -1128,7 +1129,7 @@ public class nInterface  implements Poolable {
 			if (context_bloc != null) {
 				sValue v = context_bloc.getValue(val_ref);
 				if (v != null) {
-					float fct = Applet.tofloat(fact);
+					float fct = Utl.tofloat(fact);
 					add1.setLink((sFlt)v, 0f, (float)Math.sqrt(fct)); 
 					add2.setLink((sFlt)v, 0f, fct); 
 					wtc.setWatcher("<x "+text, v, " />");
@@ -1143,7 +1144,7 @@ public class nInterface  implements Poolable {
 
 	public nWidget add_row_slide(int width, float min, float max) { 
 		if (current_row == null) { add_row(); }
-		if (current_row != null) newCommand(Code.ROW_SLD, Applet.tostr(width), Applet.tostr(min), Applet.tostr(max));
+		if (current_row != null) newCommand(Code.ROW_SLD, Utl.tostr(width), Utl.tostr(min), Utl.tostr(max));
 		if (is_pop && current_row != null) {
 			nWidget ent = add_row_entry(width);
 			ent.setSlider()
@@ -1155,7 +1156,7 @@ public class nInterface  implements Poolable {
 
 	public nWidget add_row_slide_flt(int width, float min, float max, String val_ref) { 
 		if (current_row == null) { add_row(); }
-		if (current_row != null) newCommand(Code.ROW_SLD_F, Applet.tostr(width), Applet.tostr(min), Applet.tostr(max), val_ref);
+		if (current_row != null) newCommand(Code.ROW_SLD_F, Utl.tostr(width), Utl.tostr(min), Utl.tostr(max), val_ref);
 		if (is_pop && current_row != null) {
 			nWidget ent = add_row_entry(width);
 			ent.setSlider()
@@ -1170,7 +1171,7 @@ public class nInterface  implements Poolable {
 
 	public nWidget add_row_slide_int(int width, float min, float max, String val_ref) {
 		if (current_row == null) { add_row(); }
-		if (current_row != null) newCommand(Code.ROW_SLD_I, Applet.tostr(width), Applet.tostr(min), Applet.tostr(max), val_ref);
+		if (current_row != null) newCommand(Code.ROW_SLD_I, Utl.tostr(width), Utl.tostr(min), Utl.tostr(max), val_ref);
 		if (is_pop && current_row != null) {
 			nWidget ent = add_row_entry(width);
 			ent.setSlider()

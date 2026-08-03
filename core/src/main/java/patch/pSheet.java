@@ -12,10 +12,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import app.Applet;
-import app.nMap;
-import app.nPool;
-import app.nRun;
-
+import app.GdxApp;
 import data.*;
 import data.sPool.State;
 import gui.*;
@@ -28,6 +25,10 @@ import plane.pProperty;
 import plane.pSpace;
 import plane.pSystem;
 import plane.pView;
+import util.Utl;
+import util.nMap;
+import util.nPool;
+import util.nRun;
 
 public class pSheet {
 
@@ -77,7 +78,7 @@ public class pSheet {
 	public static SheetModel newSheet(String ref) { return newSheet(ref, false); }
 	public static SheetModel newSheet(String ref, boolean def_collapse) {
 		if (sheet_builders.hasKey("sheet_builder_"+ref)) {
-			Applet.app.logn("ERROR: cant create sheet bloc_builder, <"+ref+"> allready exist"); return null; }
+			GdxApp.app.logn("ERROR: cant create sheet bloc_builder, <"+ref+"> allready exist"); return null; }
 		
 		sBloc_Builder new_builder = new sBloc_Builder(sheet_app.data, "sheet_builder_"+ref)
 			.setInitRun(new nRun() { public void run(Object o) {
@@ -95,7 +96,7 @@ public class pSheet {
 		pPatch.builder.addEventInit(new nRun() { public void run(Object o) {
 			sValueBloc b = (sValueBloc)o; b.addBlocBuilder(new_builder); 
 			if (b.is_new_bloc) {
-				sheet_app.exec_nothrow("pPatch.bloc.buildBloc("+ref+")", 
+				sheet_app.gdx.exec_nothrow("pPatch.bloc.buildBloc("+ref+")", 
 						new nRun() { public void run() {	
 					b.buildBloc("sheet_builder_"+ref, ref); }}); }
 		}});
@@ -147,12 +148,12 @@ public class pSheet {
 			patch.select_sheet.unselect_sheet();
 		patch.select_sheet = this;
 		selected = true;
-		sheet_bound_bound.set_color_outline(app.color(0,200,200,255));
+		sheet_bound_bound.set_color_outline(Utl.color(0,200,200,255));
 	}
 	public void unselect_sheet() {
 		if (patch.select_sheet == this) {
 			selected = false;
-			sheet_bound_bound.set_color_outline(app.color(0,60,200,255));
+			sheet_bound_bound.set_color_outline(Utl.color(0,60,200,255));
 			patch.unselect_all(); 
 			patch.select_sheet = null;
 		}
@@ -184,7 +185,7 @@ public class pSheet {
 	public pSheet() {}
 	public pSheet init(sValueBloc b, String m) {
 		bloc = b; app = b.app;
-		sheet_model = Applet.copy(m);
+		sheet_model = Utl.copy(m);
 		model = sheet_models.get(m);
 		plane = b.parent.object("plane", pPlane.class);
 		bloc.addObject("plane", plane);
@@ -225,7 +226,7 @@ public class pSheet {
 			Vector2 m = new Vector2(app.input.mouse);
 			m.set(sheet_link_draw.revertWarp(m));
 			for (pInstance c : cos) c.run("draw"); 
-			for (pInstance c : Applet.duplic(node_links)) c.run("draw", m); 
+			for (pInstance c : Utl.duplic(node_links)) c.run("draw", m); 
 			if (patch.linking_node_co != null && patch.linking_node_co.sheet == sheet) {
 				Vector2 pos = patch.linking_node_co.get("getCenter", Vector2.class);
 				if (pos == null) return;
@@ -526,14 +527,14 @@ public class pSheet {
 		inst_pool.load_3();
 		link_pool.load_3();
 
-		for (pInstance b : Applet.duplic(inst_pool.all())) b.do_point_after_load();
-		for (pInstance b : Applet.duplic(ent_pool.all())) b.do_point_after_load();
-		for (pInstance b : Applet.duplic(link_pool.all())) b.do_point_after_load();
+		for (pInstance b : Utl.duplic(inst_pool.all())) b.do_point_after_load();
+		for (pInstance b : Utl.duplic(ent_pool.all())) b.do_point_after_load();
+		for (pInstance b : Utl.duplic(link_pool.all())) b.do_point_after_load();
 
 		app.addDelayEvent(1, new nRun() { public void run() {
-			for (pInstance b : Applet.duplic(cos)) b.run("run_event_link"); 
-			for (pInstance b : Applet.duplic(plugs)) b.run("run_event_link");
-			for (pInstance b : Applet.duplic(node_plugs)) b.run("run_event_link");  }});
+			for (pInstance b : Utl.duplic(cos)) b.run("run_event_link"); 
+			for (pInstance b : Utl.duplic(plugs)) b.run("run_event_link");
+			for (pInstance b : Utl.duplic(node_plugs)) b.run("run_event_link");  }});
 
 		run_collapse.run();
 	}
@@ -653,7 +654,7 @@ public class pSheet {
 		book.newModel("SB_ref")
 //		.setPassif()
 //		.setBoundParent(true)
-		.set_color_background(app.color(0,0))
+		.set_color_background(Utl.color(0,0))
 		.setDraw(false)
 		.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM) // TOP CENTER  BOTTOM
 		.setBoundOutspace(0)
@@ -661,10 +662,10 @@ public class pSheet {
 		;
 
 		book.newModel("SB_bound")
-		.set_color_background(app.color(0,0))
+		.set_color_background(Utl.color(0,0))
 		.setPassif()
 		.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM) // TOP   BOTTOM
-		.set_color_outline(app.color(0,60,200,255))
+		.set_color_outline(Utl.color(0,60,200,255))
 		.setOutline(true)
 		.setOutlineWeight(RS/15f)
 		.setOutlineConstant(true)
@@ -713,7 +714,7 @@ public class pSheet {
 
 		book.newModel("SB_fx")
 //		.setRect(0,0,RS*15f,RS*10f)
-		.set_color_background(app.color(0, 0, 0, 0))
+		.set_color_background(Utl.color(0, 0, 0, 0))
 //		.setBoundParent(true)
 //		.setBoundChild(true)
 //		.setBoundOutspace(0f)

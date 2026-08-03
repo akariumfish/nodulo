@@ -3,7 +3,7 @@ package plane;
 import java.util.ArrayList;
 
 import app.Applet;
-
+import util.Utl;
 import data.*;
 
 public class pCollec extends sPoolable {
@@ -54,7 +54,7 @@ public class pCollec extends sPoolable {
 		cnt += length;
 		
 	}
-	private void set(Object[] c, int i, Object data) { c[i] = Applet.copy(data); }
+	private void set(Object[] c, int i, Object data) { c[i] = Utl.copy(data); }
 	public void to_array(Object[] c) {
 		int cnt = 0;
 		
@@ -140,7 +140,7 @@ public class pCollec extends sPoolable {
 			if (so != null) fill = (int)so;
 			String type = prop.getCollecData(ref_in_prop);
 			for (int j = 0 ; j < fill ; j++) {
-				String a = Applet.to_string(Applet.new_object(Applet.type_ref_class.get(type)));
+				String a = Utl.to_string(Utl.new_object(Utl.type_ref_class.get(type)));
 				add(a); length++; 
 			}
 		}
@@ -149,7 +149,7 @@ public class pCollec extends sPoolable {
 
 	public void clear_action() {
 		empty();
-		if (space != null && !Applet.has(space.delCollecs, this)) space.delCollecs.add(this);
+		if (space != null && !Utl.has(space.delCollecs, this)) space.delCollecs.add(this);
 	}
 	
 	
@@ -185,7 +185,7 @@ public class pCollec extends sPoolable {
 		return datas.get(i); }
 	public ArrayList<String> get() { 
 		ArrayList<String> arr = new ArrayList<String>();
-		for (String s : datas) arr.add(Applet.copy(s));
+		for (String s : datas) arr.add(Utl.copy(s));
 		return arr; }
 	
 	

@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nMap;
-
+import util.Utl;
 import data.sPoolable;
 import data.sTab;
 import data.sValueBloc;
+import util.nMap;
 
 public class pParam extends sPoolable {
 	
@@ -58,22 +57,22 @@ public class pParam extends sPoolable {
 		
 		int cnt = start_data_nb;
 
-		for (int i = 0 ; i < Applet.data_type_nb ; i++) {
+		for (int i = 0 ; i < Utl.data_type_nb ; i++) {
 			for (int j = 0 ; j < data_used[i] ; j++) {
-				if (i == Applet.type_class_index.get(Vector2.class)) { 
+				if (i == Utl.type_class_index.get(Vector2.class)) { 
 					((Vector2)datas[i][j]).x = getFloat(c, cnt+(j*2));
 					((Vector2)datas[i][j]).y = getFloat(c, cnt+(j*2)+1);
-				} else if (i == Applet.type_class_index.get(Float.class)) { 
+				} else if (i == Utl.type_class_index.get(Float.class)) { 
 					datas[i][j] = getFloat(c, cnt+j);
-				} else if (i == Applet.type_class_index.get(Integer.class)) { 
+				} else if (i == Utl.type_class_index.get(Integer.class)) { 
 					datas[i][j] = getInt(c, cnt+j);
-				} else if (i == Applet.type_class_index.get(Boolean.class)) { 
+				} else if (i == Utl.type_class_index.get(Boolean.class)) { 
 					datas[i][j] = getBool(c, cnt+j);
-				} else if (i == Applet.type_class_index.get(String.class)) { 
+				} else if (i == Utl.type_class_index.get(String.class)) { 
 					datas[i][j] = getStr(c, cnt+j);
 				}
 			}
-			cnt += data_used[i] * Applet.type_data_size.get(Applet.data_type[i]);
+			cnt += data_used[i] * Utl.type_data_size.get(Utl.data_type[i]);
 		}
 		
 		for (int j = 0 ; j < collec_used ; j++) {
@@ -97,22 +96,22 @@ public class pParam extends sPoolable {
 		
 		int cnt = start_data_nb;
 
-		for (int i = 0 ; i < Applet.data_type_nb ; i++) {
+		for (int i = 0 ; i < Utl.data_type_nb ; i++) {
 			for (int j = 0 ; j < data_used[i] ; j++) {
-				if (i == Applet.type_class_index.get(Vector2.class)) { 
+				if (i == Utl.type_class_index.get(Vector2.class)) { 
 					((Vector2)datas[i][j]).x = getFloat(c, cnt+(j*2));
 					((Vector2)datas[i][j]).y = getFloat(c, cnt+(j*2)+1);
-				} else if (i == Applet.type_class_index.get(Float.class)) { 
+				} else if (i == Utl.type_class_index.get(Float.class)) { 
 					datas[i][j] = getFloat(c, cnt+j);
-				} else if (i == Applet.type_class_index.get(Integer.class)) { 
+				} else if (i == Utl.type_class_index.get(Integer.class)) { 
 					datas[i][j] = getInt(c, cnt+j);
-				} else if (i == Applet.type_class_index.get(Boolean.class)) { 
+				} else if (i == Utl.type_class_index.get(Boolean.class)) { 
 					datas[i][j] = getBool(c, cnt+j);
-				} else if (i == Applet.type_class_index.get(String.class)) { 
+				} else if (i == Utl.type_class_index.get(String.class)) { 
 					datas[i][j] = getStr(c, cnt+j);
 				}
 			}
-			cnt += data_used[i] * Applet.type_data_size.get(Applet.data_type[i]);
+			cnt += data_used[i] * Utl.type_data_size.get(Utl.data_type[i]);
 		}
 		
 		for (int j = 0 ; j < collec_used ; j++) {
@@ -135,33 +134,33 @@ public class pParam extends sPoolable {
 //		signalChange();
 		
 	}
-	private void setArr(Object[] c, int i, Object data) { c[i] = Applet.copy(data); }
+	private void setArr(Object[] c, int i, Object data) { c[i] = Utl.copy(data); }
 	public void to_array(Object[] c) {
 		setArr(c, 0, true);
 		
 		int cnt = start_data_nb;
 
-		for (int i = 0 ; i < Applet.data_type_nb ; i++) {
+		for (int i = 0 ; i < Utl.data_type_nb ; i++) {
 			for (int j = 0 ; j < data_used[i] ; j++) {
-				if (i == Applet.type_class_index.get(Vector2.class)) { 
+				if (i == Utl.type_class_index.get(Vector2.class)) { 
 					Vector2 v = (Vector2)datas[i][j];
 					setArr(c, cnt+(j*2), v.x);
 					setArr(c, cnt+(j*2)+1, v.y);
-				} else if (i == Applet.type_class_index.get(Float.class)) { 
+				} else if (i == Utl.type_class_index.get(Float.class)) { 
 					float v = (float)datas[i][j];
 					setArr(c, cnt+j, v);
-				} else if (i == Applet.type_class_index.get(Integer.class)) { 
+				} else if (i == Utl.type_class_index.get(Integer.class)) { 
 					int v = (int)datas[i][j];
 					setArr(c, cnt+j, v);
-				} else if (i == Applet.type_class_index.get(Boolean.class)) { 
+				} else if (i == Utl.type_class_index.get(Boolean.class)) { 
 					boolean v = (boolean)datas[i][j];
 					setArr(c, cnt+j, v);
-				} else if (i == Applet.type_class_index.get(String.class)) { 
+				} else if (i == Utl.type_class_index.get(String.class)) { 
 					String v = (String)datas[i][j];
 					setArr(c, cnt+j, v);
 				}
 			}
-			cnt += data_used[i] * Applet.type_data_size.get(Applet.data_type[i]);
+			cnt += data_used[i] * Utl.type_data_size.get(Utl.data_type[i]);
 		}
 		
 		for (int j = 0 ; j < collec_used ; j++) {
@@ -196,8 +195,8 @@ public class pParam extends sPoolable {
 	}
 	public int data_size() {
 		int cnt = start_data_nb;
-		for (int i = 0 ; i < Applet.data_type_nb ; i++) 
-			cnt += data_used[i] * Applet.type_data_size.get(Applet.data_type[i]);
+		for (int i = 0 ; i < Utl.data_type_nb ; i++) 
+			cnt += data_used[i] * Utl.type_data_size.get(Utl.data_type[i]);
 		cnt += collec_used;
 		cnt += ref_used;
 		cnt += body_used;
@@ -266,15 +265,15 @@ public class pParam extends sPoolable {
 	public ArrayList<pCollec> collec_list = new ArrayList<pCollec>();
 	
 	public pParam() { 
-		data_used = new int[Applet.data_type_nb]; }
+		data_used = new int[Utl.data_type_nb]; }
 	
 	public pParam init(pSpace s, pProperty p) { 
 		prop = p; space = s; 
 		
 		users.clear();
 		
-		for (int i = 0 ; i < Applet.data_type_nb ; i++) {
-			data_used[i] = prop.getDataUsed(Applet.data_type[i]); }
+		for (int i = 0 ; i < Utl.data_type_nb ; i++) {
+			data_used[i] = prop.getDataUsed(Utl.data_type[i]); }
 		
 		collec_used = prop.getCollecUsed();
 		collecs = new String[collec_used];
@@ -289,25 +288,25 @@ public class pParam extends sPoolable {
 		bodys = new String[body_used];
 		for (int i = 0 ; i < body_used ; i++) bodys[i] = "";
 		
-		datas = new Object[Applet.data_type_nb][];
+		datas = new Object[Utl.data_type_nb][];
 		
-		int u = Applet.type_class_index.get(Vector2.class);
+		int u = Utl.type_class_index.get(Vector2.class);
 		datas[u] = new Vector2[data_used[u]];
 		for (int i = 0 ; i < data_used[u] ; i++) datas[u][i] = new Vector2();
 		
-		u = Applet.type_class_index.get(Float.class);
+		u = Utl.type_class_index.get(Float.class);
 		datas[u] = new Float[data_used[u]];
 		for (int i = 0 ; i < data_used[u] ; i++) datas[u][i] = 0f;
 		
-		u = Applet.type_class_index.get(Integer.class);
+		u = Utl.type_class_index.get(Integer.class);
 		datas[u] = new Integer[data_used[u]];
 		for (int i = 0 ; i < data_used[u] ; i++) datas[u][i] = (int)0;
 		
-		u = Applet.type_class_index.get(Boolean.class);
+		u = Utl.type_class_index.get(Boolean.class);
 		datas[u] = new Boolean[data_used[u]];
 		for (int i = 0 ; i < data_used[u] ; i++) datas[u][i] = false;
 		
-		u = Applet.type_class_index.get(String.class);
+		u = Utl.type_class_index.get(String.class);
 		datas[u] = new String[data_used[u]];
 		for (int i = 0 ; i < data_used[u] ; i++) datas[u][i] = "";
 		
@@ -344,16 +343,16 @@ public class pParam extends sPoolable {
 		empty();
 		cancelChange();
 
-		if (space != null && !Applet.has(space.delParams, this)) space.delParams.add(this);
+		if (space != null && !Utl.has(space.delParams, this)) space.delParams.add(this);
 	}
 	
 	public void setAllDef() {
-		for (int i = 0 ; i < Applet.data_type_nb ; i++) {
-			if (prop != null && prop.data_vals.get(Applet.data_type[i]) != null)
+		for (int i = 0 ; i < Utl.data_type_nb ; i++) {
+			if (prop != null && prop.data_vals.get(Utl.data_type[i]) != null)
 				for (Map.Entry<String, Integer> me : 
-						prop.data_vals.get(Applet.data_type[i]).entrySet()) {
-					Object o = getDef(me.getKey(), Applet.data_type[i]);
-					if (o != null) set(me.getKey(), space.app.copy(o));
+						prop.data_vals.get(Utl.data_type[i]).entrySet()) {
+					Object o = getDef(me.getKey(), Utl.data_type[i]);
+					if (o != null) set(me.getKey(), Utl.copy(o));
 				}
 		}
 		
@@ -394,46 +393,46 @@ public class pParam extends sPoolable {
 		if (prop == null) return null;
 		pCollec col = getCollec(r);
 		if (col == null) return this;
-		if (!Applet.type_is_used(o.getClass())) return null;
-		String s = Applet.to_string(o);
+		if (!Utl.type_is_used(o.getClass())) return null;
+		String s = Utl.to_string(o);
 		col.set(i,s); 
 		return this; }
 
 	public <T> T collecGet(String r, int i, Class<T> ct) {
-		if (!Applet.type_is_used(ct)) return null;
+		if (!Utl.type_is_used(ct)) return null;
 		pCollec col = getCollec(r);
 		if (col == null) return null;
 		String dt = prop.getCollecData(r);
 		if (dt == null || !dt.equals(ct.getName())) return null;
-		return Applet.from_string(col.get(i), ct);
+		return Utl.from_string(col.get(i), ct);
 	}
 	
 	public pParam collecRemove(String r, Object o) { 
 		if (prop == null) return null;
 		pCollec col = getCollec(r);
 		if (col == null) return this;
-		if (!Applet.type_is_used(o.getClass())) return null;
-		String s = Applet.to_string(o);
+		if (!Utl.type_is_used(o.getClass())) return null;
+		String s = Utl.to_string(o);
 		col.remove(s); 
 		return this; }
 	public pParam collecAdd(String r, Object o) { 
 		if (prop == null) return null;
 		pCollec col = getCollec(r);
 		if (col == null) return this;
-		if (!Applet.type_is_used(o.getClass())) return null;
-		String s = Applet.to_string(o);
+		if (!Utl.type_is_used(o.getClass())) return null;
+		String s = Utl.to_string(o);
 		col.add(s); 
 		return this; }
 	
 	public <T> ArrayList<T> getCollecData(String r, Class<T> ct) {
 		ArrayList<T> arr = new ArrayList<T>();
 		if (prop == null) return arr;
-		if (!Applet.type_is_used(ct)) return null;
+		if (!Utl.type_is_used(ct)) return null;
 		pCollec col = getCollec(r);
 		if (col == null) return null;
 		String dt = prop.getCollecData(r);
 		if (dt == null || !dt.equals(ct.getName())) return null;
-		for (String s : col.get()) arr.add(Applet.from_string(s, ct)); 
+		for (String s : col.get()) arr.add(Utl.from_string(s, ct)); 
 		return arr;
 	}
 	
@@ -582,7 +581,7 @@ public class pParam extends sPoolable {
 		if (r == null || o == null) return this; 
 		int val_id = prop.getDataValId(r, o.getClass());
 		if (val_id == -1) return this;
-		int data_id = Applet.type_class_index.get(o.getClass());
+		int data_id = Utl.type_class_index.get(o.getClass());
 		boolean change = datas[data_id][val_id] != o;
 		if (o != null && datas[data_id][val_id] != null && 
 				(datas[data_id][val_id] instanceof String) && (o instanceof String)) 
@@ -598,14 +597,14 @@ public class pParam extends sPoolable {
 		Class<?> ct = prop.getDataValClass(r);
 		int val_id = prop.getDataValId(r, ct);
 		if (val_id == -1) return null;
-		int data_id = Applet.type_class_index.get(ct);
-		return Applet.copy(datas[data_id][val_id]); 
+		int data_id = Utl.type_class_index.get(ct);
+		return Utl.copy(datas[data_id][val_id]); 
 	}
 	public <T> T get(String r, Class<T> ct) { 
 		int val_id = prop.getDataValId(r, ct);
 		if (val_id == -1) return null;
-		int data_id = Applet.type_class_index.get(ct);
-		return Applet.copy((T)datas[data_id][val_id]); 
+		int data_id = Utl.type_class_index.get(ct);
+		return Utl.copy((T)datas[data_id][val_id]); 
 	}
 	public String getStr(String r) { return get(r, String.class); }
 	public int getInt(String r) { return get(r, Integer.class); }
@@ -616,16 +615,16 @@ public class pParam extends sPoolable {
 	public pParam setVec(String r, Vector2 v) { 
 		int val_id = prop.getDataValId(r, Vector2.class);
 		if (val_id == -1) return this;
-		int data_id = Applet.type_class_index.get(Vector2.class);
+		int data_id = Utl.type_class_index.get(Vector2.class);
 		boolean change = !((Vector2)datas[data_id][val_id]).equals(v);
 		((Vector2)datas[data_id][val_id]).set(v.x,v.y);
-		if (change) signalChangeData(r, Applet.copy(v));
+		if (change) signalChangeData(r, Utl.copy(v));
 		return this; 
 	}
 	public pParam setVec(String r, float x, float y) { 
 		int val_id = prop.getDataValId(r, Vector2.class);
 		if (val_id == -1) return this;
-		int data_id = Applet.type_class_index.get(Vector2.class);
+		int data_id = Utl.type_class_index.get(Vector2.class);
 		boolean change = !((Vector2)datas[data_id][val_id]).equals(new Vector2(x,y));
 		((Vector2)datas[data_id][val_id]).set(x,y);
 		if (change) signalChangeData(r, new Vector2(x,y));

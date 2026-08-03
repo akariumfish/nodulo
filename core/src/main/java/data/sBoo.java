@@ -1,7 +1,6 @@
 package data;
 
 import app.Applet;
-
 import net.nNetwork;
 
 public class sBoo extends sValue {

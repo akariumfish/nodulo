@@ -6,11 +6,8 @@ import java.util.Map;
 import java.util.Random;
 
 import com.badlogic.gdx.math.Vector2;
-import app.Applet;
-import app.nMap;
-import app.nPool;
-import app.nRun;
 
+import app.Applet;
 import data.*;
 import gui.nDrawable;
 import gui.nGUI;
@@ -24,6 +21,7 @@ import gui.nWidgetGroup;
 import net.nNetwork;
 import patch.pAnk;
 import patch.pStandard;
+import util.*;
 
 public class pSpace extends pSystem {
 	
@@ -34,7 +32,7 @@ public class pSpace extends pSystem {
 			sValueBloc b = (sValueBloc)o; newObject(b); }});
 	}
 
-	public static void dispose(Applet app) {
+	public static void dispose(Utl app) {
 		pool.dispose();
 	}
 
@@ -148,16 +146,16 @@ public class pSpace extends pSystem {
 	
 	public void signalChange(pBody b) { 
 		if (bloc_change) return;
-		if (!checking_change && !Applet.has(chgBodys, b)) chgBodys.add(b); 
-		if (checking_change && !Applet.has(delayChgBodys, b)) delayChgBodys.add(b); }
+		if (!checking_change && !Utl.has(chgBodys, b)) chgBodys.add(b); 
+		if (checking_change && !Utl.has(delayChgBodys, b)) delayChgBodys.add(b); }
 	public void signalChange(pParam b) { 
 		if (bloc_change) return;
-		if (!checking_change && !Applet.has(chgParams, b)) chgParams.add(b); 
-		if (checking_change && !Applet.has(delayChgParams, b)) delayChgParams.add(b); }
+		if (!checking_change && !Utl.has(chgParams, b)) chgParams.add(b); 
+		if (checking_change && !Utl.has(delayChgParams, b)) delayChgParams.add(b); }
 	public void signalChange(pCollec b) { 
 		if (bloc_change) return;
-		if (!checking_change && !Applet.has(chgCollecs, b)) chgCollecs.add(b); 
-		if (checking_change && !Applet.has(delayChgCollecs, b)) delayChgCollecs.add(b); }
+		if (!checking_change && !Utl.has(chgCollecs, b)) chgCollecs.add(b); 
+		if (checking_change && !Utl.has(delayChgCollecs, b)) delayChgCollecs.add(b); }
 
 	private boolean bloc_change = false;
 	private boolean checking_change = false;
@@ -165,16 +163,16 @@ public class pSpace extends pSystem {
 
 		checking_change = true;
 
-		for (pBody b : newBodys) if (Applet.has(chgBodys, b)) chgBodys.remove(b);
-		for (pParam b : newParams) if (Applet.has(chgParams, b)) chgParams.remove(b);
-		for (pCollec b : newCollecs) if (Applet.has(chgCollecs, b)) chgCollecs.remove(b);
+		for (pBody b : newBodys) if (Utl.has(chgBodys, b)) chgBodys.remove(b);
+		for (pParam b : newParams) if (Utl.has(chgParams, b)) chgParams.remove(b);
+		for (pCollec b : newCollecs) if (Utl.has(chgCollecs, b)) chgCollecs.remove(b);
 		
-		for (pBody b : delBodys) if (Applet.has(chgBodys, b)) chgBodys.remove(b);
-		for (pBody b : delBodys) if (Applet.has(newBodys, b)) newBodys.remove(b);
-		for (pParam b : delParams) if (Applet.has(chgParams, b)) chgParams.remove(b);
-		for (pParam b : delParams) if (Applet.has(newParams, b)) newParams.remove(b);
-		for (pCollec b : delCollecs) if (Applet.has(chgCollecs, b)) chgCollecs.remove(b);
-		for (pCollec b : delCollecs) if (Applet.has(newCollecs, b)) newCollecs.remove(b);
+		for (pBody b : delBodys) if (Utl.has(chgBodys, b)) chgBodys.remove(b);
+		for (pBody b : delBodys) if (Utl.has(newBodys, b)) newBodys.remove(b);
+		for (pParam b : delParams) if (Utl.has(chgParams, b)) chgParams.remove(b);
+		for (pParam b : delParams) if (Utl.has(newParams, b)) newParams.remove(b);
+		for (pCollec b : delCollecs) if (Utl.has(chgCollecs, b)) chgCollecs.remove(b);
+		for (pCollec b : delCollecs) if (Utl.has(newCollecs, b)) newCollecs.remove(b);
 
 		for (pCollec b : delCollecs) nRun.runEvents(eventDelCollec, b);
 		for (pParam b : delParams) nRun.runEvents(eventDelParam, b);
@@ -191,9 +189,9 @@ public class pSpace extends pSystem {
 
 		checking_change = false;
 
-		for (pBody b : newBodys) if (Applet.has(delayChgBodys, b)) delayChgBodys.remove(b);
-		for (pParam b : newParams) if (Applet.has(delayChgParams, b)) delayChgParams.remove(b);
-		for (pCollec b : newCollecs) if (Applet.has(delayChgCollecs, b)) delayChgCollecs.remove(b);
+		for (pBody b : newBodys) if (Utl.has(delayChgBodys, b)) delayChgBodys.remove(b);
+		for (pParam b : newParams) if (Utl.has(delayChgParams, b)) delayChgParams.remove(b);
+		for (pCollec b : newCollecs) if (Utl.has(delayChgCollecs, b)) delayChgCollecs.remove(b);
 		
 		for (pCollec b : delayChgCollecs) nRun.runEvents(eventChgCollec, b);
 		for (pParam b : delayChgParams) nRun.runEvents(eventChgParam, b);
