@@ -1,13 +1,17 @@
 package gui;
 
+import app.App;
 import app.Applet;
 
 public class nModelGroup {
 
-	public Applet app;
 	public String ref = "";
 	
-	public nModelGroup(Applet a) { app = a; }
+	public nModelGroup() { }
+
+	public nModelGroup(App a) { }
+
+	public nModelGroup(Applet a) { }
 	
 	public nWidgetGroup build(nGUI gui) { return null; }
 	

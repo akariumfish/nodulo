@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
+import app.App;
 import app.Applet;
 import app.nLauncher;
 import gui.nInterface;
@@ -81,7 +82,7 @@ public abstract class sValue extends nLauncher implements nClearable, Poolable {
 	public String shrt;
 	public String adress;
 	sData data;
-	Applet app;
+	App app;
 	
 	sValue() { super(); }
 	
@@ -217,16 +218,16 @@ public abstract class sValue extends nLauncher implements nClearable, Poolable {
 //	protected nWidgetGroup widgGroup_value_viewer = null;
 //	
 	public void open_viewer() {
-		nInterface interf = data.app.menu.get_popWindow();
-		interf.add_row();
-		interf.add_row_label(6, "  "+type+"  :  "+ref+"  ");
-		String tv = getString();
-		if (tv.length() > 0) {
-			interf.add_row();
-			interf.add_row_label(6, " val : "+tv);
-		}
-		populate_viewer(interf);
-		data.app.menu.pop_popwindow(ref);
+//		nInterface interf = data.app.menu.get_popWindow();
+//		interf.add_row();
+//		interf.add_row_label(6, "  "+type+"  :  "+ref+"  ");
+//		String tv = getString();
+//		if (tv.length() > 0) {
+//			interf.add_row();
+//			interf.add_row_label(6, " val : "+tv);
+//		}
+//		populate_viewer(interf);
+//		data.app.menu.pop_popwindow(ref);
 	}
 //	
 	public void populate_viewer(nInterface interf)  {}

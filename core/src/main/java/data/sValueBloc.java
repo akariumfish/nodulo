@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
+import app.App;
 import app.Applet;
 import app.GdxApp;
 import app.nLauncher;
@@ -316,7 +317,7 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 	
 
 
-	public Applet app;
+	public App app;
 	public sData data; public sValueBloc parent = null, last_created_bloc = null; 
 	public sValue last_created_value = null;
 	public String ref = "", base_ref = "", type = "def", use = "";

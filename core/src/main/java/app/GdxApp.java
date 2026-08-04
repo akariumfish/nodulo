@@ -7,6 +7,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor.SystemCursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -16,10 +17,13 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.noodle.nodulo.Main;
 
 import util.*;
 
-public class GdxApp implements ApplicationListener {
+//public class GdxApp implements ApplicationListener {
+public class GdxApp implements Screen ,nDrawer.DrawContext, Utl.Logger {
 	
 	
 	
@@ -33,29 +37,17 @@ public class GdxApp implements ApplicationListener {
 		
 	}
 	
-	public static class AppConfig {
-		public boolean START_FULLSCREEN = false;
-		public int WIDTH = 500;
-		public int HEIGHT = 500;
-		public String window_title = "";
-		public AppConfig() {}
-		public AppConfig(String t) { window_title = t; }
-		public AppConfig(String t, int w, int h) {
-			window_title = t; WIDTH = w; HEIGHT = h; }
-		public AppConfig(String t, int w, int h, boolean f) {
-			window_title = t; WIDTH = w; HEIGHT = h; START_FULLSCREEN = f; }
-		
-	}
-
 //	public static boolean CATCH_THROW = true;
 	public static boolean CATCH_THROW = false;
 
 //	public static boolean PRINT_TIMETRACK = true;
 	public static boolean PRINT_TIMETRACK = false;
 	
-	public GdxApp(AppConfig c) { window_title = c.window_title; 
-		WIDTH = c.WIDTH; HEIGHT = c.HEIGHT; START_FULLSCREEN = c.START_FULLSCREEN; }
-	public GdxApp(AppConfig c, nAppListener l) { this(c); listener = l; }
+	public GdxApp(Main m, AppConfig c) { main = m; window_title = c.window_title; 
+		WIDTH = c.WIDTH; HEIGHT = c.HEIGHT; START_FULLSCREEN = c.START_FULLSCREEN; 
+		create(); }
+	public GdxApp(Main m, AppConfig c, nAppListener l) { 
+		this(m,c); listener = l; create(); }
 
 	public static boolean START_FULLSCREEN = false;
 
@@ -64,6 +56,8 @@ public class GdxApp implements ApplicationListener {
 	
 	public static GdxApp app;
 
+	public Main main;
+	
 	public String window_title = "";
 
     public OrthographicCamera camera; 
@@ -76,7 +70,6 @@ public class GdxApp implements ApplicationListener {
 	
 	nAppListener listener;
 	
-	@Override
 	public void create() {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		
@@ -88,8 +81,6 @@ public class GdxApp implements ApplicationListener {
 		
 		app = this;
 		
-		Utl.build_types();
-
 		drawer = new nDrawer(this, false);
 		
 		Graphics.DisplayMode currentMode = Gdx.graphics.getDisplayMode();
@@ -146,10 +137,20 @@ public class GdxApp implements ApplicationListener {
 	public void pause() { }
 	@Override
 	public void resume() { }
-
-
 	@Override
-	public void render() {
+	public void show() { }
+	@Override
+	public void hide() { }
+	@Override
+	public nDrawer getDrawer() { return drawer; }
+	@Override
+	public Viewport getViewport() { return viewport; }
+	@Override
+	public Rectangle getScreenRect() { return screenrect; }
+	@Override
+	public OrthographicCamera getCamera() { return camera; }
+	@Override
+	public void render(float delta) {
 		
 		try_nodraw_frame();
 		
@@ -467,5 +468,6 @@ public class GdxApp implements ApplicationListener {
 
 	public static void crash() { loggn(" -- FORCED CRASH -- "); String s = to_crash(); s+=s; }
 	private static String to_crash() { return null; }
+	
 	
 }

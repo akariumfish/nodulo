@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
+import app.App;
 import app.Applet;
 import data.sValueBloc;
 import util.nClearable;
@@ -27,7 +28,7 @@ public class nWidgetGroup implements Poolable, nClearable {
 	
 	
 	public nGUI gui;
-	public Applet app;
+	public App app;
 	
 	public nMap<nWidget> widgets;
 	public nMap<nWidgetGroup> widgetgroups;

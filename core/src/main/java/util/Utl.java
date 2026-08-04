@@ -22,6 +22,12 @@ import data.sValue;
 import data.sVec;
 
 public class Utl {
+
+	public interface Logger {
+		public void logn();
+		public void logn(String t);
+		public void log(String t);
+	}
 	
 	public static boolean file_exist(String path) {
 		FileHandle handle = Gdx.files.local(path);

@@ -8,9 +8,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import app.nDrawer;
+import app.App;
 import app.Applet;
 import app.nInput;
 import app.nMenu;
+import app.nPref;
+import data.sData;
 import data.sInt;
 import data.sValueBloc;
 import util.Utl;
@@ -22,10 +26,10 @@ public class nGUI {
 	
 	
 	public void print_state() {
-		app.logn("Printing nGUI state :");
-		app.logn(" - Widgets :");
+		log.logn("Printing nGUI state :");
+		log.logn(" - Widgets :");
 		for (nWidget r : orphan_widgets) r.print_state(0); 
-		app.logn(" - WidgetGroups :");
+		log.logn(" - WidgetGroups :");
 		for (nWidgetGroup r : widgetgroup_pool.all()) r.print_state();
 	}
 	
@@ -107,9 +111,13 @@ public class nGUI {
 	}
 	
 	
-	
 
-	public Applet app;
+	public nDrawer.DrawContext context;
+	public Utl.Logger log;
+	public sData data;
+	public nPref.PrefAccess pref;
+	
+	public App app;
 	public nInput in;
 	public OrthographicCamera cam;
 	public Vector2 mouse_vec;
@@ -137,7 +145,7 @@ public class nGUI {
 		
 		new_param("entry_width", "2.0");
 		new_param("entry_height", "1.0");
-		if (app.getPref("RELEASE", Boolean.class)) 
+		if (pref.getPref("RELEASE", Boolean.class)) 
 			new_param("entry_colors", "CL_release");
 		else new_param("entry_colors", "CL_def");
 		new_param("spacing", "2.0");
@@ -168,19 +176,22 @@ public class nGUI {
 	public boolean do_help = false;
 	public Color helper_light;
 	
-	public nGUI(Applet _app, OrthographicCamera c, Vector2 m, Rectangle r) {
-		in = _app.input; 
+	public nGUI(App _app, nDrawer.DrawContext c, Utl.Logger l, nInput i, sData d, 
+			nPref.PrefAccess p
+//			OrthographicCamera c, Vector2 m, Rectangle r
+		) {
+		in = i; data = d; log = l; context = c; pref = p;
 		app = _app;
-		cam = c;
+		cam = c.getCamera();
 		gui = this;
-		book = new nModelBook(app);
-		mouse_vec = m;
-		viewrect = r;
+		book = new nModelBook(app, pref.getPref("RELEASE", Boolean.class));
+		mouse_vec = in.mouse;
+		viewrect = c.getScreenRect();
 		
 		helper_light = Utl.color(240,230,220,150);
 
-		val_interf_nb = app.data.setting_bloc.newInt("val_interf_nb", "", 0);
-		val_free_interf_nb = app.data.setting_bloc.newInt("val_free_interf_nb", "", 0);
+		val_interf_nb = data.setting_bloc.newInt("val_interf_nb", "", 0);
+		val_free_interf_nb = data.setting_bloc.newInt("val_free_interf_nb", "", 0);
 		
 		app.addRunFrameStart(new nRun() { public void run() {
 			val_interf_nb.set(interf_pool.all().size());
@@ -191,11 +202,11 @@ public class nGUI {
 
 		setup_params();
 		
-		add_info_svalues_in(app.data.setting_bloc);
+		add_info_svalues_in(data.setting_bloc);
 	}
 
 	public void build(nMenu menu) {
-		if (app.getPref("RELEASE", Boolean.class)) return;
+		if (pref.getPref("RELEASE", Boolean.class)) return;
 		menu.add_info_text("widget:", val_widget_nb);
 		menu.add_info_text("free widget:", val_free_widget_nb);
 		menu.add_info_text("wgroup:", val_wgroup_nb);
@@ -251,7 +262,7 @@ public class nGUI {
 			widget_pool.all().get(i).mouseOver = false;
 			widget_pool.all().get(i).mouseOverZone = false;
 			widget_pool.all().get(i).mouseOverChildZone = false; }
-		if (!app.input.mouse_has_been_catched) {
+		if (!in.mouse_has_been_catched) {
 			nWidget w;
 			nWidget zone = null;
 			boolean found = false, found_zone = false;
@@ -261,11 +272,11 @@ public class nGUI {
 						w.maskedrect.contains(mouse_vec)) {
 					if (w.hoverable && !found) {
 						w.mouseOver = true; found = true; 
-						app.input.mouse_has_been_catched = true; 
+						in.mouse_has_been_catched = true; 
 					} else w.mouseOver = false;
 					if (w.hoverable_zone && !found_zone) {
 						w.mouseOverZone = true; found_zone = true; 
-						app.input.mouse_has_been_catched = true; 
+						in.mouse_has_been_catched = true; 
 						zone = w;
 					} else w.mouseOverZone = false;
 				} else {
@@ -297,7 +308,7 @@ public class nGUI {
 			r.drawMasked();
 		}
 		
-		app.gdx.drawer.flush();
+		context.getDrawer().flush();
 		
 //		for (nWidget r : all_widgets) {
 //			r.draw_debug();
@@ -431,7 +442,7 @@ public class nGUI {
 			;
 		}
 		
-		book.newModelGroup("interface", new nModelGroup(app) { 
+		book.newModelGroup("interface", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup();
 				nWidget ref = g.addWidget("ref", gui.addWidget("INT_back"));

@@ -10,7 +10,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
+import app.App;
 import app.Applet;
+import app.GdxApp;
 import data.*;
 import util.Utl;
 import util.nClearable;
@@ -42,6 +44,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 	
 
 	protected nGUI gui;
+	public App app;
 	
 	public nDrawable drawer, custom_drawer = null;
 	public  nWidget setDrawer(nDrawable d) { drawer = d; return this; }
@@ -52,7 +55,8 @@ public class nWidget extends nModel implements Poolable, nClearable {
 	
 	// called when pool is filled
 	public nWidget(nGUI g) {
-		super(g.app);
+		super();
+		app = g.app;
 		gui = g; 
 		widget_id = WIDGET_COUNTER;
 		WIDGET_COUNTER++;
@@ -254,7 +258,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 		quitGroup(); 
 		String base_ref = k;
 		int c = 1; while (g.widgets.get(k) != null) { k = base_ref + "-" + c; c++; }
-		if (!base_ref.equals(k)) app.logn("Error when adding widget to group " + 
+		if (!base_ref.equals(k)) GdxApp.loggn("Error when adding widget to group " + 
 				g.ref + ": '"+base_ref+"' allready used, '"+k+"' used instead");
 		g.widgets.put(k, this); 
 		group = g; groupKey = k; 
@@ -381,7 +385,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 			//	      if (showInfo) gui.info.showText(infoText);
 			isHovered = true;
 			
-			if (has_info) gui.app.menu.pop_infopop(this);
+//			if (has_info) gui.app.menu.pop_infopop(this);
 			
 		} else {
 			if (isHovered) runEventList("eventMouseLeaveRun"); 
@@ -389,7 +393,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 		}
 		if (helper && gui.do_help && gui.in.getClick("MouseRight") && 
 				isHovered && !isRightClicked) {
-			app.menu.popHelp(helper_ref);
+//			app.menu.popHelp(helper_ref);
 		}
 		if (triggerRightMode) {
 			if (gui.in.getUnClick("MouseRight")) {

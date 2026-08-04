@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 
+import app.App;
 import app.Applet;
 import gui.nAlign;
 import gui.nGUI;
@@ -51,7 +52,7 @@ public class sDataBook {
 	public static sBloc_Builder dataview_builder = null, blocmenu_builder = null, 
 			blocinterf_builder = null;
 	
-	public static void build(Applet app) {
+	public static void build(App app) {
 //		build_blocinterf(app);
 //		build_blocmenu(app);
 //		build_dataview(app);
@@ -68,7 +69,7 @@ public class sDataBook {
 
 	public static sBloc_Builder file_builder;
 	
-	public static void build_fileexplo(Applet app) {
+	public static void build_fileexplo(App app) {
 		
 		nModelBook book = app.gui.book;
 		float RS = book.RS;
@@ -2309,7 +2310,7 @@ public class sDataBook {
 	//-         EXPLORER                   //
 	//-------------------------------------//	
 		
-	public static void build_explorer(Applet app) {
+	public static void build_explorer(App app) {
 
 		nModelBook book = app.gui.book;
 		float RS = book.RS;

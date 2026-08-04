@@ -27,19 +27,21 @@ public class FirstScreen2 implements Screen {
 
 		Skin skin;
 		Stage stage;
-		Texture texture1;
-		Texture texture2;
+//		Texture texture1;
+//		Texture texture2;
 		Label fpsLabel;
+		
+	public FirstScreen2() { setup(); }
 
 	public void setup() {
 
-		skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
-		texture1 = new Texture(Gdx.files.internal("ui/badlogicsmall.jpg"));
-		texture2 = new Texture(Gdx.files.internal("ui/badlogic.jpg"));
-		TextureRegion image = new TextureRegion(texture1);
-		TextureRegion imageFlipped = new TextureRegion(image);
-		imageFlipped.flip(true, true);
-		TextureRegion image2 = new TextureRegion(texture2);
+		skin = new Skin(Gdx.files.internal("ui/Holo-dark-ldpi.json"));
+//		texture1 = new Texture(Gdx.files.internal("ui/badlogicsmall.jpg"));
+//		texture2 = new Texture(Gdx.files.internal("ui/badlogic.jpg"));
+//		TextureRegion image = new TextureRegion(texture1);
+//		TextureRegion imageFlipped = new TextureRegion(image);
+//		imageFlipped.flip(true, true);
+//		TextureRegion image2 = new TextureRegion(texture2);
 		// stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false, new PolygonSpriteBatch());
 		stage = new Stage(new ScreenViewport());
 		Gdx.input.setInputProcessor(stage);
@@ -47,13 +49,13 @@ public class FirstScreen2 implements Screen {
 		// stage.setDebugAll(true);
 
 		ImageButtonStyle style = new ImageButtonStyle(skin.get(ButtonStyle.class));
-		style.imageUp = new TextureRegionDrawable(image);
-		style.imageDown = new TextureRegionDrawable(imageFlipped);
+//		style.imageUp = new TextureRegionDrawable(image);
+//		style.imageDown = new TextureRegionDrawable(imageFlipped);
 		ImageButton iconButton = new ImageButton(style);
 
 		Button buttonMulti = new TextButton("Multi\nLine\nToggle", skin, "toggle");
-		Button imgButton = new Button(new Image(image), skin);
-		Button imgToggleButton = new Button(new Image(image), skin, "toggle");
+//		Button imgButton = new Button(new Image(image), skin);
+//		Button imgToggleButton = new Button(new Image(image), skin, "toggle");
 
 		Label myLabel = new Label("this is some text.", skin);
 		myLabel.setWrap(true);
@@ -85,8 +87,8 @@ public class FirstScreen2 implements Screen {
 			"Android3", "Windows3", "Linux3", "OSX3", "Android4", "Windows4", "Linux4", "OSX4", "Android5", "Windows5", "Linux5",
 			"OSX5", "Android6", "Windows6", "Linux6", "OSX6", "Android7", "Windows7", "Linux7", "OSX7");
 		selectBox.setSelected("Linux6");
-		Image imageActor = new Image(image2);
-		ScrollPane scrollPane = new ScrollPane(imageActor);
+//		Image imageActor = new Image(image2);
+//		ScrollPane scrollPane = new ScrollPane(imageActor);
 		List list = new List(skin);
 		list.setItems(listEntries);
 		list.getSelection().setMultiple(true);
@@ -98,7 +100,7 @@ public class FirstScreen2 implements Screen {
 		Table rightSideTable = new Table(skin);
 		rightSideTable.add(minSizeLabel).growX().row();
 		rightSideTable.add(scrollPane2).grow();
-		SplitPane splitPane = new SplitPane(scrollPane, rightSideTable, false, skin, "default-horizontal");
+//		SplitPane splitPane = new SplitPane(scrollPane, rightSideTable, false, skin, "default-horizontal");
 		fpsLabel = new Label("fps:", skin);
 
 		// configures an example of a TextField in password mode.
@@ -108,13 +110,13 @@ public class FirstScreen2 implements Screen {
 		passwordTextField.setPasswordCharacter('*');
 		passwordTextField.setPasswordMode(true);
 
-		buttonMulti.addListener(new TextTooltip(
-			"This is a tooltip! This is a tooltip! This is a tooltip! This is a tooltip! This is a tooltip! This is a tooltip!",
-			skin));
-		Table tooltipTable = new Table(skin);
-		tooltipTable.pad(10).background("default-round");
-		tooltipTable.add(new TextButton("Fancy tooltip!", skin));
-		imgButton.addListener(new Tooltip(tooltipTable));
+//		buttonMulti.addListener(new TextTooltip(
+//			"This is a tooltip! This is a tooltip! This is a tooltip! This is a tooltip! This is a tooltip! This is a tooltip!",
+//			skin));
+//		Table tooltipTable = new Table(skin);
+//		tooltipTable.pad(10).background("default-round");
+//		tooltipTable.add(new TextButton("Fancy tooltip!", skin));
+//		imgButton.addListener(new Tooltip(tooltipTable));
 
 		// window.debug();
 		Window window = new Window("Dialog", skin);
@@ -124,16 +126,16 @@ public class FirstScreen2 implements Screen {
 		window.row().fill().expandX();
 		window.add(iconButton);
 		window.add(buttonMulti);
-		window.add(imgButton);
-		window.add(imgToggleButton);
+//		window.add(imgButton);
+//		window.add(imgToggleButton);
 		window.row();
 		window.add(checkBox);
 		window.add(slider).minWidth(100).fillX().colspan(3);
 		window.row();
 		window.add(selectBox).maxWidth(100);
 		window.add(textfield).minWidth(100).growX().colspan(3);
-		window.row();
-		window.add(splitPane).grow().colspan(4).maxHeight(200);
+//		window.row();
+//		window.add(splitPane).grow().colspan(4).maxHeight(200);
 		window.row();
 		window.add(passwordLabel).colspan(2);
 		window.add(passwordTextField).minWidth(100).growX().colspan(2);
@@ -198,7 +200,7 @@ public class FirstScreen2 implements Screen {
 		// If the window is minimized on a desktop (LWJGL3) platform, width and height are 0, which causes problems.
 		// In that case, we don't resize anything, and wait for the window to be a normal size before updating.
 		if(width <= 0 || height <= 0) return;
-		stage.getViewport().update(width, height, true);
+		if (stage != null) stage.getViewport().update(width, height, true);
 
 		// Resize your screen here. The parameters represent the new window size.
 	}
@@ -223,7 +225,7 @@ public class FirstScreen2 implements Screen {
 		// Destroy screen's assets here.
 		stage.dispose();
 		skin.dispose();
-		texture1.dispose();
-		texture2.dispose();
+//		texture1.dispose();
+//		texture2.dispose();
 	}
 }

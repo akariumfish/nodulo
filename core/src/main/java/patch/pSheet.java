@@ -184,7 +184,7 @@ public class pSheet {
 	
 	public pSheet() {}
 	public pSheet init(sValueBloc b, String m) {
-		bloc = b; app = b.app;
+		bloc = b; app = Applet.app;
 		sheet_model = Utl.copy(m);
 		model = sheet_models.get(m);
 		plane = b.parent.object("plane", pPlane.class);

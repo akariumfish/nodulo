@@ -58,7 +58,7 @@ public class nInput implements InputProcessor {
 //			  'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
 			  }; 
 
-	public nInput(Applet a) {//PApplet app) {
+	public nInput(App a) {//PApplet app) {
 		app = a;
 		mouseLeft = getButton("MouseLeft");
 		mouseRight = getButton("MouseRight");
@@ -105,7 +105,7 @@ public class nInput implements InputProcessor {
 				val_fullscreen.set(app.gdx.isfullscreen()); }}); }});
 	}
 
-	public Applet app;
+	public App app;
 	
 	public sBoo val_fullscreen;
 	

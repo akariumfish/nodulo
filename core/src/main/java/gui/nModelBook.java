@@ -7,8 +7,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import app.App;
 import app.Applet;
 import app.GdxApp;
+import app.nMenu;
 import data.*;
 import patch.pNode;
 import util.Utl;
@@ -17,17 +19,17 @@ import util.nRun;
 
 public class nModelBook {
 	
-	public Applet app;
-
+	public App app;
+	
 	public final nMap<nModel> models;
 	public final nMap<nModelGroup> modelgroups;
 	
-	public nModelBook(Applet a) {
-		app = a;
+	public nModelBook(App a, boolean release) {
+		app = a; 
 		models = new nMap<nModel>();
 		modelgroups = new nMap<nModelGroup>();
 		
-		build_book();
+		build_book(release);
 	}
 	
 	public nModel newModel(String ref) {
@@ -85,7 +87,7 @@ public class nModelBook {
 		return new Vector2(px,py);
 	}
 	
-	private void build_book() {
+	private void build_book(boolean RELEASE) {
 		
 		
 		//      -----  BUILDING MODEL  -----
@@ -249,7 +251,7 @@ public class nModelBook {
 //		-----  BASE MODEL  -----
 		
 		
-		if (app.getPref("RELEASE", Boolean.class)) {
+		if (RELEASE) {
 //			app.DEF_VIEW_ZOOM = 0.2f;
 //			app.DEF_PATCH_ZOOM = 0.4f;
 //			app.DEF_PATCH_POS = new Vector2(0f,0f);
@@ -496,7 +498,7 @@ public class nModelBook {
 		
 		//      -----  POP WINDOW  -----
 		
-		newModelGroup("pop_window", new nModelGroup(app) { 
+		newModelGroup("pop_window", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup();
 				g.ref = "pop_window";
@@ -669,8 +671,8 @@ public class nModelBook {
 				nWidget close = g.addWidget("close", "CW_close")
 						.setParent(headback); 
 
-				nWidget bar_swtch = app.menu.add_taskbar_entry();
-				g.addWidget("bar_swtch", bar_swtch);
+//				nWidget bar_swtch = menu.add_taskbar_entry();
+//				g.addWidget("bar_swtch", bar_swtch);
 				
 				close.addEventTrigger(new nRun() { public void run() {
 					g.clear(); }});
@@ -681,9 +683,10 @@ public class nModelBook {
 				
 				nRun run_tofront = new nRun() { public void run() {
 					if (g.hasObject("no_tofront")) return;
-					for(nWidget n : app.menu.bar_entrys) 
-						if (n != bar_swtch) n.setOff();
-					bar_swtch.setOn(); ref.show(); ref.toFront(); 
+//					for(nWidget n : menu.bar_entrys) 
+//						if (n != bar_swtch) n.setOff();
+//					bar_swtch.setOn(); 
+					ref.show(); ref.toFront(); 
 					if (g.hasObject("val_collapse")) 
 						g.object("val_collapse", sBoo.class).set(false); 
 					if (g.hasObject("event_tofront")) 
@@ -692,11 +695,11 @@ public class nModelBook {
 				
 //				run_tofront.run();
 
-				bar_swtch.addEventSwitchOn(run_tofront);
+//				bar_swtch.addEventSwitchOn(run_tofront);
 //				bar_swtch.setOn();
 				
 				nRun run_collapse = new nRun() { public void run() {
-					ref.hide(); bar_swtch.setOff(); 
+					ref.hide(); //bar_swtch.setOff(); 
 					if (g.hasObject("val_collapse")) 
 						g.object("val_collapse", sBoo.class).set(true); }};
 				
@@ -709,8 +712,8 @@ public class nModelBook {
 						run_tofront.run(); }  }};
 				ref.addEventLogic(run_testfocus);
 				
-				g.addEventClear(new nRun() { public void run() {
-					app.menu.remove_taskbar_entry(bar_swtch); }});
+//				g.addEventClear(new nRun() { public void run() {
+//					menu.remove_taskbar_entry(bar_swtch); }});
 
 				g.addMetode("run_tofront", run_tofront);
 				g.addMetode("run_collapse", run_collapse);
@@ -720,7 +723,7 @@ public class nModelBook {
 				
 				g.addMetode("set_title", new nRun() { public void run(Object o) {
 					String v = ((String)o);
-					bar_swtch.setText(v);
+//					bar_swtch.setText(v);
 					head.setText(v); }});
 				
 				g.addMetode("set_tofront_event", new nRun() { public void run(Object o) {

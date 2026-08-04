@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 import util.Utl;
+import app.App;
 import app.Applet;
 import app.nLauncher;
 
@@ -11,14 +12,28 @@ public class nModel extends nLauncher {
 	
 	public nWidget custom_init(nWidget w) { return w; }
 	
-	public Applet app;
-	
-	public nModel(Applet a) {
+//	public App app;
+
+	public nModel() {
 		super();
-		app = a;
+//		app = a;
 		
 		init_default();
 	}
+
+	public nModel(App a) {
+		super();
+//		app = a;
+		
+		init_default();
+	}
+
+//	public nModel(Applet a) {
+//		super();
+////		app = a;
+//		
+//		init_default();
+//	}
 	
 	public nWidget asWidget() { return (nWidget)this; }
 	

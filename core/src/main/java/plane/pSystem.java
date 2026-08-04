@@ -155,7 +155,7 @@ public abstract class pSystem {
 	public pSystem() {}
 	
 	public pSystem init(sValueBloc b) {
-		bloc = b; app = b.app;
+		bloc = b; app = Applet.app;
 		plane = b.parent.object("plane", pPlane.class);
 		bloc.addObject("plane", plane);
 		bloc.addObject("system", this);

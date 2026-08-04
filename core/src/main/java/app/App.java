@@ -10,7 +10,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.codedisaster.steamworks.SteamAPI;
 
-import app.GdxApp.AppConfig;
 import app.GdxApp.nAppListener;
 import data.sData;
 import data.sValueBloc;
@@ -59,12 +58,12 @@ public class App implements nAppListener {
 //			log("STEAM : You probably messed up the call order somehow");
 //			e.printStackTrace(System.out);
 //		}
+
+	    data = new sData(this);
+	    
+		input = new nInput(this);
 		
-//	    data = new sData(this);
-//	    
-//		input = new nInput(this);
-//		
-//		gui = new nGUI(this, gdx.camera, input.mouse, gdx.screenrect);
+//		gui = new nGUI(this, gdx, gdx, input, data, this);
 		
 	}
 

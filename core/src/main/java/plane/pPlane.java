@@ -158,7 +158,7 @@ public class pPlane {
 	pPlane() {}
 	
 	public pPlane init(sValueBloc b) {
-		bloc = b; app = b.app; plan = this;
+		bloc = b; app = Applet.app; plan = this;
 
 		if (app.start_as_client) NET_CTRL = true;
 		

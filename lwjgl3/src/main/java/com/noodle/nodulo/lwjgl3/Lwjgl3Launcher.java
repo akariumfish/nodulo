@@ -4,6 +4,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.noodle.nodulo.Main;
 
+import app.AppConfig;
 import app.Applet;
 import app.GdxApp;
 
@@ -12,18 +13,20 @@ public class Lwjgl3Launcher {
 
 	public static void main(String[] args) {
 		
-		if (StartupHelper.startNewJvmIfRequired()) return;
-		new Lwjgl3Application(Applet.make(new GdxApp.AppConfig("nodulo", 1300, 960, false)), 
-				getConfiguration(610, 50, 1300, 960));
+//		if (StartupHelper.startNewJvmIfRequired()) return;
+//		new Lwjgl3Application(Applet.make(new GdxApp.AppConfig("nodulo", 1300, 960, false)), 
+//				getConfiguration(610, 50, 1300, 960));
 		
 //		Lwjgl3Launcher_app.main(args);
 
-//		if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
-//		createApplication();
+		if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
+		createApplication("nodulo", 610, 50, 1300, 960, false);
 	}
 
-	private static Lwjgl3Application createApplication() {
-		return new Lwjgl3Application(new Main(), getDefaultConfiguration());
+	private static Lwjgl3Application createApplication(String title, 
+			int posx, int posy, int sizex, int sizey, boolean fullscreen) {
+		return new Lwjgl3Application(new Main(new AppConfig(title, sizex, sizey, fullscreen)), 
+				getConfiguration(posx, posy, sizex, sizey));
 	}
 
 	private static Lwjgl3ApplicationConfiguration getConfiguration(int px, int py, int sx, int sy) {

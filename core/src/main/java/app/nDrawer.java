@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -20,6 +21,7 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.crashinvaders.vfx.VfxManager;
 import com.crashinvaders.vfx.effects.AbstractVfxEffect;
@@ -42,7 +44,8 @@ import util.nTransform;
 
 public class nDrawer {
 	public boolean vfx;
-	public BitmapFont bitmapfont;
+	public final BitmapFont bitmapfont, bitmapfont_2y;
+	public BitmapFont font;
 	public PolygonSpriteBatch spritebatch;
 	public Texture texture;
 	public ShapeDrawer drawer;
@@ -50,12 +53,21 @@ public class nDrawer {
 	private VfxManager vfxManager;
 	ArrayList<AbstractVfxEffect> effect = new ArrayList<AbstractVfxEffect>();
     private VfxFrameBuffer buffer;
-    public GdxApp app;
+//    public GdxApp app;
+    public DrawContext context;
+    
+    public interface DrawContext {
+		public nDrawer getDrawer();
+		public Viewport getViewport();
+    		public Rectangle getScreenRect();
+    		public OrthographicCamera getCamera();
+    }
 
 	public void draw_begin() {
 		transf.reset();
 		ScreenUtils.clear(color_back);
-		app.viewport.apply(false);
+		context.getViewport().apply(false);
+//		app.viewport.apply(false);
 		ready(); begin();
 	}
 	public void fx() { end(); vfx = true; begin(); }
@@ -67,28 +79,33 @@ public class nDrawer {
 	public void restart_batch() { 
 		begin(); 
 	}
-	
-	public nDrawer(GdxApp a, boolean fx) {
-		app = a; vfx = fx;
-
-		spritebatch = new PolygonSpriteBatch();
-		
+	private BitmapFont makeFont(String s) {
 
 		FreeTypeFontGenerator fontgenerator = new FreeTypeFontGenerator(
-				Gdx.files.internal("Mx437_IBM_BIOS-2y.ttf"));
+				Gdx.files.internal(s));
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 //		parameter.borderWidth = basetxtSize/20f;
 //		parameter.borderColor = Color.BLACK; 
 //		parameter.borderStraight = true;
 		parameter.size = (int) basetxtSize;
-		bitmapfont = fontgenerator.generateFont(parameter);
+		BitmapFont f = fontgenerator.generateFont(parameter);
 		fontgenerator.dispose();
 		//font has 15pt, but we need to scale it to our viewport by ratio of viewport height to screen height
-		bitmapfont.setUseIntegerPositions(false);
+		f.setUseIntegerPositions(false);
 		//		bitmapfont.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
 
-		bitmapfont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		f.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		return f;
+	}
+	
+	public nDrawer(DrawContext a, boolean fx) {
+		context = a; vfx = fx;
+
+		spritebatch = new PolygonSpriteBatch();
 		
+		bitmapfont = makeFont("Mx437_IBM_BIOS.ttf");
+		bitmapfont_2y = makeFont("Mx437_IBM_BIOS-2y.ttf");
+		font = bitmapfont_2y;
 		
 		Pixmap pixmap = new Pixmap(1, 1, Format.RGBA8888);
 		pixmap.setColor(Color.WHITE);
@@ -138,7 +155,7 @@ public class nDrawer {
 	}
 	public Matrix4 getTransformMatrix() { return spritebatch.getTransformMatrix(); }
 	public void dispose() {
-		bitmapfont.dispose();
+		bitmapfont.dispose(); bitmapfont_2y.dispose();
 		buffer.dispose();
 		vfxManager.dispose();
 		for (AbstractVfxEffect e : effect) e.dispose();
@@ -150,7 +167,8 @@ public class nDrawer {
 	public void flush() { spritebatch.flush(); }
 	public void ready() { vfxManager.cleanUpBuffers(Utl.color(0, 0)); }
 	public void begin() {
-		spritebatch.setProjectionMatrix(app.viewport.getCamera().combined);
+//		spritebatch.setProjectionMatrix(app.viewport.getCamera().combined);
+		spritebatch.setProjectionMatrix(context.getViewport().getCamera().combined);
 		drawer.updatePixelSize(); 
 		if (vfx) {
 //			vfxManager.rebind();
@@ -175,7 +193,8 @@ public class nDrawer {
 	        vfxManager.renderToFbo(buffer);
 	        spritebatch.begin();
 			spritebatch.draw(buffer.getTexture(), 0, 0, 
-					(int)app.screenrect.width, (int)app.screenrect.height, 
+					(int)context.getScreenRect().width, 
+					(int)context.getScreenRect().height, 
 					0, 0, 1, 1);
 			spritebatch.end();
 		}
@@ -241,9 +260,14 @@ public class nDrawer {
 	// to redo correctly
 	public float txtCharSize = txtSize/2f;
 	// 	game.font.getBounds(t.subSequence(0,t.length()-1));
-	public float textWidth(String t) { return txtCharSize * t.length(); }
-	public float textWidth(char t) { return txtCharSize; }
-	public float textHeight() { return bitmapfont.getLineHeight(); }
+	public void setLargeFont() { font = bitmapfont; }
+	public void setDefaultFont() { font = bitmapfont_2y; }
+	public float textWidth(String t) { 
+		if (font == bitmapfont_2y) return txtCharSize * t.length(); 
+		else return txtCharSize * t.length() * 1.9f; }
+	public float textWidth(char t) { 
+		if (font == bitmapfont_2y) return txtCharSize; else return txtCharSize*1.9f; }
+	public float textHeight() { return font.getLineHeight(); }
 	public nDrawer textAlign(nAlign ax, nAlign ay) {
 		textAlignmentX = ax;
 		textAlignmentY = ay;
@@ -260,7 +284,7 @@ public class nDrawer {
 		txtSize = txtSizeTransf;
 		txtCharSize = txtSizeTransf/2f;
 		float f = txtSize/basetxtSize;
-		bitmapfont.getData().setScale(f);
+		font.getData().setScale(f);
 		float alignmentOffsetX = 0;
 		float alignmentOffsetY = 0;
 		if (textAlignmentX == nAlign.CENTER) 
@@ -268,14 +292,14 @@ public class nDrawer {
 		else if (textAlignmentX == nAlign.RIGHT) 
 			alignmentOffsetX = -textWidth(t) / transf.getScale();
 		if (textAlignmentY == nAlign.CENTER) 
-			alignmentOffsetY = bitmapfont.getLineHeight() / (2.0f * transf.getScale());
+			alignmentOffsetY = font.getLineHeight() / (2.0f * transf.getScale());
 		else if (textAlignmentY == nAlign.BOTTOM) 
-			alignmentOffsetY = bitmapfont.getLineHeight() / transf.getScale();
+			alignmentOffsetY = font.getLineHeight() / transf.getScale();
 		x += alignmentOffsetX;
 		y += alignmentOffsetY;
 		Vector2 p = transf.transform(x, y);
-		bitmapfont.setColor(c);
-		bitmapfont.draw(spritebatch, t, p.x, p.y);
+		font.setColor(c);
+		font.draw(spritebatch, t, p.x, p.y);
 		return this;
 	}
 	

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.badlogic.gdx.utils.Pool.Poolable;
 
+import app.App;
 import app.Applet;
 import data.*;
 import util.Utl;
@@ -57,7 +58,7 @@ public class nInterface  implements Poolable {
 	
 	
 
-	public Applet app;
+	public App app;
 //	public nInterfaceHandler handler;
 	public nGUI handler;
 	

@@ -5,21 +5,25 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.math.Vector2;
+import com.noodle.nodulo.Main;
 
-import app.GdxApp.AppConfig;
 import data.sData;
 import gui.nGUI;
 import plane.pPlane;
 import util.nMap;
 import util.nRun;
 
-public class Applet extends App {
-	// Applet.pop(new AppConfig());
-	public static GdxApp make(AppConfig c) {
-		return new GdxApp(c, new Applet()); }
+public class Applet extends App implements nPref.PrefAccess {
+	// Applet.make(new AppConfig());
+	public static GdxApp make(Main m, AppConfig c) {
+		return new GdxApp(m, c, new Applet()); }
 	
-
-	
+	public nPref pref;
+	public <T> T getPref(String r, Class<T> cl) {
+		return pref.getPref(r,cl);
+	}
+	public void setPref(String p, String r, Object d) {
+		pref.setPref(p,r,d); }
 	
 
 //	private boolean TITLE_SCREEN = true;
@@ -122,10 +126,14 @@ public class Applet extends App {
 	
 	public nMenu menu;
 	
+	public static Applet app;
+	
 	@Override
 	public void setup(GdxApp a) {
-		gdx = a;
+		gdx = a; app = this;
 
+		pref = new nPref();
+		
 		newPref("default");
 		
 		newPref("focus_space");
@@ -135,9 +143,9 @@ public class Applet extends App {
 
 		for (nRun n : pref_runs) n.run();
 
-		for (Preferences n : prefs.all()) n.flush();
+		for (Preferences n : pref.prefs.all()) n.flush();
 		
-		setCurrentPref(PREFERENCE_REF);
+		pref.setCurrentPref(PREFERENCE_REF);
 
 		if (getPref("start_fullscreen", Boolean.class)) START_FULLSCREEN = true;
 		USE_FX = getPref("use_fx", Boolean.class); 
@@ -145,11 +153,11 @@ public class Applet extends App {
 		
 		super.setup(a);
 
-	    data = new sData(this);
-	    
-		input = new nInput(this);
-		
-		gui = new nGUI(this, gdx.camera, input.mouse, gdx.screenrect);
+//	    data = new sData(this);
+//	    
+//		input = new nInput(this);
+//		
+		gui = new nGUI(this, gdx, gdx, input, data, this);
 		
 		
 		menu = new nMenu(this);
@@ -205,62 +213,10 @@ public class Applet extends App {
 			gdx.add_nodraw_frame(40); }});
 	}
 
-	public <T> T getPref(String r, Class<T> cl) {
-		if (cl == Boolean.class) {
-			return (T)(Object)current_pref.getBoolean(r);
-		} else if (cl == Float.class) {
-			return (T)(Object)current_pref.getFloat(r);
-		} else if (cl == Integer.class) {
-			return (T)(Object)current_pref.getInteger(r);
-		} else if (cl == String.class) {
-			return (T)(Object)current_pref.getString(r);
-		} else if (cl == Vector2.class) {
-			return (T)(Object)(new Vector2(
-					current_pref.getFloat(r+"_x"), current_pref.getFloat(r+"_y")));
-		} else {
-			return null;
-		}
-	}
 
-	public void setPref(String r, Object d) {
-		if (current_pref == null) return;
-		setPref(current_pref, r, d);
-	}
-	public void setPref(String pref_ref, String r, Object d) {
-		Preferences pref = prefs.get(pref_ref);
-		if (pref == null) return;
-		setPref(pref, r, d);
-	}
-	public void setPref(Preferences pref, String r, Object d) {
-		if (pref == null) return;
-		Class<?> cl = d.getClass();
-		if (cl == Boolean.class) {
-			pref.putBoolean(r, (boolean)d);
-		} else if (cl == Float.class) {
-			pref.putFloat(r, (float)d);
-		} else if (cl == Integer.class) {
-			pref.putInteger(r, (int)d);
-		} else if (cl == String.class) {
-			pref.putString(r, (String)d);
-		} else if (cl == Vector2.class) {
-			pref.putFloat(r+"_x", ((Vector2)d).x);
-			pref.putFloat(r+"_y", ((Vector2)d).y);
-		} else {
-			return;
-		}
-		pref.flush();
-	}
-	
-	public nMap<Preferences> prefs = new nMap<Preferences>();
-	public Preferences current_pref;
-	
-	public void setCurrentPref(String r) {
-		if (prefs.hasKey(r)) current_pref = prefs.get(r);
-	}
-	
 	public Preferences newPref(String r) {
 		Preferences p = Gdx.app.getPreferences(r);
-		prefs.put(r,p);
+		pref.prefs.put(r,p);
 		
 		p.putBoolean("TITLE_SCREEN", TITLE_SCREEN);
 		p.putBoolean("RELEASE", RELEASE);
@@ -297,6 +253,5 @@ public class Applet extends App {
 		
 		return p;
 	}
-	
 	
 }
