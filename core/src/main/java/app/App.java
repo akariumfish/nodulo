@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -12,29 +12,24 @@ import com.codedisaster.steamworks.SteamAPI;
 
 import app.GdxApp.nAppListener;
 import data.sData;
-import data.sValueBloc;
 import gui.nAlign;
-import gui.nGUI;
-import plane.pPlane;
-import space.earlygrey.shapedrawer.JoinType;
 import util.nRun;
 import util.nTransform;
 
-public class App implements nAppListener {
+public class App implements nAppListener, Runner, nDrawer.Drawer {
 	
 	public int LOADING_SCREEN_FRAME = 1;
 	
+	public static String setting_file = "setting"+sData.setting_extension;
 	
 	public GdxApp gdx;
 	public nInput input;
 	public sData data;
-	public nGUI gui;
 	
 	@Override
 	public void setup(GdxApp a) {
 		gdx = a;
-		
-		
+		setting_file = gdx.window_title + sData.setting_extension;
 		
 //		try {
 //			// with libGDX - requires steamworks4j-gdx
@@ -63,26 +58,24 @@ public class App implements nAppListener {
 	    
 		input = new nInput(this);
 		
-//		gui = new nGUI(this, gdx, gdx, input, data, this);
-		
 	}
 
 	@Override
 	public void closing() {
-
-//		pPlane.dispose(this);
 		
-		if (gui != null) gui.dispose();
-		if (data != null) data.dispose();
+		data.dispose();
 		
 //		SteamAPI.shutdown();
 	}
 
 	public void startup() { do_startup = true; }
 	private boolean do_startup = false;
-	protected void do_startup() {
-		do_startup = false;
-	}
+	
+	protected void do_startup() {}
+	protected void gui_frame() {}
+	protected void gui_draw() {}
+	public void draw_start() {}
+	public void draw_end() {}
 	
 	@Override
 	public void pre_draw() {
@@ -123,9 +116,8 @@ public class App implements nAppListener {
 		    }
 		}});
 		
-		gdx.exec_nothrow("gui.frame()", new nRun() { public void run() {	
-			//nGUI update
-			if (gui != null) gui.frame();
+		gdx.exec_nothrow("gui_frame()", new nRun() { public void run() {	
+			gui_frame();
 		}});
 
 		gdx.exec_nothrow("runEvents(runFrame, delta)", new nRun() { public void run() {	
@@ -136,11 +128,10 @@ public class App implements nAppListener {
 	}
 
 	@Override
-	public void draw() {
+	public void drawer_draw() {
 
-		gdx.exec_nothrow("gui.draw()", new nRun() { public void run() {	
-			//screen GUI drawing
-			if (gui != null) gui.draw();
+		gdx.exec_nothrow("gui_draw()", new nRun() { public void run() {	
+			gui_draw();
 		}});
 		
 		if (LOADING_SCREEN_FRAME > 0) {
@@ -177,7 +168,7 @@ public class App implements nAppListener {
 			if (input != null) input.frame_end();
 		}});
 		
-		if (do_startup) do_startup();
+		if (do_startup) { do_startup = false; do_startup(); }
 	}
 
 
@@ -199,14 +190,14 @@ public class App implements nAppListener {
 	ArrayList<nRun> eventsNextFrame2 = new ArrayList<nRun>();
 	boolean active_nxtfrm_pile = false;
 
-	public App addRunFrame(nRun r) { runFrame.add(r); return this; }
-	public App removeRunFrame(nRun r) { runFrame.remove(r); return this; }
-	public App addRunFrameStart(nRun r) { runFrameStart.add(r); return this; }
-	public App removeRunFrameStart(nRun r) { runFrameStart.remove(r); return this; }
-	public App addRunFrameEnd(nRun r) { runFrameEnd.add(r); return this; }
-	public App removeRunFrameEnd(nRun r) { runFrameEnd.remove(r); return this; }
-	public App addEventNextFrame(nRun r) { 
-		if (active_nxtfrm_pile) eventsNextFrame1.add(r); else eventsNextFrame2.add(r); return this; }
+	public void addRunFrame(nRun r) { runFrame.add(r); }
+	public void removeRunFrame(nRun r) { runFrame.remove(r); }
+	public void addRunFrameStart(nRun r) { runFrameStart.add(r); }
+	public void removeRunFrameStart(nRun r) { runFrameStart.remove(r); }
+	public void addRunFrameEnd(nRun r) { runFrameEnd.add(r); }
+	public void removeRunFrameEnd(nRun r) { runFrameEnd.remove(r); }
+	public void addEventNextFrame(nRun r) { 
+		if (active_nxtfrm_pile) eventsNextFrame1.add(r); else eventsNextFrame2.add(r); }
 
 	private class DelayEvent {
 		public nRun event;
@@ -214,9 +205,9 @@ public class App implements nAppListener {
 		public DelayEvent(int d, nRun r) { delay = d; event = r; } }
 
 	ArrayList<DelayEvent> delay_events = new ArrayList<DelayEvent>();
-	public App addDelayEvent(int delay, nRun r) { 
-		if (delay <= 0) { r.run(); return this; }
-		delay_events.add(new DelayEvent(delay, r)); return this; }
+	public void addDelayEvent(int delay, nRun r) { 
+		if (delay <= 0) { r.run(); return; }
+		delay_events.add(new DelayEvent(delay, r)); }
 	
 	
 	
@@ -235,7 +226,12 @@ public class App implements nAppListener {
 	public void logn() { gdx.logn(); }
 	public void logn(String t) { gdx.logn(t); }
 	public void log(String t) { gdx.log(t); }
-
+	
+	public void flush() { gdx.drawer.flush(); }
+	public void fx() { gdx.drawer.fx(); }
+	public void noFx() { gdx.drawer.noFx(); }
+	public Matrix4 getTransformMatrix() { return gdx.drawer.getTransformMatrix(); }
+	
 
 	public void push() { 
 		gdx.drawer.push(); }

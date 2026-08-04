@@ -2,9 +2,9 @@ package util;
 
 import java.util.ArrayList;
 
-import app.Applet;
-import patch.pInstance;
-import patch.pPar;
+import zz_applet.Applet;
+import zz_patch.pInstance;
+import zz_patch.pPar;
 
 public abstract class nRun {
 	

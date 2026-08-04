@@ -3,25 +3,27 @@ package com.noodle.nodulo;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import aa_nodulo.PlaneApplet;
 import app.nDrawer;
+import gui.nDrawable;
+import util.Utl;
 
 /** First screen of the application. Displayed after the application is created. */
 public class TitleScreen implements Screen ,nDrawer.DrawContext {
 	
 	public Main main;
 	
-	Skin skinl,skinm,skinh;
+	Skin skin;
 	Stage stage;
 
     public OrthographicCamera camera; 
@@ -29,6 +31,7 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 	public nDrawer drawer;
 	public Rectangle screenrect;
 
+	TextButtonStyle textbuttstyle;
 	
 	public TitleScreen(Main m) {
 		main = m;
@@ -44,78 +47,72 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 		camera.update();
 		
 		drawer = new nDrawer(this, false);
-		
-		skinl = new Skin(Gdx.files.internal("ui/Holo-dark-ldpi.json"));
-		skinm = new Skin(Gdx.files.internal("ui/Holo-dark-mdpi.json"));
-		skinh = new Skin(Gdx.files.internal("ui/Holo-dark-hdpi.json"));
+
+		title_effect = new TitleEffect(this);
+
+		skin = new Skin(Gdx.files.internal("ui/skin.json"));
 		stage = new Stage(new ScreenViewport());
 		Gdx.input.setInputProcessor(stage);
 
 		Table table1 = new Table();
-		table1.setSize(m.conf.WIDTH,m.conf.HEIGHT * 4f / 5f);
-		table1.setPosition(0,0);
+		table1.setSize(m.conf.WIDTH / 1f,m.conf.HEIGHT * 4f / 5f);
+		table1.setPosition(m.conf.WIDTH * 0f / 4f,0);
+		table1.layout();
+//		table1.debug();
 		stage.addActor(table1);
-		
+
 		Table table2 = new Table();
-		table2.setSize(m.conf.WIDTH,m.conf.HEIGHT * 4f / 5f);
-		table2.setPosition(0,0);
+		table2.setSize(m.conf.WIDTH / 1f,m.conf.HEIGHT * 4f / 5f);
+		table2.setPosition(m.conf.WIDTH * 0f / 4f,0);
+		table2.layout();
 
-		TextButtonStyle style = new TextButtonStyle(skinh.get(TextButtonStyle.class));
+		textbuttstyle = new TextButtonStyle(skin.get(TextButtonStyle.class));
 
-		TextButton button = new TextButton("Back", style);
-		button.addListener(new InputListener() { public boolean touchDown (
+		table2.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
+		table2.add(new Label("Build Models :", skin));
+		
+		for (String nm : PlaneApplet.getModels()) {
+			makeButton(nm, table2).addListener(new InputListener() { public boolean touchDown (
+					InputEvent event, float x, float y, int pointer, int button) {
+				main.launch_nodulo(nm); return false; }}); }
+		
+		makeButton("Back", table2).addListener(new InputListener() { public boolean touchDown (
 				InputEvent event, float x, float y, int pointer, int button) {
 			stage.addActor(table1); table2.remove(); return false; }});
 		
-		table2.row();
-		table2.add(button);
-		
-
-		Label label = new Label("Some text", skinh);
-//		label.setFontScale(6f);
-//		label.setWrap(true);
-		table1.row();
-		table1.add(label);
-		button = new TextButton("New", style);
-		button.addListener(new InputListener() { public boolean touchDown (
+		makeButton("New", table1).addListener(new InputListener() { public boolean touchDown (
 				InputEvent event, float x, float y, int pointer, int button) {
-			stage.addActor(table2); table1.remove(); 
-			return false; }});
-		table1.row();
-		table1.add(button);
-
-		button = new TextButton("Load", style);
-		button.addListener(new InputListener() { public boolean touchDown (
+			stage.addActor(table2); table1.remove(); return false; }});
+//		makeButton("Load", table1).addListener(new InputListener() { public boolean touchDown (
+//				InputEvent event, float x, float y, int pointer, int button) {
+//			return false; }});
+//		makeButton("Join", table1).addListener(new InputListener() { public boolean touchDown (
+//				InputEvent event, float x, float y, int pointer, int button) {
+//			return false; }});
+		makeButton("Applet", table1).addListener(new InputListener() { public boolean touchDown (
 				InputEvent event, float x, float y, int pointer, int button) {
-			return false; }});
-		table1.row();
-		table1.add(button);
-
-		button = new TextButton("Join", style);
-		button.addListener(new InputListener() { public boolean touchDown (
-				InputEvent event, float x, float y, int pointer, int button) {
-			return false; }});
-		table1.row();
-		table1.add(button);
-
-		button = new TextButton("Setting", style);
-		button.addListener(new InputListener() { public boolean touchDown (
-				InputEvent event, float x, float y, int pointer, int button) {
-			return false; }});
-		table1.row();
-		table1.add(button);
-
-		button = new TextButton("Exit", style);
-		button.addListener(new InputListener() { public boolean touchDown (
+			main.launch_applet(); return false; }});
+		makeButton("Exit", table1).addListener(new InputListener() { public boolean touchDown (
 				InputEvent event, float x, float y, int pointer, int button) {
 			Gdx.app.exit(); return false; }});
-		table1.row();
-		table1.add(button);
-		
-		table1.layout();
-//		table.debug();
 
+		table1.row().fill().pad(100,10,0,10).minWidth(main.conf.WIDTH / 5f);
+		table1.add(new Label("Some text, contact, ext ... ", skin));
+		
+		
 	}
+	
+	private TextButton makeButton(String t, Table table) {
+		TextButton button = new TextButton(t, textbuttstyle);
+		table.row()
+		.fill()
+		.pad(10)
+		.minWidth(main.conf.WIDTH / 4f)
+		.minHeight(main.conf.HEIGHT / 18f)
+		;
+		table.add(button);
+		return button; }
+	
 	@Override
 	public nDrawer getDrawer() { return drawer; }
 	@Override
@@ -137,7 +134,20 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 		ScreenUtils.clear(0.2f, 0.2f, 0.2f, 1);
 
 		drawer.draw_begin();
+		
+		title_effect.draw();
 
+		drawer.fill(60); drawer.stroke(0,6f);
+		float sx = screenrect.width / 1.5f;
+		float sy = screenrect.height / 6f;
+		drawer.rect(screenrect.width / 2f - sx / 2f, 
+				screenrect.height * 4f / 5f - sy / 2f + 10f, 
+				sx, sy);
+		sx = screenrect.width / 3.5f;
+		sy = screenrect.height * 3f / 5f;
+		drawer.rect(screenrect.width / 2f - sx / 2f, 
+				0f + sy / 6f, 
+				sx, sy);
 		drawer.fill(255); drawer.stroke(0,3f); drawer.setLargeFont();
 		drawer.text("NODULO",screenrect.width / 2f, screenrect.height * 4f / 5f, 120);
 		drawer.setDefaultFont();
@@ -184,7 +194,94 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 	public void dispose() {
 		// Destroy screen's assets here.
 		stage.dispose();
-		skinl.dispose(); skinm.dispose(); skinh.dispose(); 
+		skin.dispose(); 
 		drawer.dispose();
 	}
+	
+	
+	
+	
+
+	public static class TitleEffect {
+		public TitleScreen app;
+		public nDrawable drawable;
+		int sx, sy, w = 0, h = 0;
+		float density = 1.0f/10000.0f;
+		float scale = 6.0f;
+		int hue = 190;
+		int[][][] world;
+		Color[][] pic;
+		int frame_counter = 0;
+		public TitleEffect(TitleScreen a) {
+			app = a;
+			drawable = new nDrawable() {public void drawing() {
+				draw(); }};
+			w = (int)(app.main.conf.WIDTH / scale);
+			h = (int)(app.main.conf.HEIGHT / scale);
+			sx = w; sy = h;
+			world = new int[sx][sy][2];
+			pic = new Color[sx][sy];
+			for (int x = 0; x < sx; x++) 
+				for (int y = 0; y < sy; y++) {
+					pic[x][y] = Utl.color(0); }
+			reset();
+		}
+		void reset() {
+			for (int x = 0; x < sx; x++) 
+				for (int y = 0; y < sy; y++) {
+					world[x][y][0] = 0;
+					world[x][y][1] = 0;
+//					pic[x][y].set(Color.BLACK); 
+				}
+			// Set random cells to 'on'
+			for (int i = 0; i < sx * sy * density; i++) {
+				int a = (int)(Math.random()*(float)(sx-1));
+				int b = (int)(Math.random()*(float)(sy-1));
+				world[a][b][1] = 1; }
+			frame_counter = 0;
+		}
+
+		void draw() {
+			frame_counter++;
+			if (frame_counter%100 == 0) reset();
+			app.drawer.fill(0); app.drawer.noStroke();
+			app.drawer.rect(0,0,app.main.conf.WIDTH,app.main.conf.HEIGHT);
+			conway_up();
+			hue = (hue+10)%210;
+			for (int x = 0; x < sx; x=x+1) for (int y = 0; y < sy; y=y+1) {
+				app.drawer.fill(pic[x][y]); app.drawer.noStroke();
+				app.drawer.rect(x*scale,y*scale,scale,scale); }
+		}
+
+		void conway_up() {
+			for (int x = 0; x < sx; x++) for (int y = 0; y < sy; y++) {
+				if ((world[x][y][1] == 1) || 
+						(world[x][y][1] == 0 && world[x][y][0] == 1)) { 
+					world[x][y][0] = 1; }
+				if (world[x][y][1] == -1) { world[x][y][0] = 0; }
+				world[x][y][1] = 0;
+			}
+			for (int x = 0; x < sx; x++) for (int y = 0; y < sy; y++) {
+				int count = neighbors(x, y);
+				if ((count == 1 || count == 2) && world[x][y][0] == 0) {
+					world[x][y][1] = 1;
+					pic[x][y].set(Utl.color(40+hue));
+				}
+			}
+		}
+
+		// Count the number of adjacent cells 'on'
+		int neighbors(int x, int y) {
+			return world[(x + 1) % sx][y][0] + 
+					world[x][(y + 1) % sy][0] + 
+					world[(x + sx - 1) % sx][y][0] + 
+					world[x][(y + sy - 1) % sy][0] + 
+					world[(x + 1) % sx][(y + 1) % sy][0] + 
+					world[(x + sx - 1) % sx][(y + 1) % sy][0] + 
+					world[(x + sx - 1) % sx][(y + sy - 1) % sy][0] + 
+					world[(x + 1) % sx][(y + sy - 1) % sy][0];
+		}
+	}
+	
+	public TitleEffect title_effect;
 }

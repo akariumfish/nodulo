@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
 import app.App;
-import app.Applet;
 import app.nLauncher;
 import gui.nInterface;
 import gui.nWidget;
@@ -16,6 +15,7 @@ import net.nNetwork;
 import util.Utl;
 import util.nClearable;
 import util.nRun;
+import zz_applet.Applet;
 
 
 public abstract class sValue extends nLauncher implements nClearable, Poolable {

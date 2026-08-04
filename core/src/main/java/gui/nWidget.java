@@ -11,31 +11,32 @@ import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
 import app.App;
-import app.Applet;
 import app.GdxApp;
+import app.nDrawer;
 import data.*;
 import util.Utl;
 import util.nClearable;
 import util.nRun;
 import util.nTransform;
+import zz_applet.Applet;
 
 public class nWidget extends nModel implements Poolable, nClearable {
 	
 	
 	
-	public void print_state(int tabs) {
-		String t = "";
-		for (int i = 0 ; i < tabs ; i++) t += " ";
-		t += "-"+widget_id+" "+groupKey;
-		if (group != null) t += " in "+group.ref;
-		t += " : "+text+" "+maskedrect.toString();
-		int dec = 60 - t.length();
-		for (int i = 0 ; i < dec ; i++) t += " ";
-		t += ".";
-		if (mouseOver) t += "mouseOver";
-		app.logn(t);
-		for (nWidget r : childs) r.print_state(tabs+1); 
-	}
+//	public void print_state(int tabs) {
+//		String t = "";
+//		for (int i = 0 ; i < tabs ; i++) t += " ";
+//		t += "-"+widget_id+" "+groupKey;
+//		if (group != null) t += " in "+group.ref;
+//		t += " : "+text+" "+maskedrect.toString();
+//		int dec = 60 - t.length();
+//		for (int i = 0 ; i < dec ; i++) t += " ";
+//		t += ".";
+//		if (mouseOver) t += "mouseOver";
+//		app.logn(t);
+//		for (nWidget r : childs) r.print_state(tabs+1); 
+//	}
 	
 	
 	
@@ -43,8 +44,8 @@ public class nWidget extends nModel implements Poolable, nClearable {
 	public nWidget runModelCustomInit(nModel m) { return m.custom_init(this); }
 	
 
-	protected nGUI gui;
-	public App app;
+	public nGUI gui;
+	public nDrawer.Drawer app;
 	
 	public nDrawable drawer, custom_drawer = null;
 	public  nWidget setDrawer(nDrawable d) { drawer = d; return this; }
@@ -56,7 +57,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 	// called when pool is filled
 	public nWidget(nGUI g) {
 		super();
-		app = g.app;
+		app = g.drawer;
 		gui = g; 
 		widget_id = WIDGET_COUNTER;
 		WIDGET_COUNTER++;
@@ -937,7 +938,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 	
 	public nWidget drawMasked() {  
 
-		if (vfx) app.gdx.drawer.fx();
+		if (vfx) app.fx();
 		
 		
 		if (getVisibility()) { 
@@ -959,9 +960,9 @@ public class nWidget extends nModel implements Poolable, nClearable {
 			boolean pop = false;
 			if (maskChildren) {
 			    ScissorStack.calculateScissors(
-			    		gui.cam, app.gdx.drawer.getTransformMatrix(), 
+			    		gui.cam, app.getTransformMatrix(), 
 			    		maskedrect, maskingrect);
-				app.gdx.drawer.flush();
+				app.flush();
 				pop = ScissorStack.pushScissors(maskingrect); //return false if mask area =0
 				if (pop) gui.scissors.add(maskingrect);
 //				app.logn("a"+gui.scissors.size());
@@ -971,7 +972,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 				for (nWidget w : childs) w.drawMasked();
 
 			if (maskChildren) {
-				app.gdx.drawer.flush();
+				app.flush();
 				if (pop) ScissorStack.popScissors();
 				if (pop) gui.scissors.remove(gui.scissors.get(gui.scissors.size() - 1));
 //				app.logn("b"+gui.scissors.size());
@@ -981,7 +982,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 
 		}
 
-		if (vfx) app.gdx.drawer.noFx();
+		if (vfx) app.noFx();
 //		if (vfx) app.noFx((int)maskingrect.x, (int)maskingrect.y, 
 //				(int)maskingrect.width, (int)maskingrect.height);
 		

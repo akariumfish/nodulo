@@ -6,8 +6,8 @@ import java.io.OutputStream;
 
 import com.badlogic.gdx.math.Vector2;
 
-import app.Applet;
 import util.Utl;
+import zz_applet.Applet;
 
 public class File_Data {
 	

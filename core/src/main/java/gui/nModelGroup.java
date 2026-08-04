@@ -1,7 +1,7 @@
 package gui;
 
 import app.App;
-import app.Applet;
+import zz_applet.Applet;
 
 public class nModelGroup {
 

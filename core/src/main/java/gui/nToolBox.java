@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.math.Vector2;
 
-import app.Applet;
 import app.GdxApp;
-import app.nMenu;
 import data.*;
-import plane.pSpace;
 import util.Utl;
 import util.nRun;
+import zz_applet.Applet;
+import zz_applet.nMenu;
+import zz_plane.pSpace;
 
 public class nToolBox {
 

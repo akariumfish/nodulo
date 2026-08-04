@@ -410,5 +410,71 @@ public class nDrawer {
 
 	
 	
-	
+	public interface Drawer {
+
+
+		public void flush();
+		
+		public void fx();
+		public void noFx();
+
+		public Matrix4 getTransformMatrix();
+		
+		public void push();  
+		public void pop();  
+		public void transf(nTransform t);  
+		public void translate(float x, float y);  
+		public void translate(Vector2 v);  
+		public void scale(float s);  
+		public void rotate(float s);  
+		
+		public float textWidth(String t);  
+		public float textWidth(char t);  
+		public float textHeight();  
+		public void textAlign(nAlign ax, nAlign ay); 
+		public void text(String t, Vector2 v, float s); 
+		public void text(String t, Vector2 v, float s, Color c); 
+		public void text(String t, float x, float y, float s); 
+		public void text(String t, float x, float y, float s, Color c); 
+		
+		public void rect(Rectangle n); 
+		public void rect(float x, float y, float w, float h); 
+		
+		public void circle(Rectangle r); 
+		public void circle(float x, float y, float r); 
+		
+		public void line(Vector2 p1, Vector2 p2); 
+		public void line(float x1, float y1, float x2, float y2); 
+		
+		public void polygon(Polygon p); 
+		public void polygon(Vector2 v0, Vector2 v1, Vector2 v2); 
+		public void polygon(Vector2 v0, Vector2 v1, Vector2 v2, Vector2 v3); 
+		public void polygon(Vector2[] v); 
+		public void polygon(float[] v); 
+		
+		public void diamond(Rectangle r); 
+		
+		public void fill(Color c); 
+		public void fill(int c); 
+		public void fill(int l, int a); 
+		public void fill(int r, int g, int b); 
+		public void fill(int r, int g, int b, int a); 
+
+		public void stroke(Color c); 
+		public void stroke(Color c, float w); 
+		public void stroke(int c); 
+		public void stroke(int l, float w); 
+		public void stroke(int r, int g, int b); 
+		public void stroke(int r, int g, int b, int a); 
+		public void stroke(int r, int g, int b, int a, float w); 
+		
+		public void noFill();  
+		public void noStroke();  
+		public void strokeWeight(float strokeW);  
+
+		public void point(Vector2 v);  
+		public void point(float x, float y); 
+		public void point(float x, float y, Color c);
+
+	}
 }

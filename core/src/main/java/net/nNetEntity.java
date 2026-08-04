@@ -2,10 +2,10 @@ package net;
 
 import java.util.HashMap;
 
-import app.Applet;
 import data.*;
 import net.nNetwork.*;
 import util.nRun;
+import zz_applet.Applet;
 
 public abstract class nNetEntity {
 	

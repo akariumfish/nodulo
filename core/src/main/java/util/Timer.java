@@ -18,7 +18,7 @@ package util;
 
 import com.badlogic.gdx.utils.ObjectMap;
 
-import app.Applet;
+import zz_applet.Applet;
 
 /**
  * A simple Timer class that let's you measure multiple times and are identified via an id.

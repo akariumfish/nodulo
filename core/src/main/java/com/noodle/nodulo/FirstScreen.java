@@ -18,7 +18,7 @@ public class FirstScreen implements Screen {
 		
 		stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
-		Skin skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
+		Skin skin = new Skin(Gdx.files.internal("ui/skin.json"));
 
 		Label nameLabel = new Label("Name:", skin);
 		TextField nameText = new TextField("", skin);

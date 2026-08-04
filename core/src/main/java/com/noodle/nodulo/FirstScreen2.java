@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.utils.Align;
@@ -35,7 +36,7 @@ public class FirstScreen2 implements Screen {
 
 	public void setup() {
 
-		skin = new Skin(Gdx.files.internal("ui/Holo-dark-ldpi.json"));
+		skin = new Skin(Gdx.files.internal("ui/skin.json"));
 //		texture1 = new Texture(Gdx.files.internal("ui/badlogicsmall.jpg"));
 //		texture2 = new Texture(Gdx.files.internal("ui/badlogic.jpg"));
 //		TextureRegion image = new TextureRegion(texture1);
@@ -48,10 +49,12 @@ public class FirstScreen2 implements Screen {
 
 		// stage.setDebugAll(true);
 
-		ImageButtonStyle style = new ImageButtonStyle(skin.get(ButtonStyle.class));
+//		ImageButtonStyle style = new ImageButtonStyle(skin.get(ButtonStyle.class));
 //		style.imageUp = new TextureRegionDrawable(image);
 //		style.imageDown = new TextureRegionDrawable(imageFlipped);
-		ImageButton iconButton = new ImageButton(style);
+//		ImageButton iconButton = new ImageButton(style);
+		TextButton button = new TextButton("Text Text", 
+				new TextButtonStyle(skin.get(TextButtonStyle.class)));
 
 		Button buttonMulti = new TextButton("Multi\nLine\nToggle", skin, "toggle");
 //		Button imgButton = new Button(new Image(image), skin);
@@ -110,13 +113,14 @@ public class FirstScreen2 implements Screen {
 		passwordTextField.setPasswordCharacter('*');
 		passwordTextField.setPasswordMode(true);
 
-//		buttonMulti.addListener(new TextTooltip(
-//			"This is a tooltip! This is a tooltip! This is a tooltip! This is a tooltip! This is a tooltip! This is a tooltip!",
-//			skin));
-//		Table tooltipTable = new Table(skin);
-//		tooltipTable.pad(10).background("default-round");
-//		tooltipTable.add(new TextButton("Fancy tooltip!", skin));
+		buttonMulti.addListener(new TextTooltip(
+			"This is a tooltip! This is a tooltip! This is a tooltip! This is a tooltip! This is a tooltip! This is a tooltip!",
+			skin));
+		Table tooltipTable = new Table(skin);
+		tooltipTable.pad(10);//.background("default");
+		tooltipTable.add(new TextButton("Fancy tooltip!", skin));
 //		imgButton.addListener(new Tooltip(tooltipTable));
+		button.addListener(new Tooltip(tooltipTable));
 
 		// window.debug();
 		Window window = new Window("Dialog", skin);
@@ -124,7 +128,8 @@ public class FirstScreen2 implements Screen {
 		window.setPosition(0, 0);
 		window.defaults().spaceBottom(10);
 		window.row().fill().expandX();
-		window.add(iconButton);
+//		window.add(iconButton);
+		window.add(button);
 		window.add(buttonMulti);
 //		window.add(imgButton);
 //		window.add(imgToggleButton);
@@ -158,16 +163,16 @@ public class FirstScreen2 implements Screen {
 			}
 		});
 
-		iconButton.addListener(new ChangeListener() {
-			public void changed (ChangeEvent event, Actor actor) {
-				new Dialog("Some Dialog", skin, "dialog") {
-					protected void result (Object object) {
-						System.out.println("Chosen: " + object);
-					}
-				}.text("Are you enjoying this demo?").button("Yes", true).button("No", false).key(Keys.ENTER, true)
-					.key(Keys.ESCAPE, false).show(stage);
-			}
-		});
+//		iconButton.addListener(new ChangeListener() {
+//			public void changed (ChangeEvent event, Actor actor) {
+//				new Dialog("Some Dialog", skin, "dialog") {
+//					protected void result (Object object) {
+//						System.out.println("Chosen: " + object);
+//					}
+//				}.text("Are you enjoying this demo?").button("Yes", true).button("No", false).key(Keys.ENTER, true)
+//					.key(Keys.ESCAPE, false).show(stage);
+//			}
+//		});
 
 		checkBox.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {

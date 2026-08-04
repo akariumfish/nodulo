@@ -1,7 +1,7 @@
 package data;
 
-import app.Applet;
 import net.nNetwork;
+import zz_applet.Applet;
 
 public class sBoo extends sValue {
 	

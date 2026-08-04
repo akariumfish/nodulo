@@ -7,10 +7,11 @@ import java.util.Map;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
 import app.App;
-import app.Applet;
+import app.nDrawer;
 import data.*;
 import util.Utl;
 import util.nRun;
+import zz_applet.Applet;
 
 public class nInterface  implements Poolable {
 	
@@ -58,7 +59,7 @@ public class nInterface  implements Poolable {
 	
 	
 
-	public App app;
+	public nDrawer.Drawer app;
 //	public nInterfaceHandler handler;
 	public nGUI handler;
 	
@@ -81,7 +82,7 @@ public class nInterface  implements Poolable {
 	public nInterface init(nGUI g) {
 		
 		handler = g; 
-		app = g.app;
+		app = g.drawer;
 		
 		gui = g;
 		group = null;
@@ -354,7 +355,7 @@ public class nInterface  implements Poolable {
 				coms.add(n); }
 			int add_ind = command_addition_index;
 			empty();
-			app.addDelayEvent(6, new nRun() { public void run() {
+			gui.runner.addDelayEvent(6, new nRun() { public void run() {
 				build_from_command_list(coms); 
 				command_addition_index = add_ind; }});
 		}
@@ -381,8 +382,8 @@ public class nInterface  implements Poolable {
 	
 	public void cmd_context(String adress) {
 		newCommand(Code.CONTEXT, adress);
-		if (!app.data.blocAdressExist(adress)) return;
-		sValueBloc c = app.data.getBlocFromAdress(adress);
+		if (!gui.data.blocAdressExist(adress)) return;
+		sValueBloc c = gui.data.getBlocFromAdress(adress);
 		setContext(c);
 	}
 	

@@ -9,9 +9,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 
-import app.Applet;
 import util.Utl;
 import util.nMap;
+import zz_applet.Applet;
 
 
 public class File_Bloc {

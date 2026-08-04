@@ -2,9 +2,9 @@ package data;
 
 import com.badlogic.gdx.math.Vector2;
 
-import app.Applet;
 import net.nNetwork;
 import util.Utl;
+import zz_applet.Applet;
 
 public class sVec extends sValue {
 	public Vector2 asVec() { return new Vector2(val.x, val.y); }

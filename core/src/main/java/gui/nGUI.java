@@ -1,7 +1,6 @@
 package gui;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -10,10 +9,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import app.nDrawer;
 import app.App;
-import app.Applet;
+import app.Runner;
 import app.nInput;
-import app.nMenu;
-import app.nPref;
 import data.sData;
 import data.sInt;
 import data.sValueBloc;
@@ -21,17 +18,19 @@ import util.Utl;
 import util.nMap;
 import util.nPool;
 import util.nRun;
+import zz_applet.nMenu;
+import zz_applet.nPref;
 
 public class nGUI {
 	
 	
-	public void print_state() {
-		log.logn("Printing nGUI state :");
-		log.logn(" - Widgets :");
-		for (nWidget r : orphan_widgets) r.print_state(0); 
-		log.logn(" - WidgetGroups :");
-		for (nWidgetGroup r : widgetgroup_pool.all()) r.print_state();
-	}
+//	public void print_state() {
+//		log.logn("Printing nGUI state :");
+//		log.logn(" - Widgets :");
+//		for (nWidget r : orphan_widgets) r.print_state(0); 
+//		log.logn(" - WidgetGroups :");
+//		for (nWidgetGroup r : widgetgroup_pool.all()) r.print_state();
+//	}
 	
 	
 
@@ -113,12 +112,12 @@ public class nGUI {
 	
 
 	public nDrawer.DrawContext context;
+	public nDrawer.Drawer drawer;
 	public Utl.Logger log;
 	public sData data;
-	public nPref.PrefAccess pref;
-	
-	public App app;
+	public Runner runner;
 	public nInput in;
+	
 	public OrthographicCamera cam;
 	public Vector2 mouse_vec;
     public float scale = 1;
@@ -145,9 +144,10 @@ public class nGUI {
 		
 		new_param("entry_width", "2.0");
 		new_param("entry_height", "1.0");
-		if (pref.getPref("RELEASE", Boolean.class)) 
-			new_param("entry_colors", "CL_release");
-		else new_param("entry_colors", "CL_def");
+//		if (app.getPref("RELEASE", Boolean.class)) 
+//			new_param("entry_colors", "CL_release");
+//		else 
+		new_param("entry_colors", "CL_def");
 		new_param("spacing", "2.0");
 		new_param("row_entry_model", "INT_row_entry_");
 		new_param("row_entry_button_model", "INT_row_entry_");
@@ -175,16 +175,15 @@ public class nGUI {
 	
 	public boolean do_help = false;
 	public Color helper_light;
-	
-	public nGUI(App _app, nDrawer.DrawContext c, Utl.Logger l, nInput i, sData d, 
-			nPref.PrefAccess p
-//			OrthographicCamera c, Vector2 m, Rectangle r
-		) {
-		in = i; data = d; log = l; context = c; pref = p;
-		app = _app;
+
+	public nGUI(App app) { this(app,app.gdx,app,app.gdx,app.input,app.data); }
+	public nGUI(Runner _app, nDrawer.DrawContext c, nDrawer.Drawer dr, 
+			Utl.Logger l, nInput i, sData d) {
+		in = i; data = d; log = l; context = c; drawer = dr;
+		runner = _app;
 		cam = c.getCamera();
 		gui = this;
-		book = new nModelBook(app, pref.getPref("RELEASE", Boolean.class));
+		book = new nModelBook();
 		mouse_vec = in.mouse;
 		viewrect = c.getScreenRect();
 		
@@ -193,29 +192,16 @@ public class nGUI {
 		val_interf_nb = data.setting_bloc.newInt("val_interf_nb", "", 0);
 		val_free_interf_nb = data.setting_bloc.newInt("val_free_interf_nb", "", 0);
 		
-		app.addRunFrameStart(new nRun() { public void run() {
+		runner.addRunFrameStart(new nRun() { public void run() {
 			val_interf_nb.set(interf_pool.all().size());
 			val_free_interf_nb.set(interf_pool.getFree());
 		}});
 		
-		build_interf_book();
-
 		setup_params();
 		
 		add_info_svalues_in(data.setting_bloc);
 	}
 
-	public void build(nMenu menu) {
-		if (pref.getPref("RELEASE", Boolean.class)) return;
-		menu.add_info_text("widget:", val_widget_nb);
-		menu.add_info_text("free widget:", val_free_widget_nb);
-		menu.add_info_text("wgroup:", val_wgroup_nb);
-		menu.add_info_text("free wgroup:", val_free_wgroup_nb);
-		menu.add_info_text("interf:", val_interf_nb);
-		menu.add_info_text("free interf:", val_free_interf_nb);
-		
-	}
-	
 	public void dispose() {
 		widget_pool.dispose();
 		widgetgroup_pool.dispose();
@@ -329,126 +315,4 @@ public class nGUI {
 	
 	
 	
-	
-	public void build_interf_book() {
-		float RS = book.RS;
-		
-		
-		book.newModel("INT_back")
-		.copyColorFrom(book.getModel("ref"))
-		.setRect(0,0,0,0)
-		.setBackground()
-		.setBoundChild(true)
-		.setBoundParent(true)
-		.setStacked(true)
-		.setOutline(false)
-		.setStack(nAlign.VERTICAL,nAlign.DOWN) // HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
-		.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM)
-		.setBoundOutspace(0 * RS / 6f)
-		.setStackSpacing(RS / 15f)
-		.set_color_background(Utl.color(0,0))
-		.setDraw(false)
-		;
-		book.newModel("INT_col_line")
-		.copyColorFrom(book.getModel("ref"))
-		.setRect(0,0,0,0)
-		.setBoundParent(true)
-		.setBoundChild(true)
-		.setStacked(true)
-		.setOutline(false)
-		.setBoundOutspace(0)
-		.setStackSpacing(RS / 15f)
-		.setStack(nAlign.HORIZONTAL, nAlign.RIGHT) // HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
-		.set_color_background(Utl.color(0,0))
-		.setDraw(false)
-		;
-		book.newModel("INT_col")
-		.copyColorFrom(book.getModel("ref"))
-		.setRect(0,0,0,0)
-		.setBoundParent(true)
-		.setBoundChild(true)
-		.setStacked(true)
-		.setOutline(false)
-		.setBoundOutspace(0)
-		.setStackSpacing(RS / 15f)
-		.setStack(nAlign.VERTICAL, nAlign.DOWN) // HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
-		.set_color_background(Utl.color(0,0))
-		.setDraw(false)
-		;
-		book.newModel("INT_col_back") 
-		.copyColorFrom(book.getModel("ref"))
-		.setRect(0,0,0,0)
-		.setBoundParent(true)
-		.setBoundChild(true)
-		.setStacked(true)
-		.setOutline(false)
-		.setBoundOutspace(RS / 10f)
-		.setStackSpacing(RS / 15f)
-		.setStack(nAlign.VERTICAL, nAlign.DOWN) // HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
-		.setOutline(true)
-		.setOutlineWeight(RS / 10f)
-		.set_color_outline(Utl.color(20))
-		.set_color_background(Utl.color(0,0))
-		;
-
-		book.newModel("INT_col_head")
-		.copyColorFrom(book.getModel("ref"))
-		.setSize(RS*10f, RS/3f*2f)
-		.setBoundParent(true)
-		.setStacked(true)
-//		.set_color_pressed(Utl.color(20))
-//		.set_color_hovered(Utl.color(120))
-//		.set_color_standby(Utl.color(60))
-		.setSwitch()
-		;
-
-		book.newModel("INT_filler")
-		.copyFrom(book.getModel("INT_col"))
-		.setSize(RS*2,RS*2)
-		.set_color_background(Utl.color(0,0))
-		.setDraw(false)
-		;
-
-		book.newModel("INT_row")
-		.copyFrom(book.getModel("INT_col"))
-		.setStackSpacing(RS / 15f)
-		.setStack(nAlign.HORIZONTAL, nAlign.RIGHT) // HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
-		;
-
-		book.newModel("INT_col_entry")
-		.copyColorFrom(book.getModel("ref"))
-		.setSize(RS*10f, RS)
-		.setBoundParent(true)
-		.setStacked(true)
-		.setBoundOutspace(0)
-		.set_color_background(Utl.color(0,0))
-		;
-
-		book.newModel("INT_col_separator")
-		.copyFrom(book.getModel("INT_col_entry"))
-		.setSY(RS/6f)
-		;
-		
-		
-		// bigger size made n demand in Interface.get_row_entry_widget && Interface.get_row_button_widget
-		for (int i = 1 ; i <= 40 ; i++) {
-			book.newModel("INT_row_entry_"+i)
-			.copyColorFrom(book.getModel("ref"))
-			.setSize(RS * i / 2f, RS)
-			.setBoundParent(true)
-			.setStacked(true)
-			.setBoundOutspace(0)
-			.set_color_background(Utl.color(0,0))
-			;
-		}
-		
-		book.newModelGroup("interface", new nModelGroup() { 
-			public nWidgetGroup build(nGUI gui) {
-				nWidgetGroup g = gui.addWidgetGroup();
-				nWidget ref = g.addWidget("ref", gui.addWidget("INT_back"));
-				
-				return g;
-			} 
-		} );
-	}
 }

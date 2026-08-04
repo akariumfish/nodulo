@@ -12,14 +12,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 
 import app.App;
-import app.Applet;
-import app.GdxApp;
 import app.nInput;
-import app.nMenu;
-import gui.nAlign;
-import gui.nInterface;
-import gui.nWidget;
-import gui.nWidgetGroup;
 import util.Utl;
 import util.nMap;
 import util.nPool;
@@ -76,52 +69,6 @@ public class sData extends sValueBloc {
 	
 	
 	
-
-	public void build(nMenu menu) {
-
-		sDataBook.build(app);
-		
-		if (!menu.app.getPref("RELEASE", Boolean.class)) {
-			nWidgetGroup sec = menu.toolbox.addSection(" EXPLORER ", false);
-			nWidgetGroup exp = app.gui.addWidgetGroup("data_explorer");
-			exp.get("ref").setParent(sec.get("back"));
-			exp.metode("explore_bloc", data);
-		}
-		
-		menu.gui.addWidget("ref")
-		.setParent(menu.menu_back)
-		.addEventTrigger(new nRun() { public void run() {
-			full_save(); }})
-		.setRect(GdxApp.WIDTH - 425, 5,80,30)
-		.setFont(20)
-		.setText("save")
-		.setTrigger()
-		;
-		
-		//        FILE MENU
-
-//		menu.add_file_menu_trigg("new", new nRun() { public void run() { 
-//			
-//		}});
-		menu.add_file_menu_trigg("open last", new nRun() { public void run() {
-			re_full_load(); }});
-		menu.add_file_menu_trigg("open ...", new nRun() { public void run() {
-			sDataGUI.pop_loadfrom(menu.app); }});
-
-		menu.add_file_menu_separator();
-
-		menu.add_file_menu_trigg("save", new nRun() { public void run() { 
-			full_save(); }});
-		menu.add_file_menu_trigg("save to", new nRun() { public void run() {
-			sDataGUI.pop_saveas(menu.app); }});
-
-		menu.add_file_menu_separator();
-		
-		menu.add_file_menu_trigg("Settings", new nRun() { public void run() {
-//			app.gui.addWidgetGroup("setting"); 
-			sDataGUI.pop_setting(menu.app); }});
-		
-	}
 
 	
 	
@@ -268,7 +215,7 @@ public class sData extends sValueBloc {
 	    root_bloc.open_in_dataview = true;
 
 	    // file_init()
-		setting_savepath = Utl.copy(Applet.setting_file);
+		setting_savepath = Utl.copy(App.setting_file);
 		def_root_savepath = "root_" + app.gdx.window_title + file_extension;
 		def_db__savepath = "database_" + app.gdx.window_title + data_extension;
 		

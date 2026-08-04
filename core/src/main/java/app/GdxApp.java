@@ -32,7 +32,9 @@ public class GdxApp implements Screen ,nDrawer.DrawContext, Utl.Logger {
 		public void setup(GdxApp a);
 		public void closing();
 		public void pre_draw();
-		public void draw();
+		public void draw_start();
+		public void drawer_draw();
+		public void draw_end();
 		public void post_draw();
 		
 	}
@@ -175,13 +177,15 @@ public class GdxApp implements Screen ,nDrawer.DrawContext, Utl.Logger {
 		test_interupt();
 
 		//Draw
+
+		if (!block_custom_metodes && listener != null) listener.draw_start();
 		
 		drawer.draw_begin();
 		
 		test_interupt();
 		
 		if (!block_custom_metodes) {
-			screen_draw(); if (listener != null) listener.draw(); }
+			screen_draw(); if (listener != null) listener.drawer_draw(); }
 
 		test_interupt();
 		
@@ -203,7 +207,8 @@ public class GdxApp implements Screen ,nDrawer.DrawContext, Utl.Logger {
 		} 
 		
 		drawer.draw_end();
-		
+
+		if (!block_custom_metodes && listener != null) listener.draw_end();
         
 		test_interupt();
 		

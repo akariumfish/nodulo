@@ -9,16 +9,16 @@ import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
 
-import app.Applet;
 import data.*;
 import gui.nAlign;
 import gui.nInterface;
 import gui.nWidget;
 import gui.nWidgetGroup;
-import plane.pTime;
 import util.Utl;
 import util.nMap;
 import util.nRun;
+import zz_applet.Applet;
+import zz_plane.pTime;
 
 public class nNetwork {
 	

@@ -9,17 +9,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
 import app.App;
-import app.Applet;
 import app.GdxApp;
 import app.nLauncher;
 import gui.nWidget;
 import gui.nWidgetGroup;
-import patch.pPar;
-import patch.pStandard;
 import util.Utl;
 import util.nClearable;
 import util.nMap;
 import util.nRun;
+import zz_applet.Applet;
+import zz_patch.pPar;
+import zz_patch.pStandard;
 
 
 

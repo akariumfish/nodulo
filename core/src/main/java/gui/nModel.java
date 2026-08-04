@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 import util.Utl;
+import zz_applet.Applet;
 import app.App;
-import app.Applet;
 import app.nLauncher;
 
 public class nModel extends nLauncher {
@@ -114,7 +114,7 @@ public class nModel extends nLauncher {
 	protected int set_line_length = 0;
 	protected float textFont = 10f;
 	
-	protected boolean showOutline = false;
+	public boolean showOutline = false;
 	protected boolean hoverOutline = false;
 	protected boolean constantOutlineWeight = false;
 	protected boolean outlineAfterChild = false;
@@ -142,7 +142,7 @@ public class nModel extends nLauncher {
 	protected float shadow_thick = 0.0f;
 	
 	protected boolean has_info = false;
-	protected String info_txt = "";
+	public String info_txt = "";
 	
 	protected int float_rez = 2;
 	

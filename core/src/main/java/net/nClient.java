@@ -8,10 +8,10 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Listener.ThreadedListener;
 
-import app.Applet;
 import data.sValue;
 import net.nNetwork.*;
 import util.nRun;
+import zz_applet.Applet;
 
 public class nClient extends nNetEntity {
 	

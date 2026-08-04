@@ -6,6 +6,7 @@ import java.util.HashMap;
 import util.nMap;
 import util.nPool;
 import util.nRun;
+import zz_applet.Applet;
 
 public abstract class nLauncher implements nPool.Poolable {
 	
