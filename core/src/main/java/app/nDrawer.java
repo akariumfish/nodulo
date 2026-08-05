@@ -43,6 +43,8 @@ import util.Utl;
 import util.nTransform;
 
 public class nDrawer {
+	public boolean USE_FX = true;
+	
 	public boolean vfx;
 	public final BitmapFont bitmapfont, bitmapfont_2y;
 	public BitmapFont font;
@@ -70,7 +72,7 @@ public class nDrawer {
 //		app.viewport.apply(false);
 		ready(); begin();
 	}
-	public void fx() { end(); vfx = true; begin(); }
+	public void fx() { end(); vfx = USE_FX; begin(); }
 	public void noFx() { end(); vfx = false; begin(); }
 
 	public void pause_batch() { 

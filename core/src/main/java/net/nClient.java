@@ -11,7 +11,7 @@ import com.esotericsoftware.kryonet.Listener.ThreadedListener;
 import data.sValue;
 import net.nNetwork.*;
 import util.nRun;
-import zz_applet.Applet;
+import app.App;
 
 public class nClient extends nNetEntity {
 	
@@ -104,7 +104,7 @@ public class nClient extends nNetEntity {
 			ex.printStackTrace();
 		}
 
-		name = app.player_ref;
+		name = "";//app.player_ref;
 		Login login = new Login();
 		login.name = name;
 		client.sendTCP(login);

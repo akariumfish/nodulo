@@ -3,7 +3,7 @@ package com.noodle.nodulo.lwjgl3;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
-import zz_applet.Applet;
+//import zz_applet.Applet;
 
 public class Lwjgl3LauncherDouble {
 	

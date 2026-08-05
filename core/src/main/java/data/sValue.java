@@ -15,7 +15,6 @@ import net.nNetwork;
 import util.Utl;
 import util.nClearable;
 import util.nRun;
-import zz_applet.Applet;
 
 
 public abstract class sValue extends nLauncher implements nClearable, Poolable {
@@ -91,7 +90,7 @@ public abstract class sValue extends nLauncher implements nClearable, Poolable {
 		bloc = b; data = bloc.data; app = data.app;
 		while (bloc.values.get(r) != null) r = r + "'";
 		type = t; ref = r; shrt = s;
-		if (!sData.refIsValid(r)) app.logn("ERROR Invalid sValue ref");
+		if (!sData.refIsValid(r)) Utl.logn("ERROR Invalid sValue ref");
 		bloc.values.put(ref, this); 
 		if (bloc == data) adress = sData.adress_token + ref;
 		else adress = bloc.adress + sData.adress_token + ref;

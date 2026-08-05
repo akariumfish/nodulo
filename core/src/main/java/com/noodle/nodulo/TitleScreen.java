@@ -89,9 +89,6 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 //		makeButton("Join", table1).addListener(new InputListener() { public boolean touchDown (
 //				InputEvent event, float x, float y, int pointer, int button) {
 //			return false; }});
-		makeButton("Applet", table1).addListener(new InputListener() { public boolean touchDown (
-				InputEvent event, float x, float y, int pointer, int button) {
-			main.launch_applet(); return false; }});
 		makeButton("Exit", table1).addListener(new InputListener() { public boolean touchDown (
 				InputEvent event, float x, float y, int pointer, int button) {
 			Gdx.app.exit(); return false; }});

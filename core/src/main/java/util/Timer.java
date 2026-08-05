@@ -18,7 +18,7 @@ package util;
 
 import com.badlogic.gdx.utils.ObjectMap;
 
-import zz_applet.Applet;
+import app.GdxApp;
 
 /**
  * A simple Timer class that let's you measure multiple times and are identified via an id.
@@ -64,7 +64,7 @@ public class Timer {
 			return pauses.remove(name);
 		} else {
 //			throw new RuntimeException("Timer id doesn't exist.");
-			Applet.loggn("Timer id doesn't exist.");
+			Utl.logn("Timer id doesn't exist.");
 			return 0;
 		}
 			

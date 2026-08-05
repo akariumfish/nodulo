@@ -8,7 +8,7 @@ import java.util.Set;
 import data.sPool.State;
 import util.Utl;
 import util.nMap;
-import zz_applet.Applet;
+import app.App;
 
 public abstract class sPool <T extends sPoolable> {
 	
@@ -22,7 +22,7 @@ public abstract class sPool <T extends sPoolable> {
 	
 	
 	
-	public static <T extends sPoolable> void draw_pool(Applet app, sPool<T> pool, float x, float y, float w, float h) {
+	public static <T extends sPoolable> void draw_pool(App app, sPool<T> pool, float x, float y, float w, float h) {
 		if (pool.tab == null) return;
 //		pool.save();
 		for (int i = 0 ; i < pool.tab.width() ; i++) {
@@ -40,7 +40,7 @@ public abstract class sPool <T extends sPoolable> {
 		return -1;
 	}
 	
-	public Applet app;
+	public App app;
 	public sTab tab;
 	public String name;
 
@@ -61,7 +61,7 @@ public abstract class sPool <T extends sPoolable> {
 	
 	public nMap<T> all_used = new nMap<T>();
 	
-	public sPool (Applet a, sTab t, String n) {//pSpace s,
+	public sPool (App a, sTab t, String n) {//pSpace s,
 		app = a; tab = t; name = n; //space = s; 
 //		delayedObjects = new HashMap<T, Long>();
 		if (t != null && t.width() > prefered_capacity) capacity = t.width();
@@ -74,7 +74,7 @@ public abstract class sPool <T extends sPoolable> {
 		if (all_used.size() > 0) {
 			for (T b : Utl.duplic(all_used.all())) b.clear();
 			if (all_used.size() > 0)
-				app.logn("ERROR: sPool freeAll did not free all objects");
+				Utl.logn("ERROR: sPool freeAll did not free all objects");
 		}
 
 	}
@@ -111,7 +111,7 @@ public abstract class sPool <T extends sPoolable> {
 		expend += comp;
 		
 		if (capacity + expend > max) {
-			app.logn("ERROR : sPool is full");
+			Utl.logn("ERROR : sPool is full");
 			return;
 		}
 		T[] ps = newArray(capacity + expend);
@@ -128,7 +128,7 @@ public abstract class sPool <T extends sPoolable> {
 
 	public void expend() {
 		if (capacity + expending_capacity > max) {
-			app.logn("ERROR : sPool is full");
+			Utl.logn("ERROR : sPool is full");
 			return;
 		}
 		T[] ps = newArray(capacity + expending_capacity);
@@ -318,7 +318,7 @@ public abstract class sPool <T extends sPoolable> {
 		if (id >= capacity) expendTo(id);
 		T p = null;
 		if (use[id]) {
-			app.logn("WARNING : sPool obtain(int) : object allready in use "+objects[id].pool_ref);
+			Utl.logn("WARNING : sPool obtain(int) : object allready in use "+objects[id].pool_ref);
 			free(objects[id]);
 		}
 		p = objects[id];  use[id] = true;
@@ -347,11 +347,11 @@ public abstract class sPool <T extends sPoolable> {
 		if (p.state != State.FREE && p.state != State.CLEARING) {// && p.state != State.DELAYED
 			if (p.pool == this) {
 				if (!(objects[p.pool_index] == p)) 
-					app.logn("ERROR : sPool try to free an object not from his list");
+					Utl.logn("ERROR : sPool try to free an object not from his list");
 				else {
 					if (!(all_used.hasVal((T)p) && all_used.get(p.pool_ref) == p)) {
 						if (all_used.hasVal((T)p) && !(all_used.get(p.pool_ref) == p))
-							app.logn("ERROR : sPool try to free an object badly referenced");
+							Utl.logn("ERROR : sPool try to free an object badly referenced");
 					} else {
 						p.state = State.CLEARING;
 						p.clear();
@@ -366,7 +366,7 @@ public abstract class sPool <T extends sPoolable> {
 					}
 				}
 			} else {
-				app.logn("ERROR : sPool try to free an object with another pool");
+				Utl.logn("ERROR : sPool try to free an object with another pool");
 			}
 		}
 	}

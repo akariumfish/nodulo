@@ -18,25 +18,24 @@ import util.Utl;
 import util.nClearable;
 import util.nRun;
 import util.nTransform;
-import zz_applet.Applet;
 
 public class nWidget extends nModel implements Poolable, nClearable {
 	
 	
 	
-//	public void print_state(int tabs) {
-//		String t = "";
-//		for (int i = 0 ; i < tabs ; i++) t += " ";
-//		t += "-"+widget_id+" "+groupKey;
-//		if (group != null) t += " in "+group.ref;
-//		t += " : "+text+" "+maskedrect.toString();
-//		int dec = 60 - t.length();
-//		for (int i = 0 ; i < dec ; i++) t += " ";
-//		t += ".";
-//		if (mouseOver) t += "mouseOver";
-//		app.logn(t);
-//		for (nWidget r : childs) r.print_state(tabs+1); 
-//	}
+	public void print_state(int tabs) {
+		String t = "";
+		for (int i = 0 ; i < tabs ; i++) t += " ";
+		t += "-"+widget_id+" "+groupKey;
+		if (group != null) t += " in "+group.ref;
+		t += " : "+text+" "+maskedrect.toString();
+		int dec = 60 - t.length();
+		for (int i = 0 ; i < dec ; i++) t += " ";
+		t += ".";
+		if (mouseOver) t += "mouseOver";
+		Utl.logn(t);
+		for (nWidget r : childs) r.print_state(tabs+1); 
+	}
 	
 	
 	
@@ -259,7 +258,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 		quitGroup(); 
 		String base_ref = k;
 		int c = 1; while (g.widgets.get(k) != null) { k = base_ref + "-" + c; c++; }
-		if (!base_ref.equals(k)) GdxApp.loggn("Error when adding widget to group " + 
+		if (!base_ref.equals(k)) Utl.logn("Error when adding widget to group " + 
 				g.ref + ": '"+base_ref+"' allready used, '"+k+"' used instead");
 		g.widgets.put(k, this); 
 		group = g; groupKey = k; 
@@ -383,7 +382,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 			if (!isHovered) {
 				runEventList("eventMouseEnterRun");
 			}
-			//	      if (showInfo) gui.info.showText(infoText);
+//				      if (showInfo) gui.info.showText(infoText);
 			isHovered = true;
 			
 //			if (has_info) gui.app.menu.pop_infopop(this);
@@ -965,7 +964,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 				app.flush();
 				pop = ScissorStack.pushScissors(maskingrect); //return false if mask area =0
 				if (pop) gui.scissors.add(maskingrect);
-//				app.logn("a"+gui.scissors.size());
+//				Utl.logn("a"+gui.scissors.size());
 			}
 
 			if (pop || !maskChildren) 
@@ -975,7 +974,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 				app.flush();
 				if (pop) ScissorStack.popScissors();
 				if (pop) gui.scissors.remove(gui.scissors.get(gui.scissors.size() - 1));
-//				app.logn("b"+gui.scissors.size());
+//				Utl.logn("b"+gui.scissors.size());
 			}
 
 			if (outlineAfterChild) draw_outline();

@@ -13,69 +13,70 @@ import com.badlogic.gdx.math.Vector2;
 import app.App;
 import data.*;
 import gui.*;
+import patch.pInstance;
+import patch.pNode;
 import util.Timer;
+import util.Utl;
 import util.nMap;
 import util.nPool;
 import util.nRun;
 
 public class pTime {
 	
-	public static void build_node(App app) {
+	public static void build_node(PlaneApplet app) {
 		
-//		pNode.newNodeModel("time")
-//		.newRun("do_step", new nRun() {public void run() { 
-//			if (!instance.hasVar("counter")) { instance.addVar("counter", (int)0); }
-//			int delay = instance.getVar("delay", Integer.class);
-//			int counter = instance.getVar("counter", Integer.class);
-//			if (instance.hasVar("state") && instance.getVar("state", Boolean.class)) {
-//				counter++; if (counter >= delay) {
-//					pInstance co = instance.get("get_co", pInstance.class, "out");
-//					co.run("send", true);
-//					counter = 0; }
-//				instance.setVar("counter", counter); }
-//		}})
-//		.newRun("do_tick", new nRun() {public void run() { 
-//			if (!(instance.hasVar("tick") && instance.getVar("tick", Boolean.class))) return;
-//			instance.run("do_step");
-//		}})
-//		.process()
-//			.commande(new nRun() {public void run() { 
-//				pTime time = instance.patch.plane.getSystem(pTime.class);
-//				time.addTickBric(instance);
-//			}})
-//			.useClear().commande(new nRun() {public void run() { 
-//				pTime time = instance.patch.plane.getSystem(pTime.class);
-//				time.removeTickBric(instance);
-//			}}).useInit()
-//			.openSec()
-//				.param("logic_event", new nRun() {public void run() { 
-//					if (!(instance.hasVar("frame") && 
-//							instance.getVar("frame", Boolean.class))) return;
-//					instance.run("do_step");
-//				}}) 
-//				.run(pNode.getRun(pNode.CT.RUNP_ADD_LABEL), "", (int)1)
-//			.closeSec()
-//			.openSec()
-//				.param("def", (int)1, "min", 1f, "max", 60f, "granulo", 1f)
-//				.run(pNode.getRun(pNode.CT.RUNP_VAR_INT_LAB_FIELD), "delay", "delay", (int)6)
-//			.closeSec()
-//			.commande(pNode.getCom(pNode.CT.COM_ADD_ROW))
-//			.openSec()
-//				.param("text", "T", "width", (int)4) 
-//				.run(pNode.getRun(pNode.CT.RUNP_VAR_BOO_SWITCH), "tick")
-//			.closeSec()
-//			.openSec()
-//				.param("text", "F", "width", (int)4) 
-//				.run(pNode.getRun(pNode.CT.RUNP_VAR_BOO_SWITCH), "frame")
-//			.closeSec()
-//			.openSec()
-//				.param("text", "ON", "width", (int)4) 
-//				.run(pNode.getRun(pNode.CT.RUNP_VAR_BOO_SWITCH), "state")
-//			.closeSec()
-//		.getStand()
-//		.param("keys", new String[] {"bang"}, "filters", new String[] {"bang"})
-//		.run(pNode.getRun(pNode.CT.RUNS_ADD_CO_OUT), "out")
-//		;
+		pNode.newNodeModel("time")
+		.newRun("do_step", new nRun() {public void run() { 
+			if (!instance.hasVar("counter")) { instance.addVar("counter", (int)0); }
+			int delay = instance.getVar("delay", Integer.class);
+			int counter = instance.getVar("counter", Integer.class);
+			if (instance.hasVar("state") && instance.getVar("state", Boolean.class)) {
+				counter++; if (counter >= delay) {
+					pInstance co = instance.get("get_co", pInstance.class, "out");
+					co.run("send", true);
+					counter = 0; }
+				instance.setVar("counter", counter); }
+		}})
+		.newRun("do_tick", new nRun() {public void run() { 
+			if (!(instance.hasVar("tick") && instance.getVar("tick", Boolean.class))) return;
+			instance.run("do_step");
+		}})
+		.process()
+			.commande(new nRun() {public void run() { 
+				app.time.addTickBric(instance);
+			}})
+			.useClear().commande(new nRun() {public void run() { 
+				app.time.removeTickBric(instance);
+			}}).useInit()
+			.openSec()
+				.param("logic_event", new nRun() {public void run() { 
+					if (!(instance.hasVar("frame") && 
+							instance.getVar("frame", Boolean.class))) return;
+					instance.run("do_step");
+				}}) 
+				.run(pNode.getRun(pNode.CT.RUNP_ADD_LABEL), "", (int)1)
+			.closeSec()
+			.openSec()
+				.param("def", (int)1, "min", 1f, "max", 60f, "granulo", 1f)
+				.run(pNode.getRun(pNode.CT.RUNP_VAR_INT_LAB_FIELD), "delay", "delay", (int)6)
+			.closeSec()
+			.commande(pNode.getCom(pNode.CT.COM_ADD_ROW))
+			.openSec()
+				.param("text", "T", "width", (int)4) 
+				.run(pNode.getRun(pNode.CT.RUNP_VAR_BOO_SWITCH), "tick")
+			.closeSec()
+			.openSec()
+				.param("text", "F", "width", (int)4) 
+				.run(pNode.getRun(pNode.CT.RUNP_VAR_BOO_SWITCH), "frame")
+			.closeSec()
+			.openSec()
+				.param("text", "ON", "width", (int)4) 
+				.run(pNode.getRun(pNode.CT.RUNP_VAR_BOO_SWITCH), "state")
+			.closeSec()
+		.getStand()
+		.param("keys", new String[] {"bang"}, "filters", new String[] {"bang"})
+		.run(pNode.getRun(pNode.CT.RUNS_ADD_CO_OUT), "out")
+		;
 
 	}
 
@@ -114,14 +115,14 @@ public class pTime {
 	public sBoo val_pause;
 	public sInt val_tick_cnt;
 
-//	public ArrayList<pInstance> prev_tick_bric = new ArrayList<pInstance>();
-//	public ArrayList<pInstance> tick_bric = new ArrayList<pInstance>();
-//	public void addPrevTickBric(pInstance b) { 
-//		if (!prev_tick_bric.contains(b)) prev_tick_bric.add(b); }
-//	public void removePrevTickBric(pInstance b) { prev_tick_bric.remove(b); }
-//	public void addTickBric(pInstance b) { 
-//		if (!tick_bric.contains(b)) tick_bric.add(b); }
-//	public void removeTickBric(pInstance b) { tick_bric.remove(b); }
+	public ArrayList<pInstance> prev_tick_bric = new ArrayList<pInstance>();
+	public ArrayList<pInstance> tick_bric = new ArrayList<pInstance>();
+	public void addPrevTickBric(pInstance b) { 
+		if (!prev_tick_bric.contains(b)) prev_tick_bric.add(b); }
+	public void removePrevTickBric(pInstance b) { prev_tick_bric.remove(b); }
+	public void addTickBric(pInstance b) { 
+		if (!tick_bric.contains(b)) tick_bric.add(b); }
+	public void removeTickBric(pInstance b) { tick_bric.remove(b); }
 	
 	public void init() {
 		bloc = app.data.obtainBloc("time_bloc");
@@ -139,8 +140,8 @@ public class pTime {
 		val_tick_cnt = bloc.obtainInt("val_tick_cnt", 0);
 		val_tick_cnt.set(0);
 		
-//		info_tps = app.menu.add_info_text("tps:", val_tick_by_sec); 
-//		info_cnt = app.menu.add_info_text("tick cnt: ", val_tick_cnt);
+		info_tps = app.menu.add_info_text("tps:", val_tick_by_sec); 
+		info_cnt = app.menu.add_info_text("tick cnt: ", val_tick_cnt);
 		
 		tps_stack = new int[tps_stack_size];
 	    for (int i = 0 ; i < tps_stack_size ; i++) tps_stack[i] = 60;
@@ -159,8 +160,8 @@ public class pTime {
 		nRun run_pause = new nRun() { public void run(Object o) { 
 			if ((boolean)o) val_pause.set(!val_pause.get()); }};
 			
-//		app.menu.add_shortcut_target("Time - Next Tick", 'N', run_do_tick);
-//		app.menu.add_shortcut_target("Time - Pause", 'P', run_pause);
+		app.menu.add_shortcut_target("Time - Next Tick", 'N', run_do_tick);
+		app.menu.add_shortcut_target("Time - Pause", 'P', run_pause);
 
 		app.addEventToolInit(new nRun() { public void run(Object o) {
 			nInterface interf = (nInterface)o;
@@ -212,10 +213,10 @@ public class pTime {
 		
 	}
 	public void system_load() {
-//		app.addDelayEvent(1, new nRun() { public void run() {
-//			if (!app.start_solo) {
-//				plane.getSystem(pNet.class).net.addSyncVal(val_tick_cnt);	 }
-//		}});
+		app.addDelayEvent(1, new nRun() { public void run() {
+			if (!app.config.start_solo) {
+				app.net.net.addSyncVal(val_tick_cnt);	 }
+		}});
 	}
 	public void clear() {
 
@@ -324,14 +325,14 @@ public class pTime {
 		timer.start("tick");
 		
 		val_tick_cnt.add(1);
-		app.gdx.log_pref = ":"+val_tick_cnt.get();
+		Utl.log_pref2 = ":"+val_tick_cnt.get();
 
-//		for (pInstance b : prev_tick_bric) b.run("do_prev_tick");
+		for (pInstance b : prev_tick_bric) b.run("do_prev_tick");
 		
 		nRun.runEvents(eventTickRun);
 		nRun.runEvents(eventTickRun, tick_delta);
 
-//		for (pInstance b : tick_bric) b.run("do_tick");
+		for (pInstance b : tick_bric) b.run("do_tick");
 		
 		app.tick_end_inputs();
 	}
@@ -347,14 +348,14 @@ public class pTime {
 		float tick_delta = (float)timer.stop("tick");
 		timer.start("tick");
 
-		app.gdx.log_pref = ":"+val_tick_cnt.get();
+		Utl.log_pref2 = ":"+val_tick_cnt.get();
 		
-//		for (pInstance b : prev_tick_bric) b.run("do_prev_tick");
+		for (pInstance b : prev_tick_bric) b.run("do_prev_tick");
 		
 		nRun.runEvents(eventNetTickRun);
 		nRun.runEvents(eventNetTickRun, tick_delta);
 
-//		for (pInstance b : tick_bric) b.run("do_tick");
+		for (pInstance b : tick_bric) b.run("do_tick");
 
 		app.tick_end_inputs();
 		

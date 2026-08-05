@@ -6,8 +6,6 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import zz_applet.Applet;
-
 public class nTransform {
 	
 	class Transf {

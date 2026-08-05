@@ -18,19 +18,19 @@ import util.Utl;
 import util.nMap;
 import util.nPool;
 import util.nRun;
-import zz_applet.nMenu;
-import zz_applet.nPref;
+//import zz_applet.nMenu;
+//import zz_applet.nPref;
 
 public class nGUI {
 	
 	
-//	public void print_state() {
-//		log.logn("Printing nGUI state :");
-//		log.logn(" - Widgets :");
-//		for (nWidget r : orphan_widgets) r.print_state(0); 
-//		log.logn(" - WidgetGroups :");
-//		for (nWidgetGroup r : widgetgroup_pool.all()) r.print_state();
-//	}
+	public void print_state() {
+		Utl.logn("Printing nGUI state :");
+		Utl.logn(" - Widgets :");
+		for (nWidget r : orphan_widgets) r.print_state(0); 
+		Utl.logn(" - WidgetGroups :");
+		for (nWidgetGroup r : widgetgroup_pool.all()) r.print_state();
+	}
 	
 	
 
@@ -113,7 +113,6 @@ public class nGUI {
 
 	public nDrawer.DrawContext context;
 	public nDrawer.Drawer drawer;
-	public Utl.Logger log;
 	public sData data;
 	public Runner runner;
 	public nInput in;
@@ -176,10 +175,10 @@ public class nGUI {
 	public boolean do_help = false;
 	public Color helper_light;
 
-	public nGUI(App app) { this(app,app.gdx,app,app.gdx,app.input,app.data); }
+	public nGUI(App app) { this(app,app.gdx,app,app.input,app.data); }
 	public nGUI(Runner _app, nDrawer.DrawContext c, nDrawer.Drawer dr, 
-			Utl.Logger l, nInput i, sData d) {
-		in = i; data = d; log = l; context = c; drawer = dr;
+			nInput i, sData d) {
+		in = i; data = d; context = c; drawer = dr;
 		runner = _app;
 		cam = c.getCamera();
 		gui = this;

@@ -23,149 +23,48 @@ import gui.nWidget;
 import gui.nWidgetGroup;
 import util.Utl;
 import util.nRun;
-import zz_patch.pNode;
+import patch.pNode;
 
 public class nGUIBook {
 
 	public static void build_book(nModelBook book, App app) {
+		build_color(book,app);
 		build_all_book(book,app);
 		build_interf_book(book);
 	}
 
 	
-	public static void build_interf_book(nModelBook book) {
-		float RS = book.RS;
-		
-		
-		book.newModel("INT_back")
-		.copyColorFrom(book.getModel("ref"))
-		.setRect(0,0,0,0)
-		.setBackground()
-		.setBoundChild(true)
-		.setBoundParent(true)
-		.setStacked(true)
-		.setOutline(false)
-		.setStack(nAlign.VERTICAL,nAlign.DOWN) // HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
-		.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM)
-		.setBoundOutspace(0 * RS / 6f)
-		.setStackSpacing(RS / 15f)
-		.set_color_background(Utl.color(0,0))
-		.setDraw(false)
-		;
-		book.newModel("INT_col_line")
-		.copyColorFrom(book.getModel("ref"))
-		.setRect(0,0,0,0)
-		.setBoundParent(true)
-		.setBoundChild(true)
-		.setStacked(true)
-		.setOutline(false)
-		.setBoundOutspace(0)
-		.setStackSpacing(RS / 15f)
-		.setStack(nAlign.HORIZONTAL, nAlign.RIGHT) // HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
-		.set_color_background(Utl.color(0,0))
-		.setDraw(false)
-		;
-		book.newModel("INT_col")
-		.copyColorFrom(book.getModel("ref"))
-		.setRect(0,0,0,0)
-		.setBoundParent(true)
-		.setBoundChild(true)
-		.setStacked(true)
-		.setOutline(false)
-		.setBoundOutspace(0)
-		.setStackSpacing(RS / 15f)
-		.setStack(nAlign.VERTICAL, nAlign.DOWN) // HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
-		.set_color_background(Utl.color(0,0))
-		.setDraw(false)
-		;
-		book.newModel("INT_col_back") 
-		.copyColorFrom(book.getModel("ref"))
-		.setRect(0,0,0,0)
-		.setBoundParent(true)
-		.setBoundChild(true)
-		.setStacked(true)
-		.setOutline(false)
-		.setBoundOutspace(RS / 10f)
-		.setStackSpacing(RS / 15f)
-		.setStack(nAlign.VERTICAL, nAlign.DOWN) // HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
-		.setOutline(true)
-		.setOutlineWeight(RS / 10f)
-		.set_color_outline(Utl.color(20))
-		.set_color_background(Utl.color(0,0))
-		;
+	
+	
 
-		book.newModel("INT_col_head")
-		.copyColorFrom(book.getModel("ref"))
-		.setSize(RS*10f, RS/3f*2f)
-		.setBoundParent(true)
-		.setStacked(true)
-//		.set_color_pressed(Utl.color(20))
-//		.set_color_hovered(Utl.color(120))
-//		.set_color_standby(Utl.color(60))
-		.setSwitch()
-		;
-
-		book.newModel("INT_filler")
-		.copyFrom(book.getModel("INT_col"))
-		.setSize(RS*2,RS*2)
-		.set_color_background(Utl.color(0,0))
-		.setDraw(false)
-		;
-
-		book.newModel("INT_row")
-		.copyFrom(book.getModel("INT_col"))
-		.setStackSpacing(RS / 15f)
-		.setStack(nAlign.HORIZONTAL, nAlign.RIGHT) // HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
-		;
-
-		book.newModel("INT_col_entry")
-		.copyColorFrom(book.getModel("ref"))
-		.setSize(RS*10f, RS)
-		.setBoundParent(true)
-		.setStacked(true)
-		.setBoundOutspace(0)
-		.set_color_background(Utl.color(0,0))
-		;
-
-		book.newModel("INT_col_separator")
-		.copyFrom(book.getModel("INT_col_entry"))
-		.setSY(RS/6f)
-		;
-		
-		
-		// bigger size made n demand in Interface.get_row_entry_widget && Interface.get_row_button_widget
-		for (int i = 1 ; i <= 40 ; i++) {
-			book.newModel("INT_row_entry_"+i)
-			.copyColorFrom(book.getModel("ref"))
-			.setSize(RS * i / 2f, RS)
-			.setBoundParent(true)
-			.setStacked(true)
-			.setBoundOutspace(0)
-			.set_color_background(Utl.color(0,0))
-			;
-		}
-		
-		book.newModelGroup("interface", new nModelGroup() { 
-			public nWidgetGroup build(nGUI gui) {
-				nWidgetGroup g = gui.addWidgetGroup();
-				nWidget ref = g.addWidget("ref", gui.addWidget("INT_back"));
-				
-				return g;
-			} 
-		} );
-	}
-	public static void build_all_book(nModelBook book, App app) {
+	public static void build_color(nModelBook book, App app) {
 		
 		float RS = book.RS;
 		
 		boolean RELEASE = PlaneApplet.RELEASE;
 		
+
 		//      -----  BUILDING MODEL  -----
 		
 		book.newModel("SZ1-1").setSize(1*RS, 1*RS);
 		book.newModel("SZ1-2").setSize(1*RS, 2*RS);
 		
-		// CL_def in nModelBook
+
+		book.newModel("CL_def")
+		.set_color_background(Utl.color(80,80,80,255))
+		.set_color_pressed(Utl.color(20,20,255,255))
+		.set_color_hovered(Utl.color(0,0,210,255))
+		.set_color_standby(Utl.color(0,0,120,255))
+		.set_color_sliderback(Utl.color(50,50,50,255))
+		.set_color_outline(Utl.color(200,200,200,255))
+		.set_color_outline_selected(Utl.color(200,200,0,255))
+		.set_color_shadow(Utl.color(0,0,0,100))
+		.set_color_switch_on(Utl.color(0,70,255,255))
+		.set_color_switch_off(Utl.color(0,0,40,255))
+		.set_color_text(Utl.color(200,255))
+		.setFont(18)
+		;
+
 		
 		book.newModel("CL_release")
 		.set_color_background(Utl.color(230))
@@ -338,6 +237,140 @@ public class nGUIBook {
 		.copySizeFrom(book.getModel("SZ1-1"))
 		.setTrigger()
 		;
+	}
+	
+	
+	
+	
+	
+	
+	
+	public static void build_interf_book(nModelBook book) {
+		float RS = book.RS;
+		
+		
+		book.newModel("INT_back")
+		.copyColorFrom(book.getModel("ref"))
+		.setRect(0,0,0,0)
+		.setBackground()
+		.setBoundChild(true)
+		.setBoundParent(true)
+		.setStacked(true)
+		.setOutline(false)
+		.setStack(nAlign.VERTICAL,nAlign.DOWN) // HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
+		.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM)
+		.setBoundOutspace(0 * RS / 6f)
+		.setStackSpacing(RS / 15f)
+		.set_color_background(Utl.color(0,0))
+		.setDraw(false)
+		;
+		book.newModel("INT_col_line")
+		.copyColorFrom(book.getModel("ref"))
+		.setRect(0,0,0,0)
+		.setBoundParent(true)
+		.setBoundChild(true)
+		.setStacked(true)
+		.setOutline(false)
+		.setBoundOutspace(0)
+		.setStackSpacing(RS / 15f)
+		.setStack(nAlign.HORIZONTAL, nAlign.RIGHT) // HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
+		.set_color_background(Utl.color(0,0))
+		.setDraw(false)
+		;
+		book.newModel("INT_col")
+		.copyColorFrom(book.getModel("ref"))
+		.setRect(0,0,0,0)
+		.setBoundParent(true)
+		.setBoundChild(true)
+		.setStacked(true)
+		.setOutline(false)
+		.setBoundOutspace(0)
+		.setStackSpacing(RS / 15f)
+		.setStack(nAlign.VERTICAL, nAlign.DOWN) // HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
+		.set_color_background(Utl.color(0,0))
+		.setDraw(false)
+		;
+		book.newModel("INT_col_back") 
+		.copyColorFrom(book.getModel("ref"))
+		.setRect(0,0,0,0)
+		.setBoundParent(true)
+		.setBoundChild(true)
+		.setStacked(true)
+		.setOutline(false)
+		.setBoundOutspace(RS / 10f)
+		.setStackSpacing(RS / 15f)
+		.setStack(nAlign.VERTICAL, nAlign.DOWN) // HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
+		.setOutline(true)
+		.setOutlineWeight(RS / 10f)
+		.set_color_outline(Utl.color(20))
+		.set_color_background(Utl.color(0,0))
+		;
+
+		book.newModel("INT_col_head")
+		.copyColorFrom(book.getModel("ref"))
+		.setSize(RS*10f, RS/3f*2f)
+		.setBoundParent(true)
+		.setStacked(true)
+//		.set_color_pressed(Utl.color(20))
+//		.set_color_hovered(Utl.color(120))
+//		.set_color_standby(Utl.color(60))
+		.setSwitch()
+		;
+
+		book.newModel("INT_filler")
+		.copyFrom(book.getModel("INT_col"))
+		.setSize(RS*2,RS*2)
+		.set_color_background(Utl.color(0,0))
+		.setDraw(false)
+		;
+
+		book.newModel("INT_row")
+		.copyFrom(book.getModel("INT_col"))
+		.setStackSpacing(RS / 15f)
+		.setStack(nAlign.HORIZONTAL, nAlign.RIGHT) // HORIZONTAL VERTICAL RIGHT LEFT UP DOWN
+		;
+
+		book.newModel("INT_col_entry")
+		.copyColorFrom(book.getModel("ref"))
+		.setSize(RS*10f, RS)
+		.setBoundParent(true)
+		.setStacked(true)
+		.setBoundOutspace(0)
+		.set_color_background(Utl.color(0,0))
+		;
+
+		book.newModel("INT_col_separator")
+		.copyFrom(book.getModel("INT_col_entry"))
+		.setSY(RS/6f)
+		;
+		
+		
+		// bigger size made n demand in Interface.get_row_entry_widget && Interface.get_row_button_widget
+		for (int i = 1 ; i <= 40 ; i++) {
+			book.newModel("INT_row_entry_"+i)
+			.copyColorFrom(book.getModel("ref"))
+			.setSize(RS * i / 2f, RS)
+			.setBoundParent(true)
+			.setStacked(true)
+			.setBoundOutspace(0)
+			.set_color_background(Utl.color(0,0))
+			;
+		}
+		
+		book.newModelGroup("interface", new nModelGroup() { 
+			public nWidgetGroup build(nGUI gui) {
+				nWidgetGroup g = gui.addWidgetGroup();
+				nWidget ref = g.addWidget("ref", gui.addWidget("INT_back"));
+				
+				return g;
+			} 
+		} );
+	}
+	
+
+	public static void build_all_book(nModelBook book, App app) {
+		
+		float RS = book.RS;
 
 		
 		

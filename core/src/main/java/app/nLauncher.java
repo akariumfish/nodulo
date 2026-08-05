@@ -3,10 +3,11 @@ package app;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import util.Utl;
 import util.nMap;
 import util.nPool;
 import util.nRun;
-import zz_applet.Applet;
+import app.App;
 
 public abstract class nLauncher implements nPool.Poolable {
 	
@@ -57,7 +58,7 @@ public abstract class nLauncher implements nPool.Poolable {
 
 	public boolean runEventList(String ref, Object ... args) { 
 		if (ref_crash.get(ref) == null || ref_list.get(ref) == null) {
-			if (LOG_ERROR) Applet.loggn("ERROR   - nLauncher < "+launcher_ref+" > "
+			if (LOG_ERROR) Utl.logn("ERROR   - nLauncher < "+launcher_ref+" > "
 					+ "runEventList  < "+ref+" >  cant be found.");
 			return false;
 		}
@@ -78,7 +79,7 @@ public abstract class nLauncher implements nPool.Poolable {
 			return true; }
 		
 		if (ref_crash.get(ref)) {
-			if (LOG_BLOC) Applet.loggn("BLOC    - nLauncher < "+launcher_ref+" > "
+			if (LOG_BLOC) Utl.logn("BLOC    - nLauncher < "+launcher_ref+" > "
 					+ "runEventList  < "+ref+" >  has crashed before and is bloqued.");
 			return false; }
 		
@@ -102,10 +103,10 @@ public abstract class nLauncher implements nPool.Poolable {
 			has_crash = true;
 			GdxApp.app.interupt();
 			if (LOG_STACKTRACE) ex.printStackTrace(System.out);
-			if (LOG_CRASH) GdxApp.app.logn("WARNING : nLauncher < "+launcher_ref+" > "
+			if (LOG_CRASH) Utl.logn("WARNING : nLauncher < "+launcher_ref+" > "
 					+ "runEventList  < "+ref+" >  catched an Exception. "
 					+ "Render is paused, press space to continue");
-			if (LOG_CRASH) GdxApp.app.logn("          This eventList is stored as crashing and will be ignored");
+			if (LOG_CRASH) Utl.logn("          This eventList is stored as crashing and will be ignored");
 			return false;
 		}
 		return true;
@@ -114,7 +115,7 @@ public abstract class nLauncher implements nPool.Poolable {
 	public boolean runLaunchMetode(String ref, Object ... args) { 
 //		Applet.app.log("runLaunchMetode"); 
 		if (ref_crash.get(ref) == null || ref_run.get(ref) == null) {
-			if (LOG_ERROR) GdxApp.app.logn("ERROR   - nLauncher < "+launcher_ref+" > "
+			if (LOG_ERROR) Utl.logn("ERROR   - nLauncher < "+launcher_ref+" > "
 					+ "runLaunchMetode  < "+ref+" >  cant be found.");
 			return false;
 		}
@@ -134,7 +135,7 @@ public abstract class nLauncher implements nPool.Poolable {
 				ref_run.get(ref).run(args[0], args[1], args[2]); }
 			return true; }
 		if (ref_crash.get(ref)) {
-			if (LOG_BLOC) GdxApp.app.logn("BLOC    - nLauncher < "+launcher_ref+" > "
+			if (LOG_BLOC) Utl.logn("BLOC    - nLauncher < "+launcher_ref+" > "
 					+ "runLaunchMetode  < "+ref+" >  has crashed before and is bloqued.");
 			return false;
 		}
@@ -158,10 +159,10 @@ public abstract class nLauncher implements nPool.Poolable {
 			has_crash = true;
 			GdxApp.app.interupt();
 			if (LOG_STACKTRACE) ex.printStackTrace(System.out);
-			if (LOG_CRASH) GdxApp.app.logn("WARNING : nLauncher < "+launcher_ref+" > "
+			if (LOG_CRASH) Utl.logn("WARNING : nLauncher < "+launcher_ref+" > "
 					+ "runLaunchMetode  < "+ref+" >  catched an Exception. "
 					+ "Render is paused, press space to continue");
-			if (LOG_CRASH) GdxApp.app.logn("          This metode is stored as crashing and will be ignored");
+			if (LOG_CRASH) Utl.logn("          This metode is stored as crashing and will be ignored");
 			return false;
 		}
 		return true;

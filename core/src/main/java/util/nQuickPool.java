@@ -7,8 +7,6 @@ import java.util.Map;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
-import zz_applet.Applet;
-
 public abstract class nQuickPool<T> {
 
 	private final Array<T> freeObjects;

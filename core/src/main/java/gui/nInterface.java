@@ -11,7 +11,6 @@ import app.nDrawer;
 import data.*;
 import util.Utl;
 import util.nRun;
-import zz_applet.Applet;
 
 public class nInterface  implements Poolable {
 	

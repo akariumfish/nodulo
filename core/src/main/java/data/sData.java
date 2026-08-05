@@ -308,7 +308,7 @@ public class sData extends sValueBloc {
 //	}
 
 	public void re_full_load() {
-		app.LOADING_SCREEN_FRAME = 30;
+//		app.LOADING_SCREEN_FRAME = 30;
 		data.app.addDelayEvent(1, new nRun() { public void run() {
 //			empty_all();
 			full_load(); 
@@ -422,7 +422,7 @@ public class sData extends sValueBloc {
 			if (adress_list[i].length() > 0) { 
 				next_bloc = current_bloc.getBloc(adress_list[i]);
 				if (next_bloc == null) {
-					app.logn("ERROR doing getBlocFromAdress, cant find bloc " + 
+					Utl.logn("ERROR doing getBlocFromAdress, cant find bloc " + 
 							adress_list[i]); 
 					return null; }
 				current_bloc = next_bloc;
@@ -435,7 +435,7 @@ public class sData extends sValueBloc {
 			return null; }
 		sValueBloc val = current_bloc.getBloc(adress_list[adress_list.length - 1]);
 		if (val == null) {
-			app.logn("ERROR doing getBlocFromAdress: in bloc " + 
+			Utl.logn("ERROR doing getBlocFromAdress: in bloc " + 
 					current_bloc.adress + " " + current_bloc.ref + " cant find bloc " + 
 					adress_list[adress_list.length - 1]); 
 			return null; }
@@ -450,7 +450,7 @@ public class sData extends sValueBloc {
 			if (adress_list[i].length() > 0) { 
 				next_bloc = current_bloc.getBloc(adress_list[i]);
 				if (next_bloc == null) {
-					app.logn("ERROR doing getValFromAdress, cant find bloc " + 
+					Utl.logn("ERROR doing getValFromAdress, cant find bloc " + 
 							adress_list[i]); 
 					return null; }
 				current_bloc = next_bloc;
@@ -458,7 +458,7 @@ public class sData extends sValueBloc {
 		}
 		sValue val = current_bloc.getValue(adress_list[adress_list.length - 1]);
 		if (val == null) {
-			app.logn("ERROR doing getValFromAdress: in bloc " + 
+			Utl.logn("ERROR doing getValFromAdress: in bloc " + 
 					current_bloc.adress + " " + current_bloc.ref + " cant find val " + 
 					adress_list[adress_list.length - 1]); 
 			return null; }

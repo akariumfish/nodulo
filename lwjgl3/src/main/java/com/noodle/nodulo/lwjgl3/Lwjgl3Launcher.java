@@ -5,20 +5,11 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.noodle.nodulo.Main;
 
 import app.AppConfig;
-import app.GdxApp;
-import zz_applet.Applet;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
 
 	public static void main(String[] args) {
-		
-//		if (StartupHelper.startNewJvmIfRequired()) return;
-//		new Lwjgl3Application(Applet.make(new GdxApp.AppConfig("nodulo", 1300, 960, false)), 
-//				getConfiguration(610, 50, 1300, 960));
-		
-//		Lwjgl3Launcher_app.main(args);
-
 		if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
 		createApplication("nodulo", 610, 50, 1300, 960, false);
 	}

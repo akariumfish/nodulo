@@ -1,8 +1,9 @@
 package app;
 
+import aa_nodulo.PlaneApplet;
 
 public class AppConfig {
-	public boolean START_FULLSCREEN = false;
+	public boolean START_FULLSCREEN = PlaneApplet.START_FULLSCREEN;
 	public int WIDTH = 500;
 	public int HEIGHT = 500;
 	public String window_title = "";

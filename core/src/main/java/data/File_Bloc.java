@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.Vector2;
 
 import util.Utl;
 import util.nMap;
-import zz_applet.Applet;
 
 
 public class File_Bloc {
@@ -58,14 +57,14 @@ public class File_Bloc {
 		if (hasData(n)) {
 			String t = "ERROR: File_Bloc "+ref;
 			t += " newData : data ref "+n+" allready exist";
-			file.app.logn(t);
+			Utl.logn(t);
 			return null;
 		}
 		File_Data sd = file.filedata_pool.obtain().init(n); sd.parent = this; sd.set(d); datas.put(n,sd); return sd; }
 
 	public File_Bloc newBloc(String n) { 
 		if (hasBloc(n)) {
-			file.app.logn("ERROR: File_Bloc "+ref+" newBloc : "
+			Utl.logn("ERROR: File_Bloc "+ref+" newBloc : "
 					+ "bloc ref "+n+" allready exist");
 			return null; }
 		File_Bloc sd = file.filebloc_pool.obtain().init(n); sd.parent = this; blocs.put(n,sd); return sd; }
@@ -150,7 +149,7 @@ public class File_Bloc {
 				e.printStackTrace();
 			}
 		} else {
-			file.app.logn("ERROR : no output stream");
+			Utl.logn("ERROR : no output stream");
 		}
 	}
 
@@ -172,7 +171,7 @@ public class File_Bloc {
 				e.printStackTrace();
 			}
 		} else {
-			file.app.logn("ERROR : no input stream");
+			Utl.logn("ERROR : no input stream");
 		}
 	}
 	
@@ -201,14 +200,14 @@ public class File_Bloc {
 		ref_byte_nb_bytes = new byte[sData.BYTE_SIZE_INT];
 		readed_nb = stream.read(ref_byte_nb_bytes);
 		if (readed_nb != sData.BYTE_SIZE_INT) {
-			file.app.logn("ERROR: File_Bloc "+ref+" from_stream : stream.read(ref_byte_nb_bytes); "
+			Utl.logn("ERROR: File_Bloc "+ref+" from_stream : stream.read(ref_byte_nb_bytes); "
 					+ "not enough bytes readed: "+readed_nb+" instead of "+sData.BYTE_SIZE_INT);
 			return; }
 		ref_byte_nb = file.getInt(ref_byte_nb_bytes);
 		ref_byte = new byte[ref_byte_nb];
 		readed_nb = stream.read(ref_byte);
 		if (readed_nb != ref_byte_nb) {
-			file.app.logn("ERROR: File_Bloc "+ref+" from_stream : stream.read(ref_byte); "
+			Utl.logn("ERROR: File_Bloc "+ref+" from_stream : stream.read(ref_byte); "
 					+ "not enough bytes readed: "+readed_nb+" instead of "+ref_byte_nb);
 			return; }
 		ref = file.getStr(ref_byte);
@@ -216,7 +215,7 @@ public class File_Bloc {
 		tmp_bytes = new byte[sData.BYTE_SIZE_INT];
 		readed_nb = stream.read(tmp_bytes);
 		if (readed_nb != sData.BYTE_SIZE_INT) {
-			file.app.logn("ERROR: File_Bloc "+ref+" from_stream load data: stream.read(tmp_bytes); "
+			Utl.logn("ERROR: File_Bloc "+ref+" from_stream load data: stream.read(tmp_bytes); "
 					+ "not enough bytes readed: "+readed_nb+" instead of "+sData.BYTE_SIZE_INT);
 			return; }
 		int data_nb = file.getInt(tmp_bytes);
@@ -233,7 +232,7 @@ public class File_Bloc {
 		tmp_bytes = new byte[sData.BYTE_SIZE_INT];
 		readed_nb = stream.read(tmp_bytes);
 		if (readed_nb != sData.BYTE_SIZE_INT) {
-			file.app.logn("ERROR: File_Bloc "+ref+" from_stream load bloc: stream.read(tmp_bytes); "
+			Utl.logn("ERROR: File_Bloc "+ref+" from_stream load bloc: stream.read(tmp_bytes); "
 					+ "not enough bytes readed: "+readed_nb+" instead of "+sData.BYTE_SIZE_INT);
 			return; }
 		int bloc_nb = file.getInt(tmp_bytes);

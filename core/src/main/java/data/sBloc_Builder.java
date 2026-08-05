@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import util.Utl;
 import util.nRun;
-import zz_applet.Applet;
 
 
 public class sBloc_Builder {
@@ -15,7 +14,7 @@ public class sBloc_Builder {
 //	public nWidget root_interf_w = null;
 	public sBloc_Builder(sData p, String t) { 
 		if (p.bloc_builders.get(t) != null) {
-			p.app.logn("ERROR : sBloc_Builder "+t+" allready exist"); return; }
+			Utl.logn("ERROR : sBloc_Builder "+t+" allready exist"); return; }
 		data = p; ref = t; data.bloc_builders.put(t, this); 
 //		preset_bloc = data.data_space.newRootBloc(ref);
 	}

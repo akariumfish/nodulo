@@ -1,7 +1,6 @@
 package gui;
 
 import util.Utl;
-import zz_applet.Applet;
 import gui.nInterface.Code;
 
 public class nInterfCommand {

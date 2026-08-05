@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import com.badlogic.gdx.math.Vector2;
 
 import util.Utl;
-import zz_applet.Applet;
 
 public class File_Data {
 	
@@ -84,14 +83,14 @@ public class File_Data {
 		ref_byte_nb_bytes = new byte[sData.BYTE_SIZE_INT];
 		readed_nb = stream.read(ref_byte_nb_bytes);
 		if (readed_nb != sData.BYTE_SIZE_INT) {
-			file.app.logn("ERROR: File_Data "+ref+" from_stream : stream.read(ref_byte_nb_bytes); "
+			Utl.logn("ERROR: File_Data "+ref+" from_stream : stream.read(ref_byte_nb_bytes); "
 					+ "not enough bytes readed: "+readed_nb+" instead of "+sData.BYTE_SIZE_INT);
 			return; }
 		ref_byte_nb = file.getInt(ref_byte_nb_bytes);
 		ref_byte = new byte[ref_byte_nb];
 		readed_nb = stream.read(ref_byte);
 		if (readed_nb != ref_byte_nb) {
-			file.app.logn("ERROR: File_Data "+ref+" from_stream : stream.read(ref_byte); "
+			Utl.logn("ERROR: File_Data "+ref+" from_stream : stream.read(ref_byte); "
 					+ "not enough bytes readed: "+readed_nb+" instead of "+ref_byte_nb);
 			return; }
 		ref = file.getStr(ref_byte);
@@ -99,14 +98,14 @@ public class File_Data {
 		data_byte_nb_bytes = new byte[sData.BYTE_SIZE_INT];
 		readed_nb = stream.read(data_byte_nb_bytes);
 		if (readed_nb != sData.BYTE_SIZE_INT) {
-			file.app.logn("ERROR: File_Data "+ref+" from_stream : stream.read(data_byte_nb_bytes); "
+			Utl.logn("ERROR: File_Data "+ref+" from_stream : stream.read(data_byte_nb_bytes); "
 					+ "not enough bytes readed: "+readed_nb+" instead of "+sData.BYTE_SIZE_INT);
 			return; }
 		data_byte_nb = file.getInt(data_byte_nb_bytes);
 		data_byte = new byte[data_byte_nb];
 		readed_nb = stream.read(data_byte);
 		if (readed_nb != data_byte_nb) {
-			file.app.logn("ERROR: File_Data "+ref+" from_stream : stream.read(data_byte); "
+			Utl.logn("ERROR: File_Data "+ref+" from_stream : stream.read(data_byte); "
 					+ "not enough bytes readed: "+readed_nb+" instead of "+data_byte_nb);
 			return; }
 	}
@@ -121,7 +120,7 @@ public class File_Data {
 		else if (d instanceof Integer) set((int)d);
 		else if (d instanceof Boolean) set((boolean)d);
 		else if (d instanceof Vector2) set((Vector2)d); 
-		else file.app.logn("ERROR: File_Data "+ref+" set(Object) : "
+		else Utl.logn("ERROR: File_Data "+ref+" set(Object) : "
 				+ "unrecognized Object class : "+d.getClass().getName());}
 	
 	public void set(byte[] d) { 

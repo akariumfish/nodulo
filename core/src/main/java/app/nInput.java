@@ -252,14 +252,14 @@ public class nInput implements InputProcessor {
 	public boolean keyDown (int keycode) {
 		keycode_temp = Input.Keys.toString(keycode);
 		
-//		app.logn("<"+keycode_temp+">");
+//		Utl.logn("<"+keycode_temp+">");
 		
 		char keychar = 0;
 		if (keycode_temp.length() == 1) keychar = keycode_temp.charAt(0);
 		if (keycode_temp.equals("Space")) keychar = ' ';
 		
-//		app.logn(keycode_temp);
-//		app.logn(""+keychar);
+//		Utl.logn(keycode_temp);
+//		Utl.logn(""+keychar);
 		
 		boolean found = true;
 		for (nInput_Button b : buttons) 

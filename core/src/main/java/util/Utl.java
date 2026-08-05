@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import app.App;
+import app.GdxApp;
 import data.sBoo;
 import data.sFlt;
 import data.sInt;
@@ -22,12 +23,28 @@ import data.sValue;
 import data.sVec;
 
 public class Utl {
-
-	public interface Logger {
-		public void logn();
-		public void logn(String t);
-		public void log(String t);
+	
+	
+	
+	/**
+	 * Get the method name for a depth in call stack. <br />
+	 * Utility function
+	 * @param depth depth in the call stack (0 means current method, 1 means call method, ...)
+	 * @return method name
+	 */
+	public static String getMethodName(final int depth)
+	{
+	  final StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+	  if (ste.length <= 2 + depth) return ""; 
+	  return ste[2 + depth].getMethodName(); 
 	}
+	
+	public static void logn() { Gdx.app.log(log_pref1+log_pref2, log_stack); log_stack = ""; }
+	public static void logn(String t) { Gdx.app.log(log_pref1+log_pref2, log_stack+t); log_stack = ""; }
+	public static String log_pref1 = "", log_pref2 = "";
+	public static void log(String t) { log_stack += t; }
+	private static String log_stack = "";
+
 	
 	public static boolean file_exist(String path) {
 		FileHandle handle = Gdx.files.local(path);
@@ -35,16 +52,34 @@ public class Utl {
 		return false;
 	}
 	
-	public static Color color(float r, float g, float b, float a) {
-		return new Color(r/255.0f, g/255.0f, b/255.0f, a/255.0f); }
+	public static int clamp(int v, int min, int max) {
+		if (v > max) v = max; if (v < min) v = min; return v; }
+	
+	public static int rgbToInt(int red, int green, int blue, int alpha) {
+	    alpha = clamp(alpha, 0, 255);
+	    red = clamp(red, 0, 255);
+	    green = clamp(green, 0, 255);
+	    blue = clamp(blue, 0, 255);
+	    return (alpha << 24) | (red << 16) | (green << 8) | blue;
+	}
+	public static Color intToColor(int argb) {
+		int a = (argb >> 24) & 0xFF;
+		int r = (argb >> 16) & 0xFF;
+		int g = (argb >> 8) & 0xFF;
+		int b = argb & 0xFF;
+	    return new Color(r/255.0f, g/255.0f, b/255.0f, a/255.0f);
+	}
+	
 	public static Color color(int r, int g, int b, int a) {
-		return new Color(r/255.0f, g/255.0f, b/255.0f, a/255.0f); }
+		return new Color(r/255.0f, g/255.0f, b/255.0f, a/255.0f); 
+	}
+	
 	public static Color color(int r, int g, int b) {
-		return new Color(r/255.0f, g/255.0f, b/255.0f, 1.0f); }
+		return color(r, g, b, 255); }
 	public static Color color(int l, int a) {
-		return new Color(l/255.0f, l/255.0f, l/255.0f, a/255.0f); }
+		return color(l,l,l,a); }
 	public static Color color(int l) {
-		return new Color(l/255.0f, l/255.0f, l/255.0f, 1.0f); }
+		return color(l,l,l,255); }
 
 
 	static public float distanceSegmentPoint(Vector2 s1, Vector2 s2, Vector2 p) {
@@ -325,13 +360,17 @@ public class Utl {
 	public static final String[] type_short_names = new String[data_type_nb];
 	public static final byte[] type_id = new byte[data_type_nb];
 	
-	public static void build_types() {
+	public static void build() {
 
 		new_type(Float.class, "flt", "FLT", sFlt.class, 1);
 		new_type(Integer.class, "int", "INT", sInt.class, 1);
 		new_type(Boolean.class, "boo", "BOO", sBoo.class, 1);
 		new_type(String.class, "str", "STR", sStr.class, 1);
 		new_type(Vector2.class, "vec", "VEC", sVec.class, 2);
+		
+		nScripted.build_codes();
+
+		nPainting.register();
 		
 	}
 	static class vType {
@@ -403,28 +442,28 @@ public class Utl {
 				v.fromString(o);
 				return (T)v; 
 			} catch (Exception ex) {
-				App.loggn(ex.toString());
+				logn(ex.toString());
 			} }
 		else if (ct == Float.class) {
 			try {
 				Object v = Float.parseFloat(o);
 				return (T)v; 
 			} catch (NumberFormatException ex) {
-				App.loggn(ex.toString());
+				logn(ex.toString());
 			} }
 		else if (ct == Integer.class) {
 			try {
 				Object v = Integer.parseInt(o);
 				return (T)v; 
 			} catch (NumberFormatException ex) {
-				App.loggn(ex.toString());
+				logn(ex.toString());
 			} }
 		else if (ct == Boolean.class) {
 			try {
 				Object v = Boolean.parseBoolean(o);
 				return (T)v; 
 			} catch (NumberFormatException ex) {
-				App.loggn(ex.toString());
+				logn(ex.toString());
 			} }
 		else if (ct == String.class) {
 			return (T)o; }

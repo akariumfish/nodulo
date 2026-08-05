@@ -13,6 +13,7 @@ import com.codedisaster.steamworks.SteamAPI;
 import app.GdxApp.nAppListener;
 import data.sData;
 import gui.nAlign;
+import util.Utl;
 import util.nRun;
 import util.nTransform;
 
@@ -219,20 +220,12 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 	
 	
 
-	public static void logg(String t) { GdxApp.app.log(t); }
-	public static void loggn() { GdxApp.app.logn(); }
-	public static void loggn(String t) { GdxApp.app.logn(t); }
-	
-	public void logn() { gdx.logn(); }
-	public void logn(String t) { gdx.logn(t); }
-	public void log(String t) { gdx.log(t); }
-	
 	public void flush() { gdx.drawer.flush(); }
+	public void use_fx(boolean v) { gdx.drawer.USE_FX = v; }
 	public void fx() { gdx.drawer.fx(); }
 	public void noFx() { gdx.drawer.noFx(); }
 	public Matrix4 getTransformMatrix() { return gdx.drawer.getTransformMatrix(); }
 	
-
 	public void push() { 
 		gdx.drawer.push(); }
 	public void pop() { 

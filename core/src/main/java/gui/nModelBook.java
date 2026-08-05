@@ -15,7 +15,6 @@ public class nModelBook {
 		models = new nMap<nModel>();
 		modelgroups = new nMap<nModelGroup>();
 		
-		build_def();
 	}
 	
 	public nModel newModel(String ref) {
@@ -48,7 +47,7 @@ public class nModelBook {
 	
 	public void newModelGroup(String ref, nModelGroup g) {
 		if (modelgroups.containsKey(ref)) 
-			GdxApp.loggn("ERROR: book allready contains a modelGroup with key "+ref);
+			Utl.logn("ERROR: book allready contains a modelGroup with key "+ref);
 		modelgroups.put(ref, g);
 		g.ref = Utl.copy(ref);
 	}
@@ -73,23 +72,4 @@ public class nModelBook {
 		return new Vector2(px,py);
 	}
 	
-	public void build_def() {
-
-		
-		newModel("CL_def")
-		.set_color_background(Utl.color(80,80,80,255))
-		.set_color_pressed(Utl.color(20,20,255,255))
-		.set_color_hovered(Utl.color(0,0,210,255))
-		.set_color_standby(Utl.color(0,0,120,255))
-		.set_color_sliderback(Utl.color(50,50,50,255))
-		.set_color_outline(Utl.color(200,200,200,255))
-		.set_color_outline_selected(Utl.color(200,200,0,255))
-		.set_color_shadow(Utl.color(0,0,0,100))
-		.set_color_switch_on(Utl.color(0,70,255,255))
-		.set_color_switch_off(Utl.color(0,0,40,255))
-		.set_color_text(Utl.color(200,255))
-		.setFont(18)
-		;
-
-	}
 }

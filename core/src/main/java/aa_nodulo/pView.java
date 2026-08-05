@@ -17,10 +17,9 @@ import util.Utl;
 import util.nMap;
 import util.nPool;
 import util.nRun;
-import zz_applet.Applet;
-import zz_patch.pInstance;
-import zz_patch.pNode;
-import zz_patch.pNode.CT;
+import patch.pInstance;
+import patch.pNode;
+import patch.pNode.CT;
 
 public class pView {
 
@@ -33,75 +32,75 @@ public class pView {
 //		app.setPref("release_FS", "DEF_VIEW_WIN_POS", new Vector2(690f,1030f));
 //		app.setPref("release_FS", "DEF_VIEW_WIN_SZ", new Vector2(1210f,950f));
 
-	public static void build_nodes(Applet app) {
+	public static void build_nodes(PlaneApplet app) {
 		
 		
 		
 		
-//		pNode.newNodeModel("pview")
-//		.process()
-//		.useInit().commande(new nRun() {public void run() {
-//			pView pview = instance.patch.plane.getSystem(pView.class);
-//			if (!pview.in_patch) {
-//				sVec val_pos = pview.view.object("val_pos", sVec.class);
-//				Vector2 old_pos = new Vector2(val_pos.get());
-//				pview.view.setObject("old_pos", old_pos);
-//				val_pos.set(0,0);
-//				app.addDelayEvent(2, new nRun(instance) { public void run() {
-//					pInstance inst = (pInstance)builder;
-//					pView pview = inst.patch.plane.getSystem(pView.class);
-//					sVec val_pos = pview.view.object("val_pos", sVec.class);
-//					val_pos.set(0,0);
-//					nWidget vref = pview.view.get("ref");
-//					vref.unlink(val_pos);
-//					vref.unlink(pview.view.object("val_stack_index", sInt.class));
-//					vref.unlink(val_pos);
-//					vref.unlink(pview.view.object("val_stack_index", sInt.class));
-//					vref.setParent(
-//							inst.object("group", nWidgetGroup.class).get("back"));
-//					pview.in_patch = true;
-//					vref.setBoundParent(true);
-//					vref.setStacked(true);
-//					vref.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM); // TOP   BOTTOM
-//					pview.view.get("headback").hide();
-//				}});
-//				instance.object("group", nWidgetGroup.class).get("back")
-//						.addEventClear(new nRun(instance) {public void run() {
-//					pInstance inst = (pInstance)builder;
-//					pView pview = inst.patch.plane.getSystem(pView.class);
-//					nWidget vref = pview.view.get("ref");
-//					vref.clearParent();
-//					pview.in_patch = false;
-//					vref.setBoundParent(false);
-//					vref.setStacked(false);
-//					vref.setRectOrigin(nAlign.LEFT,nAlign.TOP); // TOP   BOTTOM
-//					pview.view.get("headback").show();
-//					sVec val_pos = pview.view.object("val_pos", sVec.class);
-//					Vector2 old_pos = pview.view.object("old_pos", Vector2.class);
-//					val_pos.set(old_pos);
-//					vref.setLink(val_pos);
-//					vref.setStackIndexLink(pview.view.object("val_stack_index", sInt.class));
-//				}});
-//			}
-//		}})
-//		.useClear().commande(new nRun() {public void run() {
-//			pView pview = instance.patch.plane.getSystem(pView.class);
-//			nWidget vref = pview.view.get("ref");
-//			vref.clearParent();
-//			pview.in_patch = false;
-//			vref.setBoundParent(false);
-//			vref.setStacked(false);
-//			vref.setRectOrigin(nAlign.LEFT,nAlign.TOP); // TOP   BOTTOM
-//			pview.view.get("headback").show();
-//			sVec val_pos = pview.view.object("val_pos", sVec.class);
-//			Vector2 old_pos = pview.view.object("old_pos", Vector2.class);
-//			val_pos.set(old_pos);
-//			vref.setLink(val_pos);
-//			vref.setStackIndexLink(pview.view.object("val_stack_index", sInt.class));
-//		}}).useInit()
-////		.run(pNode.getRun(pNode.CT.RUNP_ADD_LABEL), "ViewSpace", (int)20)
-//		.commande(pNode.getCom(CT.COM_ADD_ROW))
-//		;
+		pNode.newNodeModel("pview")
+		.process()
+		.useInit().commande(new nRun() {public void run() {
+			pView pview = app.view;
+			if (!pview.in_patch) {
+				sVec val_pos = pview.view.object("val_pos", sVec.class);
+				Vector2 old_pos = new Vector2(val_pos.get());
+				pview.view.setObject("old_pos", old_pos);
+				val_pos.set(0,0);
+				app.addDelayEvent(2, new nRun(instance) { public void run() {
+					pInstance inst = (pInstance)builder;
+					pView pview = app.view;
+					sVec val_pos = pview.view.object("val_pos", sVec.class);
+					val_pos.set(0,0);
+					nWidget vref = pview.view.get("ref");
+					vref.unlink(val_pos);
+					vref.unlink(pview.view.object("val_stack_index", sInt.class));
+					vref.unlink(val_pos);
+					vref.unlink(pview.view.object("val_stack_index", sInt.class));
+					vref.setParent(
+							inst.object("group", nWidgetGroup.class).get("back"));
+					pview.in_patch = true;
+					vref.setBoundParent(true);
+					vref.setStacked(true);
+					vref.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM); // TOP   BOTTOM
+					pview.view.get("headback").hide();
+				}});
+				instance.object("group", nWidgetGroup.class).get("back")
+						.addEventClear(new nRun(instance) {public void run() {
+					pInstance inst = (pInstance)builder;
+					pView pview = app.view;
+					nWidget vref = pview.view.get("ref");
+					vref.clearParent();
+					pview.in_patch = false;
+					vref.setBoundParent(false);
+					vref.setStacked(false);
+					vref.setRectOrigin(nAlign.LEFT,nAlign.TOP); // TOP   BOTTOM
+					pview.view.get("headback").show();
+					sVec val_pos = pview.view.object("val_pos", sVec.class);
+					Vector2 old_pos = pview.view.object("old_pos", Vector2.class);
+					val_pos.set(old_pos);
+					vref.setLink(val_pos);
+					vref.setStackIndexLink(pview.view.object("val_stack_index", sInt.class));
+				}});
+			}
+		}})
+		.useClear().commande(new nRun() {public void run() {
+			pView pview = app.view;
+			nWidget vref = pview.view.get("ref");
+			vref.clearParent();
+			pview.in_patch = false;
+			vref.setBoundParent(false);
+			vref.setStacked(false);
+			vref.setRectOrigin(nAlign.LEFT,nAlign.TOP); // TOP   BOTTOM
+			pview.view.get("headback").show();
+			sVec val_pos = pview.view.object("val_pos", sVec.class);
+			Vector2 old_pos = pview.view.object("old_pos", Vector2.class);
+			val_pos.set(old_pos);
+			vref.setLink(val_pos);
+			vref.setStackIndexLink(pview.view.object("val_stack_index", sInt.class));
+		}}).useInit()
+//		.run(pNode.getRun(pNode.CT.RUNP_ADD_LABEL), "ViewSpace", (int)20)
+		.commande(pNode.getCom(CT.COM_ADD_ROW))
+		;
 		
 		
 		
@@ -258,29 +257,29 @@ public class pView {
 		val_cam_rot = view.object("val_cam_rot", sFlt.class);
 
 //		if (!app.getPref("STARTUP_LOAD", Boolean.class)) {
-//			
-//			set_viewspace(
-//					app.getPref("DEF_VIEW_WIN_POS_x", Float.class),
-//					app.getPref("DEF_VIEW_WIN_POS_y", Float.class),
-//					app.getPref("DEF_VIEW_WIN_SZ_x", Float.class),
-//					app.getPref("DEF_VIEW_WIN_SZ_y", Float.class),
-//					app.getPref("DEF_VIEW_ZOOM", Float.class));
-//				
-//			
-////			if (app.getPref("RELEASE", Boolean.class)) {
-////				if (app.getPref("start_fullscreen", Boolean.class)) {
-////					set_viewspace(690f,1030f, 1210f,950f, app.getPref("DEF_VIEW_ZOOM", Float.class));
-////				} else {
-////					set_viewspace(20f,445f, 1260f,350f, app.getPref("DEF_VIEW_ZOOM", Float.class));
-////				}
-////			} else {
-////				if (app.start_solo) set_viewspace(370f,445f, 910f,350f, app.getPref("DEF_VIEW_ZOOM", Float.class));
-////	//			if (app.start_solo) set_viewspace(370f,885f, 910f,790f, app.getPref("DEF_VIEW_ZOOM", Float.class));
-////				else set_viewspace(370f,445f, 510f,270f, app.getPref("DEF_VIEW_ZOOM", Float.class));
-////			}
+			
+			set_viewspace(
+					app.config.DEF_VIEW_WIN_POS.x,
+					app.config.DEF_VIEW_WIN_POS.y,
+					app.config.DEF_VIEW_WIN_SZ.x,
+					app.config.DEF_VIEW_WIN_SZ.y,
+					app.config.DEF_VIEW_ZOOM);
+				
+			
+//			if (app.getPref("RELEASE", Boolean.class)) {
+//				if (app.getPref("start_fullscreen", Boolean.class)) {
+//					set_viewspace(690f,1030f, 1210f,950f, app.getPref("DEF_VIEW_ZOOM", Float.class));
+//				} else {
+//					set_viewspace(20f,445f, 1260f,350f, app.getPref("DEF_VIEW_ZOOM", Float.class));
+//				}
+//			} else {
+//				if (app.start_solo) set_viewspace(370f,445f, 910f,350f, app.getPref("DEF_VIEW_ZOOM", Float.class));
+//	//			if (app.start_solo) set_viewspace(370f,885f, 910f,790f, app.getPref("DEF_VIEW_ZOOM", Float.class));
+//				else set_viewspace(370f,445f, 510f,270f, app.getPref("DEF_VIEW_ZOOM", Float.class));
+//			}
 //		}
 
-//		app.menu.add_info_text("space zoom: ", view.object("val_cam_scale", sFlt.class));
+		app.menu.add_info_text("space zoom: ", view.object("val_cam_scale", sFlt.class));
 		
 		nWidget view_backref = view.get("backref");
 		view_ref = app.gui.addWidget("ref");
@@ -347,7 +346,7 @@ public class pView {
 		if (bloc != null) bloc.clear();
 		
 	}
-	
+
 	public void frame(float d) {
 		if (got_center_ratio_target) {
 			view.metode("set_center_ratio", val_center_ratio_target.get());

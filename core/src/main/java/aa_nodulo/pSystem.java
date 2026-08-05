@@ -38,10 +38,10 @@ public abstract class pSystem {
 	
 	public static ArrayList<sBloc_Builder> sys_builders = new ArrayList<sBloc_Builder>();
 
-	public static <T extends pSystem> sBloc_Builder builder(App app, String ref, 
+	public static <T extends pSystem> sBloc_Builder builder(PlaneApplet app, String ref, 
 			Class<T> sc, nRun run_new) {
 		return builder(app,ref,sc,true,run_new); }
-	public static <T extends pSystem> sBloc_Builder builder(App app, String ref, 
+	public static <T extends pSystem> sBloc_Builder builder(PlaneApplet app, String ref, 
 			Class<T> sc, boolean addToPlane, nRun run_new) {
 		 
 		storeSystemType(ref,sc);
@@ -55,15 +55,12 @@ public abstract class pSystem {
 			.setClearRun(new nRun() { public void run(Object o) {
 				sValueBloc b = (sValueBloc)o; b.run("clearing"); }});
 
-//		if (addToPlane) {
-//			pPlane.builder.addEventInit(new nRun() { public void run(Object o) {
-//				sValueBloc b = (sValueBloc)o; b.addBlocBuilder(new_builder); 
-//				if (b.is_new_bloc) {
-//					app.gdx.exec_nothrow("pPlane.bloc.buildBloc("+ref+")", 
-//							new nRun() { public void run() {	
-//						b.buildBloc(ref, ref); }}); }
-//			}});
-//		}
+		if (addToPlane) {
+			app.addEventInit(new nRun() { public void run(Object o) {
+				sValueBloc b = (sValueBloc)o; b.addBlocBuilder(new_builder); 
+				b.buildBloc(ref, ref);
+			}});
+		}
 		sys_builders.add(new_builder);
 		
 		return new_builder;
@@ -179,11 +176,11 @@ public abstract class pSystem {
 	}
 
 	public void do_system_load() { 
-//		if (plane.bloc.is_new_bloc) system_load();
+		if (app.bloc.is_new_bloc) system_load();
 //		else {
-//			plane.bloc.addEventLoadEnd(new nRun() { public void run() {
-//				system_load();
-//			}});
+			app.bloc.addEventLoadEnd(new nRun() { public void run() {
+				system_load();
+			}});
 //		}
 	}
 	
@@ -222,12 +219,12 @@ public abstract class pSystem {
 	public void tool_setup(boolean open) {
 		
 		app.addDelayEvent(1, new nRun(this) { public void run() {
-//			nWidgetGroup sec = app.menu.toolbox
-//					.addSection(system_refs.get(builder.getClass()), open);
-//			nInterface interf = app.gui.addInterface();
-//			interf.pop(sec);
-//			interf.setContext(bloc);
-//			tool_init(interf);
+			nWidgetGroup sec = app.menu.toolbox
+					.addSection(system_refs.get(builder.getClass()), open);
+			nInterface interf = app.gui.addInterface();
+			interf.pop(sec);
+			interf.setContext(bloc);
+			tool_init(interf);
 		}});
 		
 	}

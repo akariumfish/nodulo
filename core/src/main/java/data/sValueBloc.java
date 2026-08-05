@@ -17,9 +17,8 @@ import util.Utl;
 import util.nClearable;
 import util.nMap;
 import util.nRun;
-import zz_applet.Applet;
-import zz_patch.pPar;
-import zz_patch.pStandard;
+import patch.pPar;
+import patch.pStandard;
 
 
 
@@ -391,17 +390,17 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 			id = data.autoid.get_prefered_id(pref_id);
 			if (id != pref_id) {
 				//naming conflict !
-				app.logn("WARNING : sValueBloc naming cnflict, "+r+" not usable");
+				Utl.logn("WARNING : sValueBloc naming cnflict, "+r+" not usable");
 			}
 			ref = data.autoid.make_full_ref(base_ref, id);
 			if (!ref.equals(r)) {
 				//naming error !
-				app.logn("ERROR : incoherent result while naming bloc, r != ref for r: "+r+
+				Utl.logn("ERROR : incoherent result while naming bloc, r != ref for r: "+r+
 						" and ref: "+ref);
 			}
 		}
 		if (b.blocs.get(ref) != null) {
-			app.logn("ERROR : bloc naming bug "+ref+" allready exist");
+			Utl.logn("ERROR : bloc naming bug "+ref+" allready exist");
 			GdxApp.crash();
 		}
 		
@@ -411,7 +410,7 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 		  
 		if (parent == data) adress = "" + sData.adress_token + ref;
 		else adress = b.adress + sData.adress_token + ref;
-		if (!sData.refIsValid(ref)) app.logn("ERROR Invalid valbloc ref");
+		if (!sData.refIsValid(ref)) Utl.logn("ERROR Invalid valbloc ref");
 		b.blocs.put(ref, this); 
 		for (sBloc_Builder bb : data.common_bloc_builders) addBlocBuilder(bb); 
 		create_common_metodes(); }

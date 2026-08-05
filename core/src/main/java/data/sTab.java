@@ -7,9 +7,6 @@ import gui.nWidget;
 import gui.nWidgetGroup;
 import net.nNetwork;
 import util.Utl;
-//import zz_dump.Save_Bloc;
-//import zz_plane2.cPlane;
-import zz_applet.Applet;
 
 public class sTab extends sValue {
 	

@@ -17,8 +17,8 @@ import gui.nWidgetGroup;
 import util.Utl;
 import util.nMap;
 import util.nRun;
-import zz_applet.Applet;
-import zz_plane.pTime;
+import app.App;
+import aa_nodulo.pTime;
 
 public class nNetwork {
 	
@@ -140,7 +140,7 @@ public class nNetwork {
 		int id = id_section + sync_data_id_refs.getFreeId();
 		String ref = "___"+id;
 		if (sync_data_ref_ids.hasKey(ref)) {
-			app.logn("ERROR : nNetwork.newSyncedData(  "+ref+"  ) ref allready exist.");
+			Utl.logn("ERROR : nNetwork.newSyncedData(  "+ref+"  ) ref allready exist.");
 			return -1; }
 		sync_data_ref_ids.put(ref,id);
 		return id;
@@ -148,7 +148,7 @@ public class nNetwork {
 	
 	public int newSyncedData(String ref) {
 		if (sync_data_ref_ids.hasKey(ref)) {
-			app.logn("ERROR : nNetwork.newSyncedData(  "+ref+"  ) ref allready exist.");
+			Utl.logn("ERROR : nNetwork.newSyncedData(  "+ref+"  ) ref allready exist.");
 			return -1; }
 		int id = id_section + sync_data_id_refs.getFreeId();
 		sync_data_ref_ids.put(ref,id);
@@ -212,7 +212,7 @@ public class nNetwork {
 
 	
 	
-	Applet app;
+	App app;
 
 	nServer server;
 	nClient client;
@@ -224,7 +224,7 @@ public class nNetwork {
 	sInt val_connected_player;
 	sBoo val_connected_to_server;
 
-	public nNetwork(Applet a) {
+	public nNetwork(App a) {
 		app = a;
 
 		val_net_mode = app.data.setting_bloc.newStr("val_net_mode", "network mode", "");
@@ -232,19 +232,19 @@ public class nNetwork {
 		val_connected_player = app.data.setting_bloc.newInt("val_connected_player", (int)0);
 		val_connected_to_server = app.data.setting_bloc.newBoo("val_connected_to_server", false);
 
-		app.menu.add_tool_menu_trigg("Network", new nRun() { public void run() {
-			pop_net_window(); }});
+//		app.menu.add_tool_menu_trigg("Network", new nRun() { public void run() {
+//			pop_net_window(); }});
 
-		if (app.start_as_client || app.start_as_server) {
-			
-			app.menu.add_info_text("");
-			if (app.start_as_client) app.menu.add_info_text("Connected: ", val_connected_to_server);
-			if (app.start_as_server) app.menu.add_info_text("Players: ", val_connected_player);
-			app.menu.add_info_text("");
-			
-//			pop_net_window();
-			
-		}
+//		if (app.start_as_client || app.start_as_server) {
+//			
+//			app.menu.add_info_text("");
+//			if (app.start_as_client) app.menu.add_info_text("Connected: ", val_connected_to_server);
+//			if (app.start_as_server) app.menu.add_info_text("Players: ", val_connected_player);
+//			app.menu.add_info_text("");
+//			
+////			pop_net_window();
+//			
+//		}
 		
 		
 	}
@@ -266,7 +266,7 @@ public class nNetwork {
 			try { server = new nServer(this); }
 			catch(Exception e) { 
 				System.out.println(e.getMessage()); 
-				app.logn("ERROR : nNetwork.start_server() catched an Exception. "
+				Utl.logn("ERROR : nNetwork.start_server() catched an Exception. "
 						+ "Server could not start.");
 				return; }
 			val_net_mode.set("server");
@@ -282,7 +282,7 @@ public class nNetwork {
 			try { client = new nClient(this); }
 			catch(Exception e) { 
 				System.out.println(e.getMessage()); 
-				app.logn("ERROR : nNetwork.start_client() catched an Exception. "
+				Utl.logn("ERROR : nNetwork.start_client() catched an Exception. "
 						+ "Client could not start.");
 				return; }
 			val_net_mode.set("client");
@@ -311,34 +311,34 @@ public class nNetwork {
 	
 	
 	
-	public void pop_net_window() {
-
-		nInterface interf = app.menu.get_popWindow();
-
-		interf.setContext(app.data.setting_bloc);
-		
-		interf.add_row();
-		interf.add_row_label(11,"Network : ");
-
-		interf.add_row();
-		interf.add_row_watch(5, "mode: ", "val_net_mode");
-		interf.add_row_label(1,"");
-		interf.add_row_watch(5, "started: ", "val_net_started");
-		interf.add_row();
-		interf.add_row_watch(5, "Players: ", "val_connected_player");
-		interf.add_row_label(1,"");
-		interf.add_row_watch(5, "Connected: ", "val_connected_to_server");
-
-		interf.add_row();
-		interf.add_row_trigg(5, "start_server", new nRun() { public void run() {
-			start_server(); }});
-		interf.add_row_label(1,"");
-		interf.add_row_trigg(5, "start_client", new nRun() { public void run() {
-			start_client(); }});
-		
-		app.addEventNextFrame(new nRun() { public void run() {
-			app.menu.pop_popwindow("Network"); }});
-	}
+//	public void pop_net_window() {
+//
+//		nInterface interf = app.menu.get_popWindow();
+//
+//		interf.setContext(app.data.setting_bloc);
+//		
+//		interf.add_row();
+//		interf.add_row_label(11,"Network : ");
+//
+//		interf.add_row();
+//		interf.add_row_watch(5, "mode: ", "val_net_mode");
+//		interf.add_row_label(1,"");
+//		interf.add_row_watch(5, "started: ", "val_net_started");
+//		interf.add_row();
+//		interf.add_row_watch(5, "Players: ", "val_connected_player");
+//		interf.add_row_label(1,"");
+//		interf.add_row_watch(5, "Connected: ", "val_connected_to_server");
+//
+//		interf.add_row();
+//		interf.add_row_trigg(5, "start_server", new nRun() { public void run() {
+//			start_server(); }});
+//		interf.add_row_label(1,"");
+//		interf.add_row_trigg(5, "start_client", new nRun() { public void run() {
+//			start_client(); }});
+//		
+//		app.addEventNextFrame(new nRun() { public void run() {
+//			app.menu.pop_popwindow("Network"); }});
+//	}
 
 	
 

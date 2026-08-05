@@ -14,11 +14,16 @@ import com.noodle.nodulo.Main;
 import app.App;
 import app.AppConfig;
 import app.GdxApp;
+import data.sValueBloc;
 import gui.nGUI;
 import gui.nInterface;
 import gui.nWidgetGroup;
+import patch.pPatch;
+import util.Utl;
 import util.nMap;
+import util.nPainting;
 import util.nRun;
+import util.nScripted;
 
 public class PlaneApplet extends App {
 
@@ -26,16 +31,14 @@ public class PlaneApplet extends App {
 //	public static boolean TITLE_SCREEN = true; 
 	public static boolean TITLE_SCREEN = false;
 
-//	public static boolean STARTUP_APPLET = true; 
-	public static boolean STARTUP_APPLET = false;
-
+//	public static boolean START_FULLSCREEN = true;
+	public static boolean START_FULLSCREEN = false;
+	
 	
 	public static class AppletConfig {
 
 		public AppletConfig() {}
-		public AppletConfig(String s) { build_model = s; }
-		
-		public String build_model = "empty";
+		public AppletConfig(String s) { STARTUP_MODEL_REF = s; }
 		
 //		public boolean RELEASE = true;
 		public boolean RELEASE = false;
@@ -48,9 +51,6 @@ public class PlaneApplet extends App {
 		
 //		public boolean START_FX = true;
 		public boolean START_FX = false;
-		
-//		public boolean START_FULLSCREEN = true;
-		public boolean START_FULLSCREEN = false;
 		
 		public boolean START_HELP = true;
 //		public boolean START_HELP = false;
@@ -96,15 +96,22 @@ public class PlaneApplet extends App {
 	public static boolean RELEASE = false;
 	
 	public PlaneApplet(AppletConfig c) { 
-		config = c; RELEASE = c.RELEASE; app = this; }
+		config = c; RELEASE = c.RELEASE; app = this; 
+	}
 	
 	
+	public static void build_setup() {
+		pPatch.build_setup();
+		pAtom.build_setup();
+		pBox2d.build_setup();
+	}
 	
-	
-	
-
 	public static String[] getModels() {
-		return new String[] { "empty", "default" };
+		String[] l = new String[startupmodels.size()+1];
+		l[0] = "empty";
+		int i = 1;
+		for (String s : startupmodels.allKey()) { l[i] = s; i++; }
+		return l;
 	}
 	
 	
@@ -113,6 +120,7 @@ public class PlaneApplet extends App {
 	public AppletConfig config;
 
 	public nGUI gui;
+	public nMenu menu;
 
 	Skin skin;
 	Stage stage;
@@ -120,13 +128,24 @@ public class PlaneApplet extends App {
 	public pView view;
 	public pTime time;
 	public pPatch patch;
+	public pSpace space;
+	public pNet net;
 
 	public boolean NET_CTRL = false;
+	
+	nPainting paint;
+	
+	public sValueBloc bloc;
 	
 	@Override
 	public void setup(GdxApp a) {
 		super.setup(a);
 
+		if (config.start_as_client) NET_CTRL = true;
+		use_fx(config.START_FX);
+		
+		bloc = data.root_bloc;
+		
 		skin = new Skin(Gdx.files.internal("ui/skin.json"));
 		stage = new Stage(new ScreenViewport());
 		
@@ -134,41 +153,111 @@ public class PlaneApplet extends App {
 		multiplexer.addProcessor(stage);
 		multiplexer.addProcessor(input);
 		Gdx.input.setInputProcessor(multiplexer);
-
-		if (config.start_as_client) NET_CTRL = true;
 		
 		gui = new nGUI(this);
 
 		nGUIBook.build_book(gui.book, this);
+		
+		menu = new nMenu(this);
+		
+		init_inputs();
 
-		pPatch.build(this, gui);
+		
+		app.gdx.exec_nothrow("pSpace.build(app)", new nRun() { public void run() {	
+			pSpace.build(app);
+		}});
+		
+		app.gdx.exec_nothrow("pBody.build(app)", new nRun() { public void run() {	
+			pBody.build(app);
+		}});
+		app.gdx.exec_nothrow("pProperty.build(app)", new nRun() { public void run() {	
+			pProperty.build(app);
+		}});
+		app.gdx.exec_nothrow("pFamily.build(app)", new nRun() { public void run() {	
+			pFamily.build(app);
+		}});
 
-//		bloc.addEventSave(new nRun() { public void run() {
-//			nRun.runEvents(eventSaveRun);
-//		}});
-//
-//		bloc.addEventLoadParam(new nRun() { public void run() {
-//			nRun.runEvents(eventEmptyRun);
-//			app.addDelayEvent(8, new nRun() { public void run() {
-//				nRun.runEvents(eventLoadRun);
-//			}});
-//		}});
-//
-//		if (app.getPref("STARTUP_MODEL_USE", Boolean.class)) {
-//			run_startupmodel_setup(app.getPref("STARTUP_MODEL_REF", String.class)); }
-//		
-//		app.menu.add_tool_menu_trigg("Empty Plane", new nRun() { public void run() {
-//			empty_plane(); }});
-//		
+		app.gdx.exec_nothrow("pGeom.build(app)", new nRun() { public void run() {	
+			pGeom.build(app);
+		}});
+
+		app.gdx.exec_nothrow("pAtom.build(app)", new nRun() { public void run() {	
+			pAtom.build(app);
+		}});
+
+		app.gdx.exec_nothrow("pBox2d.build(app)", new nRun() { public void run() {	
+			pBox2d.build(app);
+		}});
+
+		app.gdx.exec_nothrow("pPatch.build(app)", new nRun() { public void run() {	
+			pPatch.build(app, gui);
+		}});
+
+		app.gdx.exec_nothrow("pTime.build_node(app)", new nRun() { public void run() {	
+			pTime.build_node(app);
+		}});
+		app.gdx.exec_nothrow("pView.build_nodes(app)", new nRun() { public void run() {	
+			pView.build_nodes(app);
+		}});
+
+		app.gdx.exec_nothrow("pBox2d.build_game(app)", new nRun() { public void run() {	
+			pBox2d.build_game(app);
+		}});
+
+		app.gdx.exec_nothrow("pAtom.build_game(app)", new nRun() { public void run() {	
+			pAtom.build_game(app);
+		}});
+ 
+		
+		
+		bloc.addEventSave(new nRun() { public void run() {
+			nRun.runEvents(eventSaveRun);
+		}});
+
+		bloc.addEventLoadParam(new nRun() { public void run() {
+			nRun.runEvents(eventEmptyRun);
+			app.addDelayEvent(8, new nRun() { public void run() {
+				nRun.runEvents(eventLoadRun);
+			}});
+		}});
+
+		if (config.PATCH_BUILD) {
+			run_startupmodel_setup(config.STARTUP_MODEL_REF); }
+		
+		app.menu.add_tool_menu_trigg("Empty Plane", new nRun() { public void run() {
+			empty_plane(); }});
+		
 		
 		view = new pView(this);
 		time = new pTime(this);
 		patch = new pPatch(this);
+		net = new pNet(this);
+		space = new pSpace(this);
+
+		view.system_load();
+		time.system_load();
+		net.system_load();
+		space.system_load();
+		patch.system_load();
+
+		if (!RELEASE) tool_setup();
 		
-		addEventNextFrame(new nRun() { public void run() {
-//			if (!RELEASE) 
-				tool_setup(); 
-		}});
+//		paint = new nPainting();
+//		
+//		paint.rect(300,380,480,250);
+//		paint.rect(150,300,300,250);
+//		paint.stroke(255,255,0,255,8f);
+//		paint.rect(300,250,350,300);
+//		paint.rect(180,0,200,380);
+//		
+//		Object[] scr = paint.getScript();
+//		
+//		paint.clear();
+//		
+//		nScripted.buildScript(paint, scr);
+		
+		startup();
+		
 	}
 
 	@Override
@@ -181,14 +270,21 @@ public class PlaneApplet extends App {
 		gui.dispose();
 		
 	}
+	
+	ArrayList<nRun> eventInit = new ArrayList<nRun>();
 
+	public void addEventInit(nRun n) { eventInit.add(n); }
+	
 	@Override
 	protected void do_startup() {
 		
 		LOADING_SCREEN_FRAME = 3;
+
+		nRun.runEvents(eventInit, data.setting_bloc);
 		
-//		addDelayEvent(1, new nRun() { public void run() {
-//			gdx.add_nodraw_frame(40); }});
+		addDelayEvent(1, new nRun() { public void run() {
+			gdx.add_nodraw_frame(40); 
+		}});
 	}
 
 	public void frame() { 
@@ -196,6 +292,10 @@ public class PlaneApplet extends App {
 		frame_inputs();
 
 		time.do_frame(delta);
+		view.frame(delta);
+		net.frame(delta);
+		space.do_frame(delta);
+		patch.frame(delta);
 		
 		for (int prio = pSystem.max_frame_prio ; prio >= 0 ; prio--)
 			for (pSystem sys : systems.all()) 
@@ -210,7 +310,13 @@ public class PlaneApplet extends App {
 	}
 	
 	@Override protected void gui_frame() { gui.frame(); frame(); }
-	@Override protected void gui_draw() { gui.draw(); }
+	@Override protected void gui_draw() { 
+
+		gui.draw(); 
+
+//		paint.draw(gdx.drawer);
+		
+	}
 
 	@Override 
 	public void draw_start() {
@@ -298,7 +404,7 @@ public class PlaneApplet extends App {
 				boolean b = (boolean)o; state = b; }};
 			nRun run_clic = new nRun() { public void run(Object o) {
 				boolean b = (boolean)o; if (b) click = true; else unclick = true; }};
-//			app.menu.add_shortcut_target(shortcut_name, key, run_clic, run_state);
+			menu.add_shortcut_target(shortcut_name, key, run_clic, run_state);
 			inputs.put(input_ref+"_state", new nRun() { public Object get() {
 				return state; }});
 			inputs.put(input_ref+"_click", new nRun() { public Object get() {
@@ -307,7 +413,7 @@ public class PlaneApplet extends App {
 				return unclick; }});
 		}
 		public void frame_inputs() {
-//			state = app.input.getState(key);
+			state = input.getState(key);
 		}
 		public void tick_end_inputs() {
 			click = false; unclick = false;
@@ -329,12 +435,12 @@ public class PlaneApplet extends App {
 		nRun run_ccw = new nRun() { public void run(Object o) {
 			boolean b = (boolean)o; key_ccw = b; }};
 
-//		app.menu.add_shortcut_target("Input - Up", 'W', null, run_up);
-//		app.menu.add_shortcut_target("Input - Down", 'S', null, run_down);
-//		app.menu.add_shortcut_target("Input - Left", 'A', null, run_left);
-//		app.menu.add_shortcut_target("Input - Right", 'D', null, run_right);
-//		app.menu.add_shortcut_target("Input - CW", 'E', null, run_cw);
-//		app.menu.add_shortcut_target("Input - CCW", 'Q', null, run_ccw);
+		menu.add_shortcut_target("Input - Up", 'W', null, run_up);
+		menu.add_shortcut_target("Input - Down", 'S', null, run_down);
+		menu.add_shortcut_target("Input - Left", 'A', null, run_left);
+		menu.add_shortcut_target("Input - Right", 'D', null, run_right);
+		menu.add_shortcut_target("Input - CW", 'E', null, run_cw);
+		menu.add_shortcut_target("Input - CCW", 'Q', null, run_ccw);
 		
 		new KeyInput("key_space", "Input - Space", ' ');
 		new KeyInput("key_w", "Input - W", 'Z');
@@ -372,16 +478,13 @@ public class PlaneApplet extends App {
 				return m;
 			} else return 0f;
 		}});
-//		inputs.put("mouse_hover_view", new nRun() { public Object get() { 
-//			pView view = getSystem(pView.class);
-//			if (view == null) return false;
-//			return view.mouse_is_hover_view();
-//		}});
-//		inputs.put("mouse_pos", new nRun() { public Object get() {
-//			pView view = getSystem(pView.class);
-//			if (view == null || !view.mouse_is_hover_view()) return new Vector2();
-//			return view.mouse_in_view();
-//		}});
+		inputs.put("mouse_hover_view", new nRun() { public Object get() { 
+			return view.mouse_is_hover_view();
+		}});
+		inputs.put("mouse_pos", new nRun() { public Object get() {
+			if (!view.mouse_is_hover_view()) return new Vector2();
+			return view.mouse_in_view();
+		}});
 		inputs.put("mouse_left_click", new nRun() { public Object get() {
 			return mouse_left_click; }});
 		inputs.put("mouse_left_unclick", new nRun() { public Object get() {
@@ -399,40 +502,37 @@ public class PlaneApplet extends App {
 		
 		
 
-//		outputs.put("cam_pos", new nRun() { public void run() { 
-//			if (args.length < 1) return;
-//			Vector2 r = arg(0,Vector2.class); 
-//			if (r == null) return;
-//			pView view = getSystem(pView.class);
-//			view.val_cam_pos_target.set(-r.x,-r.y);
-//			view.got_cam_pos_target = true; 
-//		}});
-//		outputs.put("cam_scale", new nRun() { public void run() {
-//			if (args.length < 1) return;
-//			float r = arg(0,Float.class); 
-//			pView view = getSystem(pView.class);
-//			view.val_cam_scale_target.set(r);
-//			view.got_cam_scale_target = true;
-//		}});
-//		outputs.put("cam_rot", new nRun() { public void run() {
-//			if (args.length < 1) return;
-//			float r = arg(0,Float.class); 
-//			pView view = getSystem(pView.class);
-//			view.val_cam_rot_target.set(-r);
-//			view.got_cam_rot_target = true;
-//		}});
+		outputs.put("cam_pos", new nRun() { public void run() { 
+			if (args.length < 1) return;
+			Vector2 r = arg(0,Vector2.class); 
+			if (r == null) return;
+			view.val_cam_pos_target.set(-r.x,-r.y);
+			view.got_cam_pos_target = true; 
+		}});
+		outputs.put("cam_scale", new nRun() { public void run() {
+			if (args.length < 1) return;
+			float r = arg(0,Float.class); 
+			view.val_cam_scale_target.set(r);
+			view.got_cam_scale_target = true;
+		}});
+		outputs.put("cam_rot", new nRun() { public void run() {
+			if (args.length < 1) return;
+			float r = arg(0,Float.class); 
+			view.val_cam_rot_target.set(-r);
+			view.got_cam_rot_target = true;
+		}});
 		
 		
 	}
 
 	private void frame_inputs() {
-//		mouse_left_state = app.input.mouseLeft.state; 
-//		mouse_left_click = app.input.mouseLeft.trigClick; 
-//		mouse_left_unclick = app.input.mouseLeft.trigUClick; 
-//		mouse_right_state = app.input.mouseRight.state; 
-//		mouse_right_click = app.input.mouseRight.trigClick; 
-//		mouse_right_unclick = app.input.mouseRight.trigUClick;
-//		key_shift_state = app.input.keyShift.state; 
+		mouse_left_state = input.mouseLeft.state; 
+		mouse_left_click = input.mouseLeft.trigClick; 
+		mouse_left_unclick = input.mouseLeft.trigUClick; 
+		mouse_right_state = input.mouseRight.state; 
+		mouse_right_click = input.mouseRight.trigClick; 
+		mouse_right_unclick = input.mouseRight.trigUClick;
+		key_shift_state = input.keyShift.state; 
 		keycross_press = (key_up || key_down || key_left || key_right); 
 		keyrot_press = (key_cw || key_ccw);
 		for (KeyInput k : keyInputs) k.frame_inputs();
@@ -457,17 +557,36 @@ public class PlaneApplet extends App {
 	public void tool_setup() {
 		
 		addDelayEvent(1, new nRun() { public void run() {
-//			nWidgetGroup sec = menu.toolbox
-//					.addSection("  pPlane  ", true);;
-//			nInterface interf = gui.addInterface();
-//			interf.pop(sec);
-//			interf.setContext(bloc);
-//			nRun.runEvents(eventToolInitRun, interf);
+			nWidgetGroup sec = menu.toolbox
+					.addSection("  pPlane  ", true);;
+			nInterface interf = gui.addInterface();
+			interf.pop(sec);
+			interf.setContext(bloc);
+			nRun.runEvents(eventToolInitRun, interf);
 		}});
 		
 	}
 	
+
+	public static void run_startupmodel_setup(String r) {
+		if (startupmodels.get(r) == null || 
+				startupmodels.get(r).setup_run == null) return;
+		startupmodels.get(r).setup_run.run();
+	}
 	
+	public static StartupModel newStartupModel(String r) {
+		StartupModel sm = new StartupModel(r);
+		startupmodels.put(r,sm);
+		return sm;
+	}
+	public static nMap<StartupModel> startupmodels = new nMap<StartupModel>();
+	public static class StartupModel {
+		public String ref;
+		public StartupModel(String r) { ref = r; }
+		nRun setup_run = null;
+		public StartupModel setSetupRun(nRun n) { setup_run = n; return this; }
+	}
+
 	
 	
 }

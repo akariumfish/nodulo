@@ -23,7 +23,7 @@ import com.noodle.nodulo.Main;
 import util.*;
 
 //public class GdxApp implements ApplicationListener {
-public class GdxApp implements Screen ,nDrawer.DrawContext, Utl.Logger {
+public class GdxApp implements Screen ,nDrawer.DrawContext {
 	
 	
 	
@@ -45,11 +45,11 @@ public class GdxApp implements Screen ,nDrawer.DrawContext, Utl.Logger {
 //	public static boolean PRINT_TIMETRACK = true;
 	public static boolean PRINT_TIMETRACK = false;
 	
-	public GdxApp(Main m, AppConfig c) { main = m; window_title = c.window_title; 
+	public GdxApp(Main m, AppConfig c) { this(m,c,null); }
+	public GdxApp(Main m, AppConfig c, nAppListener l) { 
+		listener = l; main = m; window_title = c.window_title; 
 		WIDTH = c.WIDTH; HEIGHT = c.HEIGHT; START_FULLSCREEN = c.START_FULLSCREEN; 
 		create(); }
-	public GdxApp(Main m, AppConfig c, nAppListener l) { 
-		this(m,c); listener = l; create(); }
 
 	public static boolean START_FULLSCREEN = false;
 
@@ -85,9 +85,9 @@ public class GdxApp implements Screen ,nDrawer.DrawContext, Utl.Logger {
 		
 		drawer = new nDrawer(this, false);
 		
-		Graphics.DisplayMode currentMode = Gdx.graphics.getDisplayMode();
-		Gdx.graphics.setFullscreenMode(currentMode);
-		Gdx.graphics.setWindowedMode(WIDTH, HEIGHT);
+//		Graphics.DisplayMode currentMode = Gdx.graphics.getDisplayMode();
+//		Gdx.graphics.setFullscreenMode(currentMode);
+//		Gdx.graphics.setWindowedMode(WIDTH, HEIGHT);
 		
 		setup();
 		if (listener != null) listener.setup(this);
@@ -130,9 +130,6 @@ public class GdxApp implements Screen ,nDrawer.DrawContext, Utl.Logger {
 
         drawer.resize(width, height);
         
-//        buffer.reset();
-//        buffer.initialize(width, height);
-		
         nRun.runEvents(eventsScreen); 
 	}
 	@Override
@@ -153,6 +150,8 @@ public class GdxApp implements Screen ,nDrawer.DrawContext, Utl.Logger {
 	public OrthographicCamera getCamera() { return camera; }
 	@Override
 	public void render(float delta) {
+		
+		Utl.log_pref1 = window_title+":"+frame_counter;
 		
 		try_nodraw_frame();
 		
@@ -245,11 +244,17 @@ public class GdxApp implements Screen ,nDrawer.DrawContext, Utl.Logger {
 			
 			test_interupt();
 			
-			if (!block_custom_metodes) pre_draw();
-
+			if (!block_custom_metodes) {
+				pre_draw();
+				if (listener != null) listener.pre_draw();
+			}
+			
 			test_interupt();
 			
-			if (!block_custom_metodes) post_draw();
+			if (!block_custom_metodes) {
+				post_draw();
+				if (listener != null) listener.post_draw();
+			}
 
 			test_interupt();
 			
@@ -269,11 +274,17 @@ public class GdxApp implements Screen ,nDrawer.DrawContext, Utl.Logger {
 			
 			test_interupt();
 			
-			if (!block_custom_metodes) pre_draw();
+			if (!block_custom_metodes) {
+				pre_draw();
+				if (listener != null) listener.pre_draw();
+			}
 
 			test_interupt();
 			
-			if (!block_custom_metodes) post_draw();
+			if (!block_custom_metodes) {
+				post_draw();
+				if (listener != null) listener.post_draw();
+			}
 
 			test_interupt();
 			
@@ -313,14 +324,14 @@ public class GdxApp implements Screen ,nDrawer.DrawContext, Utl.Logger {
 			interupt();
 			if (!crashing_exec.hasKey(ref)) crashing_exec.put(ref,run);
 			ex.printStackTrace(System.out);
-			logn("ERROR : exec_nothrow  < "+ref+" >  catched an Exception. "
+			Utl.logn("ERROR : exec_nothrow  < "+ref+" >  catched an Exception. "
 					+ "Render is paused, press space to continue");
-			logn("          This exec is stored as crashing and will be ignored");
+			Utl.logn("          This exec is stored as crashing and will be ignored");
 			test_interupt();
 			return false;
 		}
 		tr.stop();
-		if (PRINT_TIMETRACK) logn("exec "+ref+" med duration: "+tr.tps_med);
+		if (PRINT_TIMETRACK) Utl.logn("exec "+ref+" med duration: "+tr.tps_med);
 		test_interupt();
 		return true;
 	}
@@ -461,17 +472,7 @@ public class GdxApp implements Screen ,nDrawer.DrawContext, Utl.Logger {
 
 	
 
-	public static void logg(String t) { GdxApp.app.log(t); }
-	public static void loggn() { GdxApp.app.logn(); }
-	public static void loggn(String t) { GdxApp.app.logn(t); }
-	
-	public void logn() { Gdx.app.log(window_title+":"+frame_counter, log_stack); log_stack = ""; }
-	public void logn(String t) { Gdx.app.log(window_title+":"+frame_counter+log_pref, log_stack+t); log_stack = ""; }
-	public String log_pref = "";
-	public void log(String t) { log_stack += t; }
-	private String log_stack = "";
-
-	public static void crash() { loggn(" -- FORCED CRASH -- "); String s = to_crash(); s+=s; }
+	public static void crash() { Utl.logn(" -- FORCED CRASH -- "); String s = to_crash(); s+=s; }
 	private static String to_crash() { return null; }
 	
 	

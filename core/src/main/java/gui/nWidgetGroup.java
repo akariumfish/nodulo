@@ -11,10 +11,10 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 import app.App;
 import app.GdxApp;
 import data.sValueBloc;
+import util.Utl;
 import util.nClearable;
 import util.nMap;
 import util.nRun;
-import zz_applet.Applet;
 
 
 public class nWidgetGroup implements Poolable, nClearable {
@@ -24,7 +24,7 @@ public class nWidgetGroup implements Poolable, nClearable {
 		t += "-"+group_id+" ref:"+ref+" key:"+groupKey;
 		if (group != null) t += " in "+group.ref;
 		t += " groups:"+widgetgroups.size()+" widgets:"+widgets.size();
-		GdxApp.loggn(t);
+		Utl.logn(t);
 	}
 	
 	
@@ -128,9 +128,9 @@ public class nWidgetGroup implements Poolable, nClearable {
 //		for (Entry<String, nWidget> mev : widgets.entrySet()) s += " "+mev.getKey()+":"+mev.getValue().widget_id;
 //		app.log("Doing addWidget("+w.widget_id+") in group "+this.ref+" with: "+s);
 		
-		if (widgets.containsKey(ref)) GdxApp.loggn("ERROR : widgetgroup "+this.ref+" cant addWidget, key "+ref+" allready exist");
+		if (widgets.containsKey(ref)) Utl.logn("ERROR : widgetgroup "+this.ref+" cant addWidget, key "+ref+" allready exist");
 		else if (!widgets.containsValue(w)) w.setGroup(this, ref); 
-		else GdxApp.loggn("ERROR: widgetgroup "+this.ref+" cant addWidget "+ref+" because its allready in group as " + w.groupKey); return w; }
+		else Utl.logn("ERROR: widgetgroup "+this.ref+" cant addWidget "+ref+" because its allready in group as " + w.groupKey); return w; }
 	public nWidgetGroup removeWidget(nWidget w) {
 		w.quitGroup(); return this; }
 	public nWidgetGroup removeWidget(String s) {
@@ -140,12 +140,12 @@ public class nWidgetGroup implements Poolable, nClearable {
 	public boolean hasGroup(String ref) { return widgetgroups.containsKey(ref); }
 	public nWidgetGroup getGroup(String ref) { return widgetgroups.get(ref); }
 	public nWidgetGroup addWidgetGroup(String ref, nWidgetGroup w) {
-		if (widgetgroups.containsKey(ref)) GdxApp.loggn("ERROR : widgetgroup "+this.ref+" cant addGroup, key "+ref+" allready exist");
+		if (widgetgroups.containsKey(ref)) Utl.logn("ERROR : widgetgroup "+this.ref+" cant addGroup, key "+ref+" allready exist");
 		else if (!widgetgroups.containsValue(w)) {
 			if (w.group != null) w.group.removeGroup(w);
 			w.groupKey = ref; w.group = this;
 			widgetgroups.put(ref, w); }  
-		else GdxApp.loggn("ERROR : widgetgroup "+this.ref+" cant addGroup, it allready contain "+w.ref);
+		else Utl.logn("ERROR : widgetgroup "+this.ref+" cant addGroup, it allready contain "+w.ref);
 		return w; }
 	public nWidgetGroup addWidgetGroup(String ref, String model) {
 		return addWidgetGroup(ref, gui.addWidgetGroup(model)); }
@@ -157,25 +157,25 @@ public class nWidgetGroup implements Poolable, nClearable {
 		return this; }
 	
 	public nWidgetGroup addObject(String ref, Object r) {
-		if (hasObject(ref)) GdxApp.loggn("ERROR: object <"+ref+"> allready exist in WidgetGroup "+this.ref); 
+		if (hasObject(ref)) Utl.logn("ERROR: object <"+ref+"> allready exist in WidgetGroup "+this.ref); 
 		if (r != null) objects.put(ref, r); return this; }
 	public nWidgetGroup removeObject(String ref, Object r) {
-		if (!hasObject(ref)) GdxApp.loggn("ERROR: object <"+ref+"> dont exist in WidgetGroup "+this.ref); 
+		if (!hasObject(ref)) Utl.logn("ERROR: object <"+ref+"> dont exist in WidgetGroup "+this.ref); 
 		if (r != null) objects.remove(ref, r); return this; }
 	public nWidgetGroup removeObject(String ref) {
-		if (!hasObject(ref)) GdxApp.loggn("ERROR: object <"+ref+"> dont exist in WidgetGroup "+this.ref); 
+		if (!hasObject(ref)) Utl.logn("ERROR: object <"+ref+"> dont exist in WidgetGroup "+this.ref); 
 		objects.remove(ref); return this; }
 	public boolean hasObject(String ref) { return objects.get(ref) != null; }
 	public Object object(String ref) {
 		if (objects.get(ref) != null) return objects.get(ref);
-		else GdxApp.loggn("ERROR: object <"+ref+"> dont exist in WidgetGroup "+this.ref); 
+		else Utl.logn("ERROR: object <"+ref+"> dont exist in WidgetGroup "+this.ref); 
 		return null; }
 	public <T> T object(String ref, Class<T> cl) { 
 		if (hasObject(ref)) {
 			Object o = objects.get(ref);
 			if (cl.isAssignableFrom(o.getClass())) return (T)o; 
-			else { GdxApp.loggn("ERROR: object <"+ref+"> in WidgetGroup "+this.ref+" cant be cast to "+cl); return null; } 
-		} else GdxApp.loggn("ERROR: object <"+ref+"> dont exist in WidgetGroup "+this.ref); 
+			else { Utl.logn("ERROR: object <"+ref+"> in WidgetGroup "+this.ref+" cant be cast to "+cl); return null; } 
+		} else Utl.logn("ERROR: object <"+ref+"> dont exist in WidgetGroup "+this.ref); 
 		return null; }
 	public nWidgetGroup setObject(String ref, Object r) {
 		if (r != null) {
@@ -192,28 +192,28 @@ public class nWidgetGroup implements Poolable, nClearable {
 		metodes.put(ref, r); return this; }
 	public nWidgetGroup metode(String ref) {
 		if (metodes.get(ref) != null) metodes.get(ref).run(); 
-		else GdxApp.loggn("ERROR: metode <"+ref+"> dont exist in WidgetGroup "+this.ref); return this; }
+		else Utl.logn("ERROR: metode <"+ref+"> dont exist in WidgetGroup "+this.ref); return this; }
 	public nWidgetGroup metode(String ref, Object o) {
 		if (metodes.get(ref) != null) metodes.get(ref).run(o); 
-		else GdxApp.loggn("ERROR: metode <"+ref+"> dont exist in WidgetGroup "+this.ref); return this; }
+		else Utl.logn("ERROR: metode <"+ref+"> dont exist in WidgetGroup "+this.ref); return this; }
 	public nWidgetGroup metode(String ref, Object o1, Object o2) {
 		if (metodes.get(ref) != null) metodes.get(ref).run(o1, o2); 
-		else GdxApp.loggn("ERROR: metode <"+ref+"> dont exist in WidgetGroup "+this.ref); return this; }
+		else Utl.logn("ERROR: metode <"+ref+"> dont exist in WidgetGroup "+this.ref); return this; }
 	public nWidgetGroup metode(String ref, Object o1, Object o2, Object o3) {
 		if (metodes.get(ref) != null) metodes.get(ref).run(o1, o2, o3); 
-		else GdxApp.loggn("ERROR: metode <"+ref+"> dont exist in WidgetGroup "+this.ref); return this; }
+		else Utl.logn("ERROR: metode <"+ref+"> dont exist in WidgetGroup "+this.ref); return this; }
 	public Object metodeGet(String ref) {
 		if (metodes.get(ref) != null) return metodes.get(ref).get(); 
-		else GdxApp.loggn("ERROR: metode <"+ref+"> dont exist in WidgetGroup "+this.ref); return null; }
+		else Utl.logn("ERROR: metode <"+ref+"> dont exist in WidgetGroup "+this.ref); return null; }
 	public Object metodeGet(String ref, Object o) {
 		if (metodes.get(ref) != null) return metodes.get(ref).get(o); 
-		else GdxApp.loggn("ERROR: metode <"+ref+"> dont exist in WidgetGroup "+this.ref); return null; }
+		else Utl.logn("ERROR: metode <"+ref+"> dont exist in WidgetGroup "+this.ref); return null; }
 	public Object metodeGet(String ref, Object o1, Object o2) {
 		if (metodes.get(ref) != null) return metodes.get(ref).get(o1,o2); 
-		else GdxApp.loggn("ERROR: metode <"+ref+"> dont exist in WidgetGroup "+this.ref); return null; }
+		else Utl.logn("ERROR: metode <"+ref+"> dont exist in WidgetGroup "+this.ref); return null; }
 	public Object metodeGet(String ref, Object o1, Object o2, Object o3) {
 		if (metodes.get(ref) != null) return metodes.get(ref).get(o1,o2,o3); 
-		else GdxApp.loggn("ERROR: metode <"+ref+"> dont exist in WidgetGroup "+this.ref); return null; }
+		else Utl.logn("ERROR: metode <"+ref+"> dont exist in WidgetGroup "+this.ref); return null; }
 	
 	public int metodeGetInt(String ref) {
 		return (int)metodeGet(ref); }

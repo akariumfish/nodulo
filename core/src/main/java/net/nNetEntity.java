@@ -5,11 +5,11 @@ import java.util.HashMap;
 import data.*;
 import net.nNetwork.*;
 import util.nRun;
-import zz_applet.Applet;
+import app.App;
 
 public abstract class nNetEntity {
 	
-	Applet app;
+	App app;
 	nNetwork net;
 	
 	
