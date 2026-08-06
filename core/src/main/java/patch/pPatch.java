@@ -14,6 +14,8 @@ import aa_nodulo.PlaneApplet;
 import aa_nodulo.pAtom;
 import aa_nodulo.pBox2d;
 import aa_nodulo.pGeom;
+import aa_nodulo.pGround;
+import aa_nodulo.pProperty;
 import aa_nodulo.pTime;
 import aa_nodulo.pView;
 import app.App;
@@ -42,12 +44,14 @@ public class pPatch {
 //			app.setPref("release_FS", "DEF_PATCH_WIN_POS", new Vector2(20f,1030f));
 //			app.setPref("release_FS", "DEF_PATCH_WIN_SZ", new Vector2(660f,950f));
 //		}});
-		
+
+		pGround.build(data); 
 		pGeom.build(data); 
 		pAtom.build(data); 
 		pBox2d.build(data); 
 		
 		if (!has_build_statics) {
+			pProperty.complete_generals();
 			build_database_book();
 			build_book();
 			pMacroBook.build();
@@ -300,8 +304,8 @@ public class pPatch {
 		Vector2 m = new Vector2(app.input.mouse);
 		m.set(view_backref.revertWarp(m)); return m; }
 
-	nMap<pInstance> common_functions = new nMap<pInstance>();
-	nMap<pInstance> common_branchs = new nMap<pInstance>();
+	public nMap<pInstance> common_functions = new nMap<pInstance>();
+	public nMap<pInstance> common_branchs = new nMap<pInstance>();
 	
 	public int tile_id_counter = 0;
 	
@@ -334,6 +338,8 @@ public class pPatch {
 	nInterface tool_interf = null;
 
 	sValueBloc patch_content_bloc;
+	
+	sBoo val_wallp;
 	
 	pInstance linking_node_co = null;
 
@@ -448,7 +454,7 @@ public class pPatch {
 			val_cam_pos.set(app.config.DEF_PATCH_POS);
 //		}
 
-//		view.metode("run_collapse");
+		if (app.config.PATCH_START_COLLAPSED) view.metode("run_collapse");
 		
 		app.menu.add_info_text("patch zoom: ", view.object("val_cam_scale", sFlt.class));
 		
@@ -456,6 +462,7 @@ public class pPatch {
 		patch_pop = app.gui.addWidgetGroup("patch_pop");
 		patch_pop.metode("set_patch", this);
 		view.addWidgetGroup("patch_pop", patch_pop);
+		val_wallp = view.object("val_wallp", sBoo.class);
 		
 		build_tools();
 
@@ -511,7 +518,10 @@ public class pPatch {
 	}
 	public void system_load() {
 //		load_contents();
-		if (!app.config.RELEASE) tool_setup(true);
+		if (!app.config.RELEASE) tool_setup(false);
+		
+		app.addDelayEvent(1, new nRun() { public void run() {	
+			if (app.config.PATCH_START_WALLPAPER) val_wallp.set(true);	 }});
 		
 		nRun.runEvents(eventInit, bloc);
 	}

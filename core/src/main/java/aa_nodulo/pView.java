@@ -223,8 +223,14 @@ public class pView {
 
 	public boolean in_patch = false;
 	
-	sVec val_pos, val_view_size, val_cam_pos;
-	sFlt val_cam_scale, val_cam_rot;
+	sVec val_pos, val_view_size, val_cam_pos, val_limit_pos;
+	sFlt val_cam_scale, val_cam_rot, val_zoom_min, val_zoom_max;
+	sBoo val_do_limit, val_wallp;
+	
+	public void set_limit_pos(float lx, float ly) {
+		val_limit_pos.set(lx,ly); val_do_limit.set(true); }
+	public void set_limit_zoom(float min, float max) {
+		val_zoom_min.set(min); val_zoom_max.set(max); val_do_limit.set(true); }
 	
 	private void set_viewspace(float posx, float posy, float sx, float sy, float scale) {
 		
@@ -255,7 +261,8 @@ public class pView {
 		val_cam_pos = view.object("val_cam_pos", sVec.class);
 		val_cam_scale = view.object("val_cam_scale", sFlt.class);
 		val_cam_rot = view.object("val_cam_rot", sFlt.class);
-
+		val_wallp = view.object("val_wallp", sBoo.class);
+		
 //		if (!app.getPref("STARTUP_LOAD", Boolean.class)) {
 			if (app.config.RELEASE) {
 				if (GdxApp.START_FULLSCREEN) 
@@ -275,6 +282,8 @@ public class pView {
 			}
 //		}
 
+		if (app.config.VIEW_START_COLLAPSED) view.metode("run_collapse");
+			
 		app.menu.add_info_text("space zoom: ", view.object("val_cam_scale", sFlt.class));
 		
 		nWidget view_backref = view.get("backref");
@@ -305,6 +314,11 @@ public class pView {
 		val_cam_scale_target = bloc.obtainFlt("val_cam_scale_target", 1f);
 		val_cam_rot_target = bloc.obtainFlt("val_cam_rot_target", 0f);
 
+		val_limit_pos = bloc.obtainVec("val_limit", new Vector2(11000,11000));
+		val_do_limit = bloc.obtainBoo("val_do_limit", false);
+		val_zoom_min = bloc.obtainFlt("val_zoom_min", 0.05f);
+		val_zoom_max = bloc.obtainFlt("val_zoom_max", 2f);
+
 		view.get("draw").setCustomDrawer(new nDrawable() { public void drawing() {
 			
 			ArrayList<nDrawable> alldraw = Utl.duplic(drawRun);
@@ -328,6 +342,7 @@ public class pView {
 			
 			app.time.addEventTick(tick_run);
 			
+			if (app.config.VIEW_START_WALLPAPER) val_wallp.set(true);
 //			if (!app.start_solo) {
 //				plane.getSystem(pNet.class).net
 //					.addSyncVal(view.object("val_cam_pos", sVec.class));
@@ -361,6 +376,37 @@ public class pView {
 		if (got_cam_rot_target) {
 			view.metode("set_cam_rot", val_cam_rot_target.get());
 			got_cam_rot_target = false;
+		}
+		if (val_do_limit.get()) {
+			float min_zoom = (2f * val_limit_pos.x()) / val_view_size.x();
+			min_zoom = Math.min(min_zoom, (2f * val_limit_pos.y()) / val_view_size.y());
+			min_zoom = 1f / min_zoom;
+			min_zoom = Math.max(min_zoom, val_zoom_min.get());
+			if (val_cam_scale.get() > val_zoom_max.get()) 
+				view.metode("set_cam_scale", val_zoom_max.get());
+			if (val_cam_scale.get() < min_zoom) 
+				view.metode("set_cam_scale", min_zoom);
+			
+			float sc = 1f / val_cam_scale.get();
+			float decx = 0, decy = 0;
+			float cx = 0, cy = 0;
+			if (val_cam_pos.x() > 0 && 
+					val_cam_pos.x() + sc * val_view_size.x() / 2f > val_limit_pos.x()) { cx++;
+				decx += val_cam_pos.x() + sc * val_view_size.x() / 2f - val_limit_pos.x(); }
+			if (val_cam_pos.x() < 0 && 
+					val_cam_pos.x() - sc * val_view_size.x() / 2f < -val_limit_pos.x()) { cx++;
+				decx += ((val_cam_pos.x() - sc * val_view_size.x() / 2f) + val_limit_pos.x()); }
+			if (val_cam_pos.y() > 0 && 
+					val_cam_pos.y() + sc * val_view_size.y() / 2f > val_limit_pos.y()) { cy++;
+				decy += val_cam_pos.y() + sc * val_view_size.y() / 2f - val_limit_pos.y(); }
+			if (val_cam_pos.y() < 0 && 
+					val_cam_pos.y() - sc * val_view_size.y() / 2f < -val_limit_pos.y()) { cy++;
+				decy += ((val_cam_pos.y() - sc * val_view_size.y() / 2f) + val_limit_pos.y()); }
+			if (cx > 0) decx = decx/cx; if (cy > 0) decy = decy/cy;
+			view.metode("set_cam_pos", 
+					new Vector2(val_cam_pos.x() - decx, val_cam_pos.y() - decy));
+			
+			
 		}
 	}
 

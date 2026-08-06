@@ -170,7 +170,72 @@ public class pNodeUI {
 		.run(pNode.getRun(CT.RUNS_ADD_CHAIN_PLUGS), "UI_widg", "bottom")
 		.closeSec()
 		;
-		
+
+//		pNode.newChainnedNodeModel("UI_label")
+//		.process()
+//			.commande(new nRun() {public void run() {
+////				instance.obtainVar("state", false);
+//				PlaneApplet.app.addDelayEvent(1, new nRun(instance) {public void run() {
+//					pInstance inst = (pInstance)builder;
+//					pInstance head = inst.get("get_chain_head", pInstance.class);
+//					if (head == null) return;
+//					nInterface interf = head.object("interf", nInterface.class);
+//					if (interf == null) return;
+//					nWidget tr = interf.add_row_label(3, 
+//							inst.getVar("widg_text", String.class));
+//					inst.addObject("widg", tr);
+//					Vector2 size = inst.getVar("widg_size", Vector2.class);
+//					tr.setSX(RS*size.x);
+//					tr.setSY(RS*size.y);
+////					tr.addEventSwitch(new nRun(inst) {public void run() { 
+////						pInstance inst2 = (pInstance)builder;
+////						inst2.setVar("state", tr.isOn());
+////						pInstance co_out = inst2.get("get_co", pInstance.class, "out");
+////						if (co_out != null) co_out.run("send", tr.isOn());
+////					}});
+////					nRun logic_run = new nRun(inst) {public void run() { 
+////						pInstance inst2 = (pInstance)builder;
+////						tr.setSwitchState(inst2.getVar("state", Boolean.class));
+////					}};
+////					tr.addEventLogic(logic_run); logic_run.run();
+//				}});
+//			}})
+//			.openSec()
+//				.param("run", new nRun() {public void run() {
+//					nWidget tr = instance.object("widg", nWidget.class);
+//					if (tr == null) return;
+//					Vector2 size = instance.getVar("widg_size", Vector2.class);
+//					tr.setSX(RS*size.x);
+//					tr.setSY(RS*size.y);
+//				}})
+//				.param("text", "size", "width", (int)6, "def", new Vector2(3,1)) 
+//				.run(pNode.getRun(CT.RUNP_VAR_VEC_LAB_FIELD), "widg_size")  
+//				.commande(pNode.getCom(CT.COM_ADD_ROW))
+//			.closeSec()
+//			.openSec()
+//				.param("run", new nRun() {public void run() {
+//					nWidget tr = instance.object("widg", nWidget.class);
+//					if (tr == null) return;
+//					String text = instance.getVar("widg_text", String.class);
+//					tr.setText(text);
+//				}})
+//				.param("text", "text", "width", (int)6, "def", "") 
+//				.run(pNode.getRun(CT.RUNP_VAR_STR_LAB_FIELD), "widg_text")  
+//			.closeSec()
+//			.getStand()
+//		.openSec()
+//		.param("offer", new nRun() {public Object get() {
+//			pInstance node = instance.object("node", pInstance.class);
+//			return node.getVar("state", Boolean.class); }})
+//		.param("keys", new String[] {"all"}, "filters", new String[] {}) 
+//		.run(pNode.getRun(CT.RUNS_ADD_CO_OUT), "out")
+//		.closeSec()
+//		.openSec()
+//		.param("keys", new String[] {"UI"}, "filters", new String[] {"UI"}) 
+//		.run(pNode.getRun(CT.RUNS_ADD_CHAIN_PLUGS), "UI_widg", "bottom")
+//		.closeSec()
+//		;
+//		
 		
 		
 		

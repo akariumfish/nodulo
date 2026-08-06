@@ -168,9 +168,14 @@ public class pMacroBook {
 		.addNode("graph", "graph", 			-600f, 	0f)
 			.addSetVar("line", true).addSetVar("fill", true).getMacro()
 		.addNode("geom", "geom", 			-600f, 	-300f).getMacro()
+		.addNode("physic", "physic", 		-600f, 	600f)
+		.addSetVar("use_kinematic", true)
+		.addSetVar("def_kinematic_rad", 100f)
+		.getMacro()
 		.addLink("coordinate", "param", "blueprint", "param_in")
 		.addLink("graph", "param", "blueprint", "param_in")
 		.addLink("geom", "param", "blueprint", "param_in")
+		.addLink("physic", "param", "blueprint", "param_in")
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
 			pInstance geom = list.get("geom");
@@ -187,6 +192,16 @@ public class pMacroBook {
 
 		Macro bullet_blueprint = new Macro("bullet_blueprint")
 		.addNode("blueprint", "blueprint", 	0f, 		0f).getMacro()
+		.addNode("physic", "physic", 		-600f, 	900f)
+//		.addSetVar("use_kinematic", true)
+		.addSetVar("use_light", true)
+//		.addSetVar("def_kinematic_rad", 30f)
+		.addSetVar("def_light_dist", 500f)
+		.addSetVar("def_light_r", (int)255)
+		.addSetVar("def_light_g", (int)0)
+		.addSetVar("def_light_b", (int)0)
+		.addSetVar("def_light_a", (int)255)
+		.getMacro()
 		.addNode("coordinate", "coordinate", -600f, 	600f).addSetVar("add_ctrl_pop", true).getMacro()
 		.addNode("moveable", "moveable", 	-600f, 	-300f).addSetVar("add_ctrl_move", true).getMacro()
 		.addNode("graph", "graph", 			-600f, 	-600f).addSetVar("line", true).getMacro()
@@ -199,6 +214,7 @@ public class pMacroBook {
 		.addLink("graph", "param", "blueprint", "param_in")
 		.addLink("geom", "param", "blueprint", "param_in")
 		.addLink("damagezone", "param", "blueprint", "param_in")
+		.addLink("physic", "param", "blueprint", "param_in")
 //		.addLink("to", "in", "blueprint", "ref")
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
@@ -215,14 +231,22 @@ public class pMacroBook {
 
 		Macro body_blueprint = new Macro("body_blueprint")
 		.addNode("blueprint", "blueprint", 	0f, 		0f).getMacro()
-		.addNode("physic", "physic", 		-600f, 	900f)
-		.addSetVar("use_kinematic", true).getMacro()
 		.addNode("coordinate", "coordinate", -600f, 	600f).addSetVar("use_ctrl_pop", true).getMacro()
 		.addNode("interactif", "interactif", -600f, 	300f).getMacro()
 		.addNode("ownable", "ownable", 		-600f, 	0f).addSetVar("acquire", true).getMacro()
 		.addNode("moveable", "moveable", 	-600f, 	-300f).addSetVar("use_ctrl_move", true).getMacro()
 		.addNode("graph", "graph", 			-600f, 	-600f).addSetVar("line", true).getMacro()
 		.addNode("geom", "geom", 			-600f, 	-900f).getMacro()
+		.addNode("physic", "physic", 		-600f, 	900f)
+		.addSetVar("use_kinematic", true)
+//		.addSetVar("use_light", true)
+		.addSetVar("def_kinematic_rad", 70f)
+//		.addSetVar("def_light_dist", 80f)
+//		.addSetVar("def_light_r", (int)200)
+//		.addSetVar("def_light_g", (int)200)
+//		.addSetVar("def_light_b", (int)0)
+//		.addSetVar("def_light_a", (int)200)
+		.getMacro()
 		.addLink("coordinate", "param", "blueprint", "param_in")
 		.addLink("interactif", "param", "blueprint", "param_in")
 		.addLink("moveable", "param", "blueprint", "param_in")
@@ -248,9 +272,9 @@ public class pMacroBook {
 		
 
 		new Macro("PARAM_SETUP")
-		.addMacro("body_blueprint", body_blueprint, 0f, 0f)
+		.addMacro("body_blueprint", body_blueprint, 0f, -600f)
 		.addMacro("wall_blueprint", wall_blueprint, 0f, 1800f)
-		.addMacro("bullet_blueprint", bullet_blueprint, 0f, 3600f)
+		.addMacro("bullet_blueprint", bullet_blueprint, 0f, 4200f)
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
 		}})

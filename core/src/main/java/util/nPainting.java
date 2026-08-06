@@ -23,15 +23,15 @@ public class nPainting extends nScripted {
 	public nPainting() { }
 	
 	
-	public class nPicto {
-		public String ref;
-		public Object[] script;
-		public nPicto(String r, Object[] s) { ref = r; script = s; }
-		public nPicto(Object[] s) { script = s; }
-	}
-	
-	public nPicto getPicto() { return new nPicto(super.getScript()); }
-	public nPicto getPicto(String r) { return new nPicto(r,super.getScript()); }
+//	public class nPicto {
+//		public String ref;
+//		public Object[] script;
+//		public nPicto(String r, Object[] s) { ref = r; script = s; }
+//		public nPicto(Object[] s) { script = s; }
+//	}
+//	
+//	public nPicto getPicto() { return new nPicto(super.getScript()); }
+//	public nPicto getPicto(String r) { return new nPicto(r,super.getScript()); }
 	
 	public Object[] getScript() { return super.getScript(); }
 	

@@ -247,7 +247,16 @@ public class pNodeSpace {
 				int cnt2 = 1;
 				while (pop.hasParam(new_ref)) { 
 					new_ref = need.ref + "_" + cnt2; cnt2++; }
-				pop.newParam(need, new_ref);
+				pParam np = pop.newParam(need, new_ref);
+				new_ref = pop.getRef(np);
+				for (Map.Entry<Class<?>, nMap<Integer>> me : need.data_vals.entrySet()) {
+					if (me.getValue() != null) {
+						for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) {
+							String rf = "def_"+need.ref+"_"+map_me.getKey();
+							pop.param(new_ref).set(rf, gene_par.get(rf));
+						}		
+					}
+				}
 			}
 			for (pProperty opt : gene_prop.option_props) 
 					if (gene_par.get("use_"+opt.ref, Boolean.class)) {
@@ -255,7 +264,17 @@ public class pNodeSpace {
 				int cnt2 = 1;
 				while (pop.hasParam(new_ref)) { 
 					new_ref = opt.ref + "_" + cnt2; cnt2++; }
-				pop.newParam(opt, new_ref);
+				pParam np = pop.newParam(opt, new_ref);
+				new_ref = pop.getRef(np);
+				for (Map.Entry<Class<?>, nMap<Integer>> me : opt.data_vals.entrySet()) {
+					if (me.getValue() != null) {
+						for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) {
+							String rf = "def_"+opt.ref+"_"+map_me.getKey();
+							pop.param(new_ref).set(rf, gene_par.get(rf));
+						}		
+					}
+				}
+				
 			}
 		}
 		

@@ -44,7 +44,7 @@ public class pGeom extends pSystem {
 
 		if (builder == null) build_prop();
 		
-		builder = builder(data, "geom", pGeom.class, new nRun() { public void run(Object o) {
+		builder = builder(data, "geom", pGeom.class, true, new nRun() { public void run(Object o) {
 			sValueBloc b = (sValueBloc)o; newObject(b); }});
 		
 	}
@@ -105,6 +105,23 @@ public class pGeom extends pSystem {
 				par.collecAdd("faceA", (int)0);
 				par.collecAdd("faceB", (int)1);
 				par.collecAdd("faceC", (int)2);
+			}});
+			stand.newRun("add_trig", new nRun() {public void run() {
+				float r = arg(0, Float.class);
+				pParam par = instance.object("param", pParam.class);
+				if (par == null) return; 
+				Vector2 v = new Vector2(r,0); 
+				Vector2 v2 = new Vector2(r,0); 
+				v.rotateRad((float)(2f*Math.PI/3f)); 
+				v2.rotateRad((float)(2f*Math.PI/3f)); 
+				v2.rotateRad((float)(2f*Math.PI/3f)); 
+				int col_size = par.getCollecSize("point");
+				par.collecAdd("point", v); 
+				par.collecAdd("point", new Vector2(r,0)); 
+				par.collecAdd("point", v2);
+				par.collecAdd("faceA", col_size+(int)0);
+				par.collecAdd("faceB", col_size+(int)1);
+				par.collecAdd("faceC", col_size+(int)2);
 			}});
 			stand.newRun("set_rect", new nRun() {public void run() {
 				float r = arg(0, Float.class);
@@ -223,11 +240,15 @@ public class pGeom extends pSystem {
 						pParam geom = inst.object("param", pParam.class);
 						if (geom == null) return; 
 						ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
-						if (sel_point > 0 && sel_point < point.size()) {
+						if (sel_point >= 0 && sel_point < point.size()) {
 							Vector2 v = new Vector2(point.get(sel_point));
 							v.add(mx,my);
 							geom.collecSet("point", sel_point, v); 
 							pointlist_run.do_run(inst); }
+					}};
+					nRun add_run = new nRun(instance) { public void run() {
+						pInstance inst = (pInstance)builder;
+						inst.run("add_trig", 60f);
 					}};
 					interf.add_row_trigg(3,"U", new nRun(instance) { public void run() {
 						move_run.do_run((pInstance)builder, 0f, 10f); }});
@@ -247,7 +268,7 @@ public class pGeom extends pSystem {
 						pParam geom = inst.object("param", pParam.class);
 						if (geom == null) return; 
 						ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
-						if (sel_point > 0 && sel_point < point.size()) {
+						if (sel_point >= 0 && sel_point < point.size()) {
 							Vector2 v = new Vector2(point.get(sel_point))
 									.rotateRad(((float)Math.PI)/12f);
 							geom.collecSet("point", sel_point, v);
@@ -259,7 +280,7 @@ public class pGeom extends pSystem {
 						pParam geom = inst.object("param", pParam.class);
 						if (geom == null) return; 
 						ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
-						if (sel_point > 0 && sel_point < point.size()) {
+						if (sel_point >= 0 && sel_point < point.size()) {
 							Vector2 v = new Vector2(point.get(sel_point))
 									.rotateRad(-((float)Math.PI)/12f);
 							geom.collecSet("point", sel_point, v);
@@ -273,7 +294,7 @@ public class pGeom extends pSystem {
 						pParam geom = inst.object("param", pParam.class);
 						if (geom == null) return; 
 						ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
-						if (sel_point > 0 && sel_point < point.size()) {
+						if (sel_point >= 0 && sel_point < point.size()) {
 							Vector2 v = new Vector2(point.get(sel_point));
 							float l = v.len(); float l2 = l - 10f;
 							if (l > 0 && l2 > 0) v.scl(l2 / l);
@@ -286,7 +307,7 @@ public class pGeom extends pSystem {
 						pParam geom = inst.object("param", pParam.class);
 						if (geom == null) return; 
 						ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
-						if (sel_point > 0 && sel_point < point.size()) {
+						if (sel_point >= 0 && sel_point < point.size()) {
 							Vector2 v = new Vector2(point.get(sel_point));
 							float l = v.len(); float l2 = l + 10f;
 							if (l > 0) v.scl(l2 / l); else v.set(10,0);
@@ -295,6 +316,16 @@ public class pGeom extends pSystem {
 						} }});
 					
 
+					interf.add_row();
+					interf.add_row_label(6, "");
+					interf.add_row();
+					interf.add_row_label(1, "");
+					interf.add_row_trigg(4,"ADD", new nRun(instance) { public void run() {
+						add_run.do_run((pInstance)builder); 
+					}});
+					interf.add_row_label(1, "");
+
+					
 					pointlist_run.do_run(instance);
 					
 					preview.setSY(RS*7f);
@@ -345,7 +376,7 @@ public class pGeom extends pSystem {
 						}
 						
 						int sel_point = instance.getVar("sel_point", Integer.class);
-						if (sel_point > 0 && sel_point < point.size()) {
+						if (sel_point >= 0 && sel_point < point.size()) {
 							Vector2 v = point.get(sel_point);
 							app.fill(255,180,0,255);
 							app.circle(v.x, v.y, 10f);
@@ -379,10 +410,11 @@ public class pGeom extends pSystem {
 						for (Vector2 v : point) {
 							Vector2 l = new Vector2(v).sub(mouse);
 							if (l.len() <= 10f && App.ap.input.mouseLeft.trigClick) {
-								inst.setVar("sel_point", i);
+								inst.setVar("sel_point", i); 
 								break; }
-							i++; }
-						if (i == point.size() && 
+							i++; 
+						}
+						if (i >= point.size() && 
 								preview.globalrect.contains(App.ap.input.mouse) && 
 								App.ap.input.mouseLeft.trigClick)
 							inst.setVar("sel_point", (int)-1);
@@ -557,12 +589,12 @@ public class pGeom extends pSystem {
 		
 		pProperty interactif = pProperty.newGeneralProperty("interactif");
 
-//		interactif.addBodyClearRun(new nRun() {public void run() {
-//			pBody bod = arg(0,pBody.class);
-//			pGeom geo = bod.space.plane.getSystem(pGeom.class);
-//			if (geo == null || bod == null) return;
-//			
-//		}});
+		interactif.addClearRun(new nRun() {public void run() {
+			pBody bod = arg(0,pBody.class);
+			pGeom geo = bod.space.app.getSystem(pGeom.class);
+			if (geo == null || bod == null) return;
+			
+		}});
 		
 		interactif.newLocalProperty("highlightable")
 		.setLocalVal()
@@ -611,7 +643,18 @@ public class pGeom extends pSystem {
 		
 
 
-		
+		pProperty logic = pProperty.newGeneralProperty("logic")
+		.addData("run", true)
+		.addData("frame", false)
+		.addData("tick", true)
+		.addData("delay", (int)0)
+		.addData("func_ref", "")
+		;
+
+		pFamily.newFamily("logic")
+		.addProp("logic")
+		;
+
 		
 		
 		
@@ -988,10 +1031,11 @@ public class pGeom extends pSystem {
 	public pGeom() { super(); 
 		tick_run = new nRun() { public void run(Object o) { tick((float)o); }};
 		net_tick_run = new nRun() { public void run(Object o) { net_tick((float)o); }};
-		draw_run = new nDrawable() { public void drawing() { draw(); }}; }
+		draw_run = new nDrawable() { public void drawing() { draw(); }}; 
+		draw_aabb_run = new nDrawable() { public void drawing() { draw_aabb(); }}; }
 
 	nRun tick_run, net_tick_run;
-	nDrawable draw_run;
+	nDrawable draw_run, draw_aabb_run;
 	
 	public pGeom init(sValueBloc b) { return (pGeom) super.init(b); }
 	
@@ -1014,8 +1058,8 @@ public class pGeom extends pSystem {
 		useNetFrame();
 		
 		val_do_draw = bloc.obtainBoo("val_do_draw", true);
-		val_do_aabb_draw = bloc.obtainBoo("val_do_aabb_draw", true);
-		val_do_hover_draw = bloc.obtainBoo("val_do_hover_draw", true);
+		val_do_aabb_draw = bloc.obtainBoo("val_do_aabb_draw", false);
+		val_do_hover_draw = bloc.obtainBoo("val_do_hover_draw", false);
 		val_do_click_draw = bloc.obtainBoo("val_do_click_draw", true);
 		val_do_calc = bloc.obtainBoo("val_do_calc", true);
 		val_do_ctrl = bloc.obtainBoo("val_do_ctrl", true);
@@ -1036,11 +1080,12 @@ public class pGeom extends pSystem {
 
 		app.time.addEventTick(tick_run);
 		app.time.addEventNetTick(net_tick_run);
-		app.view.addDrawable(draw_run);
+		app.view.addDrawable(5, draw_run);
+		app.view.addDrawable(20, draw_aabb_run);
 		space = app.space;
 
 //		if (!app.RELEASE) 
-			tool_setup();
+			tool_setup(false);
 		
 //		plane.addEventSave(new nRun() { public void run() {
 //			
@@ -1081,12 +1126,10 @@ public class pGeom extends pSystem {
 		run_body_select.run();
 	}
 	public void system_clear() {
-		if (app.time != null) 
-			app.time.removeEventTick(tick_run);
-		if (app.time != null) 
-			app.time.removeEventNetTick(net_tick_run);
-		if (app.view != null) 
-			app.view.removeDrawable(draw_run);
+		app.time.removeEventTick(tick_run);
+		app.time.removeEventNetTick(net_tick_run);
+		app.view.removeDrawable(draw_run);
+		app.view.removeDrawable(draw_aabb_run);
 	}
 	
 	public void tool_init(nInterface interf) {
@@ -1147,6 +1190,7 @@ public class pGeom extends pSystem {
 					control_ticks.get(ref).run(b);
 				}
 			}
+			for (pBody b : space.familyMember("logic")) do_logic(b);
 		}
 		if (val_do_move.get()) {
 			for (pBody b : space.familyMember("movable")) calc_move(b);
@@ -1181,7 +1225,9 @@ public class pGeom extends pSystem {
 		
 		if (val_do_draw.get())
 			for (pBody b : space.familyMember("drawable")) draw_body(app, b);
-		
+	
+	}
+	public void draw_aabb() { 
 		if (val_do_click_draw.get())
 			for (pBody b : space.familyMember("aabb_clickable")) draw_clic_aabb(b);
 		else if (val_do_hover_draw.get())
@@ -1238,6 +1284,15 @@ public class pGeom extends pSystem {
 		}
 	}
 	
+	public void do_logic(pBody b) {
+		if (!b.hasParam("logic")) return;
+		String func_ref = b.getStr("logic", "func_ref");
+		pInstance func = app.patch.common_functions.get(func_ref);
+		if (func == null) return;
+		
+		//TODO
+		
+	}
 
 	public void calc_move(pBody b) {
 		if (!b.hasParam("ref") || !b.hasParam("var_move") || !b.hasParam("move")) return;

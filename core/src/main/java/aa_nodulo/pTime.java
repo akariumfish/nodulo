@@ -83,7 +83,7 @@ public class pTime {
 	
 	
 	
-	
+	public void set_pause(boolean b) { val_pause.set(b); }
 
 	ArrayList<nRun> eventTickRun = new ArrayList<nRun>();
 	ArrayList<nRun> eventNetTickRun = new ArrayList<nRun>();
@@ -136,9 +136,12 @@ public class pTime {
 		val_tickrate = bloc.obtainFlt("val_tickrate", 1f / 
 				app.config.DEF_TICK_BY_SEC); // cible
 		val_tick_by_sec = bloc.obtainFlt("val_tick_by_sec"); // result
-		val_pause = bloc.obtainBoo("val_pause", false);
+		val_pause = bloc.obtainBoo("val_pause", true);
 		val_tick_cnt = bloc.obtainInt("val_tick_cnt", 0);
 		val_tick_cnt.set(0);
+		
+		app.outputs.put("pause", new nRun() { public void run() {
+			val_pause.set(!val_pause.get()); }});
 		
 		info_tps = app.menu.add_info_text("tps:", val_tick_by_sec); 
 		info_cnt = app.menu.add_info_text("tick cnt: ", val_tick_cnt);

@@ -75,6 +75,37 @@ public class pProperty {
 		general_propertys.put(r,p);
 		return p;
 	}
+	
+	public static void complete_generals() {
+		for (pProperty gene : general_propertys.all()) {
+			for (pProperty need : gene.need_props) {
+				for (Map.Entry<Class<?>, nMap<Integer>> me : need.data_vals.entrySet()) {
+					Class<?> ct = me.getKey();
+					if (me.getValue() != null) {
+						for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) {
+							Object df = need.data_defs.get(ct).get(map_me.getKey());
+							String rf = "def_"+need.ref+"_"+map_me.getKey();
+							if (df != null) gene.addData(rf, df);
+							else gene.addData(rf, Utl.new_object(ct));
+						}		
+					}
+				}
+			}
+			for (pProperty opt : gene.option_props) {
+				for (Map.Entry<Class<?>, nMap<Integer>> me : opt.data_vals.entrySet()) {
+					Class<?> ct = me.getKey();
+					if (me.getValue() != null) {
+						for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) {
+							Object df = opt.data_defs.get(ct).get(map_me.getKey());
+							String rf = "def_"+opt.ref+"_"+map_me.getKey();
+							if (df != null) gene.addData(rf, df);
+							else gene.addData(rf, Utl.new_object(ct));
+						}		
+					}
+				}
+			}
+		}
+	}
 
 	
 	public pProperty getGeneral() { return general; }
@@ -104,6 +135,12 @@ public class pProperty {
 	public pProperty general = null;
 	public boolean is_general = false;
 	
+	
+	
+	public ArrayList<nRun> clear_runs = new ArrayList<nRun>();
+	
+	public void addClearRun(nRun n) { clear_runs.add(n); }
+	
 	public pProperty copy(pProperty s) {
 
 		mode_runtime = s.mode_runtime;
@@ -115,6 +152,8 @@ public class pProperty {
 		grouping_flag = Utl.copy(s.grouping_flag);
 
 		for (nRun n : s.node_run) node_run.add(n);
+
+		for (nRun n : s.clear_runs) clear_runs.add(n);
 
 		for (nRun n : s.body_init_run) body_init_run.add(n);
 //		for (nRun n : s.body_clear_run) body_clear_run.add(n);

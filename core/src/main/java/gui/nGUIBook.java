@@ -176,7 +176,7 @@ public class nGUIBook {
 		
 
 		book.newModel("CL_def_graph")
-		.set_color_background(Utl.color(0,0))
+		.set_color_background(Utl.color(120))
 		.set_color_outline(Utl.color(210))
 		.setOutlineWeight(6)
 		;
@@ -571,6 +571,34 @@ public class nGUIBook {
 		.setStacked(true)
 		.setBoundOutspace(0)
 		;
+
+		// -----------  WINDOW BAR -----------
+		
+		book.newModel("taskbar_back")
+		.copyFrom(book.getModel("ref"))
+		.setBackground()
+		.setOutline(true)
+		.setDrawstackPriority(true)
+		;
+		book.newModel("taskbar_ref")
+		.copyFrom(book.getModel("ref"))
+		.setBoundChild(true)
+		.setStackAxis(nAlign.HORIZONTAL) // HORIZONTAL   VERTICAL
+		.setStackDirection(nAlign.RIGHT) // RIGHT   LEFT   UP   DOWN
+		.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM) // TOP   BOTTOM
+		.setBoundOutspace(5)
+		.setStackSpacing(5)
+		.set_color_background(Utl.color(0, 0))
+		;
+
+		book.newModel("taskbar_entry")
+		.copyFrom(book.getModel("ref"))
+		.setRect(0,0,RS*5,RS)
+		.setBoundParent(true)
+		.setStacked(true)
+		.setFont(22)
+		.setSwitch()
+		;
 		
 		book.newModelGroup("complex_window", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
@@ -586,26 +614,26 @@ public class nGUIBook {
 						.setParent(ref);
 				nWidget head = g.addWidget("head", "CW_head")
 						.setParent(headback);
-//				nWidget collapse = g.addWidget("collapse", "CW_collapse") 
-//						.setParent(headback);
+				nWidget collapse = g.addWidget("collapse", "CW_collapse") 
+						.setParent(headback);
 				nWidget close = g.addWidget("close", "CW_close")
 						.setParent(headback); 
 
-//				nWidget bar_swtch = menu.add_taskbar_entry();
-//				g.addWidget("bar_swtch", bar_swtch);
+				nWidget bar_swtch = PlaneApplet.app.menu.add_taskbar_entry();
+				g.addWidget("bar_swtch", bar_swtch);
 				
 				close.addEventTrigger(new nRun() { public void run() {
 					g.clear(); }});
 				
 				head.setSizeCopyX(back);
 				head.setSizeCopyMin(RS);
-				head.setSizeCopyIncr(-1*RS);
+				head.setSizeCopyIncr(-2*RS);
 				
 				nRun run_tofront = new nRun() { public void run() {
 					if (g.hasObject("no_tofront")) return;
-//					for(nWidget n : menu.bar_entrys) 
-//						if (n != bar_swtch) n.setOff();
-//					bar_swtch.setOn(); 
+					for(nWidget n : PlaneApplet.app.menu.bar_entrys) 
+						if (n != bar_swtch) n.setOff();
+					bar_swtch.setOn(); 
 					ref.show(); ref.toFront(); 
 					if (g.hasObject("val_collapse")) 
 						g.object("val_collapse", sBoo.class).set(false); 
@@ -615,16 +643,16 @@ public class nGUIBook {
 				
 //				run_tofront.run();
 
-//				bar_swtch.addEventSwitchOn(run_tofront);
-//				bar_swtch.setOn();
+				bar_swtch.addEventSwitchOn(run_tofront);
+				bar_swtch.setOn();
 				
 				nRun run_collapse = new nRun() { public void run() {
-//					ref.hide(); //bar_swtch.setOff(); 
-//					if (g.hasObject("val_collapse")) 
-//						g.object("val_collapse", sBoo.class).set(true); 
+					ref.hide(); bar_swtch.setOff(); 
+					if (g.hasObject("val_collapse")) 
+						g.object("val_collapse", sBoo.class).set(true); 
 				}};
-//				
-//				collapse.addEventTrigger(run_collapse);
+				
+				collapse.addEventTrigger(run_collapse);
 				
 				nRun run_testfocus = new nRun() { public void run() {
 					if (ref.getVisibility() && 
@@ -633,18 +661,18 @@ public class nGUIBook {
 						run_tofront.run(); }  }};
 				ref.addEventLogic(run_testfocus);
 				
-//				g.addEventClear(new nRun() { public void run() {
-//					menu.remove_taskbar_entry(bar_swtch); }});
+				g.addEventClear(new nRun() { public void run() {
+					PlaneApplet.app.menu.remove_taskbar_entry(bar_swtch); }});
 
 				g.addMetode("run_tofront", run_tofront);
-//				g.addMetode("run_collapse", run_collapse);
+				g.addMetode("run_collapse", run_collapse);
 				g.addMetode("init_pos", new nRun() { public void run() {
 					head.setPos(book.getNewWindowPos()); 
 					run_tofront.run(); } });
 				
 				g.addMetode("set_title", new nRun() { public void run(Object o) {
 					String v = ((String)o);
-//					bar_swtch.setText(v);
+					bar_swtch.setText(v);
 					head.setText(v); }});
 				
 				g.addMetode("set_tofront_event", new nRun() { public void run(Object o) {
@@ -669,15 +697,15 @@ public class nGUIBook {
 						ref.setLink(val_pos);
 						g.addObject("val_pos", val_pos);
 
-//						sBoo val_collapse = v.obtainBoo("val_collapse", false);
-//						g.addObject("val_collapse", val_collapse);
-//						if (val_collapse.get()) run_collapse.run(); 
-//						else run_tofront.run();
-//						
-//						val_collapse.addEventChangeThisFrame(
-//								new nRun() { public void run() {
-//							if (val_collapse.get()) run_collapse.run(); 
-//							else run_tofront.run(); }});
+						sBoo val_collapse = v.obtainBoo("val_collapse", false);
+						g.addObject("val_collapse", val_collapse);
+						if (val_collapse.get()) run_collapse.run(); 
+						else run_tofront.run();
+						
+						val_collapse.addEventChangeThisFrame(
+								new nRun() { public void run() {
+							if (val_collapse.get()) run_collapse.run(); 
+							else run_tofront.run(); }});
 						
 //						sInt val_stack_index = v.obtainInt("val_stack_index", 
 //								ref.getSiblingIndex());
@@ -971,14 +999,14 @@ public class nGUIBook {
 				.set_color_hovered(Utl.color(120))
 				.set_color_standby(Utl.color(40));
 
-				g.get("head").setSizeCopyIncr(-3*RS);
+				g.get("head").setSizeCopyIncr(-4*RS);
 
-//				g.get("collapse").clearParent();
+				g.get("collapse").clearParent();
 //				g.get("close").clearParent();
 				border.setParent(g.get("headback"));
 				grid.setParent(g.get("headback"));
 				wallpaper.setParent(g.get("headback"));
-//				g.get("collapse").setParent(g.get("headback"));
+				g.get("collapse").setParent(g.get("headback"));
 //				g.get("close").setParent(g.get("headback"));
 				
 				nRun run_border_view = new nRun() { public void run() {
@@ -1157,7 +1185,7 @@ public class nGUIBook {
 						sBoo val_border = g.object("val_border", sBoo.class);
 						val_border.set(false);
 						border.hide();
-//						g.get("collapse").hide();
+						g.get("collapse").hide();
 						g.get("head").setSizeCopyIncr(-2*RS);
 						g.get("ref").toBack();
 						space.setOutline(false);
@@ -1166,8 +1194,8 @@ public class nGUIBook {
 						if (g.hasObject("no_tofront")) 
 							g.removeObject("no_tofront");
 						border.show();
-//						g.get("collapse").show();
-						g.get("head").setSizeCopyIncr(-3*RS);
+						g.get("collapse").show();
+						g.get("head").setSizeCopyIncr(-4*RS);
 						space.setOutline(true);
 						g.get("ref").setOutline(true);
 

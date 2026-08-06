@@ -32,8 +32,7 @@ public class nToolBox {
 		toolbox_bloc = data.setting_bloc.obtainBloc("toolbox_bloc");
 
 		val_toolbox_open = toolbox_bloc.obtainBoo("val_toolbox_open", "toolbox open", 
-				!app.config.RELEASE 
-				|| app.config.TOOLBOX_OPEN);
+				app.config.TOOLBOX_OPEN);
 		val_toolbox_scroll = toolbox_bloc.obtainFlt("val_toolbox_scroll", "toolbox scroll", 1);
 //		val_toolbox_stackindex = toolbox_bloc.obtainInt("val_toolbox_stackindex", "toolbox stackindex", 0);
 
@@ -94,6 +93,7 @@ public class nToolBox {
 	private void build_toolbox() {
 		tool_group = gui.addWidgetGroup("toolbox");
 		tool_group.metode("set_toolbox", this);
+//		tool_group.metode("set_val_open", val_toolbox_open);
 
 		if (app.config.TOOLBOX_OPEN)
 			app.addDelayEvent(30, new nRun() { public void run() {
@@ -322,11 +322,12 @@ public class nToolBox {
 				back.setParent(space);
 				collapse.setParent(space);
 				
-				collapse.addEventTrigger(new nRun() { public void run() {
+				nRun run_collapse = new nRun() { public void run() {
 					Object o = g.object("val_open");
 					if (o != null) ((sBoo)o).swtch();
 					else back.switchVisibility();
-				}}) ;
+				}};
+				collapse.addEventTrigger(run_collapse) ;
 				
 				back.addEventVisibility(new nRun() { public void run() {
 					App.ap.addEventNextFrame(new nRun() { public void run() {

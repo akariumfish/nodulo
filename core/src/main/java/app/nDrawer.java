@@ -1,6 +1,7 @@
 package app;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -43,6 +44,10 @@ import util.Utl;
 import util.nTransform;
 
 public class nDrawer {
+
+	public static boolean BLOCK_FX = true;
+	
+	
 	public boolean USE_FX = true;
 	
 	public boolean vfx;
@@ -72,8 +77,8 @@ public class nDrawer {
 //		app.viewport.apply(false);
 		ready(); begin();
 	}
-	public void fx() { end(); vfx = USE_FX; begin(); }
-	public void noFx() { end(); vfx = false; begin(); }
+	public void fx() { if (!BLOCK_FX && USE_FX) { end(); vfx = true; begin(); } }
+	public void noFx() { if (vfx) { end(); vfx = false; begin(); } }
 
 	public void pause_batch() { 
 		end(); 
@@ -307,6 +312,82 @@ public class nDrawer {
 	
 	
 	
+	
+	
+	
+	
+	public nDrawer line(float x1, float y1, float x2, float y2, Color c1, Color c2) {
+		Vector2 v1 = transf.transform(x1,y1);
+		Vector2 v2 = transf.transform(x2,y2);
+		float s = strokeW * transf.getScale();
+		if (s > 1) drawer.line(v1.x, v1.y, v2.x, v2.y, s, false, c1, c2);
+		else {
+			Color a1 = new Color(c1);
+			Color a2 = new Color(c2);
+			a1.a = a1.a * s;
+			a2.a = a2.a * s;
+			drawer.line(v1.x, v1.y, v2.x, v2.y, 1f, true, a1, a2); }
+		return this; }
+	public nDrawer face(float x1, float y1, float x2, float y2, float x3, float y3, 
+			Color c1, Color c2, Color c3) {
+		Vector2 v1 = transf.transform(x1,y1);
+		Vector2 v2 = transf.transform(x2,y2);
+		Vector2 v3 = transf.transform(x3,y3);
+		drawer.filledTriangle(v1, v2, v3, c1, c2, c3);
+		return this; }
+
+	
+	
+	public void grid(int size, float cell, final Color[] cl) {
+		if (cl.length < size*size) return;
+		for (int x = 0 ; x < size - 1 ; x++)
+			for (int y = 0 ; y < size - 1 ; y++) {
+				face((x*cell), (y*cell), ((x+1)*cell), (y*cell), (x*cell), ((y+1)*cell), 
+						cl[x+size*y], cl[(x+1)+size*y], cl[x+size*(y+1)]);
+				face(((x+1)*cell), (y*cell), ((x+1)*cell), ((y+1)*cell), 
+						(x*cell), ((y+1)*cell), 
+						cl[(x+1)+size*y], cl[(x+1)+size*(y+1)], cl[x+size*(y+1)]);
+			}
+	}
+	public void grid(int size, float cell) {
+		if (color_stack.size() < size*size) return;
+		for (int x = 0 ; x < size - 1 ; x++)
+			for (int y = 0 ; y < size - 1 ; y++) {
+				face((x*cell), (y*cell), ((x+1)*cell), (y*cell), (x*cell), ((y+1)*cell), 
+						color_stack.get(x+size*y), 
+						color_stack.get((x+1)+size*y), 
+						color_stack.get(x+size*(y+1)));
+			}
+	}
+	
+	
+	
+	public void putColor(final ArrayList<Color> cl) {
+		for (Color c : cl) color_stack.add(getColor(c)); }
+	public void putColor(final Color[] cl) {
+		for (Color c : cl) color_stack.add(getColor(c)); }
+	public void putColor(final Color c) { color_stack.add(getColor(c)); }
+	public void putPoint(final ArrayList<Vector2> cl) { for (Vector2 c : cl) point_stack.add(c); }
+	public void putPoint(final Vector2[] cl) { for (Vector2 c : cl) point_stack.add(c); }
+	public void putPoint(final Vector2 c) { point_stack.add(c); }
+	public void resetStack() { color_stack.clear(); point_stack.clear(); }
+	
+	private ArrayList<Color> color_stack = new ArrayList<Color>();
+	private ArrayList<Vector2> point_stack = new ArrayList<Vector2>();
+
+	private static HashMap<Integer,Color> colors = new HashMap<Integer,Color>();
+	private Color getColor(Color c) {
+		int id = Utl.rgbToInt((int)(255.0f*c.r), (int)(255.0f*c.g), 
+				(int)(255.0f*c.b), (int)(255.0f*c.a));
+		if (colors.get(id) != null) return colors.get(id);
+		colors.put(id,c);
+		return c;
+	}
+	
+	
+	
+	
+	
 
 	public nDrawer rect(Rectangle n) {
 		Rectangle r = transf.transform(n);
@@ -331,11 +412,12 @@ public class nDrawer {
 		Vector2 v1 = transf.transform(x1,y1);
 		Vector2 v2 = transf.transform(x2,y2);
 		float s = strokeW * transf.getScale();
-		if (s > 1) drawer.line(v1.x, v1.y, v2.x, v2.y, color_stroke, s);
+		if (s > 1) drawer.line(v1.x, v1.y, v2.x, v2.y, s, false, 
+				color_stroke, color_stroke);
 		else {
 			Color c = new Color(color_stroke);
 			c.a = c.a * s;
-			drawer.line(v1.x, v1.y, v2.x, v2.y, c, 1); }
+			drawer.line(v1.x, v1.y, v2.x, v2.y, 1, true, c, c); }
 		return this; }
 	
 	public nDrawer polygon(Polygon p) {

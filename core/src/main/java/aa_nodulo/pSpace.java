@@ -41,11 +41,11 @@ public class pSpace {
 			pTime time = app.time;
 			clear_all_body();
 			app.addDelayEvent(2, new nRun() { public void run() {
-				time.val_pause.set(true);
+				time.set_pause(true);
 				nRun.runEvents(eventSpaceStart);
 				app.addDelayEvent(1, new nRun() { public void run() {
 					time.val_tick_cnt.set(0);
-					time.val_pause.set(false);
+					time.set_pause(false);
 					space_starting = false; }}); 
 			}}); 
 		}
@@ -427,7 +427,7 @@ public class pSpace {
 		
 //		load_contents();
 		
-		if (!app.config.RELEASE) tool_setup(true);
+		if (!app.config.RELEASE) tool_setup(false);
 		
 //		if (app.AUTO_BUILD) {
 //			sValueBloc bloc2 = bloc.getBloc("bodyview");

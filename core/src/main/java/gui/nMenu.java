@@ -167,17 +167,18 @@ public class nMenu {
 		toolbox = new nToolBox(this);
 		
 
-//		bar_entrys = new ArrayList<nWidget>();
-//		
+		bar_entrys = new ArrayList<nWidget>();
+		
 //		bar_back = gui.addWidget("taskbar_back")
 //				.setRect(0,0,GdxApp.WIDTH,RS+10)
 //				.setDrawstackPriority(true)
 //				.asWidget()
 //				;
-//		bar_ref = gui.addWidget("taskbar_ref")
-//				.asWidget()
-//				.setParent(bar_back)
-//				;
+		bar_ref = gui.addWidget("taskbar_ref")
+				.setRect(RS*12f,0,RS*6f,RS)
+				.asWidget()
+				.setParent(menu_back)
+				;
 
 		nRun run_hb_frame = new nRun() { public void run() {
 			if (app.input.mouse.y > menu_back.getLocalY() - menu_back.getLocalSY()) {
@@ -396,24 +397,24 @@ public class nMenu {
 	
 	
 
-//	nWidget bar_back, bar_ref;
-//	public ArrayList<nWidget> bar_entrys;
-//	
-//	public nWidget add_taskbar_entry() {
-//		
-//		nWidget w = gui.addWidget("taskbar_entry")
-//		.setParent(bar_ref);
-//		
-//		for(nWidget n : bar_entrys) n.setOff();
-//		
-//		w.addEventSwitchOn(new nRun() { public void run() {
-//			for(nWidget n : bar_entrys) if (n != w) n.setOff(); }});
-//		
-//		bar_entrys.add(w);
-//		return w;
-//	}
-//	public void remove_taskbar_entry(nWidget w) {
-//		bar_entrys.remove(w); }
+	nWidget bar_ref; //bar_back, 
+	public ArrayList<nWidget> bar_entrys;
+	
+	public nWidget add_taskbar_entry() {
+		
+		nWidget w = gui.addWidget("taskbar_entry")
+		.setParent(bar_ref);
+		
+		for(nWidget n : bar_entrys) n.setOff();
+		
+		w.addEventSwitchOn(new nRun() { public void run() {
+			for(nWidget n : bar_entrys) if (n != w) n.setOff(); }});
+		
+		bar_entrys.add(w);
+		return w;
+	}
+	public void remove_taskbar_entry(nWidget w) {
+		bar_entrys.remove(w); }
 	
 	
 
@@ -701,7 +702,7 @@ public class nMenu {
 	}
 	
 
-	//TODO a refaire avec sceneéd.ui dans un autre Screen
+	//TODO a refaire avec scene2d.ui dans un autre Screen
 //	public void pop_book_explo() {
 //		nInterface interf = gui.get_popWindow();
 //
@@ -751,7 +752,7 @@ public class nMenu {
 //	}
 	
 
-	//TODO a refaire avec sceneéd.ui dans un autre Screen
+	//TODO a refaire avec scene2d.ui dans un autre Screen
 //	public void pop_about() {
 //		
 //		String about = "Eeeeeeeeeeeeeee\n" + 

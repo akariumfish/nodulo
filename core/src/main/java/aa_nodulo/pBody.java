@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import data.*;
 import util.Utl;
 import util.nMap;
+import util.nRun;
 import app.App;
 
 public class pBody extends sPoolable {
@@ -279,6 +280,7 @@ public class pBody extends sPoolable {
 	public pBody init(pSpace s) { space = s; return this; }
 	
 	public void empty() {
+		
 		if (space != null) 
 			for (Map.Entry<pFamily, ArrayList<pBody>> me : space.families.entrySet()) {
 			pFamily fam = me.getKey();
@@ -294,6 +296,10 @@ public class pBody extends sPoolable {
 	}
 
 	public void clear_action() {
+
+		for (pParam prm : params.all()) if (prm.prop.is_general) {
+			nRun.runList(prm.prop.clear_runs, this); }
+		
 		for (Map.Entry<pFamily, ArrayList<pBody>> me : space.families.entrySet()) {
 			pFamily fam = me.getKey();
 			if (fam.contains(this) && fam.clear_run != null) fam.clear_run.run(this); 
@@ -312,6 +318,11 @@ public class pBody extends sPoolable {
 		for (pParam p : params.all()) if (p.prop.ref.equals(r)) return true;
 		return false; }
 	public pParam param(String r) { return params.get(r); }
+	public String getRef(pParam r) { 
+		for (Map.Entry<String,pParam> me : params.entrySet()) {
+			if (me.getValue() == r) return me.getKey(); }
+		return null; }
+
 
 	public ArrayList<pParam> allProperty(String r) { 
 		ArrayList<pParam> ar = new ArrayList<pParam>();

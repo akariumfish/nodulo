@@ -41,7 +41,7 @@ public class pAtom extends pSystem {
 
 		if (builder == null) build_prop();
 		
-		builder = builder(data, "atom", pAtom.class, new nRun() { public void run(Object o) {
+		builder = builder(data, "atom", pAtom.class, true, new nRun() { public void run(Object o) {
 			sValueBloc b = (sValueBloc)o; newObject(b); }});
 		
 	}
@@ -99,7 +99,7 @@ public class pAtom extends pSystem {
 		.com("get_last")
 
 		.com("add_set_output", "cam_scale")
-		.com("add_flt_at", "data", 0.15f)
+		.com("add_flt_at", "data", 0.4f)
 		.com("add_set_output", "cam_rot")
 		.com("add_flt_at", "data", (float)(Math.PI / 2f))
 		.com("add_set_output", "cam_pos")
@@ -244,8 +244,12 @@ public class pAtom extends pSystem {
 		.addNode("ownable", "ownable", 		-600f, 	0f).addSetVar("acquire", true).getMacro()
 		.addNode("moveable", "moveable", 	-600f, 	-300f).getMacro()
 		.addNode("graph", "graph", 			-600f, 	-600f).addSetVar("line", true).getMacro()
-		.addNode("hittable", "hittable", 	-600f, 	-900f).getMacro()
+		.addNode("hittable", "hittable", 	-600f, 	-900f)
+		.addSetVar("use_avatar", true).getMacro()
 		.addNode("geom", "geom", 			-600f, 	-1200f).getMacro()
+		.addNode("physic", "physic", 		-600f, 	900f)
+		.addSetVar("use_kinematic", true)
+		.addSetVar("def_kinematic_rad", 70f).getMacro()
 		.addLink("coordinate", "param", "blueprint", "param_in")
 		.addLink("interactif", "param", "blueprint", "param_in")
 		.addLink("moveable", "param", "blueprint", "param_in")
@@ -253,6 +257,7 @@ public class pAtom extends pSystem {
 		.addLink("geom", "param", "blueprint", "param_in")
 		.addLink("ownable", "param", "blueprint", "param_in")
 		.addLink("hittable", "param", "blueprint", "param_in")
+		.addLink("physic", "param", "blueprint", "param_in")
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
 			pInstance geom = list.get("geom");
@@ -373,7 +378,9 @@ public class pAtom extends pSystem {
 		pProperty hittable = pProperty.newGeneralProperty("hittable")
 		;
 		hittable.newLocalProperty("hitzone")
-		.addData("hitpoint", (int)50)
+		.addData("hitpoint", (int)5)
+		;
+		hittable.newOptionalLocalProperty("avatar")
 		;
 
 		pProperty.newGeneralProperty("damagezone")
@@ -457,9 +464,28 @@ public class pAtom extends pSystem {
 		;
 
 		
+		
+		
+		
 	}
 
 
+	
+	
+	
+	
+
+	public void start_game() {
+		app.space.start_space();
+	}
+	
+	
+	public void game_over() {
+		app.time.set_pause(true);
+	}
+	
+	
+	
 	
 	
 	
@@ -502,6 +528,10 @@ public class pAtom extends pSystem {
 		val_bullet_pop_dist = bloc.obtainFlt("val_bullet_pop_dist", 150f);
 //		val_max_hp = bloc.obtainInt("val_max_hp", (int)50);
 //		val_bullet_damage = bloc.obtainInt("val_bullet_damage", (int)1);
+		
+
+		app.outputs.put("start_game", new nRun() { public void run() {
+			start_game(); }});
 		
 	}
 	public void system_load() {
@@ -661,7 +691,10 @@ public class pAtom extends pSystem {
 		int damage = b2.getInt("damagezone", "damage");
 		b1.setInt("hitzone", "hitpoint", b1.getInt("hitzone", "hitpoint") - damage);
 		
-		if (b1.getInt("hitzone", "hitpoint") <= 0) to_clr.add(b1);
+		if (b1.getInt("hitzone", "hitpoint") <= 0) {
+			to_clr.add(b1);
+			if (b1.hasParam("avatar")) game_over();
+		}
 		to_clr.add(b2);
 	}
 	

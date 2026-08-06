@@ -119,6 +119,83 @@ public abstract class nScripted {
 			}
 		}
 	}
+
+	public static <T extends nScripted> String buildCodeFromScript(Class<T> targ, Object[] scr) {
+		if (targ == null) {
+			Utl.logn("ERROR : nScripted.buildScript : "
+					+ "no target"); return null; }
+		if (scripted_methods.get(targ) == null) {
+			Utl.logn("ERROR : nScripted.buildScript : "
+					+ "unscriptable target"); return null; }
+		if (scr == null || scr.length == 0) {
+			Utl.logn("ERROR : nScripted.buildScript : "
+					+ "no script"); return null; }
+		nMap<Method> metodes = scripted_methods.get(targ);
+		ArrayList<Object> script = to_array(scr);
+		if (popC(script) != C.INT) {
+			Utl.logn("ERROR : nScripted.buildScript : "
+					+ "no script size"); return null; }
+		int tot_size = pop(script, Integer.class);
+		if (script.size() + 2 != tot_size) { Utl.logn("ERROR : "
+				+ "nScripted.buildScript : script.size() != tot_size"
+				+ " " + script.size() +" "+ tot_size); 
+				return null; }
+		
+		String code = "";
+		
+		while (script.size() > 1) {
+			if (popC(script) != C.CODE) {
+				Utl.logn("ERROR : nScripted.buildScript : "
+						+ "no start code"); return null; }
+			if (popC(script) != C.MET) {
+				Utl.logn("ERROR : nScripted.buildScript : "
+						+ "no start code 2"); return null; }
+			if (popC(script) != C.STR) {
+				Utl.logn("ERROR : nScripted.buildScript : "
+						+ "no code for method ref"); return null; }
+			String method_ref = pop(script, String.class);
+			if (method_ref == null) {
+				Utl.logn("ERROR : nScripted.buildScript : "
+						+ "no method ref"); return null; }
+			Method metode = metodes.get(method_ref);
+			if (metode == null) {
+				Utl.logn("ERROR : nScripted.buildScript : "
+						+ "cant found method "+method_ref); return null; }
+			int arg_nb = metode.getParameterCount();
+			Class<?>[] arg_type = metode.getParameterTypes();
+			Object[] args = new Object[arg_nb];
+			for (int i = 0 ; i < arg_nb ; i++) {
+				if (popC(script) != int_to_code.get(
+						Utl.type_class_index.get(arg_type[i]))) {
+					Utl.logn("ERROR : nScripted.buildScript : "
+							+ "bad arg class"); return null; }
+				args[i] = pop(script);
+			}
+			
+			code += method_ref + "(";
+			for (int i = 0 ; i < arg_nb ; i++) {
+				if (i > 0) code += ", ";
+				code += Utl.to_code(args[i]); }
+			code += ");\n";
+			
+//			try {
+//				metode.invoke(scripted, args);
+//			} catch (IllegalAccessException e) {
+//				Utl.logn("ERROR : nScripted.buildScript : "
+//						+ "IllegalAccessException");
+////				e.printStackTrace();
+//			} catch (IllegalArgumentException e) {
+//				Utl.logn("ERROR : nScripted.buildScript : "
+//						+ "IllegalArgumentException");
+////				e.printStackTrace();
+//			} catch (InvocationTargetException e) {
+//				Utl.logn("ERROR : nScripted.buildScript : "
+//						+ "InvocationTargetException");
+////				e.printStackTrace();
+//			}
+		}
+		return code;
+	}
 	
 	
 	

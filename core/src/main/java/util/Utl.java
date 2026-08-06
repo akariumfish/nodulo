@@ -432,7 +432,23 @@ public class Utl {
 		}
 		return "??";
 	}
-
+	public static String to_code(Object o) {
+		if (o == null) return "null";
+		if (!type_is_used(o.getClass())) return "??";
+		if (o instanceof Vector2) {
+			Vector2 v = (Vector2)o;
+			return "new Vector2("+Float.toString(v.x)+"f,"+Float.toString(v.y)+"f)";
+		} else if (o instanceof Float) {
+			return Float.toString((float)o)+"f";
+		} else if (o instanceof Integer) {
+			return "(int)"+Integer.toString((int)o);
+		} else if (o instanceof Boolean) {
+			return Boolean.toString((boolean)o);
+		} else if (o instanceof String) {
+			return "\""+((String)o)+"\"";
+		}
+		return "??";
+	}
 	public static <T> T from_string(String o, Class<?> ct) {
 		if (!type_is_used(ct)) return null;
 		if (o == null || o.length() == 0) return null;

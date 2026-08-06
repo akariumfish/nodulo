@@ -18,7 +18,8 @@ public class nNoise {
 	 * 		TODO
 	 * */
 
-    private static void noiseStage(final Grid grid, final NoiseGenerator noiseGenerator, final int radius,
+    public static void noiseStage(final Grid grid, final NoiseGenerator noiseGenerator, 
+    			final int radius,
             final float modifier) {
         noiseGenerator.setRadius(radius);
         noiseGenerator.setModifier(modifier);

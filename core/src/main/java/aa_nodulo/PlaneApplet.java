@@ -58,29 +58,35 @@ public class PlaneApplet extends App {
 //		public boolean AUTO_CONNECT = true;
 		public boolean AUTO_CONNECT = false;
 		
-//		public boolean START_FX = true;
-		public boolean START_FX = false;
+		public boolean START_FX = true;
+//		public boolean START_FX = false;
 		
 		public boolean START_HELP = true;
 //		public boolean START_HELP = false;
 
 //		public String STARTUP_MODEL_REF = "TEST";
 //		public String STARTUP_MODEL_REF = "box2d_exemple";
-		public String STARTUP_MODEL_REF = "patch_exemple";
-//		public String STARTUP_MODEL_REF = "atom_game";
+//		public String STARTUP_MODEL_REF = "patch_exemple";
+		public String STARTUP_MODEL_REF = "atom_game";
 //		public String STARTUP_MODEL_REF = "";
 
-		public float DEF_VIEW_ZOOM = 0.4f;
+
+		public boolean VIEW_START_WALLPAPER = true;
+		public boolean VIEW_START_COLLAPSED = false;
+//		public float DEF_VIEW_ZOOM = 0.07f;
+		public float DEF_VIEW_ZOOM = 0.5f;
 		public Vector2 DEF_VIEW_POS = new Vector2(0f,0f);
 		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
 		public Vector2 DEF_VIEW_WIN_SZ = new Vector2(910f,370f);
-		public float DEF_PATCH_ZOOM = 0.1f;
+		public boolean PATCH_START_WALLPAPER = false;
+		public boolean PATCH_START_COLLAPSED = true;
+		public float DEF_PATCH_ZOOM = 0.2f;
 		public Vector2 DEF_PATCH_POS = new Vector2(0f,0f);
 		public Vector2 DEF_PATCH_WIN_POS = new Vector2(370f,915f);
 		public Vector2 DEF_PATCH_WIN_SZ = new Vector2(910f,450f);
 		public boolean PATCH_TOOL_AUTOCOLLAPSE = true;
-		public boolean PATCH_SHEET_COLLAPSE = false;
-		public boolean TOOLBOX_OPEN = false;
+		public boolean PATCH_SHEET_COLLAPSE = true;
+		public boolean TOOLBOX_OPEN = true;
 		public float DEF_TICK_BY_SEC = 60f;
 		
 		public boolean start_solo = true;
@@ -238,7 +244,7 @@ public class PlaneApplet extends App {
 		space.system_load();
 		patch.system_load();
 
-		if (!RELEASE) tool_setup();
+		if (!RELEASE) tool_setup(false);
 		
 //		paint = new nPainting();
 //		
@@ -253,6 +259,8 @@ public class PlaneApplet extends App {
 //		paint.clear();
 //		
 //		nScripted.buildScript(paint, scr);
+//		
+//		Utl.logn(nScripted.buildCodeFromScript(nPainting.class, scr));
 		
 		startup();
 		
@@ -539,11 +547,11 @@ public class PlaneApplet extends App {
 	public void addEventToolInit(nRun r) { eventToolInitRun.add(r); }
 	public void removeEventToolInit(nRun r) { eventToolInitRun.remove(r); }
 
-	public void tool_setup() {
+	public void tool_setup(boolean openning) {
 		
 		addDelayEvent(1, new nRun() { public void run() {
 			nWidgetGroup sec = menu.toolbox
-					.addSection("  pPlane  ", true);;
+					.addSection("  pPlane  ", openning);
 			nInterface interf = gui.addInterface();
 			interf.pop(sec);
 			interf.setContext(bloc);
