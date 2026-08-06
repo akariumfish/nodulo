@@ -102,6 +102,8 @@ public class nToolBox {
 		
 		menu.add_menu_trigg("-", new nRun() { public void run() {
 			val_toolbox_open.swtch();
+			app.addDelayEvent(1, new nRun() { public void run() {
+				menu.updateFreeview(); }}); 
 		}}).toBack().setSize(30,30);
 		
 		nRun run_toolbox_open = new nRun() { public void run() {

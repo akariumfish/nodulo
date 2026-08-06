@@ -1,18 +1,118 @@
 package com.noodle.nodulo.lwjgl3;
 
+import java.io.IOException;
+import java.util.LinkedList;
+
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.noodle.nodulo.Main;
 
+import aa_nodulo.PlaneApplet;
 import app.AppConfig;
+import app.GdxApp;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
 
+	
+//	public static final boolean solo_double = true;		// DOUBLE
+	public static final boolean solo_double = false;		// SOLO
+	
+	
+//	public static final int launch_delay = 2000;
+	public static final int launch_delay = 4000;
+
+	
+	// SOLO WINDOW
+	public static final int WIN_SOLO_WIDTH = 1300;
+	public static final int WIN_SOLO_HEIGHT = 960;
+	
+	//DOUBLE WINDOW
+	public static final int WIN_DOUBLE_WIDTH = 900;
+	public static final int WIN_DOUBLE_HEIGHT = 860;
+	
+
+	public static final String Lwjgl3LD1_title = "server";
+	public static final String Lwjgl3LD1_setting_file = "setting_server";
+	public static final boolean Lwjgl3LD1_autorize_autoload = true;
+	public static final boolean Lwjgl3LD1_autorize_autobuild = true;
+	public static final boolean Lwjgl3LD1_is_server = true;
+	public static final int Lwjgl3LD1_window_pos_x = 20;
+	public static final int Lwjgl3LD1_window_pos_y = 50;
+
+	public static final String Lwjgl3LD2_title = "client";
+	public static final String Lwjgl3LD2_setting_file = "setting_client";
+	public static final boolean Lwjgl3LD2_autorize_autoload = true;
+	public static final boolean Lwjgl3LD2_autorize_autobuild = true;
+	public static final boolean Lwjgl3LD2_is_server = false;
+	public static final int Lwjgl3LD2_window_pos_x = 1020;
+	public static final int Lwjgl3LD2_window_pos_y = 50;
+	
+	
 	public static void main(String[] args) {
-		if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
-		createApplication("nodulo", 610, 50, 1300, 960, false);
+		
+
+		// 		>>>  RUN SINGLE <<<
+		if (!solo_double) {
+			if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
+			createApplication("nodulo", 610, 50, 
+					Lwjgl3Launcher.WIN_SOLO_WIDTH, 
+					Lwjgl3Launcher.WIN_SOLO_HEIGHT, 
+					false);
+		}
+		
+		
+		// 		>>>  RUN DOUBLE <<<
+		if (solo_double) {
+			launch_net_apps();
+		}
+		
+		
 	}
+	
+	public static Thread t1,t2;
+
+	public static void launch_net_apps() {
+
+		PlaneApplet.TITLE_SCREEN = false;
+		
+		t1 = new Thread() {
+			public void run() {
+				try {
+					int res = JavaProcess.exec(Lwjgl3LauncherDouble1.class, 
+							new LinkedList<String>()); 
+					System.out.println("exec res: "+res);
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+
+		t2 = new Thread() {
+			public void run() {
+				try {
+					int res = JavaProcess.exec(Lwjgl3LauncherDouble2.class, 
+							new LinkedList<String>()); 
+					System.out.println("exec res: "+res);
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+
+		t1.start();
+
+		try { Thread.sleep(launch_delay); } 
+		catch (InterruptedException e) { e.printStackTrace(); }
+		
+		t2.start();
+	}
+	
+	
 
 	private static Lwjgl3Application createApplication(String title, 
 			int posx, int posy, int sizex, int sizey, boolean fullscreen) {
@@ -31,10 +131,10 @@ public class Lwjgl3Launcher {
 		configuration.setWindowPosition(px,py);
 		return configuration;
 	}
-	
+
 	private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
 		Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
-		configuration.setTitle("nodulo");
+		configuration.setTitle("Applet");
 		//// Vsync limits the frames per second to what your hardware can display, and helps eliminate
 		//// screen tearing. This setting doesn't always work on Linux, so the line after is a safeguard.
 		configuration.useVsync(true);
@@ -45,19 +145,21 @@ public class Lwjgl3Launcher {
 		//// useful for testing performance, but can also be very stressful to some hardware.
 		//// You may also need to configure GPU drivers to fully disable Vsync; this can cause screen tearing.
 
-		configuration.setWindowedMode(640, 480);
+//		configuration.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+
+		configuration.setWindowedMode(GdxApp.WIDTH, GdxApp.HEIGHT);
+		
 		//// You can change these files; they are in lwjgl3/src/main/resources/ .
 		//// They can also be loaded from the root of assets/ .
 		configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
 
-		//// This could improve compatibility with Windows machines with buggy OpenGL drivers, Macs
+		configuration.setWindowPosition(610, 50);
+
+		//// This should improve compatibility with Windows machines with buggy OpenGL drivers, Macs
 		//// with Apple Silicon that have to emulate compatibility with OpenGL anyway, and more.
 		//// This uses the dependency `com.badlogicgames.gdx:gdx-lwjgl3-angle` to function.
-		//// You would need to add this line to lwjgl3/build.gradle , below the dependency on `gdx-backend-lwjgl3`:
-		////     implementation "com.badlogicgames.gdx:gdx-lwjgl3-angle:$gdxVersion"
-		//// You can choose to add the following line and the mentioned dependency if you want; they
+		//// You can choose to remove the following line and the mentioned dependency if you want; they
 		//// are not intended for games that use GL30 (which is compatibility with OpenGL ES 3.0).
-		//// Know that it might not work well in some cases.
 		//        configuration.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES20, 0, 0);
 
 		return configuration;

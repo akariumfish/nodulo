@@ -215,6 +215,8 @@ public class pMacroBook {
 
 		Macro body_blueprint = new Macro("body_blueprint")
 		.addNode("blueprint", "blueprint", 	0f, 		0f).getMacro()
+		.addNode("physic", "physic", 		-600f, 	900f)
+		.addSetVar("use_kinematic", true).getMacro()
 		.addNode("coordinate", "coordinate", -600f, 	600f).addSetVar("use_ctrl_pop", true).getMacro()
 		.addNode("interactif", "interactif", -600f, 	300f).getMacro()
 		.addNode("ownable", "ownable", 		-600f, 	0f).addSetVar("acquire", true).getMacro()
@@ -227,6 +229,7 @@ public class pMacroBook {
 		.addLink("graph", "param", "blueprint", "param_in")
 		.addLink("geom", "param", "blueprint", "param_in")
 		.addLink("ownable", "param", "blueprint", "param_in")
+		.addLink("physic", "param", "blueprint", "param_in")
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
 			pInstance geom = list.get("geom");

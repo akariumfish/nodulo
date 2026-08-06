@@ -87,13 +87,15 @@ public class pProperty {
 		p.general = this;
 		return p; 
 	}
-	public pProperty newOptionalLocalProperty(String r) {
+	public pProperty newOptionalLocalProperty(String r) { 
+		return newOptionalLocalProperty(r,false); }
+	public pProperty newOptionalLocalProperty(String r, boolean autoadd) {
 		if (!is_general) return null;
 		pProperty p = newProperty(r,false);
 //		p.copy(user_prop_abstract);
 		option_props.add(p);
 		p.general = this;
-		addData("use_"+r, false);
+		addData("use_"+r, autoadd);
 		return p; 
 	}
 	public ArrayList<pProperty> need_props = new ArrayList<pProperty>();

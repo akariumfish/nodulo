@@ -32,11 +32,14 @@ import util.nScripted;
 public class PlaneApplet extends App {
 
 	
-	public static boolean TITLE_SCREEN = true; 
-//	public static boolean TITLE_SCREEN = false;
+//	public static boolean TITLE_SCREEN = true; 
+	public static boolean TITLE_SCREEN = false;
 
 //	public static boolean START_FULLSCREEN = true;
 	public static boolean START_FULLSCREEN = false;
+
+//	public static boolean RELEASE = true;
+	public static boolean RELEASE = false;
 	
 	
 	public static class AppletConfig {
@@ -46,9 +49,8 @@ public class PlaneApplet extends App {
 			RELEASE = !dark_theme;
 			STARTUP_MODEL_REF = s; 
 		}
-		
-//		public boolean RELEASE = true;
-		public boolean RELEASE = false;
+		;
+		public boolean RELEASE = PlaneApplet.RELEASE;
 		
 		public boolean PATCH_BUILD = true;
 //		public boolean PATCH_BUILD = false;
@@ -90,17 +92,12 @@ public class PlaneApplet extends App {
 	}
 
 	
-	// NoduloApplet.make(Main, new AppConfig());
-	// NoduloApplet.make(Main, new AppConfig(), new AppletConfig());
-	
 	public static GdxApp make(Main m, AppConfig c) {
 		return new GdxApp(m, c, new PlaneApplet(new AppletConfig())); }
 	
 	public static GdxApp make(Main m, AppConfig c, AppletConfig c2) {
 		return new GdxApp(m, c, new PlaneApplet(c2)); }
 	
-	
-	public static boolean RELEASE = false;
 	
 	public PlaneApplet(AppletConfig c) { 
 		config = c; RELEASE = c.RELEASE; app = this; 
@@ -123,8 +120,8 @@ public class PlaneApplet extends App {
 	public nGUI gui;
 	public nMenu menu;
 
-	Skin skin;
-	Stage stage;
+//	Skin skin;
+//	Stage stage;
 	
 	public pView view;
 	public pTime time;
@@ -142,7 +139,9 @@ public class PlaneApplet extends App {
 	
 	@Override
 	public void setInputProcessor() {
-		Gdx.input.setInputProcessor(multiplexer); }
+//		Gdx.input.setInputProcessor(multiplexer); 
+		Gdx.input.setInputProcessor(input);
+	}
 
 	
 	
@@ -184,13 +183,13 @@ public class PlaneApplet extends App {
 		
 		bloc = data.root_bloc;
 		
-		skin = new Skin(Gdx.files.internal("ui/skin.json"));
-		stage = new Stage(new ScreenViewport());
+//		skin = new Skin(Gdx.files.internal("ui/skin.json"));
+//		stage = new Stage(new ScreenViewport());
 		
-		multiplexer = new InputMultiplexer();
-		multiplexer.addProcessor(stage);
-		multiplexer.addProcessor(input);
-		Gdx.input.setInputProcessor(multiplexer);
+//		multiplexer = new InputMultiplexer();
+//		multiplexer.addProcessor(stage);
+//		multiplexer.addProcessor(input);
+//		Gdx.input.setInputProcessor(multiplexer);
 		
 		gui = new nGUI(this);
 
@@ -263,8 +262,8 @@ public class PlaneApplet extends App {
 	public void closing() {
 		super.closing();
 
-		stage.dispose();
-		skin.dispose(); 
+//		stage.dispose();
+//		skin.dispose(); 
 		
 		gui.dispose();
 		
@@ -307,13 +306,13 @@ public class PlaneApplet extends App {
 	@Override 
 	public void draw_start() {
 
-		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
+//		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
 		
 	}
 	@Override 
 	public void draw_end() {
 		
-		stage.draw();
+//		stage.draw();
 		
 	}
 	

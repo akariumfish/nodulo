@@ -75,6 +75,9 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 //		makeButton("Join", table1).addListener(new InputListener() { public boolean touchDown (
 //				InputEvent event, float x, float y, int pointer, int button) {
 //			return false; }});
+//		makeButton("Test - Net", table1).addListener(new InputListener() { public boolean touchDown (
+//				InputEvent event, float x, float y, int pointer, int button) {
+//			Lwjgl3Launcher.launch_net_apps(); return false; }});
 		makeButton("About", table1).addListener(new InputListener() { public boolean touchDown (
 				InputEvent event, float x, float y, int pointer, int button) {
 			return false; }});
@@ -83,11 +86,11 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 			main.exit(); return false; }});
 
 		CheckBox themeCheckBox = new CheckBox("Dark Theme", skin);
-		themeCheckBox.setChecked(true);
+		themeCheckBox.setChecked(!PlaneApplet.RELEASE);
 		table1.row().fill().pad(100,10,10,10).minWidth(main.conf.WIDTH / 5f);
 		table1.add(themeCheckBox);
 		CheckBox fullScreenCheckBox = new CheckBox("Fullscreen", skin);
-		fullScreenCheckBox.setChecked(true);
+		fullScreenCheckBox.setChecked(PlaneApplet.START_FULLSCREEN);
 		table1.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
 		table1.add(fullScreenCheckBox);
 		table1.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);

@@ -1123,32 +1123,56 @@ public class nGUIBook {
 				
 				bg.addEventLogic(r);
 				
+
+				nRun run_freeview = new nRun() { public void run() {
+					if (wallpaper.isOn()) {
+						Vector2 p = new Vector2(PlaneApplet.app.menu.freeview.x, 
+								PlaneApplet.app.menu.freeview.y + 
+								PlaneApplet.app.menu.freeview.height);
+						Vector2 s = new Vector2(
+								PlaneApplet.app.menu.freeview.width, 
+								PlaneApplet.app.menu.freeview.height - RS);
+						sVec val_pos = g.object("val_pos", sVec.class);
+						if (val_pos.x() != p.x || val_pos.y() != p.y) val_pos.set(p.x,p.y);
+						g.metode("set_size", s);
+						g.metode("event_corner_drag");
+						g.get("ref").toBack();
+					}
+				}};
+				
 				nRun run_wallpaper = new nRun() { public void run() {
 					if (wallpaper.isOn()) {
 						g.addObject("no_tofront", "");
 						sVec val_pos = g.object("val_pos", sVec.class);
 						Vector2 old_pos = new Vector2(val_pos.get());
 						g.addObject("old_pos", old_pos);
-						val_pos.set(0f,App.ap.gdx.getscreenheight() - 4f*RS/3f);
+//						val_pos.set(0f,App.ap.gdx.getscreenheight() - 4f*RS/3f);
 						sVec val_view_size = g.object("val_view_size", sVec.class);
 						Vector2 old_size = new Vector2(val_view_size.get());
 						g.addObject("old_size", old_size);
-						g.metode("set_size", new Vector2(App.ap.gdx.getscreenwidth(), 
-								App.ap.gdx.getscreenheight() - 7f*RS/3f));
-						g.metode("event_corner_drag");
+//						g.metode("set_size", new Vector2(App.ap.gdx.getscreenwidth(), 
+//								App.ap.gdx.getscreenheight() - 7f*RS/3f));
+//						g.metode("event_corner_drag");
+						PlaneApplet.app.menu.addFreeviewEvent(run_freeview);
 						sBoo val_border = g.object("val_border", sBoo.class);
 						val_border.set(false);
 						border.hide();
 //						g.get("collapse").hide();
-						g.get("head").setSizeCopyIncr(-1*RS);
+						g.get("head").setSizeCopyIncr(-2*RS);
 						g.get("ref").toBack();
+						space.setOutline(false);
+						g.get("ref").setOutline(false);
 					} else {
 						if (g.hasObject("no_tofront")) 
 							g.removeObject("no_tofront");
 						border.show();
 //						g.get("collapse").show();
 						g.get("head").setSizeCopyIncr(-3*RS);
+						space.setOutline(true);
+						g.get("ref").setOutline(true);
 
+						PlaneApplet.app.menu.removeFreeviewEvent(run_freeview);
+						
 						if (g.hasObject("old_pos")) {
 							Vector2 old_pos = g.object("old_pos", Vector2.class);
 							sVec val_pos = g.object("val_pos", sVec.class);
