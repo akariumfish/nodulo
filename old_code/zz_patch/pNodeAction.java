@@ -17,7 +17,7 @@ public class pNodeAction {
 	
 	public static void build(Applet app) {
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 		
 
 

@@ -27,25 +27,25 @@ public class pNode {
 
 	public static float LINKED_PLUG_REDUC_FACT = 30f;
 	
-	public static void build(PlaneApplet app) {
+	public static void build() {
 		
-		BRIC_GRID_SIZE = app.gui.book.RS;
+		BRIC_GRID_SIZE = nGUI.book.RS;
 		BRIC_GRID_OVER = BRIC_GRID_SIZE / 10f;
 		
-		build_book(app);
+		build_book();
 		
-		build_standard(app);
+		build_standard();
 		
-		build_coms(app);
+		build_coms();
 
-		build_nodes(app);
+		build_nodes();
 
 	}
 	
 
-	public static void build_nodes(PlaneApplet app) {
+	public static void build_nodes() { //PlaneApplet app
 
-		float RS = app.gui.book.RS;
+		float RS = PlaneApplet.app.gui.book.RS;
 		
 
 		
@@ -55,7 +55,7 @@ public class pNode {
 			.openSec()
 				.param("run", new nRun() {public void run() {
 					if (instance.getVar("auto", Boolean.class)) {
-						app.addDelayEvent(1, new nRun(instance) {public void run() {
+						PlaneApplet.app.addDelayEvent(1, new nRun(instance) {public void run() {
 							pInstance inst = (pInstance)builder;
 							pInstance co = inst.get("get_co", pInstance.class, "out");
 							co.run("send", inst.getVar("var", Boolean.class)); }}); } }})
@@ -414,9 +414,9 @@ public class pNode {
 	}
 	
 	
-	public static void build_standard(PlaneApplet app) {
+	public static void build_standard() {
 
-		float RS = app.gui.book.RS;
+		float RS = PlaneApplet.app.gui.book.RS;
 
 		
 		pStandard.newStandard("node", "inst")
@@ -476,7 +476,7 @@ public class pNode {
 		.newRun("find_place", new nRun() {public void run() {
 			nWidgetGroup group = instance.object("group", nWidgetGroup.class);
 //			group.metode("find_place");
-			app.addDelayEvent(6,new nRun() { public void run() {
+			PlaneApplet.app.addDelayEvent(6,new nRun() { public void run() {
 				group.metode("find_place"); }});
 		}})
 		.newRun("attract_plugged", new nRun() {public void run() {
@@ -600,7 +600,7 @@ public class pNode {
 				if (inst_co != null && t_co != null) {
 					inst_co.run("link_to", t_co);
 					
-					app.addDelayEvent(4,new nRun(instance) {public void run() {
+					PlaneApplet.app.addDelayEvent(4,new nRun(instance) {public void run() {
 						pInstance inst = (pInstance)builder;
 						Vector2 p1 = inst_co.get("getCenter", Vector2.class);
 						Vector2 p2 = t_co.get("getCenter", Vector2.class);
@@ -719,10 +719,10 @@ public class pNode {
 
 			nWidgetGroup group = node.object("group", nWidgetGroup.class);
 			nWidget w = (nWidget)group.metodeGet("add_widget",(int)2);
-			w.copyLookFrom(app.gui.book.getModel("NC_base"));
+			w.copyLookFrom(PlaneApplet.app.gui.book.getModel("NC_base"));
 			w.setInfo(instance.getData("ref", String.class));
 			nWidget title = (nWidget)group.metodeGet("add_widget",(int)2);
-			title.copyFrom(app.gui.book.getModel("NC_title"));
+			title.copyFrom(PlaneApplet.app.gui.book.getModel("NC_title"));
 			title.setParent(w);
 			title.setSize(RS*2f,2f*RS/3f);
 			String title_txt = instance.getDataStr("ref");
@@ -844,9 +844,9 @@ public class pNode {
 		}})
 		.newRun("draw", new nRun() {public void run() {
 			Vector2 pos = instance.get("getCenter", Vector2.class);
-			app.noFill();
-			app.stroke(255,255,0,255, 5f);
-			if (instance.getDataInt("hightlight_count") > 0) app.circle(pos.x, pos.y, 5f);
+			PlaneApplet.app.noFill();
+			PlaneApplet.app.stroke(255,255,0,255, 5f);
+			if (instance.getDataInt("hightlight_count") > 0) PlaneApplet.app.circle(pos.x, pos.y, 5f);
 		}})
 		.newRun("light_up", new nRun() {public void run() {
 			if (instance.hasObject("co_widget"))
@@ -1164,6 +1164,8 @@ public class pNode {
 			Vector2 pos = co1.get("getCenter", Vector2.class);
 			Vector2 pos2 = co2.get("getCenter", Vector2.class);
 			
+			PlaneApplet app = PlaneApplet.app;
+			
 			app.noFill();
 //			app.stroke(255,255,0,255, 5f);
 //			if (instance.getDataInt("hightlight_count") > 0) {
@@ -1258,7 +1260,7 @@ public class pNode {
 			
 			nWidgetGroup group = node.object("group", nWidgetGroup.class);
 			nWidget w = (nWidget)group.metodeGet("add_widget",(int)2);
-			w.copyLookFrom(app.gui.book.getModel("NP_base"));
+			w.copyLookFrom(PlaneApplet.app.gui.book.getModel("NP_base"));
 			w.setInfo(instance.getData("ref", String.class));
 			
 			w.setParent((nWidget)group.metodeGet("get_side_stack", 
@@ -1466,9 +1468,9 @@ public class pNode {
 	
 	
 	
-	public static void build_coms(PlaneApplet app) {
+	public static void build_coms() {
 		
-		float RS = app.gui.book.RS;
+		float RS = PlaneApplet.app.gui.book.RS;
 
 		newRunTool("run_var_boo_switch", CT.RUNP_VAR_BOO_SWITCH, 
 				new nRun() {public void run() {
@@ -2187,7 +2189,7 @@ public class pNode {
 			
 			nWidget w = interf.add_row_label(1,text);
 
-			w.copyColorFrom(app.gui.book.getModel("ref"));
+			w.copyColorFrom(PlaneApplet.app.gui.book.getModel("ref"));
 			
 			w.setBoundParent(true);
 			w.setScaleLimitNoDraw(scale_min, scale_max);
@@ -2265,7 +2267,7 @@ public class pNode {
 	
 			nWidget w = getCom(CT.COM_ADD_WIDGET,instance,param,nWidget.class);
 			w.setField(true)
-			.copyLookFrom(app.gui.book.getModel("text_field"));
+			.copyLookFrom(PlaneApplet.app.gui.book.getModel("text_field"));
 			int float_rez = (int)(1.2f * w.getLocalSX() / w.getFont()) - 3;
 			if (hasParam("var_link_ref", String.class) && 
 					hasParam("var_link_class", String.class)) { 
@@ -2324,7 +2326,7 @@ public class pNode {
 			int float_rez = (int)(1.2f * w.getLocalSX() / w.getFont()) - 3;
 			if (hasParam("run_right", nRun.class)) {
 				w.setRightTrigger();
-				w.copyLookFrom(app.gui.book.getModel("CL_right_trigg"));
+				w.copyLookFrom(PlaneApplet.app.gui.book.getModel("CL_right_trigg"));
 				nRun run = getParam("run_right", nRun.class);
 				w.addEventTriggerRight(new nRun(instance,param,run) {public void run() {
 					((nRun)args[2]).do_run((pInstance)args[0],(pPar)args[1]); }});
@@ -2373,7 +2375,7 @@ public class pNode {
 			nInterface interf = instance.object("interf", nInterface.class);
 			nWidget w = interf.add_row_slide(1,min,max);
 
-			w.copyColorFrom(app.gui.book.getModel("ref"));
+			w.copyColorFrom(PlaneApplet.app.gui.book.getModel("ref"));
 			
 			w.setSX(w.getLocalSX()*width/2f);
 			w.setSY(w.getLocalSY()*height);
@@ -2463,6 +2465,7 @@ public class pNode {
 	public static pStandard newNodeModel(String r, boolean buildable) {
 		return newNodeModel(r, "base", buildable); }
 	public static pStandard newNodeModel(String r, String g, boolean buildable) {
+		if (node_models.hasKey(r)) return null;
 		pStandard p = pStandard.newStandard("node_model_"+r, "inst");
 		node_models.put(r,p);
 		node_group.put(r,g);
@@ -2521,20 +2524,24 @@ public class pNode {
 		return c.get(cont,par,ct,args); }
 
 	public static void newRunTool(String r, CT cd, nRun rn) {
+		if (run_tools.hasKey(r)) return;
 		run_tools.put(r,rn); tool_codes.put(r,cd); tool_refs.put(cd,r); 
 	}
 
 	public static pCommande newComTool(String r, CT cd, nRun rn) {
+		if (com_tools.hasKey(r)) return com_tools.get(r);
 		pCommande c = pCommande.newCommande("com_node_tool_"+r,rn);
 		com_tools.put(r,c); tool_codes.put(r,cd); tool_refs.put(cd,r); 
 		return c; }
 
 	public static pCommande newComTool(String r, CT cd, Class<?> ct, nRun rn) {
+		if (com_tools.hasKey(r)) return com_tools.get(r);
 		pCommande c = pCommande.newCommande("com_node_tool_"+r,ct,rn);
 		com_tools.put(r,c); tool_codes.put(r,cd); tool_refs.put(cd,r); 
 		return c; }
 
 	public static pProcess newProcTool(String r, CT cd) {
+		if (proc_tools.hasKey(r)) return proc_tools.get(r);
 		pProcess c = pProcess.newProcess("proc_node_tool_"+r);
 		proc_tools.put(r,c); tool_codes.put(r,cd); tool_refs.put(cd,r); 
 		return c; }
@@ -2572,8 +2579,8 @@ public class pNode {
 	
 	
 	
-	public static void build_book(PlaneApplet app) {
-		nModelBook book = app.gui.book;
+	public static void build_book() {
+		nModelBook book = nGUI.book;
 		float RS = book.RS;
 		
 
@@ -2663,7 +2670,7 @@ public class pNode {
 		.setFont(RS*5f/4f)
 		.setMask(true)
 		;
-		if (app.config.RELEASE) 
+		if (PlaneApplet.app.config.RELEASE) 
 			PN_back.setOutline(true)
 			.set_color_outline(Utl.color(0));
 		
@@ -2677,7 +2684,7 @@ public class pNode {
 		.setPassif()
 		;
 		
-		book.newModelGroup("patch_node", new nModelGroup(app) { 
+		book.newModelGroup("patch_node", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup();
 
@@ -2691,7 +2698,7 @@ public class pNode {
 				nWidget selline = g.addWidget("selline", "PN_selline")
 						.setParent(ref);
 
-				nInterface interf = app.gui.addInterface() 
+				nInterface interf = PlaneApplet.app.gui.addInterface() 
 						.pop(back);
 				g.addObject("interf", interf);
 				
@@ -2831,7 +2838,7 @@ public class pNode {
 						
 						g.addObject("mouseOver", false);
 						ref.addEventLogic(new nRun() { public void run() {
-							if (back.mouseOver && app.input.mouseLeft.trigClick) {
+							if (back.mouseOver && PlaneApplet.app.input.mouseLeft.trigClick) {
 								if (!node.getDataBoo("selected")) node.run("select");
 								else node.run("unselect"); }
 							ref.setPos(node.getDataVec("pos"));

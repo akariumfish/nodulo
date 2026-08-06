@@ -77,7 +77,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 		vl_int = null; vl_flt = null; vlslide_flt = null; vlfld_flt = null;
 		vlslide_int = null; vlfld_int = null;
 		
-		vwp_stack_index = null;
+//		vwp_stack_index = null;
 		
 		watcher_pre_text = ""; watcher_post_text = "";
 		vl_flt_incr = 0; vl_flt_fact = 1;
@@ -151,7 +151,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 			if (vl_str != null) vl_str.unlinkWidget(this);
 			if (vlfld_flt != null) vlfld_flt.unlinkWidget(this);
 			if (vlfld_int != null) vlfld_int.unlinkWidget(this);
-			if (vwp_stack_index != null) vwp_stack_index.unlinkWidget(this);
+//			if (vwp_stack_index != null) vwp_stack_index.unlinkWidget(this);
 	
 			tmpw.clear();
 			for (nWidget w : childs) tmpw.add(w);
@@ -207,32 +207,32 @@ public class nWidget extends nModel implements Poolable, nClearable {
 			else gui.orphan_widgets.remove(this);
 			parent = p; p.childs.add(this); } return this; }
 
-	public nWidget setSiblingIndex(int p) { 
-		if (parent != null && getSiblingIndex() != p) {
-			parent.childs.remove(this); 
-			if (p > parent.childs.size()) p = parent.childs.size();
-			parent.childs.add(p, this); 
-			if (vwp_stack_index != null) vwp_stack_index.set(p);
-			int i = 0;
-			for (nWidget w : parent.childs) {
-				if (w.vwp_stack_index != null) w.vwp_stack_index.set(i);
-				i++; }
-		} 
-		if (parent == null && getSiblingIndex() != p) {
-			gui.orphan_widgets.remove(this); 
-			if (p > gui.orphan_widgets.size()) p = gui.orphan_widgets.size();
-			gui.orphan_widgets.add(p, this); 
-			if (vwp_stack_index != null) vwp_stack_index.set(p);
-			int i = 0;
-			for (nWidget w : gui.orphan_widgets) {
-				if (w.vwp_stack_index != null) w.vwp_stack_index.set(i);
-				i++; }
-		} 
-		return this; 
-	}
-	public int getSiblingIndex() { 
-		if (parent != null) { return parent.childs.indexOf(this); } 
-		else { return gui.orphan_widgets.indexOf(this); } }
+//	public nWidget setSiblingIndex(int p) { 
+//		if (parent != null && getSiblingIndex() != p) {
+//			parent.childs.remove(this); 
+//			if (p > parent.childs.size()) p = parent.childs.size();
+//			parent.childs.add(p, this); 
+//			if (vwp_stack_index != null) vwp_stack_index.set(p);
+//			int i = 0;
+//			for (nWidget w : parent.childs) {
+//				if (w.vwp_stack_index != null) w.vwp_stack_index.set(i);
+//				i++; }
+//		} 
+//		if (parent == null && getSiblingIndex() != p) {
+//			gui.orphan_widgets.remove(this); 
+//			if (p > gui.orphan_widgets.size()) p = gui.orphan_widgets.size();
+//			gui.orphan_widgets.add(p, this); 
+//			if (vwp_stack_index != null) vwp_stack_index.set(p);
+//			int i = 0;
+//			for (nWidget w : gui.orphan_widgets) {
+//				if (w.vwp_stack_index != null) w.vwp_stack_index.set(i);
+//				i++; }
+//		} 
+//		return this; 
+//	}
+//	public int getSiblingIndex() { 
+//		if (parent != null) { return parent.childs.indexOf(this); } 
+//		else { return gui.orphan_widgets.indexOf(this); } }
 	
 	public nWidget clearParent() { 
 		if (parent != null) { 
@@ -382,10 +382,9 @@ public class nWidget extends nModel implements Poolable, nClearable {
 			if (!isHovered) {
 				runEventList("eventMouseEnterRun");
 			}
-//				      if (showInfo) gui.info.showText(infoText);
 			isHovered = true;
 			
-//			if (has_info) gui.app.menu.pop_infopop(this);
+			if (has_info) gui.pop_infopop(this);
 			
 		} else {
 			if (isHovered) runEventList("eventMouseLeaveRun"); 
@@ -1360,26 +1359,26 @@ public class nWidget extends nModel implements Poolable, nClearable {
 	public nWidget toBack() {
 		if (parent != null) { parent.childs.remove(this); parent.childs.add(0, this); } 
 		else { gui.orphan_widgets.remove(this); gui.orphan_widgets.add(0, this); }
-		if (parent != null) {
-			int i = 0;
-			for (nWidget w : parent.childs) {
-				if (w.vwp_stack_index != null) w.vwp_stack_index.set(i); i++; } } 
-		if (parent == null) {
-			int i = 0;
-			for (nWidget w : gui.orphan_widgets) {
-				if (w.vwp_stack_index != null) w.vwp_stack_index.set(i); i++; } } 
+//		if (parent != null) {
+//			int i = 0;
+//			for (nWidget w : parent.childs) {
+//				if (w.vwp_stack_index != null) w.vwp_stack_index.set(i); i++; } } 
+//		if (parent == null) {
+//			int i = 0;
+//			for (nWidget w : gui.orphan_widgets) {
+//				if (w.vwp_stack_index != null) w.vwp_stack_index.set(i); i++; } } 
 		return this; }
 	public nWidget toFront() {
 		if (parent != null) { parent.childs.remove(this); parent.childs.add(this); } 
 		else { gui.orphan_widgets.remove(this); gui.orphan_widgets.add(this); }
-		if (parent != null) {
-			int i = 0;
-			for (nWidget w : parent.childs) {
-				if (w.vwp_stack_index != null) w.vwp_stack_index.set(i); i++; } } 
-		if (parent == null) {
-			int i = 0;
-			for (nWidget w : gui.orphan_widgets) {
-				if (w.vwp_stack_index != null) w.vwp_stack_index.set(i); i++; } } 
+//		if (parent != null) {
+//			int i = 0;
+//			for (nWidget w : parent.childs) {
+//				if (w.vwp_stack_index != null) w.vwp_stack_index.set(i); i++; } } 
+//		if (parent == null) {
+//			int i = 0;
+//			for (nWidget w : gui.orphan_widgets) {
+//				if (w.vwp_stack_index != null) w.vwp_stack_index.set(i); i++; } } 
 		return this; }
 
 	public boolean isOn() { return switchState; }
@@ -1563,7 +1562,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 	private sStr vl_str = null;
 
 	//widget property link
-	private sInt vwp_stack_index = null;
+//	private sInt vwp_stack_index = null;
 	
 	public void svalue_linking_update() {
 		if (vw_int != null) { text = watcher_pre_text + vw_int.get() + watcher_post_text; }
@@ -1589,9 +1588,9 @@ public class nWidget extends nModel implements Poolable, nClearable {
 		if (vl_str != null) { setText(vl_str.get()); }
 		if (vlfld_flt != null) { setText(Utl.trimFlt(vlfld_flt.get(), float_rez)); }
 		if (vlfld_int != null) { setText(Utl.tostr(vlfld_int.get())); }
-		if (vwp_stack_index != null && 
-				getSiblingIndex() != vwp_stack_index.get()) { 
-			setSiblingIndex(vwp_stack_index.get()); }
+//		if (vwp_stack_index != null && 
+//				getSiblingIndex() != vwp_stack_index.get()) { 
+//			setSiblingIndex(vwp_stack_index.get()); }
 	}
 	
 	public void link(sValue v) {
@@ -1614,7 +1613,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 		if (vl_str == v) { v.unlinkWidget(this); vl_str = null; }
 		if (vlfld_flt == v) { v.unlinkWidget(this); vlfld_flt = null; }
 		if (vlfld_int == v) { v.unlinkWidget(this); vlfld_int = null; }
-		if (vwp_stack_index == v) { v.unlinkWidget(this); vwp_stack_index = null; }
+//		if (vwp_stack_index == v) { v.unlinkWidget(this); vwp_stack_index = null; }
 	}
 	public nWidget setWatcher(sValue v) { 
 		if (v.isBoo()) setWatcher((sBoo)v);
@@ -1683,7 +1682,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 	
 	public nWidget setLink(sStr v) { link(v); vl_str = v; setText(vl_str.get()); return this; }
 	
-	public nWidget setStackIndexLink(sInt v) { link(v); vwp_stack_index = v; setSiblingIndex(v.get()); return this; }
+//	public nWidget setStackIndexLink(sInt v) { link(v); vwp_stack_index = v; setSiblingIndex(v.get()); return this; }
 	
 
 

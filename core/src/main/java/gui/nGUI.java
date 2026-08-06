@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import aa_nodulo.PlaneApplet;
 import app.nDrawer;
 import app.App;
 import app.Runner;
@@ -121,12 +122,14 @@ public class nGUI {
 	public Vector2 mouse_vec;
     public float scale = 1;
     public nGUI gui;
-    public nModelBook book;
+    public static nModelBook book;
     
     public Rectangle viewrect;
     
     public sInt val_widget_nb = null, val_free_widget_nb = null, 
     		val_wgroup_nb = null, val_free_wgroup_nb = null;
+    
+    
     
     public void add_info_svalues_in(sValueBloc b) {
 		val_widget_nb = b.newInt("val_widget_nb");
@@ -143,10 +146,9 @@ public class nGUI {
 		
 		new_param("entry_width", "2.0");
 		new_param("entry_height", "1.0");
-//		if (app.getPref("RELEASE", Boolean.class)) 
-//			new_param("entry_colors", "CL_release");
-//		else 
-		new_param("entry_colors", "CL_def");
+		if (PlaneApplet.app.config.RELEASE) 
+			new_param("entry_colors", "CL_release");
+		else new_param("entry_colors", "CL_def");
 		new_param("spacing", "2.0");
 		new_param("row_entry_model", "INT_row_entry_");
 		new_param("row_entry_button_model", "INT_row_entry_");
@@ -175,16 +177,16 @@ public class nGUI {
 	public boolean do_help = false;
 	public Color helper_light;
 
-	public nGUI(App app) { this(app,app.gdx,app,app.input,app.data); }
-	public nGUI(Runner _app, nDrawer.DrawContext c, nDrawer.Drawer dr, 
-			nInput i, sData d) {
-		in = i; data = d; context = c; drawer = dr;
-		runner = _app;
-		cam = c.getCamera();
+	public nWidgetGroup group_infopop = null;
+	public nWidgetGroup group_popWindow = null;
+	
+	public nGUI(App app) {
+		in = app.input; data = app.data; context = app.gdx; drawer = app;
+		runner = app;
+		cam = context.getCamera();
 		gui = this;
-		book = new nModelBook();
 		mouse_vec = in.mouse;
-		viewrect = c.getScreenRect();
+		viewrect = context.getScreenRect();
 		
 		helper_light = Utl.color(240,230,220,150);
 
@@ -199,6 +201,35 @@ public class nGUI {
 		setup_params();
 		
 		add_info_svalues_in(data.setting_bloc);
+
+		boolean has_static = true;
+		if (book == null) {
+			has_static = false;
+			book = new nModelBook();
+			nGUIBook.build_color(book);
+		}
+		
+		nGUIBook.build_theme_color(book); 
+		
+		if (!has_static) {
+			nGUIBook.build_all_book(book);
+			nMenu.build_book();
+			nToolBox.build_book();
+		}
+
+		if (PlaneApplet.app.config.RELEASE) {
+			App.ap.gdx.drawer.color_back = new Color(
+					nGUI.book.getModel("CL_release").color_background);
+			App.ap.gdx.drawer.buffer_clear_color = new Color(
+					nGUI.book.getModel("CL_VS_back").color_background); 
+		} else {
+			App.ap.gdx.drawer.color_back = Utl.color(70);
+			App.ap.gdx.drawer.buffer_clear_color = new Color(
+					nGUI.book.getModel("CL_VS_back").color_background); 
+		}
+	
+		group_infopop = addWidgetGroup("info_pop");
+		group_popWindow = addWidgetGroup("pop_window");
 	}
 
 	public void dispose() {
@@ -211,6 +242,16 @@ public class nGUI {
 //		in = null; app = null; gui = null; book = null; mouse_vec = null;
 	}
 
+	public void pop_infopop(nWidget pop) {
+		group_infopop.metode("pop", pop); }
+
+	public nInterface get_popWindow() {
+		return (nInterface)group_popWindow.metodeGet("get_interf"); }
+	public void pop_popwindow(String title) {
+		group_popWindow.metode("pop", title); }
+	public void close_popwindow() {
+		group_popWindow.metode("close"); }
+	
 	//used only for hovering
 	public final ArrayList<nWidget> drawing_stack = new ArrayList<nWidget>();
 	

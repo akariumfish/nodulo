@@ -255,7 +255,7 @@ public class pAnk {
 	
 	public static void build_book(Applet app) {
 		
-		nModelBook book = app.gui.book;
+		nModelBook book = nGUI.book;
 		float RS = book.RS;
 
 		ANK_GRAB_BASE_SIZE = RS * 5f / 8f;

@@ -18,11 +18,11 @@ public class pNodeSpace {
 	
 	
 	
-	public static void build_sheet(PlaneApplet app) {
+	public static void build_sheet(sData data, boolean has_build_statics) {
 		
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
-		pSheet.SheetModel init_space_model = pSheet.newSheet("init_space", true)
+		pSheet.SheetModel init_space_model = pSheet.newSheet(data, "init_space", true)
 			.setSetupRun(new nRun() { public void run() {
 				pSheet sheet = arg(0, pSheet.class);
 				if (sheet == null) return;
@@ -43,114 +43,118 @@ public class pNodeSpace {
 		}})
 		;
 		
-		init_space_model.addMacro("constructor", "constructor");
-		init_space_model.addMacro("init_space_def", "init_space_def");
-		
+		if (!has_build_statics) {
+			init_space_model.addMacro("constructor", "constructor");
+			init_space_model.addMacro("init_space_def", "init_space_def");
+		}
 //		pSheet.setDefMacro("init_space", "init_space_def");
 		
 		
 		
 		
-		pSheet.SheetModel common_param_model = pSheet.newSheet("common_param", true);
-		common_param_model.getBuilder()
-		.addEventLoad(new nRun() { public void run(Object o) {
-			sValueBloc b = (sValueBloc)o; 
-			pSheet sheet = b.object("sheet", pSheet.class);
-			nRun run_frame = new nRun(sheet) {public void run() { 
-				pSheet sheet = (pSheet)builder;
-				pSpace space = app.space;
-//				for (pProperty prop : pProperty.body_propertys.all()) 
-//						if (prop.mode_common) {
-//					sPool<pParam> pool = space.param_pools.get(prop.ref);
-//					if (pool != null) for (pParam par : Utl.duplic(pool.all())) {
-//						boolean found = false;
-//						ArrayList<pInstance> toclr = new ArrayList<pInstance>();
-//						for (pInstance n : sheet.nodes) {
-//							if (pNode.node_group.get(pNode.stand_to_ref.get(n.stand))
-//									.equals("prop") && n.hasObject("param") && 
-//									 n.object("param", pParam.class) == par) {
-//								if (found) toclr.add(n);
-//								found = true;
-//							}
-//						}
-//						for (pInstance n : toclr) n.clear();
-//						if (!found) {
-//							pInstance n = sheet.newNode(prop.ref);
-//							n.run("defParam", par.pool_ref);
-//							n.run("find_place");
-//						}
-//					}
-//				}
-//				int prop_cnt = 0;
-//				float st_y = 0;
-//				for (pProperty prop : pProperty.body_propertys.all()) 
-//						if (prop.mode_common) {
-//					sPool<pParam> pool = space.param_pools.get(prop.ref);
-//					if (pool != null) {
-//						ArrayList<pInstance> member = new ArrayList<pInstance>();
-//						for (pParam par : Utl.duplic(pool.all())) {
-//							for (pInstance n : sheet.nodes) {
-//								if (pNode.node_group.get(pNode.stand_to_ref.get(n.stand))
-//										.equals("prop") && n.hasObject("param") && 
-//										 n.object("param", pParam.class) == par) {
-//									member.add(n);
-//								}
-//							}
-//						}
-//						int row_l = 3;
-//						float max_sx = 0;
-//						float max_sy = 0;
-//						for (pInstance n : member) {
-//							nWidgetGroup group = n.object("group", nWidgetGroup.class);
-//							float sx = group.get("selline").getParentRect().width;
-//							float sy = group.get("selline").getParentRect().height;
-//							if (sx > max_sx) max_sx = sx; 
-//							if (sy > max_sy) max_sy = sy; }
-//						max_sx += RS; max_sy += RS;
-//						int mem_cnt = 0;
-//						float tot_sx = max_sx * row_l;
-//						if (member.size() < row_l) tot_sx = max_sx * member.size();
-//						for (pInstance n : member) {
-//							n.run("go_to", mem_cnt * max_sx - tot_sx / 2f, st_y); 
-//							mem_cnt++; 
-//							if (mem_cnt >= row_l) {
-//								mem_cnt = 0; st_y -= max_sy; }
-//						}
-//						st_y -= max_sy;
-////						if (member.size() > 0) prop_cnt++;
-//					}
-//				}
-			}};
-			b.addObject("run_frame", run_frame);
-			app.addDelayEvent(30, new nRun() { public void run() {
-				sheet.patch.addEventFrame(run_frame);
-			}});
-		}})
-		.addEventClear(new nRun() { public void run(Object o) {
-			sValueBloc b = (sValueBloc)o; 
-			pSheet sheet = b.object("sheet", pSheet.class);
-			sheet.patch.removeEventFrame(b.object("run_frame", nRun.class));
-		}})
-		;
-		
-		common_param_model.addMacro("bullet_blueprint", "bullet_blueprint");
-		common_param_model.addMacro("body_blueprint", "body_blueprint");
-		common_param_model.addMacro("wall_blueprint", "wall_blueprint");
-		common_param_model.addMacro("PARAM_SETUP", "PARAM_SETUP");
-		
-//		pSheet.setDefMacro("common_param", "PARAM_SETUP");
-		
-
-		
-
-		build_blueprint(app);
-
+		pSheet.SheetModel common_param_model = pSheet.newSheet(data, "common_param", true);
+		if (!has_build_statics) {
+			common_param_model.getBuilder()
+			.addEventLoad(new nRun() { public void run(Object o) {
+				sValueBloc b = (sValueBloc)o; 
+				pSheet sheet = b.object("sheet", pSheet.class);
+				nRun run_frame = new nRun(sheet) {public void run() { 
+					pSheet sheet = (pSheet)builder;
+					pSpace space = PlaneApplet.app.space;
+	//				for (pProperty prop : pProperty.body_propertys.all()) 
+	//						if (prop.mode_common) {
+	//					sPool<pParam> pool = space.param_pools.get(prop.ref);
+	//					if (pool != null) for (pParam par : Utl.duplic(pool.all())) {
+	//						boolean found = false;
+	//						ArrayList<pInstance> toclr = new ArrayList<pInstance>();
+	//						for (pInstance n : sheet.nodes) {
+	//							if (pNode.node_group.get(pNode.stand_to_ref.get(n.stand))
+	//									.equals("prop") && n.hasObject("param") && 
+	//									 n.object("param", pParam.class) == par) {
+	//								if (found) toclr.add(n);
+	//								found = true;
+	//							}
+	//						}
+	//						for (pInstance n : toclr) n.clear();
+	//						if (!found) {
+	//							pInstance n = sheet.newNode(prop.ref);
+	//							n.run("defParam", par.pool_ref);
+	//							n.run("find_place");
+	//						}
+	//					}
+	//				}
+	//				int prop_cnt = 0;
+	//				float st_y = 0;
+	//				for (pProperty prop : pProperty.body_propertys.all()) 
+	//						if (prop.mode_common) {
+	//					sPool<pParam> pool = space.param_pools.get(prop.ref);
+	//					if (pool != null) {
+	//						ArrayList<pInstance> member = new ArrayList<pInstance>();
+	//						for (pParam par : Utl.duplic(pool.all())) {
+	//							for (pInstance n : sheet.nodes) {
+	//								if (pNode.node_group.get(pNode.stand_to_ref.get(n.stand))
+	//										.equals("prop") && n.hasObject("param") && 
+	//										 n.object("param", pParam.class) == par) {
+	//									member.add(n);
+	//								}
+	//							}
+	//						}
+	//						int row_l = 3;
+	//						float max_sx = 0;
+	//						float max_sy = 0;
+	//						for (pInstance n : member) {
+	//							nWidgetGroup group = n.object("group", nWidgetGroup.class);
+	//							float sx = group.get("selline").getParentRect().width;
+	//							float sy = group.get("selline").getParentRect().height;
+	//							if (sx > max_sx) max_sx = sx; 
+	//							if (sy > max_sy) max_sy = sy; }
+	//						max_sx += RS; max_sy += RS;
+	//						int mem_cnt = 0;
+	//						float tot_sx = max_sx * row_l;
+	//						if (member.size() < row_l) tot_sx = max_sx * member.size();
+	//						for (pInstance n : member) {
+	//							n.run("go_to", mem_cnt * max_sx - tot_sx / 2f, st_y); 
+	//							mem_cnt++; 
+	//							if (mem_cnt >= row_l) {
+	//								mem_cnt = 0; st_y -= max_sy; }
+	//						}
+	//						st_y -= max_sy;
+	////						if (member.size() > 0) prop_cnt++;
+	//					}
+	//				}
+				}};
+				b.addObject("run_frame", run_frame);
+				App.ap.addDelayEvent(30, new nRun() { public void run() {
+					sheet.patch.addEventFrame(run_frame);
+				}});
+			}})
+			.addEventClear(new nRun() { public void run(Object o) {
+				sValueBloc b = (sValueBloc)o; 
+				pSheet sheet = b.object("sheet", pSheet.class);
+				sheet.patch.removeEventFrame(b.object("run_frame", nRun.class));
+			}})
+			;
+			
+			common_param_model.addMacro("bullet_blueprint", "bullet_blueprint");
+			common_param_model.addMacro("body_blueprint", "body_blueprint");
+			common_param_model.addMacro("wall_blueprint", "wall_blueprint");
+			common_param_model.addMacro("PARAM_SETUP", "PARAM_SETUP");
+			
+	//		pSheet.setDefMacro("common_param", "PARAM_SETUP");
+			
+			
+			
+			
+			build_blueprint();
+			
+			
+		}
 		
 		
 	}
 	
 
-	public static void build_blueprint(PlaneApplet app) {
+	public static void build_blueprint() {
 		
 		
 
@@ -287,13 +291,13 @@ public class pNodeSpace {
 
 	
 	
-	public static void build_nodes(PlaneApplet app) {
+	public static void build_nodes() {
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
-		build_param_chain_nodes(app);
+		build_param_chain_nodes();
 		
-		build_sel_body_node(app);
+		build_sel_body_node();
 		
 
 		pNode.newNodeModel("space_init", false)
@@ -305,10 +309,10 @@ public class pNodeSpace {
 				co.run("send");
 			}};
 			instance.addObject("run_space_start", run_space_start);
-			app.space.addEventSpaceStart(run_space_start);
+			PlaneApplet.app.space.addEventSpaceStart(run_space_start);
 		}})
 		.useClear().commande(new nRun() { public void run() {
-			app.space.removeEventSpaceStart(instance.object("run_space_start", nRun.class));
+			PlaneApplet.app.space.removeEventSpaceStart(instance.object("run_space_start", nRun.class));
 		}}).useInit()
 		.openSec()
 		.run(pNode.getRun(CT.RUNP_ADD_LABEL), "space_start > ", (int)8)
@@ -332,7 +336,7 @@ public class pNodeSpace {
 		pStandard stand_constructor = pNode.newNodeModel("constructor", "body");
 		stand_constructor.newRun("new_body", new nRun() {public Object get() {
 			
-			pSpace space = app.space;
+			pSpace space = PlaneApplet.app.space;
 			pParam bluep = null;
 			
 			String print_name = instance.getVar("print_name", String.class);
@@ -420,7 +424,7 @@ public class pNodeSpace {
 				nWidget trigg_w = instance.get("get_mapped_widget", nWidget.class, 
 						"trigg_dropm_print");
 				if (trigg_w == null) return;
-				pSpace space = app.space;
+				pSpace space = PlaneApplet.app.space;
 				instance.patch.patch_dropmenu.metode("clear_entrys");
 				for (String br : space.param_pools.get("blueprint").allKey()) {
 					String nm = space.param_pools.get("blueprint")
@@ -475,7 +479,7 @@ public class pNodeSpace {
 			String r = m.getKey();
 			pProperty prop = m.getValue();
 //			if (!prop.mode_common) continue;
-			pStandard stand = build_prop_node(app,r,prop);
+			pStandard stand = build_prop_node(r,prop);
 			
 			for (nRun rn : prop.node_run) {
 				stand.openSec().run(rn).closeSec();
@@ -490,15 +494,15 @@ public class pNodeSpace {
 	
 	
 
-	private static pStandard build_prop_node(PlaneApplet app, String r, pProperty prop) {
+	private static pStandard build_prop_node(String r, pProperty prop) {
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 		
 		pStandard stand = pNode.newNodeModel(r, "prop");
 		stand.newRun("defParam", new nRun() {public void run() { 
 			String par_ref = arg(0,String.class);
 			if (par_ref == null) return; 
-			pParam par = app.space.getParam(prop.ref, par_ref);
+			pParam par = PlaneApplet.app.space.getParam(prop.ref, par_ref);
 			if (par == null) return; 
 			instance.setObject("param", par);
 			instance.setVar("param_used", par.pool_ref);
@@ -514,7 +518,7 @@ public class pNodeSpace {
 		.process().commande(new nRun() {public void run() {
 			instance.addObject("prop", prop);
 			if (!instance.hasVar("param_used")) { instance.addVar("param_used", ""); } 
-			pSpace space = app.space;
+			pSpace space = PlaneApplet.app.space;
 			pParam par = space.getParam(prop.ref, instance.getVar("param_used", String.class));
 			if (par == null && !space.client_space) {
 				par = space.new_param(prop.ref);
@@ -547,9 +551,9 @@ public class pNodeSpace {
 			instance.patch.addEventFrame(run_frame);
 		}})
 		.useLoad().commande(new nRun() {public void run() { 
-			app.addDelayEvent(1, new nRun(instance) { public void run() {
+			App.ap.addDelayEvent(1, new nRun(instance) { public void run() {
 				pInstance inst = (pInstance)builder;
-				pSpace space = app.space;
+				pSpace space = PlaneApplet.app.space;
 				pParam par = space.getParam(prop.ref, inst.getVar("param_used", String.class));
 				if (par == null && !space.client_space) {
 					par = space.new_param(prop.ref);
@@ -598,7 +602,7 @@ public class pNodeSpace {
 						"trigg_dropm_param");
 				if (triggP_w == null) return;
 				instance.patch.patch_dropmenu.metode("clear_entrys");
-				for (pParam param : app.space.param_pools.get(prop.ref).all()) {
+				for (pParam param : PlaneApplet.app.space.param_pools.get(prop.ref).all()) {
 					String par = param.pool_ref;
 					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
 							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
@@ -704,10 +708,10 @@ public class pNodeSpace {
 	
 
 
-	public static void build_param_chain_nodes(PlaneApplet app) {
+	public static void build_param_chain_nodes() {
 			
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
 		
 		
@@ -761,7 +765,7 @@ public class pNodeSpace {
 					interf.add_row_label(4, data_ref);
 					nWidget w = interf.add_row_label(6, "");
 					w.setField(true)
-					.copyLookFrom(app.gui.book.getModel("text_field"));
+					.copyLookFrom(nGUI.book.getModel("text_field"));
 					w.addEventFieldChange(new nRun(head) {public void run() {
 						pInstance target = (pInstance)builder;
 							target.setVar(data_ref, w.getText());
@@ -779,7 +783,7 @@ public class pNodeSpace {
 				interf.add_row_label(3, data_ref);
 				nWidget w = interf.add_row_label(3, "");
 				w.setField(true)
-				.copyLookFrom(app.gui.book.getModel("text_field"));
+				.copyLookFrom(nGUI.book.getModel("text_field"));
 				int float_rez = (int)(1.2f * w.getLocalSX() / w.getFont()) - 3;
 				w.addEventFieldChange(new nRun(head) {public void run() {
 					pInstance target = (pInstance)builder;
@@ -821,7 +825,7 @@ public class pNodeSpace {
 				interf.add_row_label(3, data_ref + " : X");
 				nWidget w = interf.add_row_label(3, "");
 				w.setField(true)
-				.copyLookFrom(app.gui.book.getModel("text_field"));
+				.copyLookFrom(nGUI.book.getModel("text_field"));
 				int float_rez = (int)(1.2f * w.getLocalSX() / w.getFont()) - 3;
 				w.addEventFieldChange(new nRun(head) {public void run() {
 					pInstance target = (pInstance)builder;
@@ -870,7 +874,7 @@ public class pNodeSpace {
 				interf.add_row_label(3, "           Y");
 				nWidget w2 = interf.add_row_label(3, "");
 				w2.setField(true)
-				.copyLookFrom(app.gui.book.getModel("text_field"));
+				.copyLookFrom(nGUI.book.getModel("text_field"));
 				w2.addEventFieldChange(new nRun(head) {public void run() {
 					pInstance target = (pInstance)builder;
 					float y = Utl.tofloat(w2.getText());
@@ -912,7 +916,7 @@ public class pNodeSpace {
 				interf.add_row_label(3, data_ref);
 				nWidget w = interf.add_row_label(3, "");
 				w.setField(true)
-				.copyLookFrom(app.gui.book.getModel("text_field"));
+				.copyLookFrom(nGUI.book.getModel("text_field"));
 				w.addEventFieldChange(new nRun(head) {public void run() {
 					pInstance target = (pInstance)builder;
 						target.setVar(data_ref, Utl.toint(w.getText()));
@@ -952,7 +956,7 @@ public class pNodeSpace {
 		}})
 		.process()
 			.commande(new nRun() {public void run() {
-				app.addDelayEvent(1, new nRun(instance) {public void run() {
+				App.ap.addDelayEvent(1, new nRun(instance) {public void run() {
 					pInstance inst = (pInstance)builder;
 					if (inst.object("got_data") == null)
 						inst.run("set_data", inst.getVar("data_ref", String.class));
@@ -971,21 +975,21 @@ public class pNodeSpace {
 	
 	
 	
-	public static void build_sel_body_node(PlaneApplet app) {
+	public static void build_sel_body_node() {
 		
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
 
 		pStandard stand_sel_body = pNode.newNodeModel("sel_body", "body");
 		stand_sel_body.newRun("select_body", new nRun() {public void run() {
 			if (args.length < 1) return;
 			String bod_ref = arg(0, String.class);
-			pBody bod = app.space.body_pool.get(bod_ref);
+			pBody bod = PlaneApplet.app.space.body_pool.get(bod_ref);
 			if (bod == null) return;
 			
 			if (bod.hasParam("owner") && bod.getBoo("owner", "owned") && 
-					!bod.getStr("owner", "owner").equals(app.config.player_ref)) return;
+					!bod.getStr("owner", "owner").equals(PlaneApplet.app.config.player_ref)) return;
 			
 			instance.run("unselect_body");
 			
@@ -993,7 +997,7 @@ public class pNodeSpace {
 				bod.setBoo("highlightable", "lighted", true);
 			instance.setVar("owned", bod.getBoo("owner", "owned"));
 			instance.setVar("body_ref", bod.pool_ref);
-			pGeom geom = app.getSystem(pGeom.class);
+			pGeom geom = PlaneApplet.app.getSystem(pGeom.class);
 			geom.removeEventBodyClic(instance.object("clic_run", nRun.class));
 			geom.removeEventEmptyClic(instance.object("empty_clic_run", nRun.class));
 			
@@ -1019,14 +1023,14 @@ public class pNodeSpace {
 			}
 		}})
 		.newRun("unselect_body", new nRun() {public void run() {
-			pBody bod = app.space.body_pool.get(instance.getVar("body_ref", String.class));
+			pBody bod = PlaneApplet.app.space.body_pool.get(instance.getVar("body_ref", String.class));
 			if (bod == null) return;
 			if (bod.hasParam("highlightable")) 
 				bod.setBoo("highlightable", "lighted", false);
 			
 			instance.setVar("owned", false);
 			instance.setVar("body_ref", "");
-			pGeom geom = app.getSystem(pGeom.class);
+			pGeom geom = PlaneApplet.app.getSystem(pGeom.class);
 			geom.removeEventBodyClic(instance.object("clic_run", nRun.class));
 			geom.removeEventEmptyClic(instance.object("empty_clic_run", nRun.class));
 			
@@ -1054,7 +1058,7 @@ public class pNodeSpace {
 				pInstance ank = instance.object("ank", pInstance.class);
 				if (ank == null) return;
 				if (instance.getVar("body_ref", String.class) == null) return;
-				pBody bod = app.space.body_pool.get(instance.getVar("body_ref", String.class));
+				pBody bod = PlaneApplet.app.space.body_pool.get(instance.getVar("body_ref", String.class));
 				if (bod == null || !bod.hasParam("ref")) return;
 				ank.setVar("ank_pos", new Vector2(bod.getVec("ref", "pos")));
 				ank.run("recalc");
@@ -1065,7 +1069,7 @@ public class pNodeSpace {
 				pInstance ank = instance.object("ank", pInstance.class);
 				if (ank == null) return;
 				if (instance.getVar("body_ref", String.class) == null) return;
-				pBody bod = app.space.body_pool.get(instance.getVar("body_ref", String.class));
+				pBody bod = PlaneApplet.app.space.body_pool.get(instance.getVar("body_ref", String.class));
 				if (bod == null || !bod.hasParam("ref")) return;
 				ank.setVar("ank_pos", new Vector2(bod.getVec("ref", "pos")));
 				ank.run("recalc");
@@ -1073,9 +1077,9 @@ public class pNodeSpace {
 		}})
 		.process()
 		.useInit().commande(new nRun() {public void run() {
-			app.time.addPrevTickBric(instance);
-			app.time.addTickBric(instance);
-			pGeom geom = app.getSystem(pGeom.class);
+			PlaneApplet.app.time.addPrevTickBric(instance);
+			PlaneApplet.app.time.addTickBric(instance);
+			pGeom geom = PlaneApplet.app.getSystem(pGeom.class);
 			nRun clic_run = new nRun(instance) { public void run(Object o) {
 				pInstance inst = ((pInstance)builder);
 				inst.setVar("select", false);
@@ -1106,16 +1110,16 @@ public class pNodeSpace {
 			geom.addEventBodyClear(instance.object("clear_run", nRun.class));
 		}})
 		.useLoad().commande(new nRun() {public void run() {
-			app.addDelayEvent(1,new nRun(instance) { public void run() {
+			App.ap.addDelayEvent(1,new nRun(instance) { public void run() {
 				pInstance inst = ((pInstance)builder);
 				if (inst.getVar("body_ref", String.class) == null) return;
-				pBody bod = app.space.body_pool.get(inst.getVar("body_ref", String.class));
+				pBody bod = PlaneApplet.app.space.body_pool.get(inst.getVar("body_ref", String.class));
 				if (bod != null) inst.run("select_body", bod.pool_ref); }});
 		}}).useInit()
 		.useClear().commande(new nRun() {public void run() {
-			app.time.removePrevTickBric(instance);
-			app.time.removeTickBric(instance);
-			pGeom geom = app.getSystem(pGeom.class);
+			PlaneApplet.app.time.removePrevTickBric(instance);
+			PlaneApplet.app.time.removeTickBric(instance);
+			pGeom geom = PlaneApplet.app.getSystem(pGeom.class);
 			geom.removeEventEmptyClic(instance.object("empty_clic_run", nRun.class));
 			geom.removeEventBodyClic(instance.object("clic_run", nRun.class));
 			geom.removeEventBodyClear(instance.object("clear_run", nRun.class));
@@ -1130,7 +1134,7 @@ public class pNodeSpace {
 						"trigg_dropm_body");
 				if (trigg_w == null) return;
 				instance.patch.patch_dropmenu.metode("clear_entrys");
-				for (String par : app.space.body_pool.allKey()) {
+				for (String par : PlaneApplet.app.space.body_pool.allKey()) {
 					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
 							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
 					w1.addEventTrigger(new nRun(instance) { public void run() {
@@ -1142,7 +1146,7 @@ public class pNodeSpace {
 		.closeSec()
 		.openSec()
 			.param("run", new nRun() {public void run() {
-				pGeom geom = app.getSystem(pGeom.class);
+				pGeom geom = PlaneApplet.app.getSystem(pGeom.class);
 				nRun clic_run = instance.object("clic_run", nRun.class); 
 				nRun empty_clic_run = instance.object("empty_clic_run", nRun.class); 
 				if (instance.getVar("select", Boolean.class)) {
@@ -1157,21 +1161,21 @@ public class pNodeSpace {
 		.openSec()
 			.param("run", new nRun() {public void run() {
 				if (instance.getVar("body_ref", String.class) == null) return;
-				pBody bod = app.space.body_pool.get(instance.getVar("body_ref", String.class));
+				pBody bod = PlaneApplet.app.space.body_pool.get(instance.getVar("body_ref", String.class));
 				if (bod == null) return;
 				if (instance.getVar("owned", Boolean.class)) {
 					if (bod.hasParam("owner") && !bod.getBoo("owner", "owned")) {
 						bod.setBoo("owner", "owned", true);
-						bod.setStr("owner", "owner", app.config.player_ref);
+						bod.setStr("owner", "owner", PlaneApplet.app.config.player_ref);
 					} else if (bod.hasParam("owner") && bod.getBoo("owner", "owned") && 
-							!bod.getStr("owner", "owner").equals(app.config.player_ref)) {
+							!bod.getStr("owner", "owner").equals(PlaneApplet.app.config.player_ref)) {
 						instance.setVar("owned", false);
 					} else if (!bod.hasParam("owner")) {
 						instance.setVar("owned", false);
 					}
 				} else {
 					if (bod.hasParam("owner") && bod.getBoo("owner", "owned") && 
-							bod.getStr("owner", "owner").equals(app.config.player_ref)) {
+							bod.getStr("owner", "owner").equals(PlaneApplet.app.config.player_ref)) {
 						bod.setBoo("owner", "owned", false);
 						bod.setStr("owner", "owner", "");
 					} 
@@ -1201,7 +1205,7 @@ public class pNodeSpace {
 				pInstance node = instance.object("node", pInstance.class);
 				if (node.getVar("body_ref", String.class) == null) 
 					return null;
-				return app.space.body_pool.get(node.getVar("body_ref", String.class));
+				return PlaneApplet.app.space.body_pool.get(node.getVar("body_ref", String.class));
 			}})
 			.param("keys", new String[] {"body"}, "filters", new String[] {"body"}) 
 			.run(pNode.getRun(CT.RUNS_ADD_CO_OUT), "co_sel_bod")
@@ -1211,7 +1215,7 @@ public class pNodeSpace {
 	//				app.log("sel bod received");
 				pInstance node = instance.object("node", pInstance.class);
 				if (node.getVar("body_ref", String.class) == null) return;
-				pBody bod = app.space.body_pool.get(node.getVar("body_ref", String.class));
+				pBody bod = PlaneApplet.app.space.body_pool.get(node.getVar("body_ref", String.class));
 				if (bod == null) return;
 				String par_ref = arg(0,String.class);
 				String data_ref = arg(1,String.class);
@@ -1244,7 +1248,7 @@ public class pNodeSpace {
 						ank.setVar("grab", !node.getVar("track", Boolean.class));
 	//						ank.setVar("title", "Selected Body");
 						if (node.getVar("body_ref", String.class) == null) return;
-						pBody bod = app.space.body_pool.get(node.getVar("body_ref", String.class));
+						pBody bod = PlaneApplet.app.space.body_pool.get(node.getVar("body_ref", String.class));
 						if (bod != null) ank.setVar("view_ank", true);
 						else ank.setVar("view_ank", false);
 						break;
@@ -1288,7 +1292,7 @@ public class pNodeSpace {
 				if (trigg_w == null) return;
 				pInstance head = instance.get("get_chain_head", pInstance.class);
 				if (head == null) return;
-				pBody bod = app.space.body_pool.get(head.getVar("body_ref", String.class));
+				pBody bod = PlaneApplet.app.space.body_pool.get(head.getVar("body_ref", String.class));
 				if (bod == null) return;
 				instance.patch.patch_dropmenu.metode("clear_entrys");
 				for (String par : bod.params.allKey()) {
@@ -1313,7 +1317,7 @@ public class pNodeSpace {
 				if (trigg_w == null) return;
 				pInstance head = instance.get("get_chain_head", pInstance.class);
 				if (head == null) return;
-				pBody bod = app.space.body_pool.get(head.getVar("body_ref", String.class));
+				pBody bod = PlaneApplet.app.space.body_pool.get(head.getVar("body_ref", String.class));
 				if (bod == null) return;
 				String param_ref = instance.getVar("param_ref", String.class);
 				if (!bod.hasParam(param_ref)) return;
@@ -1335,7 +1339,7 @@ public class pNodeSpace {
 				pInstance node = instance.object("node", pInstance.class);
 				pInstance head = node.get("get_chain_head", pInstance.class);
 				if (head == null) return null;
-				pBody bod = app.space.body_pool.get(head.getVar("body_ref", String.class));
+				pBody bod = PlaneApplet.app.space.body_pool.get(head.getVar("body_ref", String.class));
 				if (bod == null) return null;
 				String param_ref = node.getVar("param_ref", String.class);
 				String body_ref = node.getVar("body_ref", String.class);
@@ -1358,7 +1362,7 @@ public class pNodeSpace {
 //	public static void build_old_nodes(Applet app) {
 //		
 //
-//		float RS = app.gui.book.RS;
+//		float RS = nGUI.book.RS;
 //
 //
 //		pStandard stand_new_body = pNode.newNodeModel("new_body", "body");
@@ -1439,7 +1443,7 @@ public class pNodeSpace {
 ////			pInstance co_out = instance.get("get_co", pInstance.class, "body");
 ////			co_out.run("send", bod);
 ////			
-//////			app.addDelayEvent(2, new nRun() { public void run() {
+//////			App.ap.addDelayEvent(2, new nRun() { public void run() {
 //////				bod.space.plane.getSystem(pGeom.class).select_body(bod);
 //////			}});
 ////			

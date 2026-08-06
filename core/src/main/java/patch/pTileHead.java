@@ -18,11 +18,11 @@ public class pTileHead {
 	
 	public static int func_counter = 0;
 
-	public static void build_nodes(PlaneApplet app) {
+	public static void build_nodes() {
 
 //		build_stack_editor(app);
 		
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 		
 
 		pStandard exec_context = pStandard.newStandard("exec_context_abstract", "inst");
@@ -245,7 +245,7 @@ public class pTileHead {
 			head.setData("gui", gui);
 			instance.setObject("is_script", !gui);
 			instance.setVar("script", !gui);
-			if (gui) { app.addDelayEvent(1, new nRun() { public void run() {
+			if (gui) { App.ap.addDelayEvent(1, new nRun() { public void run() {
 				head.run("build_script", script); }}); }
 		}})
 		.newRun("build_saved_script", new nRun() {public void run() { 
@@ -604,7 +604,7 @@ public class pTileHead {
 	
 	
 	
-	public static void build_tiles(PlaneApplet app) {
+	public static void build_tiles() {
 
 		pStandard stack_start_abstract = pStandard.newStandard("stack_start_abstract", "inst");
 		stack_start_abstract
@@ -801,7 +801,7 @@ public class pTileHead {
 
 	public static void build_stack_editor(PlaneApplet app) {
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
 		pNode.newChainnedNodeModel("stack_editor")
 		.process()

@@ -11,17 +11,17 @@ import app.*;
 
 public class pCommande {
 
-	public static nMap<pCommande> commandes;
-	public static PlaneApplet app;
-	
-	public static void build(PlaneApplet a) {
-		app = a; 
-		commandes = new nMap<pCommande>(); 
-	}
+	public static nMap<pCommande> commandes = new nMap<pCommande>(); 
+//	public static PlaneApplet app;
+//	
+//	public static void build(PlaneApplet a) {
+//		app = a; 
+//		commandes = new nMap<pCommande>(); 
+//	}
 
 	public static pCommande newCommande(String r) {
 		if (commandes.hasKey(r)) {
-			Utl.logn("ERROR: cant create commande, <"+r+"> allready exist"); return null; }
+			Utl.logn("ERROR: cant create commande, <"+r+"> allready exist"); return commandes.get(r); }
 		pCommande p = new pCommande(r); return p; }
 	
 	public static pCommande newCommande(String r, nRun rn) {

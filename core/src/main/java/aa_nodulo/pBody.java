@@ -14,13 +14,6 @@ import app.App;
 
 public class pBody extends sPoolable {
 
-	public static App app;
-
-	public static void build(App a) {
-		app = a;
-	}
-	
-	
 	
 	
 	

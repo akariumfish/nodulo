@@ -9,17 +9,17 @@ import app.App;
 
 public class pProcess {
 
-	public static nMap<pProcess> process;
-	public static App app;
-	
-	public static void build(App a) {
-		app = a; 
-		process = new nMap<pProcess>(); 
-	}
+	public static nMap<pProcess> process = new nMap<pProcess>(); 
+//	public static App app;
+//	
+//	public static void build(App a) {
+//		app = a; 
+//		process = new nMap<pProcess>(); 
+//	}
 
 	public static pProcess newProcess(String r) {
 		if (process.hasKey(r)) {
-			Utl.logn("ERROR: cant create process, <"+r+"> allready exist"); return null; }
+			Utl.logn("ERROR: cant create process, <"+r+"> allready exist"); return process.get(r); }
 		pProcess p = new pProcess(r); return p; }
 	public static pProcess get(String r) {
 		return process.get(r); }

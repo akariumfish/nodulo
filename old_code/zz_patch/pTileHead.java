@@ -25,7 +25,7 @@ public class pTileHead {
 
 //		build_stack_editor(app);
 		
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 		
 
 		pStandard exec_context = pStandard.newStandard("exec_context_abstract", "inst");
@@ -804,7 +804,7 @@ public class pTileHead {
 
 	public static void build_stack_editor(Applet app) {
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
 		pNode.newChainnedNodeModel("stack_editor")
 		.process()

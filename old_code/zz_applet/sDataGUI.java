@@ -176,7 +176,7 @@ public class sDataGUI {
 
 	public static void pop_setting(Applet app) {
 		
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
 		nInterface interf = app.menu.get_popWindow();
 		interf.add_row();

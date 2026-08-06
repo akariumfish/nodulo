@@ -21,9 +21,9 @@ public class pFuncBook {
 	public static final String[] index_list = new String[] {
 		"0", "1", "2", "3"};
 
-	public static void build_operators(PlaneApplet app) {
+	public static void build_operators() {
 
-		float RS = app.gui.book.RS;
+		float RS = PlaneApplet.app.gui.book.RS;
 
 		new Operator("and", "&&", C.AND, Boolean.class, new nRun() {public Object get() {
 			Boolean o1 = ask("in1", Boolean.class); Boolean o2 = ask("in2", Boolean.class);
@@ -223,7 +223,7 @@ public class pFuncBook {
 
 		new Operator("get_input", "I", C.GETI, new nRun() {public Object get() {
 			String in_ref = ask("in_ref", String.class);
-				nRun in = app.inputs.get(in_ref);
+				nRun in = PlaneApplet.app.inputs.get(in_ref);
 				if (in != null) { return in.do_get(); } 
 			return null; 
 			}})
@@ -238,7 +238,7 @@ public class pFuncBook {
 						"in_ref_watch");
 				if (triggP_w == null) return;
 				instance.patch.patch_dropmenu.metode("clear_entrys");
-				for (String par : app.inputs.allKey()) {
+				for (String par : PlaneApplet.app.inputs.allKey()) {
 					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
 							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
 					w1.addEventTrigger(new nRun(instance) { public void run() {
@@ -572,9 +572,9 @@ public class pFuncBook {
 		
 		
 
-	public static void build_instructions(PlaneApplet app) {	
+	public static void build_instructions() {	
 
-		float RS = app.gui.book.RS;
+		float RS = PlaneApplet.app.gui.book.RS;
 		new Instruction("set_mem", "SMM", C.SMM, new nRun() {public Object get() {
 			Boolean active = ask("active", Boolean.class);
 			if (active == null || !active) return pFunc.C.NEXT;
@@ -642,7 +642,7 @@ public class pFuncBook {
 			Boolean active = ask("active", Boolean.class);
 			if (active == null || !active) return pFunc.C.NEXT;
 			String out_ref = ask("out_ref", String.class);
-			nRun out = app.outputs.get(out_ref);
+			nRun out = PlaneApplet.app.outputs.get(out_ref);
 			Object r = ask("data");
 			if (r != null && out != null) { 
 				if (ask("exec_in_instance", Boolean.class)) 
@@ -666,7 +666,7 @@ public class pFuncBook {
 						"out_ref_watcher");
 				if (triggP_w == null) return;
 				instance.patch.patch_dropmenu.metode("clear_entrys");
-				for (String par : app.outputs.allKey()) {
+				for (String par : PlaneApplet.app.outputs.allKey()) {
 					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
 							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
 					w1.addEventTrigger(new nRun(instance) { public void run() {

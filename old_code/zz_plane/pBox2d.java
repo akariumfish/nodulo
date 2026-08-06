@@ -57,7 +57,7 @@ public class pBox2d extends pSystem {
 
 	public static void build_game(Applet app) {
 		
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 		
 
 		Macro b2d_tile = new Macro("b2d_tile")
@@ -198,7 +198,7 @@ public class pBox2d extends pSystem {
 
 	public static void build_prop(Applet app) {
 		
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 		
 		pProperty physic = pProperty.newGeneralProperty("physic");
 //		physic

@@ -433,7 +433,7 @@ public class nMenu {
 			nWidget w = interf.add_list_entry(ref);
 			w.setTextAlignment(nAlign.LEFT, nAlign.CENTER);
 			
-			float RS = app.gui.book.RS;
+			float RS = nGUI.book.RS;
 			nWidget fld_w = interf.get_row_button_widget(4);
 			fld_w.setParent(w)
 			.setField(true)
@@ -844,7 +844,7 @@ public class nMenu {
 	
 	
 	private void build_book() {
-		nModelBook book = gui.book;
+		nModelBook book = nGUI.book;
 		float RS = book.RS;
 		
 		

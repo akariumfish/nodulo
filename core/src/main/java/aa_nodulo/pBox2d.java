@@ -24,6 +24,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
 import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer.Renderer;
 
+import app.App;
 import app.GdxApp;
 import app.nDrawer.PolygonSpriteBatchRendererAdapter;
 import box2dLight.*;
@@ -41,11 +42,13 @@ public class pBox2d extends pSystem {
 
 	public static sBloc_Builder builder = null;
 	
-	public static void build(PlaneApplet app) {
-		builder = builder(app, "box2d", pBox2d.class, new nRun() { public void run(Object o) {
+	public static void build(sData data) {
+
+		if (builder == null) build_prop();
+		
+		builder = builder(data, "box2d", pBox2d.class, new nRun() { public void run(Object o) {
 			sValueBloc b = (sValueBloc)o; newObject(b); }});
 		
-		build_prop(app);
 	}
 
 	public static void dispose(PlaneApplet app) { pool.dispose(); }
@@ -75,10 +78,14 @@ public class pBox2d extends pSystem {
 		
 	}
 	
+
+	private static boolean has_build = false;
 	
-	public static void build_game(PlaneApplet app) {
+	public static void build_game() {
+		if (has_build) return;
+		has_build = true;
 		
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 		
 
 		Macro b2d_tile = new Macro("b2d_tile")
@@ -137,7 +144,7 @@ public class pBox2d extends pSystem {
 		.addTileScript("func_p", "b2d_move")
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
-			app.addDelayEvent(3, new nRun() { public void run() {
+			App.ap.addDelayEvent(3, new nRun() { public void run() {
 //				list.get("func_p").setVar("script", true);
 			}});
 		}})
@@ -205,9 +212,9 @@ public class pBox2d extends pSystem {
 	
 	
 	
-	public static void build_prop(PlaneApplet app) {
+	public static void build_prop() {
 		
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 		
 		pProperty physic = pProperty.newGeneralProperty("physic");
 //		physic
@@ -217,7 +224,7 @@ public class pBox2d extends pSystem {
 
 		physic.addBodyInitRun(new nRun() {public void run() {
 			pBody bod = arg(0,pBody.class);
-			pBox2d b2d = app.getSystem(pBox2d.class);
+			pBox2d b2d = PlaneApplet.app.getSystem(pBox2d.class);
 			if (b2d == null || bod == null) return;
 			b2d.init_body(bod);
 		}});
@@ -244,7 +251,7 @@ public class pBox2d extends pSystem {
 
 		nRun run_ctrl_box = new nRun() { public void run(Object o) { 
 			pBody bod = (pBody)o; if (bod == null) return;
-			pBox2d box = app.getSystem(pBox2d.class);
+			pBox2d box = PlaneApplet.app.getSystem(pBox2d.class);
 			if (box != null && bod.hasParam("coord") && bod.hasParam("ctrl_box")) {
 				float accel = bod.getFlt("ctrl_box","accel_strength");
 				if (bod.getBoo("ctrl_box","accel_up")) {

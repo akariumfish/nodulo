@@ -27,10 +27,17 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 	public nInput input;
 	public sData data;
 	
+	public static App ap;
+
+	ArrayList<nRun> eventInit = new ArrayList<nRun>();
+
+	public void addEventInit(nRun n) { eventInit.add(n); }
+	
 	@Override
 	public void setup(GdxApp a) {
 		gdx = a;
 		setting_file = gdx.window_title + sData.setting_extension;
+		ap = this;
 		
 //		try {
 //			// with libGDX - requires steamworks4j-gdx
@@ -72,11 +79,22 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 	public void startup() { do_startup = true; }
 	private boolean do_startup = false;
 	
-	protected void do_startup() {}
+	protected void do_startup() {
+		
+		LOADING_SCREEN_FRAME = 3;
+
+		nRun.runEvents(eventInit, data.setting_bloc);
+		
+		addDelayEvent(1, new nRun() { public void run() {
+			gdx.add_nodraw_frame(40); 
+		}});
+	}
+	
 	protected void gui_frame() {}
 	protected void gui_draw() {}
 	public void draw_start() {}
 	public void draw_end() {}
+	public void setInputProcessor() {}
 	
 	@Override
 	public void pre_draw() {

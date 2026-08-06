@@ -16,19 +16,19 @@ import com.badlogic.gdx.math.Vector2;
 
 public class pFunc {
 
-	public static void build(PlaneApplet app) {
+	public static void build() {
 
 		build_codes();
 
-		pFuncBook.build_operators(app);
+		pFuncBook.build_operators();
 		
-		pFuncBook.build_instructions(app);
+		pFuncBook.build_instructions();
 		
-		build_tile(app);
+		build_tile();
 
 	}
 	
-	public static void build_tile(PlaneApplet app) {
+	public static void build_tile() {
 		pStandard stand_stack_start = pStandard.standards.get("tile_model_stack_start");
 		pStandard stand_branch_start = pStandard.standards.get("tile_model_branch_start");
 		

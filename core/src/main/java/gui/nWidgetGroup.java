@@ -128,8 +128,8 @@ public class nWidgetGroup implements Poolable, nClearable {
 //		for (Entry<String, nWidget> mev : widgets.entrySet()) s += " "+mev.getKey()+":"+mev.getValue().widget_id;
 //		app.log("Doing addWidget("+w.widget_id+") in group "+this.ref+" with: "+s);
 		
-		if (widgets.containsKey(ref)) Utl.logn("ERROR : widgetgroup "+this.ref+" cant addWidget, key "+ref+" allready exist");
-		else if (!widgets.containsValue(w)) w.setGroup(this, ref); 
+		if (widgets.hasKey(ref)) Utl.logn("ERROR : widgetgroup "+this.ref+" cant addWidget, key "+ref+" allready exist");
+		else if (!widgets.hasVal(w)) w.setGroup(this, ref); 
 		else Utl.logn("ERROR: widgetgroup "+this.ref+" cant addWidget "+ref+" because its allready in group as " + w.groupKey); return w; }
 	public nWidgetGroup removeWidget(nWidget w) {
 		w.quitGroup(); return this; }
@@ -137,11 +137,11 @@ public class nWidgetGroup implements Poolable, nClearable {
 		nWidget w = get(s);
 		if (w != null) w.quitGroup(); return this; }
 	
-	public boolean hasGroup(String ref) { return widgetgroups.containsKey(ref); }
+	public boolean hasGroup(String ref) { return widgetgroups.hasKey(ref); }
 	public nWidgetGroup getGroup(String ref) { return widgetgroups.get(ref); }
 	public nWidgetGroup addWidgetGroup(String ref, nWidgetGroup w) {
-		if (widgetgroups.containsKey(ref)) Utl.logn("ERROR : widgetgroup "+this.ref+" cant addGroup, key "+ref+" allready exist");
-		else if (!widgetgroups.containsValue(w)) {
+		if (widgetgroups.hasKey(ref)) Utl.logn("ERROR : widgetgroup "+this.ref+" cant addGroup, key "+ref+" allready exist");
+		else if (!widgetgroups.hasVal(w)) {
 			if (w.group != null) w.group.removeGroup(w);
 			w.groupKey = ref; w.group = this;
 			widgetgroups.put(ref, w); }  
@@ -150,7 +150,7 @@ public class nWidgetGroup implements Poolable, nClearable {
 	public nWidgetGroup addWidgetGroup(String ref, String model) {
 		return addWidgetGroup(ref, gui.addWidgetGroup(model)); }
 	public nWidgetGroup removeGroup(nWidgetGroup w) {
-		if (widgetgroups.containsValue(w)) {
+		if (widgetgroups.hasVal(w)) {
 			widgetgroups.remove(w.groupKey, w); 
 			w.groupKey = ""; w.group = null;
 		} 

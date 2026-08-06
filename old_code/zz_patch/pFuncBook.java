@@ -32,7 +32,7 @@ public class pFuncBook {
 
 	public static void build_operators(Applet app) {
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
 		new Operator("and", "&&", C.AND, Boolean.class, new nRun() {public Object get() {
 			Boolean o1 = ask("in1", Boolean.class); Boolean o2 = ask("in2", Boolean.class);
@@ -583,7 +583,7 @@ public class pFuncBook {
 
 	public static void build_instructions(Applet app) {	
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 		new Instruction("set_mem", "SMM", C.SMM, new nRun() {public Object get() {
 			Boolean active = ask("active", Boolean.class);
 			if (active == null || !active) return pFunc.C.NEXT;

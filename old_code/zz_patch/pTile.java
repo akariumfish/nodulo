@@ -39,7 +39,7 @@ public class pTile {
 	
 	public static void build_standard(Applet app) {
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
 		
 		pStandard.newStandard("tile", "tile")
@@ -631,7 +631,7 @@ public class pTile {
 	
 	public static void build_coms(Applet app) {
 		
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
 		newRunTool("add_obtain_plug", CT.ADD_OBTAIN_PLUG, new nRun() {public void run() {
 			pStandard stand = arg(0,pStandard.class);
@@ -1229,7 +1229,7 @@ public class pTile {
 	
 	
 	public static void build_book(Applet app) {
-		nModelBook book = app.gui.book;
+		nModelBook book = nGUI.book;
 		float RS = book.RS;
 		
 

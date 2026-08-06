@@ -11,14 +11,14 @@ import com.badlogic.gdx.math.Vector2;
 
 public class pNodeUI {
 	
-	public static void build(PlaneApplet app) {
+	public static void build() {
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 		
 		pNode.newNodeModel("UI").process()
 			.useLoad().commande(new nRun() {public void run() { 
-				pView view = app.view;
-				nWidgetGroup bar = app.gui.addWidgetGroup("viewspace_tool");
+				pView view = PlaneApplet.app.view;
+				nWidgetGroup bar = PlaneApplet.app.gui.addWidgetGroup("viewspace_tool");
 				instance.addObject("viewspace_tool", bar);
 				bar.metode("set_px", 100f);
 				bar.metode("set_py", 100f);
@@ -54,7 +54,7 @@ public class pNodeUI {
 		pNode.newChainnedNodeModel("UI_trigg")
 		.process()
 			.commande(new nRun() {public void run() {
-				app.addDelayEvent(1, new nRun(instance) {public void run() {
+				PlaneApplet.app.addDelayEvent(1, new nRun(instance) {public void run() {
 					pInstance inst = (pInstance)builder;
 					pInstance head = inst.get("get_chain_head", pInstance.class);
 					if (head == null) return;
@@ -110,7 +110,7 @@ public class pNodeUI {
 		.process()
 			.commande(new nRun() {public void run() {
 				instance.obtainVar("state", false);
-				app.addDelayEvent(1, new nRun(instance) {public void run() {
+				PlaneApplet.app.addDelayEvent(1, new nRun(instance) {public void run() {
 					pInstance inst = (pInstance)builder;
 					pInstance head = inst.get("get_chain_head", pInstance.class);
 					if (head == null) return;

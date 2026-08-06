@@ -28,21 +28,19 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 
     public OrthographicCamera camera; 
 	public ScreenViewport viewport; 
-	public nDrawer drawer;
 	public Rectangle screenrect;
+	
+	public nDrawer drawer;
 
 	TextButtonStyle textbuttstyle;
 	
 	public TitleScreen(Main m) {
 		main = m;
 
-		Gdx.app.setLogLevel(Application.LOG_DEBUG);
-		
 		screenrect = new Rectangle(0,0,m.conf.WIDTH,m.conf.HEIGHT);
 		
-		camera = new OrthographicCamera(m.conf.WIDTH,m.conf.HEIGHT);
-		viewport = new ScreenViewport(camera);
-
+		camera = main.camera;
+		viewport = main.viewport;
 		camera.position.set(m.conf.WIDTH / 2, m.conf.HEIGHT / 2, 0);
 		camera.update();
 		
@@ -68,18 +66,6 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 
 		textbuttstyle = new TextButtonStyle(skin.get(TextButtonStyle.class));
 
-		table2.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
-		table2.add(new Label("Build Models :", skin));
-		
-		for (String nm : PlaneApplet.getModels()) {
-			makeButton(nm, table2).addListener(new InputListener() { public boolean touchDown (
-					InputEvent event, float x, float y, int pointer, int button) {
-				main.launch_nodulo(nm); return false; }}); }
-		
-		makeButton("Back", table2).addListener(new InputListener() { public boolean touchDown (
-				InputEvent event, float x, float y, int pointer, int button) {
-			stage.addActor(table1); table2.remove(); return false; }});
-		
 		makeButton("New", table1).addListener(new InputListener() { public boolean touchDown (
 				InputEvent event, float x, float y, int pointer, int button) {
 			stage.addActor(table2); table1.remove(); return false; }});
@@ -89,12 +75,37 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 //		makeButton("Join", table1).addListener(new InputListener() { public boolean touchDown (
 //				InputEvent event, float x, float y, int pointer, int button) {
 //			return false; }});
+		makeButton("About", table1).addListener(new InputListener() { public boolean touchDown (
+				InputEvent event, float x, float y, int pointer, int button) {
+			return false; }});
 		makeButton("Exit", table1).addListener(new InputListener() { public boolean touchDown (
 				InputEvent event, float x, float y, int pointer, int button) {
-			Gdx.app.exit(); return false; }});
+			main.exit(); return false; }});
 
-		table1.row().fill().pad(100,10,0,10).minWidth(main.conf.WIDTH / 5f);
+		CheckBox themeCheckBox = new CheckBox("Dark Theme", skin);
+		themeCheckBox.setChecked(true);
+		table1.row().fill().pad(100,10,10,10).minWidth(main.conf.WIDTH / 5f);
+		table1.add(themeCheckBox);
+		CheckBox fullScreenCheckBox = new CheckBox("Fullscreen", skin);
+		fullScreenCheckBox.setChecked(true);
+		table1.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
+		table1.add(fullScreenCheckBox);
+		table1.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
 		table1.add(new Label("Some text, contact, ext ... ", skin));
+
+		
+		table2.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
+		table2.add(new Label("Build Models :", skin));
+		
+		for (String nm : PlaneApplet.getModels()) {
+			makeButton(nm, table2).addListener(new InputListener() { public boolean touchDown (
+					InputEvent event, float x, float y, int pointer, int button) {
+				main.launch_nodulo(nm, themeCheckBox.isChecked(), 
+						fullScreenCheckBox.isChecked()); return false; }}); }
+		
+		makeButton("Back", table2).addListener(new InputListener() { public boolean touchDown (
+				InputEvent event, float x, float y, int pointer, int button) {
+			stage.addActor(table1); table2.remove(); return false; }});
 		
 		
 	}

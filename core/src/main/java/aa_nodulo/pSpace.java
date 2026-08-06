@@ -25,34 +25,6 @@ import patch.pStandard;
 
 public class pSpace {
 	
-//	public static sBloc_Builder builder = null;
-	
-	public static void build(App app) {
-//		builder = builder(app, "space", pSpace.class, new nRun() { public void run(Object o) {
-//			sValueBloc b = (sValueBloc)o; newObject(b); }});
-	}
-
-//	public static void dispose(Utl app) {
-//		pool.dispose();
-//	}
-//
-//	public static final nPool<pSpace> pool = new nPool<pSpace>() {
-//		protected pSpace newObject() { return new pSpace(); } };
-//	public static pSpace newObject(sValueBloc b) {
-//		return pool.obtain().init(b); }
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
 	ArrayList<nRun> eventSpaceStart = new ArrayList<nRun>();
 //	ArrayList<nRun> eventSpaceClear = new ArrayList<nRun>();

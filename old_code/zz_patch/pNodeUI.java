@@ -14,7 +14,7 @@ public class pNodeUI {
 	
 	public static void build(Applet app) {
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 		
 		pNode.newNodeModel("UI").process()
 			.useLoad().commande(new nRun() {public void run() { 

@@ -13,11 +13,14 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import app.App;
 import data.sBloc_Builder;
 import data.sBoo;
+import data.sData;
 import data.sFlt;
 import data.sValueBloc;
 import gui.nDrawable;
+import gui.nGUI;
 import gui.nInterface;
 import gui.nWidget;
 import gui.nWidgetGroup;
@@ -37,11 +40,13 @@ public class pGeom extends pSystem {
 
 	public static sBloc_Builder builder = null;
 	
-	public static void build(PlaneApplet app) {
-		builder = builder(app, "geom", pGeom.class, new nRun() { public void run(Object o) {
+	public static void build(sData data) {
+
+		if (builder == null) build_prop();
+		
+		builder = builder(data, "geom", pGeom.class, new nRun() { public void run(Object o) {
 			sValueBloc b = (sValueBloc)o; newObject(b); }});
 		
-		build_prop(app);
 	}
 
 	public static void dispose(PlaneApplet app) { pool.dispose(); }
@@ -50,9 +55,9 @@ public class pGeom extends pSystem {
 	public static pGeom newObject(sValueBloc b) {
 		return pool.obtain().init(b); }
 	
-	public static void build_prop(PlaneApplet app) {
+	public static void build_prop() {
 		
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 		
 		
 		
@@ -159,7 +164,7 @@ public class pGeom extends pSystem {
 					
 					instance.obtainVar("sel_point", (int)-1);
 					
-					nInterface interf = app.menu.get_popWindow();
+					nInterface interf = PlaneApplet.app.gui.get_popWindow();
 
 					interf.add_col();
 					interf.add_row();
@@ -294,6 +299,7 @@ public class pGeom extends pSystem {
 					
 					preview.setSY(RS*7f);
 					nRun pr = new nRun() {public void run() { 
+						PlaneApplet app = PlaneApplet.app;
 						app.fill(40); app.rect(0,0,210,210);
 						app.push(); app.translate(105,105);
 						app.stroke(255,0,0,255,2f); app.line(0,-80,0,80);
@@ -367,23 +373,23 @@ public class pGeom extends pSystem {
 						pParam geom = inst.object("param", pParam.class);
 						if (geom == null) return; 
 						ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
-						Vector2 mouse = new Vector2(app.input.mouse);
+						Vector2 mouse = new Vector2(App.ap.input.mouse);
 						mouse.sub(preview.getPos()).sub(105,105);
 						int i = 0;
 						for (Vector2 v : point) {
 							Vector2 l = new Vector2(v).sub(mouse);
-							if (l.len() <= 10f && app.input.mouseLeft.trigClick) {
+							if (l.len() <= 10f && App.ap.input.mouseLeft.trigClick) {
 								inst.setVar("sel_point", i);
 								break; }
 							i++; }
 						if (i == point.size() && 
-								preview.globalrect.contains(app.input.mouse) && 
-								app.input.mouseLeft.trigClick)
+								preview.globalrect.contains(App.ap.input.mouse) && 
+								App.ap.input.mouseLeft.trigClick)
 							inst.setVar("sel_point", (int)-1);
 					}});
 					
-					app.addEventNextFrame(new nRun() { public void run() {
-//						app.menu.pop_popwindow("Load"); 
+					App.ap.addEventNextFrame(new nRun() { public void run() {
+						PlaneApplet.app.gui.pop_popwindow("Load"); 
 					}});
 				}})
 				.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "editor", "editor", (int)8)
@@ -393,6 +399,7 @@ public class pGeom extends pSystem {
 			.param("ref", "preview", "scale_min", 0.0f)
 			.param("text", "", "width", (int)6, "height", 6f)
 			.param("custom_drawer", new nRun() {public void run() { 
+				PlaneApplet app = PlaneApplet.app;
 				app.fill(40); app.rect(0,0,180,180);
 				app.push(); app.translate(90,90);
 				app.stroke(255,0,0,255,2f); app.line(0,-80,0,80);
@@ -456,9 +463,9 @@ public class pGeom extends pSystem {
 		
 		
 		
-		Color fill = app.gui.book.getModel("CL_graph").color_background;
-		Color line = app.gui.book.getModel("CL_graph").color_outline;
-		float thick = app.gui.book.getModel("CL_graph").outlineWeight;
+		Color fill = nGUI.book.getModel("CL_graph").color_background;
+		Color line = nGUI.book.getModel("CL_graph").color_outline;
+		float thick = nGUI.book.getModel("CL_graph").outlineWeight;
 		
 		pProperty graph = pProperty.newGeneralProperty("graph")
 		.setGroupFlag("draw")
@@ -485,7 +492,7 @@ public class pGeom extends pSystem {
 		
 		moveable.addBodyInitRun(new nRun() {public void run() {
 			pBody bod = arg(0,pBody.class);
-			pGeom geo = app.getSystem(pGeom.class);
+			pGeom geo = PlaneApplet.app.getSystem(pGeom.class);
 			if (geo == null || bod == null) return;
 			geo.init_body(bod);
 		}});
@@ -584,11 +591,11 @@ public class pGeom extends pSystem {
 
 		ownable.addBodyInitRun(new nRun() {public void run() {
 			pBody bod = arg(0,pBody.class);
-			pGeom geo = app.getSystem(pGeom.class);
+			pGeom geo = PlaneApplet.app.getSystem(pGeom.class);
 			if (geo == null || bod == null) return;
 			if (bod.getBoo("ownable", "acquire")) {
 				bod.setBoo("owner", "owned", true);
-				bod.setStr("owner", "owner", app.config.player_ref);
+				bod.setStr("owner", "owner", PlaneApplet.app.config.player_ref);
 			}
 		}});
 		
@@ -662,7 +669,7 @@ public class pGeom extends pSystem {
 		
 		nRun run_ctrl_move = new nRun() { public void run(Object o) { 
 			pBody bod = (pBody)o; if (bod == null) return;
-			pGeom geo = app.getSystem(pGeom.class);
+			pGeom geo = PlaneApplet.app.getSystem(pGeom.class);
 			if (bod.hasParam("ref") && bod.hasParam("ctrl_move")) {
 				if (bod.getBoo("ctrl_move","accelerate")) {
 					Vector2 acc_pos = bod.getVec("ctrl_move","acc_pos"); 
@@ -730,7 +737,7 @@ public class pGeom extends pSystem {
 
 		nRun run_ctrl_pop = new nRun() { public void run(Object o) { 
 			pBody bod = (pBody)o; if (bod == null) return;
-			pGeom geo = app.getSystem(pGeom.class);
+			pGeom geo = PlaneApplet.app.getSystem(pGeom.class);
 			if (geo != null && bod.hasParam("ref") && bod.hasParam("ctrl_pop")) {
 
 				Vector2 pop_pos = bod.getVec("ctrl_pop","pop_pos");

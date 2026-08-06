@@ -31,7 +31,7 @@ public class pNodeSpace {
 	
 	public static void build_sheet(Applet app) {
 		
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
 		pSheet.SheetModel init_space_model = pSheet.newSheet("init_space", true)
 			.setSetupRun(new nRun() { public void run() {
@@ -302,7 +302,7 @@ public class pNodeSpace {
 	
 	public static void build_nodes(Applet app) {
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
 		build_param_chain_nodes(app);
 		
@@ -509,7 +509,7 @@ public class pNodeSpace {
 
 	private static pStandard build_prop_node(Applet app, String r, pProperty prop) {
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 		
 		pStandard stand = pNode.newNodeModel(r, "prop");
 		stand.newRun("defParam", new nRun() {public void run() { 
@@ -726,7 +726,7 @@ public class pNodeSpace {
 	public static void build_param_chain_nodes(Applet app) {
 			
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
 		
 		
@@ -993,7 +993,7 @@ public class pNodeSpace {
 	public static void build_sel_body_node(Applet app) {
 		
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
 
 		pStandard stand_sel_body = pNode.newNodeModel("sel_body", "body");
@@ -1398,7 +1398,7 @@ public class pNodeSpace {
 //	public static void build_old_nodes(Applet app) {
 //		
 //
-//		float RS = app.gui.book.RS;
+//		float RS = nGUI.book.RS;
 //
 //
 //		pStandard stand_new_body = pNode.newNodeModel("new_body", "body");

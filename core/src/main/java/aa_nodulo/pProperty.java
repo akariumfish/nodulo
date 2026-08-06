@@ -22,10 +22,6 @@ public class pProperty {
 
 	public static nMap<pProperty> body_propertys = new nMap<pProperty>(); 
 	public static nMap<pProperty> body_common_propertys = new nMap<pProperty>(); 
-	public static App app;
-
-//	public static nMap<pProperty> addable_props = new nMap<pProperty>();
-//	public static nMap<pProperty> def_added_props = new nMap<pProperty>();
 	
 	public static pProperty get(String r) {
 		return body_propertys.get(r);
@@ -42,29 +38,28 @@ public class pProperty {
 		return p;
 	}
 	
-	public static pProperty general_prop_abstract;
-	public static pProperty user_prop_abstract;
-	
-	public static void build(App a) {
-		app = a;
-		
-		
-		general_prop_abstract = new pProperty("general_prop_abstract")
-		.addNodeRun(new nRun() { public void run() {	
-			pStandard stand = arg(0,pStandard.class);
-			if (stand == null) return;
-			
-			
-		}})
-		
-		;
-
-		user_prop_abstract = new pProperty("user_prop_abstract")
-		
-		;
-		
-		
-	}
+//	public static pProperty general_prop_abstract;
+//	public static pProperty user_prop_abstract;
+//	
+//	public static void build() {
+//		
+//		
+//		general_prop_abstract = new pProperty("general_prop_abstract")
+//		.addNodeRun(new nRun() { public void run() {	
+//			pStandard stand = arg(0,pStandard.class);
+//			if (stand == null) return;
+//			
+//			
+//		}})
+//		
+//		;
+//
+//		user_prop_abstract = new pProperty("user_prop_abstract")
+//		
+//		;
+//		
+//		
+//	}
 	
 
 	public static nMap<pProperty> general_propertys = new nMap<pProperty>(); 
@@ -74,7 +69,7 @@ public class pProperty {
 			Utl.logn("ERROR: cant add property, <"+r+"> allready exist");
 			return null; }
 		pProperty p = new pProperty(r);
-		p.copy(general_prop_abstract);
+//		p.copy(general_prop_abstract);
 		p.setCommon();
 		p.is_general = true;
 		general_propertys.put(r,p);
@@ -87,7 +82,7 @@ public class pProperty {
 	public pProperty newLocalProperty(String r) {
 		if (!is_general) return null;
 		pProperty p = newProperty(r,false);
-		p.copy(user_prop_abstract);
+//		p.copy(user_prop_abstract);
 		need_props.add(p);
 		p.general = this;
 		return p; 
@@ -95,7 +90,7 @@ public class pProperty {
 	public pProperty newOptionalLocalProperty(String r) {
 		if (!is_general) return null;
 		pProperty p = newProperty(r,false);
-		p.copy(user_prop_abstract);
+//		p.copy(user_prop_abstract);
 		option_props.add(p);
 		p.general = this;
 		addData("use_"+r, false);

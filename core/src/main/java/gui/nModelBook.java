@@ -18,11 +18,13 @@ public class nModelBook {
 	}
 	
 	public nModel newModel(String ref) {
+		if (models.get(ref) != null) { return models.get(ref); }//models.get(ref).reset(); models.remove(ref); }
 		nModel m = new nModel();
 		models.put(ref,m);
 		return m;
 	}
 	public nModel newModel(String ref, nModel m) {
+		if (models.get(ref) != null) { return models.get(ref); }//models.get(ref).reset(); models.remove(ref); }
 		models.put(ref,m);
 		return m;
 	}
@@ -46,8 +48,11 @@ public class nModelBook {
 	}
 	
 	public void newModelGroup(String ref, nModelGroup g) {
-		if (modelgroups.containsKey(ref)) 
-			Utl.logn("ERROR: book allready contains a modelGroup with key "+ref);
+		if (modelgroups.hasKey(ref)) {
+//			Utl.logn("ERROR: book allready contains a modelGroup with key "+ref);
+//			return; 
+			modelgroups.remove(ref);
+		}
 		modelgroups.put(ref, g);
 		g.ref = Utl.copy(ref);
 	}

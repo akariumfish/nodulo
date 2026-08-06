@@ -15,13 +15,13 @@ import com.badlogic.gdx.math.Vector2;
 
 public class pTile {
 	
-	public static void build(PlaneApplet app) {
+	public static void build() {
 		
-		build_book(app);
+		build_book();
 		
-		build_standard(app);
+		build_standard();
 		
-		build_coms(app);
+		build_coms();
 
 	}
 
@@ -29,9 +29,9 @@ public class pTile {
 	
 	
 	
-	public static void build_standard(PlaneApplet app) {
+	public static void build_standard() {
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
 		
 		pStandard.newStandard("tile", "tile")
@@ -312,7 +312,7 @@ public class pTile {
 
 				nWidgetGroup group = tile.object("group", nWidgetGroup.class);
 				nWidget w = (nWidget)group.metodeGet("add_widget",(int)2);
-				w.copyLookFrom(app.gui.book.getModel("PL_base"));
+				w.copyLookFrom(nGUI.book.getModel("PL_base"));
 				
 				w.setInfo(instance.getData("ref", String.class));
 				
@@ -346,32 +346,32 @@ public class pTile {
 				if (instance.getData("side", String.class).equals("left")) {
 					instance.getInst("plugged")
 					.object("plug_widget", nWidget.class)
-					.copyFrom(app.gui.book.getModel("PL_plugged_H_R"));
+					.copyFrom(nGUI.book.getModel("PL_plugged_H_R"));
 					instance.object("plug_widget", nWidget.class)
-					.copyFrom(app.gui.book.getModel("PL_plugged_H_L"));
+					.copyFrom(nGUI.book.getModel("PL_plugged_H_L"));
 				} else if (instance.getData("side", String.class).equals("right")) {
 					instance.getInst("plugged")
 					.object("plug_widget", nWidget.class)
-					.copyFrom(app.gui.book.getModel("PL_plugged_H_L"));
+					.copyFrom(nGUI.book.getModel("PL_plugged_H_L"));
 					instance.object("plug_widget", nWidget.class)
-					.copyFrom(app.gui.book.getModel("PL_plugged_H_R"));
+					.copyFrom(nGUI.book.getModel("PL_plugged_H_R"));
 				} else {
 					instance.getInst("plugged")
 					.object("plug_widget", nWidget.class)
-					.copyFrom(app.gui.book.getModel("PL_plugged_V"));
+					.copyFrom(nGUI.book.getModel("PL_plugged_V"));
 					instance.object("plug_widget", nWidget.class)
-					.copyFrom(app.gui.book.getModel("PL_plugged_V"));
+					.copyFrom(nGUI.book.getModel("PL_plugged_V"));
 				}
 			} else if (instance.object("plug_widget", nWidget.class) != null) {
 				if (instance.getData("side", String.class).equals("left")) {
 					instance.object("plug_widget", nWidget.class)
-					.copyFrom(app.gui.book.getModel("PL_open_H"));
+					.copyFrom(nGUI.book.getModel("PL_open_H"));
 				} else if (instance.getData("side", String.class).equals("right")) {
 					instance.object("plug_widget", nWidget.class)
-					.copyFrom(app.gui.book.getModel("PL_open_H"));
+					.copyFrom(nGUI.book.getModel("PL_open_H"));
 				} else {
 					instance.object("plug_widget", nWidget.class)
-					.copyFrom(app.gui.book.getModel("PL_open_V"));
+					.copyFrom(nGUI.book.getModel("PL_open_V"));
 				}
 			}
 		}})
@@ -389,10 +389,10 @@ public class pTile {
 							instance.getData("side", String.class).equals("right")) 
 						instance.getInst("plugged")
 							.object("plug_widget", nWidget.class)
-							.copyFrom(app.gui.book.getModel("PL_open_H"));
+							.copyFrom(nGUI.book.getModel("PL_open_H"));
 					else instance.getInst("plugged")
 						.object("plug_widget", nWidget.class)
-						.copyFrom(app.gui.book.getModel("PL_open_V")); }
+						.copyFrom(nGUI.book.getModel("PL_open_V")); }
 				instance.getInst("plugged").setInst("plugged", ""); }
 		}})
 		.newRun("trigger_clic", new nRun() {public void run() {
@@ -518,18 +518,18 @@ public class pTile {
 							instance.getData("side", String.class).equals("right")) 
 						instance.getInst("plugged")
 							.object("plug_widget", nWidget.class)
-							.copyFrom(app.gui.book.getModel("PL_open_H"));
+							.copyFrom(nGUI.book.getModel("PL_open_H"));
 					else instance.getInst("plugged")
 						.object("plug_widget", nWidget.class)
-						.copyFrom(app.gui.book.getModel("PL_open_V")); }
+						.copyFrom(nGUI.book.getModel("PL_open_V")); }
 				instance.getInst("plugged").setInst("plugged", ""); 
 				if (instance.object("plug_widget", nWidget.class) != null) { 
 					if (instance.getData("side", String.class).equals("left") || 
 							instance.getData("side", String.class).equals("right")) 
 						instance.object("plug_widget", nWidget.class)
-						.copyFrom(app.gui.book.getModel("PL_open_H"));
+						.copyFrom(nGUI.book.getModel("PL_open_H"));
 					else instance.object("plug_widget", nWidget.class)
-					.copyFrom(app.gui.book.getModel("PL_open_V")); }
+					.copyFrom(nGUI.book.getModel("PL_open_V")); }
 				instance.setInst("plugged", ""); }
 		}})
 		.newRun("link_to", new nRun() {public void run() {
@@ -541,19 +541,19 @@ public class pTile {
 				if (instance.getDataBoo("gui")) {
 					if (instance.getData("side", String.class).equals("left")) {
 						nWidget w = instance.object("plug_widget", nWidget.class);
-						if (w != null) w.copyFrom(app.gui.book.getModel("PL_plugged_H_L"));
+						if (w != null) w.copyFrom(nGUI.book.getModel("PL_plugged_H_L"));
 						w = c.object("plug_widget", nWidget.class);
-						if (w != null) w.copyFrom(app.gui.book.getModel("PL_plugged_H_R"));
+						if (w != null) w.copyFrom(nGUI.book.getModel("PL_plugged_H_R"));
 					} else if (instance.getData("side", String.class).equals("right")) {
 						nWidget w = instance.object("plug_widget", nWidget.class);
-						if (w != null) w.copyFrom(app.gui.book.getModel("PL_plugged_H_R"));
+						if (w != null) w.copyFrom(nGUI.book.getModel("PL_plugged_H_R"));
 						w = c.object("plug_widget", nWidget.class);
-						if (w != null) w.copyFrom(app.gui.book.getModel("PL_plugged_H_L"));
+						if (w != null) w.copyFrom(nGUI.book.getModel("PL_plugged_H_L"));
 					} else {
 						nWidget w = instance.object("plug_widget", nWidget.class);
-						if (w != null) w.copyFrom(app.gui.book.getModel("PL_plugged_V"));
+						if (w != null) w.copyFrom(nGUI.book.getModel("PL_plugged_V"));
 						w = c.object("plug_widget", nWidget.class);
-						if (w != null) w.copyFrom(app.gui.book.getModel("PL_plugged_V"));
+						if (w != null) w.copyFrom(nGUI.book.getModel("PL_plugged_V"));
 					}
 				}
 			}
@@ -621,9 +621,9 @@ public class pTile {
 	
 	
 	
-	public static void build_coms(PlaneApplet app) {
+	public static void build_coms() {
 		
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
 		newRunTool("add_obtain_plug", CT.ADD_OBTAIN_PLUG, new nRun() {public void run() {
 			pStandard stand = arg(0,pStandard.class);
@@ -871,7 +871,7 @@ public class pTile {
 			nWidgetGroup group = instance.object("group", nWidgetGroup.class);
 			nWidget w = (nWidget)group.metodeGet("add_widget",(int)2);
 
-			w.copyColorFrom(app.gui.book.getModel("ref"));
+			w.copyColorFrom(nGUI.book.getModel("ref"));
 			
 			w.setText(text);
 			w.setInfo(info);
@@ -956,7 +956,7 @@ public class pTile {
 			
 			nWidget w = getCom(CT.ADD_WIDGET,instance,param,nWidget.class);
 			w.setField(true)
-			.copyLookFrom(app.gui.book.getModel("text_field"));
+			.copyLookFrom(nGUI.book.getModel("text_field"));
 			int float_rez = (int)(1.2f * w.getLocalSX() / w.getFont()) - 3;
 			if (hasParam("var_link_ref", String.class) && 
 					hasParam("var_link_class", String.class)) { 
@@ -1018,7 +1018,7 @@ public class pTile {
 			int float_rez = (int)(1.2f * w.getLocalSX() / w.getFont()) - 3;
 			if (hasParam("run_right", nRun.class)) {
 				w.setRightTrigger();
-				w.copyLookFrom(app.gui.book.getModel("CL_right_trigg"));
+				w.copyLookFrom(nGUI.book.getModel("CL_right_trigg"));
 				nRun run = getParam("run_right", nRun.class);
 				w.addEventTriggerRight(new nRun(instance,param,run) {public void run() {
 					((nRun)args[2]).do_run((pInstance)args[0],(pPar)args[1]); }});
@@ -1069,7 +1069,7 @@ public class pTile {
 			nWidgetGroup group = instance.object("group", nWidgetGroup.class);
 			nWidget w = (nWidget)group.metodeGet("add_widget",(int)2);
 
-			w.copyColorFrom(app.gui.book.getModel("ref"));
+			w.copyColorFrom(nGUI.book.getModel("ref"));
 			
 			w.setParent(group.get("back"));
 			
@@ -1154,9 +1154,11 @@ public class pTile {
 	}
 
 	public static pStandard newUnpoppableTileModel(String r) {
+		if (tile_models.hasKey(r)) return null;
 		not_poppable_models.add(r);
 		return newTileModel(r); }
 	public static pStandard newTileModel(String r) {
+		if (tile_models.hasKey(r)) return null;
 		pStandard p = pStandard.newStandard("tile_model_"+r, "tile");
 		tile_models.put(r,p);
 		ArrayList<PlugDef> pd = new ArrayList<PlugDef>();
@@ -1177,20 +1179,24 @@ public class pTile {
 		return c.get(cont,par,ct,args); }
 
 	public static void newRunTool(String r, CT cd, nRun rn) {
+		if (run_tools.hasKey(r)) return;
 		run_tools.put(r,rn); tool_codes.put(r,cd); tool_refs.put(cd,r); 
 	}
 
 	public static pCommande newComTool(String r, CT cd, nRun rn) {
+		if (com_tools.hasKey(r)) return com_tools.get(r);
 		pCommande c = pCommande.newCommande("com_tile_tool_"+r,rn);
 		com_tools.put(r,c); tool_codes.put(r,cd); tool_refs.put(cd,r); 
 		return c; }
 
 	public static pCommande newComTool(String r, CT cd, Class<?> ct, nRun rn) {
+		if (com_tools.hasKey(r)) return com_tools.get(r);
 		pCommande c = pCommande.newCommande("com_tile_tool_"+r,ct,rn);
 		com_tools.put(r,c); tool_codes.put(r,cd); tool_refs.put(cd,r); 
 		return c; }
 
 	public static pProcess newProcTool(String r, CT cd) {
+		if (proc_tools.hasKey(r)) return proc_tools.get(r);
 		pProcess c = pProcess.newProcess("proc_tile_tool_"+r);
 		proc_tools.put(r,c); tool_codes.put(r,cd); tool_refs.put(cd,r); 
 		return c; }
@@ -1220,8 +1226,8 @@ public class pTile {
 	
 	
 	
-	public static void build_book(PlaneApplet app) {
-		nModelBook book = app.gui.book;
+	public static void build_book() {
+		nModelBook book = nGUI.book;
 		float RS = book.RS;
 		
 
@@ -1326,7 +1332,7 @@ public class pTile {
 		.setFont(RS*5f/4f)
 		.setMask(true)
 		;
-		if (app.config.RELEASE) 
+		if (PlaneApplet.app.config.RELEASE) 
 			PT_back.setOutline(true)
 			.set_color_outline(Utl.color(0));
 
@@ -1339,7 +1345,7 @@ public class pTile {
 		.set_color_background(Utl.color(0,0))
 		.setPassif()
 		;
-		book.newModelGroup("patch_tile", new nModelGroup(app) { 
+		book.newModelGroup("patch_tile", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup();
 

@@ -15,15 +15,15 @@ import app.*;
 public class pAnk {
 	
 	
-	public static void build(PlaneApplet app) {
+	public static void build() {
 		
-		build_book(app);
+		build_book();
 		
-		build_nodes(app);
+		build_nodes();
 		
 	}
 	
-	public static void build_nodes(PlaneApplet app) {
+	public static void build_nodes() {
 		
 		pNode.newNodeModel("ank")
 		.addInitRun(new nRun() {public void run() {
@@ -33,7 +33,7 @@ public class pAnk {
 			instance.obtainVar("grab", true); 
 			instance.obtainVar("title", ""); 
 			
-			nWidgetGroup group = app.gui.addWidgetGroup("space_ank");
+			nWidgetGroup group = PlaneApplet.app.gui.addWidgetGroup("space_ank");
 			instance.addObject("space_ank", group);
 			
 			group.get("grab").setInfo(instance.getVar("title", String.class));
@@ -50,11 +50,11 @@ public class pAnk {
 //				app.noStroke(); app.fill(255); app.circle(0,0,5);
 			}});
 			
-			app.time.addPrevTickBric(instance);
-			app.time.addTickBric(instance);
+			PlaneApplet.app.time.addPrevTickBric(instance);
+			PlaneApplet.app.time.addTickBric(instance);
 		}})
 		.addLoadRun(new nRun() {public void run() {
-			app.addDelayEvent(1, new nRun(instance) { public void run() {
+			PlaneApplet.app.addDelayEvent(1, new nRun(instance) { public void run() {
 				nWidgetGroup group = ((pInstance)builder).object("space_ank", nWidgetGroup.class);
 				group.metode("link_to_node", ((pInstance)builder));
 			}});
@@ -62,8 +62,8 @@ public class pAnk {
 		.addClearRun(new nRun() {public void run() {
 			if (instance.hasObject("space_ank"))
 				instance.object("space_ank", nWidgetGroup.class).clear();
-			app.time.removePrevTickBric(instance);
-			app.time.removeTickBric(instance);
+			PlaneApplet.app.time.removePrevTickBric(instance);
+			PlaneApplet.app.time.removeTickBric(instance);
 		}})
 		.newRun("do_prev_tick", new nRun() {public void run() { 
 			if (instance.hasObject("space_ank")) {
@@ -142,7 +142,7 @@ public class pAnk {
 		.param("offer", new nRun() {public Object get() {
 			pInstance node = instance.object("node", pInstance.class);
 			if (node == null) return new Vector2();
-			Vector2 m = app.view.mouse_in_view();
+			Vector2 m = PlaneApplet.app.view.mouse_in_view();
 			m.sub(node.getVar("ank_pos", Vector2.class));
 			return m;
 		}})
@@ -167,8 +167,8 @@ public class pAnk {
 				pInstance co_loc = inst.get("get_co", pInstance.class, "loc_pos");
 				Vector2 loc_pos = co_loc.get("provide", Vector2.class);
 				if (loc_pos == null) return;
-				app.stroke(255,255,0,255,3f);
-				app.line(0,0,loc_pos.x,loc_pos.y);
+				PlaneApplet.app.stroke(255,255,0,255,3f);
+				PlaneApplet.app.line(0,0,loc_pos.x,loc_pos.y);
 			}};
 			instance.addObject("run_draw", run_draw);
 		}})
@@ -219,8 +219,8 @@ public class pAnk {
 				 pInstance inst = (pInstance)builder;
 				 if (!inst.getVar("show", Boolean.class)) return;
 				 float rad = inst.getVar("radius", Float.class);
-				 app.stroke(255,255,0,255,3f); app.noFill();
-				 app.circle(0,0,rad);
+				 PlaneApplet.app.stroke(255,255,0,255,3f); PlaneApplet.app.noFill();
+				 PlaneApplet.app.circle(0,0,rad);
 			}};
 			instance.addObject("run_draw", run_draw);
 		}})
@@ -246,9 +246,9 @@ public class pAnk {
 	
 	public static float ANK_GRAB_BASE_SIZE = 1f;
 	
-	public static void build_book(PlaneApplet app) {
+	public static void build_book() {
 		
-		nModelBook book = app.gui.book;
+		nModelBook book = nGUI.book;
 		float RS = book.RS;
 
 		ANK_GRAB_BASE_SIZE = RS * 5f / 8f;
@@ -279,7 +279,7 @@ public class pAnk {
 		;
 		
 		
-		book.newModelGroup("space_ank", new nModelGroup(app) { 
+		book.newModelGroup("space_ank", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup();
 
@@ -295,7 +295,7 @@ public class pAnk {
 						g.addEventClear(new nRun() { public void run() {
 							node.clear(); }});
 						
-						ref.setParent(app.view.view_ref);
+						ref.setParent(PlaneApplet.app.view.view_ref);
 
 						ref.setPos(node.getVar("ank_pos", Vector2.class));
 

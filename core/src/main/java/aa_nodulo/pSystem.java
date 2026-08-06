@@ -8,6 +8,7 @@ import java.util.Random;
 import app.App;
 import data.sBloc_Builder;
 import data.sBoo;
+import data.sData;
 import data.sInt;
 import data.sStr;
 import data.sTab;
@@ -38,15 +39,15 @@ public abstract class pSystem {
 	
 	public static ArrayList<sBloc_Builder> sys_builders = new ArrayList<sBloc_Builder>();
 
-	public static <T extends pSystem> sBloc_Builder builder(PlaneApplet app, String ref, 
+	public static <T extends pSystem> sBloc_Builder builder(sData data, String ref, 
 			Class<T> sc, nRun run_new) {
-		return builder(app,ref,sc,true,run_new); }
-	public static <T extends pSystem> sBloc_Builder builder(PlaneApplet app, String ref, 
+		return builder(data,ref,sc,true,run_new); }
+	public static <T extends pSystem> sBloc_Builder builder(sData data, String ref, 
 			Class<T> sc, boolean addToPlane, nRun run_new) {
 		 
 		storeSystemType(ref,sc);
 		
-		sBloc_Builder new_builder = new sBloc_Builder(app.data, ref)
+		sBloc_Builder new_builder = new sBloc_Builder(data, ref)
 			.setSolo(true)
 			.setInitRun(new nRun() { public void run(Object o) {
 				sValueBloc b = (sValueBloc)o; run_new.run(b); }})
@@ -56,7 +57,7 @@ public abstract class pSystem {
 				sValueBloc b = (sValueBloc)o; b.run("clearing"); }});
 
 		if (addToPlane) {
-			app.addEventInit(new nRun() { public void run(Object o) {
+			PlaneApplet.app.addEventInit(new nRun() { public void run(Object o) {
 				sValueBloc b = (sValueBloc)o; b.addBlocBuilder(new_builder); 
 				b.buildBloc(ref, ref);
 			}});

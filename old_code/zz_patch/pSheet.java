@@ -630,7 +630,7 @@ public class pSheet {
 	
 	
 	public static void build_book(Applet app) {
-		nModelBook book = app.gui.book;
+		nModelBook book = nGUI.book;
 		float RS = book.RS;
 		
 //		book.newModel("S_ref")

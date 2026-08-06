@@ -1,4 +1,4 @@
-package aa_nodulo;
+package gui;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,9 +8,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 
+import aa_nodulo.PlaneApplet;
 import app.GdxApp;
 import data.*;
-import gui.*;
 import util.Utl;
 import util.nMap;
 import util.nRun;
@@ -27,7 +27,7 @@ public class nMenu {
 	public nWidget menu_back;
 	public nWidget menu_ref;
 	nWidget info_back;
-	nWidgetGroup dropmenu_file, dropmenu_tool;//dropmenu_build, 
+	nWidgetGroup dropmenu_file;//, dropmenu_tool;//dropmenu_build, 
 	public nWidget save_path_viewer, close, fullscreen, hidebar, hideinfo, fx;
 	
 	public sBoo val_hide_bar, val_hide_info, val_fx;
@@ -38,11 +38,9 @@ public class nMenu {
 		gui = a.gui;
 		data = a.data;
 		
-		build_book();
-		
 		build_help();
 		
-		float RS = gui.book.RS;
+		float RS = nGUI.book.RS;
 		
 		menu_back = gui.addWidget("menu_back")
 				.setRect(0,GdxApp.HEIGHT - 4f*RS/3f,GdxApp.WIDTH,4f*RS/3f)
@@ -62,7 +60,7 @@ public class nMenu {
 				.asWidget()
 				.setParent(menu_back)
 				.addEventTrigger(new nRun() { public void run() {
-					app.gdx.close_app();  }})
+					pop_exit(); }})
 				;
 
 		fullscreen = gui.addWidget("ref")
@@ -75,7 +73,7 @@ public class nMenu {
 				.setLink(app.input.val_fullscreen)
 				;
 
-		val_hide_bar = app.data.setting_bloc.newBoo("val_hide_bar", false);
+		val_hide_bar = app.data.setting_bloc.newBoo("val_hide_bar", true);
 
 		hidebar = gui.addWidget("ref")
 				.setRect(GdxApp.WIDTH - 21f*RS/6f, RS/6f, RS, RS)
@@ -114,7 +112,7 @@ public class nMenu {
 				;
 		
 		save_path_viewer = gui.addWidget("ref")
-				.setRect(GdxApp.WIDTH - RS*13f, RS/6f, RS*10f, RS)
+				.setRect(GdxApp.WIDTH - RS*16f, RS/6f, RS*10f, RS)
 				.setPassif()
 				.set_color_background(Utl.color(0,0))
 				.asWidget()
@@ -124,7 +122,7 @@ public class nMenu {
 				;
 
 		info_back = gui.addWidget("info_back")
-				.setPos(GdxApp.WIDTH - 190,4f*RS/3f)
+				.setPos(GdxApp.WIDTH - 190,0)
 				.asWidget()
 				;
 
@@ -137,10 +135,10 @@ public class nMenu {
 //		dropmenu_build = gui.addWidgetGroup("dropmenu");
 //		d2.addEventTrigger(new nRun() { public void run() {
 //			dropmenu_build.metode("open", d2); }});
-		nWidget d3 = add_menu_trigg("Tool");
-		dropmenu_tool = gui.addWidgetGroup("dropmenu");
-		d3.addEventTrigger(new nRun() { public void run() {
-			dropmenu_tool.metode("open", d3); }});
+//		nWidget d3 = add_menu_trigg("Tool");
+//		dropmenu_tool = gui.addWidgetGroup("dropmenu");
+//		d3.addEventTrigger(new nRun() { public void run() {
+//			dropmenu_tool.metode("open", d3); }});
 		
 		
 		
@@ -149,17 +147,17 @@ public class nMenu {
 //		toolbox.build_quicktool();
 		
 
-		bar_entrys = new ArrayList<nWidget>();
-		
-		bar_back = gui.addWidget("taskbar_back")
-				.setRect(0,0,GdxApp.WIDTH,RS+10)
-				.setDrawstackPriority(true)
-				.asWidget()
-				;
-		bar_ref = gui.addWidget("taskbar_ref")
-				.asWidget()
-				.setParent(bar_back)
-				;
+//		bar_entrys = new ArrayList<nWidget>();
+//		
+//		bar_back = gui.addWidget("taskbar_back")
+//				.setRect(0,0,GdxApp.WIDTH,RS+10)
+//				.setDrawstackPriority(true)
+//				.asWidget()
+//				;
+//		bar_ref = gui.addWidget("taskbar_ref")
+//				.asWidget()
+//				.setParent(bar_back)
+//				;
 
 		nRun run_hb_frame = new nRun() { public void run() {
 			if (app.input.mouse.y > menu_back.getLocalY() - menu_back.getLocalSY()) {
@@ -167,11 +165,11 @@ public class nMenu {
 			} else {
 				menu_back.hide();
 			}
-			if (app.input.mouse.y < bar_back.getLocalY() + bar_back.getLocalSY()) {
-				bar_back.show();
-			} else {
-				bar_back.hide();
-			}
+//			if (app.input.mouse.y < bar_back.getLocalY() + bar_back.getLocalSY()) {
+//				bar_back.show();
+//			} else {
+//				bar_back.hide();
+//			}
 		}};
 		nRun run_hi_frame = new nRun() { public void run() {
 			if (app.input.mouse.x > info_back.getLocalX() && 
@@ -188,7 +186,7 @@ public class nMenu {
 			} else {
 				app.removeRunFrameStart(run_hb_frame);
 				menu_back.show();
-				bar_back.show();
+//				bar_back.show();
 			}
 			if (val_hide_info.get()) {
 				if (!app.runFrameStart.contains(run_hi_frame))
@@ -205,15 +203,15 @@ public class nMenu {
 
 		app.gdx.addEventScreen(new nRun() { public void run() {
 			menu_back.setRect(0,app.gdx.getscreenheight() - 4f*RS/3f,app.gdx.getscreenwidth(),4f*RS/3f); 
-			info_back.setPos(app.gdx.getscreenwidth() - 190,4f*RS/3f); 
+			info_back.setPos(app.gdx.getscreenwidth() - 190,0); 
 			close.setRect(app.gdx.getscreenwidth() - 7f*RS/6f, RS/6f, RS, RS);
 			fullscreen.setRect(app.gdx.getscreenwidth() - 14f*RS/6f, RS/6f, RS, RS);
-			save_path_viewer.setRect(app.gdx.getscreenwidth() - RS*13f, RS/6f, RS*10f, RS);
+			save_path_viewer.setRect(app.gdx.getscreenwidth() - RS*16f, RS/6f, RS*10f, RS);
 			hidebar.setRect(app.gdx.getscreenwidth() - 21f*RS/6f, RS/6f, RS, RS);
 			hideinfo.setRect(app.gdx.getscreenwidth() - 28f*RS/6f, RS/6f, RS, RS);
 			fx.setRect(app.gdx.getscreenwidth() - 35f*RS/6f, RS/6f, RS, RS);
-			bar_back.setRect(0,0,app.gdx.getscreenwidth(),RS+10); 
-			if (app.gdx.isfullscreen()) close.show(); else close.hide();
+//			bar_back.setRect(0,0,app.gdx.getscreenwidth(),RS+10); 
+//			if (app.gdx.isfullscreen()) close.show(); else close.hide();
 		}});
 		
 		add_shortcut_target("Fullscreen", 'M', new nRun() { public void run() {
@@ -231,8 +229,8 @@ public class nMenu {
 		
 		
 		
-		group_popWindow = app.gui.addWidgetGroup("pop_window");
-		group_infopop = app.gui.addWidgetGroup("info_pop");
+//		group_popWindow = app.gui.addWidgetGroup("pop_window");
+//		group_infopop = app.gui.addWidgetGroup("info_pop");
 
 		add_info_text("fps:", app.input.val_framerate);
 		if (!app.config.RELEASE) {
@@ -247,47 +245,49 @@ public class nMenu {
 
 		add_file_menu_trigg("Shortcut", new nRun() { public void run() {
 			pop_shortcut(); }});
-			
-		add_file_menu_trigg("About", new nRun() { public void run() {
-			pop_about(); }});
+
+//		add_file_menu_trigg("Book Explo", new nRun() { public void run() {
+//			pop_book_explo(); 
+//		}});
+
+		//TODO a bouger dans titleScreen
+//		add_file_menu_trigg("About", new nRun() { public void run() {
+//			pop_about(); }});
 
 		add_file_menu_separator();
 		
 		add_file_menu_trigg("Exit", new nRun() { public void run() {
 			app.gdx.close_app(); }});
 
-		add_tool_menu_trigg("Book Explo", new nRun() { public void run() {
-			pop_book_explo(); }});
-
 		app.addRunFrameStart(new nRun() { public void run() {
 			update_shortcut(); }});
 		
 	}
 	
-
-	public nWidgetGroup group_infopop = null;
-	public nWidgetGroup group_popWindow = null;
+//
+//	public nWidgetGroup group_infopop = null;
+//	public nWidgetGroup group_popWindow = null;
+////	
+//	public void pop_infopop(nWidget pop) {
+//		group_infopop.metode("pop", pop); }
+//
+//	public nInterface get_popWindow() {
+//		return (nInterface)group_popWindow.metodeGet("get_interf"); }
+//	public void pop_popwindow(String title) {
+//		group_popWindow.metode("pop", title); }
+//	public void close_popwindow() {
+//		group_popWindow.metode("close"); }
+//	
 	
-	public void pop_infopop(nWidget pop) {
-		group_infopop.metode("pop", pop); }
 
-	public nInterface get_popWindow() {
-		return (nInterface)group_popWindow.metodeGet("get_interf"); }
-	public void pop_popwindow(String title) {
-		group_popWindow.metode("pop", title); }
-	public void close_popwindow() {
-		group_popWindow.metode("close"); }
-	
-	
-
-	public nWidget add_tool_menu_trigg(String t, nRun r) {
-		nWidget w1 = (nWidget)dropmenu_tool.metodeGet("add_entry", t);
-		w1.addEventTrigger(r);
-		return w1;
-	}
-	public void add_tool_menu_separator() {
-		dropmenu_tool.metode("add_separator");
-	}
+//	public nWidget add_tool_menu_trigg(String t, nRun r) {
+//		nWidget w1 = (nWidget)dropmenu_tool.metodeGet("add_entry", t);
+//		w1.addEventTrigger(r);
+//		return w1;
+//	}
+//	public void add_tool_menu_separator() {
+//		dropmenu_tool.metode("add_separator");
+//	}
 	
 //	public nWidget add_build_menu_trigg(String t, nRun r) {
 //		nWidget w1 = (nWidget)dropmenu_build.metodeGet("add_entry", t);
@@ -395,30 +395,30 @@ public class nMenu {
 	
 	
 
-	nWidget bar_back, bar_ref;
-	public ArrayList<nWidget> bar_entrys;
-	
-	public nWidget add_taskbar_entry() {
-		
-		nWidget w = gui.addWidget("taskbar_entry")
-		.setParent(bar_ref);
-		
-		for(nWidget n : bar_entrys) n.setOff();
-		
-		w.addEventSwitchOn(new nRun() { public void run() {
-			for(nWidget n : bar_entrys) if (n != w) n.setOff(); }});
-		
-		bar_entrys.add(w);
-		return w;
-	}
-	public void remove_taskbar_entry(nWidget w) {
-		bar_entrys.remove(w); }
+//	nWidget bar_back, bar_ref;
+//	public ArrayList<nWidget> bar_entrys;
+//	
+//	public nWidget add_taskbar_entry() {
+//		
+//		nWidget w = gui.addWidget("taskbar_entry")
+//		.setParent(bar_ref);
+//		
+//		for(nWidget n : bar_entrys) n.setOff();
+//		
+//		w.addEventSwitchOn(new nRun() { public void run() {
+//			for(nWidget n : bar_entrys) if (n != w) n.setOff(); }});
+//		
+//		bar_entrys.add(w);
+//		return w;
+//	}
+//	public void remove_taskbar_entry(nWidget w) {
+//		bar_entrys.remove(w); }
 	
 	
 
 	public void pop_shortcut() {
 
-		nInterface interf = app.menu.get_popWindow();
+		nInterface interf = gui.get_popWindow();
 
 		interf.add_row();
 		interf.add_row_label(10,"Shortcut : ");
@@ -432,7 +432,7 @@ public class nMenu {
 			nWidget w = interf.add_list_entry(ref);
 			w.setTextAlignment(nAlign.LEFT, nAlign.CENTER);
 			
-			float RS = app.gui.book.RS;
+			float RS = nGUI.book.RS;
 			nWidget fld_w = interf.get_row_button_widget(4);
 			fld_w.setParent(w)
 			.setField(true)
@@ -450,105 +450,125 @@ public class nMenu {
 		}
 		
 		app.addEventNextFrame(new nRun() { public void run() {
-			app.menu.pop_popwindow("Shortcut"); }});
+			gui.pop_popwindow("Shortcut"); }});
 	}
 
 	
-	
-	
-	
-	public void pop_book_explo() {
-		nInterface interf = get_popWindow();
 
-		interf.add_row();
-		interf.add_row_label(10, "Book Exploration");
-		interf.add_row();
-		interf.add_row_label(10, "Model nb: "+app.gui.book.models.size() + 
-				"  ModelGroup nb: "+app.gui.book.modelgroups.size());
+	public void pop_exit() {
 
+		nInterface interf = gui.get_popWindow();
 		interf.add_row();
-		interf.add_row_label(10, "nWidget Models :");
+		interf.add_row_label(10, "");
 		interf.add_row();
-		nWidgetGroup list = interf.add_treelist(10, 12);
+		interf.add_row_trigg(5, "Exit", new nRun() {public void run() { 
+			app.gdx.close_app(); }});
+		interf.add_row_label(1, "");
+		interf.add_row_trigg(5, "Title", new nRun() {public void run() { 
+			gui.close_popwindow(); app.gdx.to_title(); }});
+		interf.add_row_label(1, "");
+		interf.add_row_trigg(5, "Cancel", new nRun() {public void run() { 
+			gui.close_popwindow(); }});
+		interf.add_row();
+		interf.add_row_label(10, "");
+		gui.pop_popwindow("Exit ?");
 		
-		interf.change_current_list(list);
-
-		ArrayList<String> mod = new ArrayList<String>();
-		for (Map.Entry<String,nModel> me : app.gui.book.models.entrySet()) {
-			mod.add(me.getKey());
-		}
-		Collections.sort(mod);
-		for (String s : mod) {
-			interf.add_list_entry(s);
-			interf.go_up_tree();
-		}
-
-		interf.add_col();
-		
-		interf.add_row();
-		interf.add_row_label(10, "nWidgetGroup ModelGroups :");
-		interf.add_row();
-		nWidgetGroup list2 = interf.add_treelist(10, 14);
-		
-		interf.change_current_list(list2);
-
-		mod.clear();
-		for (Map.Entry<String,nModelGroup> me : app.gui.book.modelgroups.entrySet()) {
-			mod.add(me.getKey());
-		}
-		Collections.sort(mod);
-		for (String s : mod) {
-			interf.add_list_entry(s);
-			interf.go_up_tree();
-		}
-		
-		pop_popwindow("Book Explo");
 	}
 	
+	//TODO a refaire avec sceneéd.ui dans un autre Screen
+//	public void pop_book_explo() {
+//		nInterface interf = gui.get_popWindow();
+//
+//		interf.add_row();
+//		interf.add_row_label(10, "Book Exploration");
+//		interf.add_row();
+//		interf.add_row_label(10, "Model nb: "+app.gui.book.models.size() + 
+//				"  ModelGroup nb: "+app.gui.book.modelgroups.size());
+//
+//		interf.add_row();
+//		interf.add_row_label(10, "nWidget Models :");
+//		interf.add_row();
+//		nWidgetGroup list = interf.add_treelist(10, 12);
+//		
+//		interf.change_current_list(list);
+//
+//		ArrayList<String> mod = new ArrayList<String>();
+//		for (Map.Entry<String,nModel> me : app.gui.book.models.entrySet()) {
+//			mod.add(me.getKey());
+//		}
+//		Collections.sort(mod);
+//		for (String s : mod) {
+//			interf.add_list_entry(s);
+//			interf.go_up_tree();
+//		}
+//
+//		interf.add_col();
+//		
+//		interf.add_row();
+//		interf.add_row_label(10, "nWidgetGroup ModelGroups :");
+//		interf.add_row();
+//		nWidgetGroup list2 = interf.add_treelist(10, 14);
+//		
+//		interf.change_current_list(list2);
+//
+//		mod.clear();
+//		for (Map.Entry<String,nModelGroup> me : app.gui.book.modelgroups.entrySet()) {
+//			mod.add(me.getKey());
+//		}
+//		Collections.sort(mod);
+//		for (String s : mod) {
+//			interf.add_list_entry(s);
+//			interf.go_up_tree();
+//		}
+//		
+//		gui.pop_popwindow("Book Explo");
+//	}
+	
 
-	public void pop_about() {
-		
-		String about = "Eeeeeeeeeeeeeee\n" + 
-				"eeeeeeeeeeeeeee\n" + 
-				"eeeeeeeeeeeeeee\n" + 
-				"eeeeeeeeeeeeeee\n" + 
-				"eeeeeeeeeeeeeee\n" + 
-				"eeeeeeeeeeeeeee\n" + 
-				"eeeeeeeeeeeeeee\n" + 
-				"eeeeeeeeeeeeeee\n" + 
-				"eeeeeeeeeeeeeee\n" + 
-				"eeeeeeeeeeeeeee\n" + 
-				"eeeeeeeeeeeeeee\n" + 
-				"eeeeeeeeeeeeeee\n" + 
-				"Eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-				+ "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-				+ "eeeeeeeeeeeeeeeeeeeeE\n" + 
-				"eeeeeeeeeeeeeee\n" + 
-				"eeeeeeeeeeeeeee\n" + 
-				"eeeeeeeeeeeeeee\n" + 
-				"eeeeeeeeeeeeeee\n" + 
-				"eeeeeeeeeeeeeee\n" + 
-				"eeeeeeeeeeeeeee\n" + 
-				"eeeeeeeeeeeeeee\n" + 
-				"eeeeeeeeeeeeeeE\n" + 
-				"E" ;
-		nInterface interf = get_popWindow();
-
-		interf.add_row();
-		
-		nWidgetGroup list = interf.add_scrollist(8, 4);
-		
-		nWidget txt_w = interf.add_list_entry("");
-		txt_w.force_calc();
-		txt_w.setSY(app.textHeight() * txt_w.line_number(about) / 1.1f);
-		txt_w.setText(about);
-		txt_w.setTextAutoReturn(true)
-		.setTextAlignment(nAlign.LEFT, nAlign.BOTTOM);
-		txt_w.force_calc();
-		list.metode("slide_calc");
-		
-		pop_popwindow("  About  ");
-	}
+	//TODO a refaire avec sceneéd.ui dans un autre Screen
+//	public void pop_about() {
+//		
+//		String about = "Eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"Eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+//				+ "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+//				+ "eeeeeeeeeeeeeeeeeeeeE\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeeE\n" + 
+//				"E" ;
+//		nInterface interf = gui.get_popWindow();
+//
+//		interf.add_row();
+//		
+//		nWidgetGroup list = interf.add_scrollist(8, 4);
+//		
+//		nWidget txt_w = interf.add_list_entry("");
+//		txt_w.force_calc();
+//		txt_w.setSY(app.textHeight() * txt_w.line_number(about) / 1.1f);
+//		txt_w.setText(about);
+//		txt_w.setTextAutoReturn(true)
+//		.setTextAlignment(nAlign.LEFT, nAlign.BOTTOM);
+//		txt_w.force_calc();
+//		list.metode("slide_calc");
+//		
+//		gui.pop_popwindow("  About  ");
+//	}
 	
 	
 	
@@ -557,7 +577,7 @@ public class nMenu {
 	
 	public void pop_help_page(Help help) {
 		
-		nInterface interf = get_popWindow();
+		nInterface interf = gui.get_popWindow();
 
 		interf.add_row();
 		
@@ -615,7 +635,7 @@ public class nMenu {
 		}
 		list.metode("slide_calc");
 		
-		pop_popwindow("  Help : "+help.ref);
+		gui.pop_popwindow("  Help : "+help.ref);
 	}
 	
 	public static class Help {
@@ -653,27 +673,12 @@ public class nMenu {
 			HELP_VIEW = b;// && val_help.get(); 
 			app.gui.do_help = HELP_VIEW; }});
 		
-		newHelp("help_1", "txt1")
-		.text(" txt2")
-		.line()
-		.text("txt3")
-		.link("help 2", "help_2")
-		.text("txt4")
-		.line()
-		;
-		
-		newHelp("help_2", "txt5")
-		.line()
-		.text("txt6")
-		.text("txt7")
-		.line()
-		;
 	}
-	
+
 
 	
-	private void build_book() {
-		nModelBook book = gui.book;
+	static void build_book() {
+		nModelBook book = nGUI.book;
 		float RS = book.RS;
 		
 		

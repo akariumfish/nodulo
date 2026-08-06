@@ -8,10 +8,6 @@ public class nModelGroup {
 	
 	public nModelGroup() { }
 
-	public nModelGroup(App a) { }
-
-//	public nModelGroup(Applet a) { }
-	
 	public nWidgetGroup build(nGUI gui) { return null; }
 	
 }

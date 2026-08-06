@@ -53,7 +53,7 @@ public class pNode {
 
 	public static void build_nodes(Applet app) {
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 		
 
 		
@@ -424,7 +424,7 @@ public class pNode {
 	
 	public static void build_standard(Applet app) {
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
 		
 		pStandard.newStandard("node", "inst")
@@ -1476,7 +1476,7 @@ public class pNode {
 	
 	public static void build_coms(Applet app) {
 		
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
 		newRunTool("run_var_boo_switch", CT.RUNP_VAR_BOO_SWITCH, 
 				new nRun() {public void run() {
@@ -2581,7 +2581,7 @@ public class pNode {
 	
 	
 	public static void build_book(Applet app) {
-		nModelBook book = app.gui.book;
+		nModelBook book = nGUI.book;
 		float RS = book.RS;
 		
 

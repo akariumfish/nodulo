@@ -14,9 +14,9 @@ import com.badlogic.gdx.math.Vector2;
 
 public class pNodeAction {
 	
-	public static void build(PlaneApplet app) {
+	public static void build() {
 
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 		
 
 
@@ -134,8 +134,8 @@ public class pNodeAction {
 		;
 		
 		stand_action.process().commande(new nRun() {public void run() {
-			app.time.addPrevTickBric(instance);
-			app.time.addTickBric(instance);
+			PlaneApplet.app.time.addPrevTickBric(instance);
+			PlaneApplet.app.time.addTickBric(instance);
 			
 			nRun run_frame = new nRun(instance) {public void run() { 
 				pInstance inst = (pInstance)builder;
@@ -144,15 +144,15 @@ public class pNodeAction {
 			instance.addObject("run_frame", run_frame);
 			instance.patch.addEventFrame(run_frame);
 			instance.obtainVar("got_ctrl", false);
-			app.addDelayEvent(1, new nRun(instance) {public void run() {
+			PlaneApplet.app.addDelayEvent(1, new nRun(instance) {public void run() {
 				pInstance inst = (pInstance)builder;
 				if (!inst.getVar("got_ctrl", Boolean.class))
 					inst.run("def_ctrl", inst.getVar("ctrl_used", String.class));
 			}});
 		}})
 		.useClear().commande(new nRun() {public void run() { 
-			app.time.removePrevTickBric(instance);
-			app.time.removeTickBric(instance);
+			PlaneApplet.app.time.removePrevTickBric(instance);
+			PlaneApplet.app.time.removeTickBric(instance);
 			instance.patch.removeEventFrame(
 					instance.object("run_frame", nRun.class));
 		}}).useInit()
@@ -216,6 +216,8 @@ public class pNodeAction {
 		.param("ref", "timeline")
 		.param("text", "", "width", (int)20, "height", 4f)
 		.param("custom_drawer", new nRun() {public void run() { 
+			PlaneApplet app = PlaneApplet.app;
+			
 			float sx = 300, sy = 120;
 			app.fill(40); app.noStroke(); 
 			app.rect(0,0,sx,sy);
@@ -415,7 +417,7 @@ public class pNodeAction {
 		stand_ctrl_chan.process()
 		.commande(new nRun() {public void run() {
 			instance.obtainVar("got_data", false);
-			app.addDelayEvent(1, new nRun(instance) {public void run() {
+			PlaneApplet.app.addDelayEvent(1, new nRun(instance) {public void run() {
 				pInstance inst = (pInstance)builder;
 				if (!inst.getVar("got_data", Boolean.class))
 					inst.run("set_data", inst.getVar("data_used", String.class));
@@ -429,6 +431,8 @@ public class pNodeAction {
 		.param("ref", "timeline")
 		.param("text", "", "width", (int)20)
 		.param("custom_drawer", new nRun() {public void run() { 
+			PlaneApplet app = PlaneApplet.app;
+			
 			float sx = 300, sy = 30;
 			app.fill(40); app.noStroke(); 
 			app.rect(0,0,sx,sy);

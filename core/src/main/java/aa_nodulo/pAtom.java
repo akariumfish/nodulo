@@ -13,8 +13,10 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import app.App;
 import data.sBloc_Builder;
 import data.sBoo;
+import data.sData;
 import data.sFlt;
 import data.sInt;
 import data.sValue;
@@ -35,11 +37,13 @@ public class pAtom extends pSystem {
 
 	public static sBloc_Builder builder = null;
 	
-	public static void build(PlaneApplet app) {
-		builder = builder(app, "atom", pAtom.class, new nRun() { public void run(Object o) {
+	public static void build(sData data) {
+
+		if (builder == null) build_prop();
+		
+		builder = builder(data, "atom", pAtom.class, new nRun() { public void run(Object o) {
 			sValueBloc b = (sValueBloc)o; newObject(b); }});
 		
-		build_prop(app);
 	}
 
 	public static void dispose(PlaneApplet app) { pool.dispose(); }
@@ -50,9 +54,13 @@ public class pAtom extends pSystem {
 	
 	
 	
+
+	private static boolean has_build = false;
 	
 	public static void build_setup() {
-
+		if (has_build) return;
+		has_build = true;
+		
 		PlaneApplet.newStartupModel("atom_game")
 		.setSetupRun(new nRun() { public void run() {
 			
@@ -70,7 +78,7 @@ public class pAtom extends pSystem {
 	}
 	
 	
-	public static void build_game(PlaneApplet app) {
+	public static void build_game() {
 
 		new MacroScript("atom_ctrl") 
 		.com("add_set_param", "ref", "rot")
@@ -191,7 +199,7 @@ public class pAtom extends pSystem {
 		.addTileScript("func_s", "atom_shoot")
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
-			app.addDelayEvent(3, new nRun() { public void run() {
+			App.ap.addDelayEvent(3, new nRun() { public void run() {
 //				list.get("func_p").setVar("script", true);
 //				list.get("func_m").setVar("script", true);
 //				list.get("func_s").setVar("script", true);
@@ -332,13 +340,13 @@ public class pAtom extends pSystem {
 			list.get("construct2_ank").setVar("view_ank", false);
 			list.get("construct2_ank").setVar("ank_pos", new Vector2(-900,0));
 			
-			sValue v = app.view
+			sValue v = PlaneApplet.app.view
 				.bloc.getValue("val_grid");
 			if (v != null) ((sBoo)v).set(false);
-			v = app.getSystem(pAtom.class)
+			v = PlaneApplet.app.getSystem(pAtom.class)
 					.bloc.getValue("val_draw");
 				if (v != null) ((sBoo)v).set(true);
-			v = app.getSystem(pAtom.class)
+			v = PlaneApplet.app.getSystem(pAtom.class)
 					.bloc.getValue("val_play");
 				if (v != null) ((sBoo)v).set(true);
 		}})
@@ -360,7 +368,7 @@ public class pAtom extends pSystem {
 	
 	
 	
-	public static void build_prop(PlaneApplet app) {
+	public static void build_prop() {
 		
 		pProperty hittable = pProperty.newGeneralProperty("hittable")
 		;
@@ -387,8 +395,8 @@ public class pAtom extends pSystem {
 
 		nRun run_ctrl_atom = new nRun() { public void run(Object o) { 
 			pBody bod = (pBody)o; if (bod == null) return;
-			pGeom geo = app.getSystem(pGeom.class);
-			pAtom ato = app.getSystem(pAtom.class);
+			pGeom geo = PlaneApplet.app.getSystem(pGeom.class);
+			pAtom ato = PlaneApplet.app.getSystem(pAtom.class);
 			if (geo != null && bod.hasParam("ref") && bod.hasParam("var_move") && 
 					bod.hasParam("move") && bod.hasParam("ctrl_atom")) {
 				float accel = ato.val_accel.get();

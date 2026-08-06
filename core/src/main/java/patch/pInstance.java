@@ -1,11 +1,7 @@
 package patch;
 
 import data.*;
-import gui.*;
-import patch.pStandard.ObjDef;
 import util.*;
-import aa_nodulo.*;
-import app.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,25 +33,6 @@ public class pInstance extends sPoolable {
 	public ArrayList<pColl> collec_list = new ArrayList<pColl>();
 	
 
-	
-	/*  pInstance init sequance :
-	 * 		Created : 
-	 * 			Pool.obtain(stand,args) > find free inst :
-	 * 				inst.init_poolable
-	 * 				inst.create_run(stand,args) > 
-	 * 					inst.join_standard(stand)
-	 * 					stand.createInst(inst,args)
-	 * 				inst.init_run() > inst.stand.initInst(inst)
-	 * 				inst.load_run() > inst.stand.loadInst(inst)
-	 * 		Loaded :
-	 * 			Pool.load() > for all tab row if used :
-	 * 				inst.init_poolable
-	 * 				inst.from_tab
-	 * 					inst join loaded standard
-	 * 				inst.init_run() > inst.stand.initInst(inst)
-	 * 				inst.load_run() > inst.stand.loadInst(inst)
-	 * 
-	 */
 	
 	public void join_standard(pStandard p) {
 		if (p != null) {
@@ -94,6 +71,10 @@ public class pInstance extends sPoolable {
 		var_vals.clear();
 		obj_is_init = false;
 		stand = null;
+		collecs = null;
+		insts = null;
+		if (datas != null) for (int i = 0 ; i < Utl.data_type_nb ; i++) {
+			datas[i] = null; }
 	}
 	
 	public void clear_action() {
@@ -125,7 +106,8 @@ public class pInstance extends sPoolable {
 		insts = new String[inst_used];
 		for (int i = 0 ; i < inst_used ; i++) insts[i] = "";
 		
-		datas = new Object[Utl.data_type_nb][];
+		if (datas == null) 
+			datas = new Object[Utl.data_type_nb][];
 		
 		int u = Utl.type_class_index.get(Vector2.class);
 		datas[u] = new Vector2[data_used[u]];
@@ -158,10 +140,10 @@ public class pInstance extends sPoolable {
 
 		for (int i = 0 ; i < inst_used ; i++) insts[i] = "";
 		
-		for (ObjDef od : stand.objdefs) {
-			Object o = od.newobj.do_get(this, od.param);
-			setObject(od.ref,o);
-		}
+//		for (ObjDef od : stand.objdefs) {
+//			Object o = od.newobj.do_get(this, od.param);
+//			setObject(od.ref,o);
+//		}
 	}
 
 	public static final int start_data_nb = 1;
@@ -363,10 +345,10 @@ public class pInstance extends sPoolable {
 		
 		for (int i = 0 ; i < inst_used ; i++) insts[i] = "";
 		
-		for (ObjDef od : stand.objdefs) {
-			Object o = od.newobj.do_get(this, od.param);
-			setObject(od.ref,o);
-		}
+//		for (ObjDef od : stand.objdefs) {
+//			Object o = od.newobj.do_get(this, od.param);
+//			setObject(od.ref,o);
+//		}
 	}
 	public <T> T getDef(String r, Class<T> ct) { 
 		if (stand == null) return null;

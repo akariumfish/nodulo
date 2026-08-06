@@ -29,7 +29,7 @@ public class nMap <T> {
 	public String getKey(T s) { 
 		for (Map.Entry<String,T> me : map.entrySet()) {
 			if (me.getValue() == s) return me.getKey(); } return null; }
-	public boolean hasKey(String s) { return map.get(s) != null; }
+	public boolean hasKey(String s) { return map.containsKey(s); }
 	public boolean hasVal(T s) { return map.containsValue(s); }
 	public void remove(String s) { if (map.get(s) == null) return; 
 		T r = map.get(s); all.remove(r); map.remove(s,r); }
@@ -41,6 +41,6 @@ public class nMap <T> {
 	}
 	public void clear() { add_cnt = 0; map.clear(); all.clear(); }
 
-	public boolean containsKey(String s) { return map.containsKey(s); }
-	public boolean containsValue(T s) { return map.containsValue(s); }
+//	public boolean containsKey(String s) { return map.containsKey(s); }
+//	public boolean containsValue(T s) { return map.containsValue(s); }
 }

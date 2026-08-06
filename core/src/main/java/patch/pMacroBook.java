@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import aa_nodulo.PlaneApplet;
 import aa_nodulo.pBody;
+import app.App;
 import patch.pMacro.Macro;
 import patch.pMacro.MacroScript;
 import util.nMap;
@@ -12,8 +13,8 @@ import util.nRun;
 public class pMacroBook {
 
 
-	private static void build_test(PlaneApplet app) {
-
+//	private static void build_test() {
+//
 //		new MacroScript("test")
 //		.com("add_set_param", "ctrl_move", "accelerate")
 //		.com("add_get_reg_in_at", "body", "body")
@@ -80,7 +81,7 @@ public class pMacroBook {
 //		;
 //		
 //		
-	}
+//	}
 	
 	
 	
@@ -91,9 +92,9 @@ public class pMacroBook {
 	
 	
 	
-	public static void build(PlaneApplet app) {
+	public static void build() {
 		
-		build_tile_scripts(app);
+		build_tile_scripts();
 		
 		
 		Macro executor = new Macro("executor")
@@ -127,7 +128,7 @@ public class pMacroBook {
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
 			
-			app.addDelayEvent(3, new nRun(list) { public void run() {
+			PlaneApplet.app.addDelayEvent(3, new nRun(list) { public void run() {
 				nMap<pInstance> list = (nMap)builder;
 
 //				list.get("set_body_param").setVar("script", true);
@@ -348,7 +349,7 @@ public class pMacroBook {
 		.addLink("const_const", "co_body", "sel_body", "in")
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
-			app.addDelayEvent(8, new nRun() { public void run() {
+			PlaneApplet.app.addDelayEvent(8, new nRun() { public void run() {
 				list.get("const_const").get("new_body", pBody.class);
 			}});
 		}})
@@ -375,7 +376,7 @@ public class pMacroBook {
 
 			pInstance action = list.get("action");
 			
-			app.addDelayEvent(2, new nRun() { public void run() {
+			PlaneApplet.app.addDelayEvent(2, new nRun() { public void run() {
 				action.run("def_ctrl", "move");
 				action.run("pop_ctrl_chan", "accelerate");
 				action.run("pop_ctrl_chan", "acc_pos");
@@ -390,7 +391,7 @@ public class pMacroBook {
 //			list.get("body_ctrl_tile").get("pop_plug_node", "tile_pop_out", 
 //					"stack_editor", "tile_pop_in");
 			
-			app.addDelayEvent(16, new nRun(list) { public void run() {
+			PlaneApplet.app.addDelayEvent(16, new nRun(list) { public void run() {
 				nMap<pInstance> list = (nMap)builder;
 				
 				pInstance ank2 = list.get("const_ank");
@@ -427,7 +428,7 @@ public class pMacroBook {
 
 		
 		
-		build_test(app);
+//		build_test();
 		
 	}
 	
@@ -437,7 +438,7 @@ public class pMacroBook {
 	
 	
 	
-	private static void build_tile_scripts(PlaneApplet app) {
+	private static void build_tile_scripts() {
 
 
 		new MacroScript("get_body_param") 

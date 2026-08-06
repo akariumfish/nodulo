@@ -748,7 +748,7 @@ public class pPatch extends pSystem {
 	
 	
 	public static void build_book(Applet app) {
-		nModelBook book = app.gui.book;
+		nModelBook book = nGUI.book;
 		float RS = book.RS;
 		
 		book.newModel("P_ref")
@@ -974,7 +974,7 @@ public class pPatch extends pSystem {
 	public static sBloc_Builder database_editor_builder;
 	public static void build_database_book(Applet app) {
 		
-		nModelBook book = app.gui.book;
+		nModelBook book = nGUI.book;
 		float RS = book.RS;
 		
 		database_editor_builder = new sBloc_Builder(app.data, "database_editor")

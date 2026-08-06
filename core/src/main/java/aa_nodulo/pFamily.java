@@ -11,14 +11,7 @@ import app.App;
 
 public class pFamily {
 
-	public static nMap<pFamily> body_families;
-	public static App app;
-	
-	public static void build(App a) {
-		app = a;
-		body_families = new nMap<pFamily>();
-		
-	}
+	public static nMap<pFamily> body_families = new nMap<pFamily>();
 	
 	public static pFamily newFamily(String r) {
 		if (body_families.hasKey(r)) {

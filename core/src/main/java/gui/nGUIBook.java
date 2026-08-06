@@ -1,10 +1,11 @@
-package aa_nodulo;
+package gui;
 
 import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
+import aa_nodulo.PlaneApplet;
 import app.App;
 import app.GdxApp;
 import data.sBoo;
@@ -12,38 +13,21 @@ import data.sFlt;
 import data.sInt;
 import data.sValueBloc;
 import data.sVec;
-import gui.nAlign;
-import gui.nDrawable;
-import gui.nGUI;
-import gui.nInterface;
-import gui.nModel;
-import gui.nModelBook;
-import gui.nModelGroup;
-import gui.nWidget;
-import gui.nWidgetGroup;
 import util.Utl;
 import util.nRun;
 import patch.pNode;
 
 public class nGUIBook {
 
-	public static void build_book(nModelBook book, App app) {
-		build_color(book,app);
-		build_all_book(book,app);
-		build_interf_book(book);
-	}
 
 	
 	
 	
 
-	public static void build_color(nModelBook book, App app) {
+	public static void build_color(nModelBook book) {
 		
 		float RS = book.RS;
 		
-		boolean RELEASE = PlaneApplet.RELEASE;
-		
-
 		//      -----  BUILDING MODEL  -----
 		
 		book.newModel("SZ1-1").setSize(1*RS, 1*RS);
@@ -202,15 +186,19 @@ public class nGUIBook {
 		.setOutlineWeight(8)
 		;
 
+	}
+
+	public static void build_theme_color(nModelBook book) {
+		
+		boolean RELEASE = PlaneApplet.RELEASE;
 		
 //		-----  BASE MODEL  -----
 		
-		
 		if (RELEASE) {
-			app.gdx.drawer.color_back = new Color(book.getModel("CL_release").color_background);
+//			app.gdx.drawer.color_back = new Color(book.getModel("CL_release").color_background);
 			book.newModel("ref").copyFrom(book.getModel("CL_release"));
 			book.newModel("CL_VS_back").copyFrom(book.getModel("CL_release_VS_back"));
-			app.gdx.drawer.buffer_clear_color = new Color(book.getModel("CL_VS_back").color_background); 
+//			app.gdx.drawer.buffer_clear_color = new Color(book.getModel("CL_VS_back").color_background); 
 			book.newModel("CL_DM_back").copyFrom(book.getModel("CL_release_DM_back"));
 			book.newModel("CL_DM_entry").copyFrom(book.getModel("CL_release_DM_entry"));
 			book.newModel("CL_CW").copyFrom(book.getModel("CL_release_CW"));
@@ -219,10 +207,10 @@ public class nGUIBook {
 			book.newModel("CL_graph").copyFrom(book.getModel("CL_release_graph"));
 			book.newModel("CL_right_trigg").copyFrom(book.getModel("CL_release_RT"));
 		} else {
-			app.gdx.drawer.color_back = Utl.color(70);
+//			app.gdx.drawer.color_back = Utl.color(70);
 			book.newModel("ref").copyFrom(book.getModel("CL_def"));
 			book.newModel("CL_VS_back").copyFrom(book.getModel("CL_def_VS_back"));
-			app.gdx.drawer.buffer_clear_color = new Color(book.getModel("CL_VS_back").color_background); 
+//			app.gdx.drawer.buffer_clear_color = new Color(book.getModel("CL_VS_back").color_background); 
 			book.newModel("CL_DM_back").copyFrom(book.getModel("CL_def_DM_back"));
 			book.newModel("CL_DM_entry").copyFrom(book.getModel("CL_def_DM_entry"));
 			book.newModel("CL_CW").copyFrom(book.getModel("CL_def_CW"));
@@ -232,23 +220,21 @@ public class nGUIBook {
 			book.newModel("CL_right_trigg").copyFrom(book.getModel("CL_def_RT"));
 		}
 		
-		book.newModel("bp")
-		.copyFrom(book.getModel("ref"))
-		.copySizeFrom(book.getModel("SZ1-1"))
-		.setTrigger()
-		;
+//		book.newModel("bp")
+//		.copyFrom(book.getModel("ref"))
+//		.copySizeFrom(book.getModel("SZ1-1"))
+//		.setTrigger()
+//		;
 	}
 	
-	
-	
-	
-	
-	
-	
-	public static void build_interf_book(nModelBook book) {
+	public static void build_all_book(nModelBook book) {
+		
 		float RS = book.RS;
+
 		
 		
+		//      -----  INTERFACE  -----
+
 		book.newModel("INT_back")
 		.copyColorFrom(book.getModel("ref"))
 		.setRect(0,0,0,0)
@@ -365,14 +351,6 @@ public class nGUIBook {
 				return g;
 			} 
 		} );
-	}
-	
-
-	public static void build_all_book(nModelBook book, App app) {
-		
-		float RS = book.RS;
-
-		
 		
 		//      -----  INFO POP  -----
 
@@ -389,7 +367,7 @@ public class nGUIBook {
 		.setOutlineAfterChild(true)
 		;
 
-		book.newModelGroup("info_pop", new nModelGroup(app) { 
+		book.newModelGroup("info_pop", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup();
 				g.ref = "info_pop";
@@ -406,10 +384,10 @@ public class nGUIBook {
 				
 				nRun run_testfocus = new nRun() { public void run() {
 					if (ref.getVisibility()) { 
-						ref.setPos(app.input.mouse); 
-						if (app.input.mouse.x > GdxApp.WIDTH / 2f + RS) 
+						ref.setPos(App.ap.input.mouse); 
+						if (App.ap.input.mouse.x > GdxApp.WIDTH / 2f + RS) 
 							ref.setRectOrigin(nAlign.RIGHT,nAlign.CENTER);
-						if (app.input.mouse.x < GdxApp.WIDTH / 2f - RS) 
+						if (App.ap.input.mouse.x < GdxApp.WIDTH / 2f - RS) 
 							ref.setRectOrigin(nAlign.LEFT,nAlign.CENTER);
 						boolean over = false;
 						Object o = g.object("widg");
@@ -428,7 +406,7 @@ public class nGUIBook {
 					ref.setText(v.info_txt);
 					ref.force_calc();
 //					ref.setPos(v.getX()+v.getSX()/2f, v.getY()+v.getSY()/2f); 
-					ref.setSX(app.textWidth(v.info_txt) + RS);
+					ref.setSX(App.ap.textWidth(v.info_txt) + RS);
 					run_tofront.run(); 
 				} });
 
@@ -480,7 +458,7 @@ public class nGUIBook {
 				nRun run_testfocus = new nRun() { public void run() {
 					if (ref.getVisibility()) { 
 						if (ref.mouseOverZone) run_tofront.run();
-//						if (app.input.mouseLeft.trigClick && !ref.mouseOverZone)
+//						if (App.ap.input.mouseLeft.trigClick && !ref.mouseOverZone)
 //							run_hide.run();		
 					}
 				}};
@@ -594,7 +572,7 @@ public class nGUIBook {
 		.setBoundOutspace(0)
 		;
 		
-		book.newModelGroup("complex_window", new nModelGroup(app) { 
+		book.newModelGroup("complex_window", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup();
 				g.ref = "complex_window";
@@ -608,8 +586,8 @@ public class nGUIBook {
 						.setParent(ref);
 				nWidget head = g.addWidget("head", "CW_head")
 						.setParent(headback);
-				nWidget collapse = g.addWidget("collapse", "CW_collapse") 
-						.setParent(headback);
+//				nWidget collapse = g.addWidget("collapse", "CW_collapse") 
+//						.setParent(headback);
 				nWidget close = g.addWidget("close", "CW_close")
 						.setParent(headback); 
 
@@ -621,7 +599,7 @@ public class nGUIBook {
 				
 				head.setSizeCopyX(back);
 				head.setSizeCopyMin(RS);
-				head.setSizeCopyIncr(-2*RS);
+				head.setSizeCopyIncr(-1*RS);
 				
 				nRun run_tofront = new nRun() { public void run() {
 					if (g.hasObject("no_tofront")) return;
@@ -641,16 +619,17 @@ public class nGUIBook {
 //				bar_swtch.setOn();
 				
 				nRun run_collapse = new nRun() { public void run() {
-					ref.hide(); //bar_swtch.setOff(); 
-					if (g.hasObject("val_collapse")) 
-						g.object("val_collapse", sBoo.class).set(true); }};
-				
-				collapse.addEventTrigger(run_collapse);
+//					ref.hide(); //bar_swtch.setOff(); 
+//					if (g.hasObject("val_collapse")) 
+//						g.object("val_collapse", sBoo.class).set(true); 
+				}};
+//				
+//				collapse.addEventTrigger(run_collapse);
 				
 				nRun run_testfocus = new nRun() { public void run() {
 					if (ref.getVisibility() && 
 							ref.mouseOverZone && 
-							app.input.mouseLeft.trigClick) {
+							App.ap.input.mouseLeft.trigClick) {
 						run_tofront.run(); }  }};
 				ref.addEventLogic(run_testfocus);
 				
@@ -658,7 +637,7 @@ public class nGUIBook {
 //					menu.remove_taskbar_entry(bar_swtch); }});
 
 				g.addMetode("run_tofront", run_tofront);
-				g.addMetode("run_collapse", run_collapse);
+//				g.addMetode("run_collapse", run_collapse);
 				g.addMetode("init_pos", new nRun() { public void run() {
 					head.setPos(book.getNewWindowPos()); 
 					run_tofront.run(); } });
@@ -690,20 +669,20 @@ public class nGUIBook {
 						ref.setLink(val_pos);
 						g.addObject("val_pos", val_pos);
 
-						sBoo val_collapse = v.obtainBoo("val_collapse", false);
-						g.addObject("val_collapse", val_collapse);
-						if (val_collapse.get()) run_collapse.run(); 
-						else run_tofront.run();
+//						sBoo val_collapse = v.obtainBoo("val_collapse", false);
+//						g.addObject("val_collapse", val_collapse);
+//						if (val_collapse.get()) run_collapse.run(); 
+//						else run_tofront.run();
+//						
+//						val_collapse.addEventChangeThisFrame(
+//								new nRun() { public void run() {
+//							if (val_collapse.get()) run_collapse.run(); 
+//							else run_tofront.run(); }});
 						
-						val_collapse.addEventChangeThisFrame(
-								new nRun() { public void run() {
-							if (val_collapse.get()) run_collapse.run(); 
-							else run_tofront.run(); }});
-						
-						sInt val_stack_index = v.obtainInt("val_stack_index", 
-								ref.getSiblingIndex());
-						ref.setStackIndexLink(val_stack_index);
-						g.addObject("val_stack_index", val_stack_index);
+//						sInt val_stack_index = v.obtainInt("val_stack_index", 
+//								ref.getSiblingIndex());
+//						ref.setStackIndexLink(val_stack_index);
+//						g.addObject("val_stack_index", val_stack_index);
 						
 						close.addEventTrigger(new nRun() { public void run() {
 							v.clear(); }});
@@ -749,7 +728,7 @@ public class nGUIBook {
 		.set_color_standby(Utl.color(100,150,100,220))
 		;
 		
-		book.newModelGroup("resizable_window", new nModelGroup(app) { 
+		book.newModelGroup("resizable_window", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup("complex_window");
 
@@ -914,9 +893,9 @@ public class nGUIBook {
 		.setDraw(false)
 		;
 		
-		book.newModel("VP_center", new nModel(app) { public nWidget custom_init(nWidget w) { 
+		book.newModel("VP_center", new nModel() { public nWidget custom_init(nWidget w) { 
 			w.setCustomDrawer(new nDrawable() { public void drawing() {
-				
+				App app = App.ap;
 				int line_nb = 20;
 				int line_sp = (int)pNode.BRIC_GRID_SIZE * 20;
 
@@ -964,7 +943,7 @@ public class nGUIBook {
 		book.newModel("VP_draw")
 		;
 		
-		book.newModelGroup("viewspace", new nModelGroup(app) { 
+		book.newModelGroup("viewspace", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup("resizable_window");
 				
@@ -992,15 +971,15 @@ public class nGUIBook {
 				.set_color_hovered(Utl.color(120))
 				.set_color_standby(Utl.color(40));
 
-				g.get("head").setSizeCopyIncr(-5*RS);
+				g.get("head").setSizeCopyIncr(-3*RS);
 
-				g.get("collapse").clearParent();
-				g.get("close").clearParent();
+//				g.get("collapse").clearParent();
+//				g.get("close").clearParent();
 				border.setParent(g.get("headback"));
 				grid.setParent(g.get("headback"));
 				wallpaper.setParent(g.get("headback"));
-				g.get("collapse").setParent(g.get("headback"));
-				g.get("close").setParent(g.get("headback"));
+//				g.get("collapse").setParent(g.get("headback"));
+//				g.get("close").setParent(g.get("headback"));
 				
 				nRun run_border_view = new nRun() { public void run() {
 					if (border.isOn()) {
@@ -1089,7 +1068,7 @@ public class nGUIBook {
 					float SCROLL_FCT = 1.1f;
 					boolean isGrabbed = (boolean)g.object("cam_grabbed");
 					if (bg.mouseOverZone) {
-						if (app.input.mouseWheelUp) {
+						if (App.ap.input.mouseWheelUp) {
 							float s = (float)g.object("cam_scale");
 							s *= SCROLL_FCT;
 							g.setObject("cam_scale", s);
@@ -1098,7 +1077,7 @@ public class nGUIBook {
 							if (vcs != null) ((sFlt)vcs).set(s);
 							g.metode("run_tofront");
 						}
-						if (app.input.mouseWheelDown) {
+						if (App.ap.input.mouseWheelDown) {
 							float s = (float)g.object("cam_scale");
 							s /= SCROLL_FCT;
 							g.setObject("cam_scale", s);
@@ -1107,12 +1086,12 @@ public class nGUIBook {
 							if (vcs != null) ((sFlt)vcs).set(s);
 							g.metode("run_tofront");
 						}
-						if (app.input.mouseLeft.trigClick) {
+						if (App.ap.input.mouseLeft.trigClick) {
 							g.metode("run_tofront");
 						}
 					} 
 					if (bg.mouseOverZone || backref.mouseOverChildZone) {
-						if (!isGrabbed && app.input.mouseCenter.trigClick) {
+						if (!isGrabbed && App.ap.input.mouseCenter.trigClick) {
 							Vector2 cp = (Vector2)g.object("cam_pos");
 							g.setObject("cam_grab_ref", 
 									new Vector2(gui.mouse_vec.x, gui.mouse_vec.y));
@@ -1122,7 +1101,7 @@ public class nGUIBook {
 						}
 					}
 					if (isGrabbed) {
-						if (app.input.mouseCenter.state) {
+						if (App.ap.input.mouseCenter.state) {
 							Vector2 cp = (Vector2)g.object("cam_pos");
 							Vector2 gr = (Vector2)g.object("cam_grab_ref");
 							float s = (float)g.object("cam_scale");
@@ -1135,7 +1114,7 @@ public class nGUIBook {
 							Object vcp = g.object("val_cam_pos");
 							if (vcp != null) ((sVec)vcp).set(nx, ny);
 						}
-						if (!app.input.mouseCenter.state) {
+						if (!App.ap.input.mouseCenter.state) {
 							g.setObject("cam_grabbed", false);
 							isGrabbed = false;
 						}
@@ -1143,32 +1122,32 @@ public class nGUIBook {
 				}};
 				
 				bg.addEventLogic(r);
-
+				
 				nRun run_wallpaper = new nRun() { public void run() {
 					if (wallpaper.isOn()) {
 						g.addObject("no_tofront", "");
 						sVec val_pos = g.object("val_pos", sVec.class);
 						Vector2 old_pos = new Vector2(val_pos.get());
 						g.addObject("old_pos", old_pos);
-						val_pos.set(0f,app.gdx.getscreenheight() - 4f*RS/3f);
+						val_pos.set(0f,App.ap.gdx.getscreenheight() - 4f*RS/3f);
 						sVec val_view_size = g.object("val_view_size", sVec.class);
 						Vector2 old_size = new Vector2(val_view_size.get());
 						g.addObject("old_size", old_size);
-						g.metode("set_size", new Vector2(app.gdx.getscreenwidth(), 
-								app.gdx.getscreenheight() - 11f*RS/3f));
+						g.metode("set_size", new Vector2(App.ap.gdx.getscreenwidth(), 
+								App.ap.gdx.getscreenheight() - 7f*RS/3f));
 						g.metode("event_corner_drag");
 						sBoo val_border = g.object("val_border", sBoo.class);
 						val_border.set(false);
 						border.hide();
-						g.get("collapse").hide();
-						g.get("head").setSizeCopyIncr(-3*RS);
+//						g.get("collapse").hide();
+						g.get("head").setSizeCopyIncr(-1*RS);
 						g.get("ref").toBack();
 					} else {
 						if (g.hasObject("no_tofront")) 
 							g.removeObject("no_tofront");
 						border.show();
-						g.get("collapse").show();
-						g.get("head").setSizeCopyIncr(-5*RS);
+//						g.get("collapse").show();
+						g.get("head").setSizeCopyIncr(-3*RS);
 
 						if (g.hasObject("old_pos")) {
 							Vector2 old_pos = g.object("old_pos", Vector2.class);
@@ -1364,7 +1343,7 @@ public class nGUIBook {
 		.setHoverableZone(true)
 		;
 		
-		book.newModelGroup("viewspace_tool", new nModelGroup(app) { 
+		book.newModelGroup("viewspace_tool", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup();
 
@@ -1409,16 +1388,16 @@ public class nGUIBook {
 						open.hide();
 						nWidgetGroup v = g.object("viewspace", nWidgetGroup.class);
 						if (v.get("ref").mouseOverChildZone) {
-							Vector2 m = new Vector2(app.input.mouse).sub(ref.getPos());
+							Vector2 m = new Vector2(App.ap.input.mouse).sub(ref.getPos());
 							if (open.isOn() && !back.mouseOverChildZone) run_close.run(); 
 							else if (!open.isOn() && m.len() < RS * 4f) run_open.run();
 						} else run_close.run(); 
 					}
 				}};
-				app.addRunFrameStart(run_frame);
+				App.ap.addRunFrameStart(run_frame);
 
 				g.addEventClear(new nRun() { public void run() {
-						app.removeRunFrameStart(run_frame); }});
+					App.ap.removeRunFrameStart(run_frame); }});
 				
 				g.addMetode("get_interf", new nRun() {
 					public Object get() { return interf; } });
@@ -1594,7 +1573,7 @@ public class nGUIBook {
 			book.newModel("list_entry_switch_"+i)
 			.copyFrom(book.getModel("list_entry_switch_1")).setSX(RS*i);
 		
-		book.newModelGroup("list", new nModelGroup(app) { 
+		book.newModelGroup("list", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup();
 				
@@ -1632,7 +1611,7 @@ public class nGUIBook {
 			} 
 		} );
 		
-		book.newModelGroup("scrollist", new nModelGroup(app) { 
+		book.newModelGroup("scrollist", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup();
 				
@@ -1670,11 +1649,11 @@ public class nGUIBook {
 					if (ref.mouseOverZone) {
 						float m = RS / (2f * (list.get("back").getSY() - space.getSY()));
 						if (m > 0) {
-							if (app.input.mouseWheelUp) {
+							if (App.ap.input.mouseWheelUp) {
 								slider.setSliderVal(slider.getSliderVal() + m);		
 								slidechangerun.run();
 							}
-							if (app.input.mouseWheelDown) {
+							if (App.ap.input.mouseWheelDown) {
 								slider.setSliderVal(slider.getSliderVal() - m);		
 								slidechangerun.run();
 							}
@@ -1700,12 +1679,12 @@ public class nGUIBook {
 				g.addMetode("add_entry", new nRun() {
 					public Object get(Object o) {
 						Object ob = list.metodeGet("add_entry", o);
-						app.addEventNextFrame(slidecalcrun);
+						App.ap.addEventNextFrame(slidecalcrun);
 						return ob; } } );
 				g.addMetode("add_widget_as_entry", new nRun() {
 					public Object get(Object o) {
 						Object ob = list.metodeGet("add_widget_as_entry", o);
-						app.addEventNextFrame(slidecalcrun);
+						App.ap.addEventNextFrame(slidecalcrun);
 						((nWidget)ob).setSX(space.getLocalSX());
 						return ob; } } );
 				
@@ -1713,20 +1692,20 @@ public class nGUIBook {
 				g.addMetode("clear_entrys", new nRun() {
 					public void run() {
 						list.metode("clear_entrys");
-						app.addEventNextFrame(slidecalcrun); } } );
+						App.ap.addEventNextFrame(slidecalcrun); } } );
 
 				g.addMetode("set_height", new nRun() {
 					public void run(Object o) {
 						float h = (Float)o;
 						space.setSY(h);
 						slider.setSY(h);
-						app.addEventNextFrame(slidecalcrun);
+						App.ap.addEventNextFrame(slidecalcrun);
 					} } );
 				g.addMetode("set_width", new nRun() {
 					public void run(Object o) {
 						float h = (Float)o;
 						space.setSX(h-RS);
-						app.addEventNextFrame(slidecalcrun);
+						App.ap.addEventNextFrame(slidecalcrun);
 					} } );
 				return g;
 			} 
@@ -1748,7 +1727,7 @@ public class nGUIBook {
 		.setSwitch()
 		;
 		
-		book.newModelGroup("picklist", new nModelGroup(app) { 
+		book.newModelGroup("picklist", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup("scrollist");
 				
@@ -1810,7 +1789,7 @@ public class nGUIBook {
 		.setTextAlignment(nAlign.LEFT, nAlign.CENTER)
 		;
 		
-		book.newModelGroup("treelist", new nModelGroup(app) { 
+		book.newModelGroup("treelist", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup("scrollist");
 				
@@ -1939,7 +1918,7 @@ public class nGUIBook {
 		
 		int DM_max_ent = 12;
 		
-		book.newModelGroup("dropmenu", new nModelGroup(app) { 
+		book.newModelGroup("dropmenu", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup();
 
@@ -2004,32 +1983,32 @@ public class nGUIBook {
 
 						ref.setVisibility(true);
 						
-						app.addEventNextFrame(new nRun() { public void run() {
-							
-								Vector2 np = op.maskedrect
-										.getPosition(new Vector2());
+						App.ap.addEventNextFrame(new nRun() { public void run() {
+						
+							Vector2 np = op.maskedrect
+									.getPosition(new Vector2());
 //								ref.toFront().setPos(np.x, np.y+5);
-								if (np.x > GdxApp.WIDTH / 2f) {
-									zone.setRectOrigin(nAlign.RIGHT,nAlign.TOP);
-									zone.setPos(2f*RS,2f*RS);
-									ref.toFront().setPos(np.x + op.maskedrect.width, 
-											np.y+5);
-									g.setObject("right_side", true);
-								} else {
-									zone.setRectOrigin(nAlign.LEFT,nAlign.TOP);
-									zone.setPos(-2f*RS,2f*RS);
-									ref.toFront().setPos(np.x, np.y+5);
-									g.setObject("right_side", false); }
-									
-							app.addRunFrameStart(r);
+							if (np.x > GdxApp.WIDTH / 2f) {
+								zone.setRectOrigin(nAlign.RIGHT,nAlign.TOP);
+								zone.setPos(2f*RS,2f*RS);
+								ref.toFront().setPos(np.x + op.maskedrect.width, 
+										np.y+5);
+								g.setObject("right_side", true);
+							} else {
+								zone.setRectOrigin(nAlign.LEFT,nAlign.TOP);
+								zone.setPos(-2f*RS,2f*RS);
+								ref.toFront().setPos(np.x, np.y+5);
+								g.setObject("right_side", false); }
+								
+							App.ap.addRunFrameStart(r);
 						}});
 					}
 				});
 				g.addMetode("close", new nRun() {
 					public void run() {
 
-						app.removeRunFrameStart(r);
-						app.addEventNextFrame(new nRun() { public void run() {
+						App.ap.removeRunFrameStart(r);
+						App.ap.addEventNextFrame(new nRun() { public void run() {
 							ref.setVisibility(false);
 							g.removeWidget("openner");
 						}});
@@ -2068,7 +2047,7 @@ public class nGUIBook {
 						nWidget ent = gui.addWidget("DM_entry", (String)o)
 								.setParent(back)
 								.addEventTrigger(new nRun() { public void run() {
-									app.addDelayEvent(5, new nRun() { public void run() {
+									App.ap.addDelayEvent(5, new nRun() { public void run() {
 										g.metode("close"); 
 									}}); }});
 						entrys.add(ent);
@@ -2092,7 +2071,7 @@ public class nGUIBook {
 						nWidget ent = gui.addWidget("DM_entry", (String)o)
 								.setParent(back)
 								.addEventTrigger(new nRun() { public void run() {
-									app.addDelayEvent(5, new nRun() { public void run() {
+									App.ap.addDelayEvent(5, new nRun() { public void run() {
 										g.metode("close"); 
 									}}); }})
 								.setSize((Float)o2, (Float)o3).asWidget();

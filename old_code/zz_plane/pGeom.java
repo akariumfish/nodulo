@@ -53,7 +53,7 @@ public class pGeom extends pSystem {
 	
 	public static void build_prop(Applet app) {
 		
-		float RS = app.gui.book.RS;
+		float RS = nGUI.book.RS;
 		
 		
 		

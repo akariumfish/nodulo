@@ -11,7 +11,13 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import aa_nodulo.PlaneApplet;
+import aa_nodulo.pAtom;
+import aa_nodulo.pBox2d;
+import aa_nodulo.pGeom;
+import aa_nodulo.pTime;
+import aa_nodulo.pView;
 import app.App;
+import app.GdxApp;
 import data.*;
 import data.sPool.State;
 import gui.*;
@@ -22,7 +28,9 @@ import util.nRun;
 
 public class pPatch {
 	
-	public static void build(PlaneApplet app, nGUI gui) {
+	public static boolean has_build_statics = false;
+	
+	public static void build(sData data, nGUI gui) {
 		
 //		app.addPrefRun(new nRun() { public void run() {
 //			app.setPref("default", "DEF_PATCH_WIN_POS", new Vector2(370f,915f));
@@ -34,58 +42,55 @@ public class pPatch {
 //			app.setPref("release_FS", "DEF_PATCH_WIN_POS", new Vector2(20f,1030f));
 //			app.setPref("release_FS", "DEF_PATCH_WIN_SZ", new Vector2(660f,950f));
 //		}});
-
-		build_database_book(app, gui);
-
-		build_book(app, gui);
 		
-		pStandard.build(app);
-		pCommande.build(app);
-		pProcess.build(app);
-
-		pMacroBook.build(app);
-
+		pGeom.build(data); 
+		pAtom.build(data); 
+		pBox2d.build(data); 
 		
-		pSheet.build(app);
+		if (!has_build_statics) {
+			build_database_book();
+			build_book();
+			pMacroBook.build();
+			pSheet.build();
+		}
 
-		build_sheet(app);
-
-		pNodeSpace.build_sheet(app);
+		build_database_builder(data);		
+		build_sheet(data);
+		pNodeSpace.build_sheet(data, has_build_statics);
 		
+		if (!has_build_statics) {
+			pNode.build();
+			pNodeUI.build();
+			pNodeSpace.build_nodes();
+			pNodeAction.build();
+			pTile.build();
+			pTileHead.build_nodes();
+			pTileHead.build_tiles();
+			pFunc.build();
+			pAnk.build();
+			pTime.build_node(); 
+			pView.build_nodes(); 
+			pBox2d.build_game(); 
+			pAtom.build_game(); 
+		}
 		
-		pNode.build(app);
-		
-		pNodeUI.build(app);
-
-		pNodeSpace.build_nodes(app);
-
-		pNodeAction.build(app);
-
-		pTile.build(app);
-		
-		pTileHead.build_nodes(app);
-		pTileHead.build_tiles(app);
-		
-		pFunc.build(app);
-
-		pAnk.build(app);
-
+		has_build_statics = true;
 	}
 	public static void dispose() { 
-		pFunc.dispose();
+//		pFunc.dispose();
 	}
 	
 	
 	
-	public static void build_sheet(PlaneApplet app) {
-		pSheet.SheetModel func_sheet_model = pSheet.newSheet("function", false);
+	public static void build_sheet(sData data) {
+		pSheet.SheetModel func_sheet_model = pSheet.newSheet(data, "function", false);
 		
 //		pSheet.setDefMacro("function", "FUNCTION_SETUP");
 //
 		func_sheet_model.addMacro("function", "function");
 		func_sheet_model.addMacro("FUNCTION_SETUP", "FUNCTION_SETUP");
 		
-		pSheet.SheetModel main_sheet_model = pSheet.newSheet("main");
+		pSheet.SheetModel main_sheet_model = pSheet.newSheet(data, "main");
 
 //		new pMacro.Macro("main_sheet_def")
 //		.addMacro("sel_body", pMacro.getMacro("sel_body"), 	0f, 	0f)
@@ -420,42 +425,25 @@ public class pPatch {
 		view.metode("link_to_bloc", bloc);
 		
 		view.metode("set_title", app.gdx.window_title+" patch");
+		view.get("close").setPassif().setDraw(false).setSize(0,0);
 		
 //		if (!app.config.STARTUP_LOAD) {
-			
-			set_viewspace(
-				app.config.DEF_PATCH_WIN_POS.x,
-				app.config.DEF_PATCH_WIN_POS.y,
-				app.config.DEF_PATCH_WIN_SZ.x,
-				app.config.DEF_PATCH_WIN_SZ.y,
-				app.config.DEF_PATCH_ZOOM);
-			
-//			if (app.getPref("RELEASE", Boolean.class)) {
-//				if (app.getPref("start_fullscreen", Boolean.class)) {
-//					set_viewspace(
-//							20f,1030f, 
-//							660f,950f, 
-//							app.getPref("DEF_PATCH_ZOOM", Float.class));
-//				} else {
-//					set_viewspace(
-//							20f,915f, 
-//							1260f,430f, 
-//							app.getPref("DEF_PATCH_ZOOM", Float.class));
-//				}
-//			} else {
-//				if (app.start_solo) set_viewspace(
-//						370f,915f, 
-//						910f,430f, 
-//						app.getPref("DEF_PATCH_ZOOM", Float.class));
-//				else set_viewspace(
-//						370f,815f, 
-////						app.getPref("DEF_PATCH_WIN_POS_x", Float.class),
-////						app.getPref("DEF_PATCH_WIN_POS_y", Float.class),
-//						510f,330f, 
-////						app.getPref("DEF_PATCH_WIN_SZ_x", Float.class),
-////						app.getPref("DEF_PATCH_WIN_SZ_y", Float.class),
-//						app.getPref("DEF_PATCH_ZOOM", Float.class));
-//			}
+			if (app.config.RELEASE) {
+				if (GdxApp.START_FULLSCREEN) 
+					set_viewspace(20f,1030f,660f,950f,app.config.DEF_PATCH_ZOOM);
+				else set_viewspace(20f,915f,1260f,430f,app.config.DEF_PATCH_ZOOM);
+			} else {
+				if (app.config.start_solo) {
+					if (GdxApp.START_FULLSCREEN) 
+						set_viewspace(20f,1030f,660f,950f,app.config.DEF_PATCH_ZOOM);
+					else set_viewspace(
+							app.config.DEF_PATCH_WIN_POS.x,
+							app.config.DEF_PATCH_WIN_POS.y,
+							app.config.DEF_PATCH_WIN_SZ.x,
+							app.config.DEF_PATCH_WIN_SZ.y,
+							app.config.DEF_PATCH_ZOOM);
+				} else set_viewspace(370f,815f,510f,330f,app.config.DEF_PATCH_ZOOM);
+			}
 			sVec val_cam_pos = view.object("val_cam_pos", sVec.class);
 			val_cam_pos.set(app.config.DEF_PATCH_POS);
 //		}
@@ -758,13 +746,13 @@ public class pPatch {
 	}
 	
 	
-	public static void build_book(App app, nGUI gui) {
-		nModelBook book = gui.book;
+	public static void build_book() {
+		nModelBook book = nGUI.book;
 		float RS = book.RS;
 		
 		book.newModel("P_ref")
 		.copyFrom(book.getModel("ref"))
-//		.setBoundChild(true)
+//		.setBoundChild(true) 
 //		.setBoundParent(true)
 //		.setStacked(true)
 //		.setStackAxis(nAlign.VERTICAL) // HORIZONTAL   VERTICAL
@@ -829,7 +817,7 @@ public class pPatch {
 		.setShape(nModel.Shape.DIAMOND)
 		;
 		
-		book.newModelGroup("patch_pop", new nModelGroup(app) { 
+		book.newModelGroup("patch_pop", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup();
 
@@ -860,8 +848,8 @@ public class pPatch {
 						
 						if (viewsp_bg.mouseOverZone) {
 							if (!g.object("selzone_clic", Boolean.class) && 
-									app.input.mouseLeft.trigClick) {
-								Vector2 m = new Vector2(app.input.mouse);
+									App.ap.input.mouseLeft.trigClick) {
+								Vector2 m = new Vector2(App.ap.input.mouse);
 								m.set(ref.warptransform.revert(m));
 								selzone_start.set(m);
 								g.setObject("selzone_clic", true);
@@ -882,7 +870,7 @@ public class pPatch {
 						}
 						
 						if (g.object("selzone_clic", Boolean.class)) {
-							Vector2 m = new Vector2(app.input.mouse);
+							Vector2 m = new Vector2(App.ap.input.mouse);
 							m.set(ref.warptransform.revert(m));
 							m.add(-selzone_start.x, -selzone_start.y);
 							Vector2 m2 = new Vector2(selzone_start);
@@ -908,7 +896,7 @@ public class pPatch {
 							}
 						} else patch.select_grab.hide();
 
-						if (app.input.mouseLeft.trigUClick) {
+						if (App.ap.input.mouseLeft.trigUClick) {
 							g.setObject("selzone_clic", false);
 							selectzone.hide();
 						}
@@ -982,16 +970,15 @@ public class pPatch {
 	
 	
 	
-	public static sBloc_Builder database_editor_builder;
-	public static void build_database_book(App app, nGUI gui) {
+	public static void build_database_builder(sData data) {
 		
-		nModelBook book = gui.book;
+		nModelBook book = nGUI.book;
 		float RS = book.RS;
 		
-		database_editor_builder = new sBloc_Builder(app.data, "database_editor")
+		sBloc_Builder database_editor_builder = new sBloc_Builder(data, "database_editor")
 			.setInitRun(new nRun() { public void run(Object o) {
 				sValueBloc b = (sValueBloc)o;
-				nWidgetGroup win = gui.addWidgetGroup("database_editor");
+				nWidgetGroup win = PlaneApplet.app.gui.addWidgetGroup("database_editor");
 				b.addObject("database_view_win", win);
 				win.metode("link_window_to_bloc", b);
 				win.addEventClear(new nRun() { public void run() {
@@ -1011,9 +998,15 @@ public class pPatch {
 				sValueBloc b = (sValueBloc)o; 
 			}});
 
-		app.data.addRootBlocBuilder(database_editor_builder);
+		data.addRootBlocBuilder(database_editor_builder);
+	}
+	
+	public static void build_database_book() {
 		
-		book.newModelGroup("database_editor", new nModelGroup(app) { 
+		nModelBook book = nGUI.book;
+		float RS = book.RS;
+		
+		book.newModelGroup("database_editor", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup("complex_window");
 
@@ -1231,7 +1224,7 @@ public class pPatch {
 				
 				g.addMetode("list_db", new nRun() { public void run() {
 					interf.change_current_list(db_list);
-					for(Map.Entry<String,sTab> me : app.data.databases.entrySet()) {
+					for(Map.Entry<String,sTab> me : App.ap.data.databases.entrySet()) {
 						String r = me.getKey(); sTab tab = me.getValue();
 						interf.add_list_entry(r);
 					}
@@ -1241,7 +1234,7 @@ public class pPatch {
 				g.addMetode("edit_tab", new nRun() { public void run() {
 					String db_name = (String)db_list.metodeGet("get_pick");
 					if (db_name == null) return;
-					sTab tab = app.data.databases.get(db_name);
+					sTab tab = App.ap.data.databases.get(db_name);
 					if (tab == null) return;
 					g.setObject("tab", tab);
 					tab_lb.setText("sTab : "+tab.ref);

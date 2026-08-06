@@ -1,5 +1,7 @@
 package gui;
 
+import java.util.HashMap;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
@@ -200,17 +202,17 @@ public class nModel extends nLauncher {
 		outlineWeight = 1;
 		cursorPos = 0; 
 		
-		color_background = Utl.color(80,80,80,255);
-		color_pressed = Utl.color(20,20,255,255);
-		color_hovered = Utl.color(0,0,210,255);
-		color_standby = Utl.color(0,0,120,255);
-		color_sliderback = Utl.color(50,50,50,255);
-		color_outline = Utl.color(200,200,200,255);
-		color_outline_selected = Utl.color(200,200,0,255);
-		color_shadow = Utl.color(0,0,0,100);
-		color_switch_on = Utl.color(0,70,255,255);
-		color_switch_off = Utl.color(0,0,40,255);
-		color_text = Utl.color(240);
+		color_background = getColor(Utl.color(80,80,80,255));
+		color_pressed = getColor(Utl.color(20,20,255,255));
+		color_hovered = getColor(Utl.color(0,0,210,255));
+		color_standby = getColor(Utl.color(0,0,120,255));
+		color_sliderback = getColor(Utl.color(50,50,50,255));
+		color_outline = getColor(Utl.color(200,200,200,255));
+		color_outline_selected = getColor(Utl.color(200,200,0,255));
+		color_shadow = getColor(Utl.color(0,0,0,100));
+		color_switch_on = getColor(Utl.color(0,70,255,255));
+		color_switch_off = getColor(Utl.color(0,0,40,255));
+		color_text = getColor(Utl.color(240));
 		
 		maskChildren = false;
 		
@@ -281,17 +283,17 @@ public class nModel extends nLauncher {
 		outlineWeight = m.outlineWeight;
 		cursorPos = m.cursorPos; 
 		
-		color_background = new Color(m.color_background);
-		color_pressed = new Color(m.color_pressed);
-		color_hovered = new Color(m.color_hovered);
-		color_standby = new Color(m.color_standby);
-		color_sliderback = new Color(m.color_sliderback);
-		color_outline = new Color(m.color_outline);
-		color_outline_selected = new Color(m.color_outline_selected);
-		color_shadow = new Color(m.color_shadow);
-		color_switch_on = new Color(m.color_switch_on);
-		color_switch_off = new Color(m.color_switch_off);
-		color_text = new Color(m.color_text);
+		color_background = getColor(m.color_background);
+		color_pressed = getColor(m.color_pressed);
+		color_hovered = getColor(m.color_hovered);
+		color_standby = getColor(m.color_standby);
+		color_sliderback = getColor(m.color_sliderback);
+		color_outline = getColor(m.color_outline);
+		color_outline_selected = getColor(m.color_outline_selected);
+		color_shadow = getColor(m.color_shadow);
+		color_switch_on = getColor(m.color_switch_on);
+		color_switch_off = getColor(m.color_switch_off);
+		color_text = getColor(m.color_text);
 		
 		maskChildren = m.maskChildren;
 		
@@ -319,32 +321,32 @@ public class nModel extends nLauncher {
 	}
 
 	public nModel copyColorFrom(nModel m) {
-		color_background = new Color(m.color_background);
-		color_pressed = new Color(m.color_pressed);
-		color_hovered = new Color(m.color_hovered);
-		color_standby = new Color(m.color_standby);
-		color_sliderback = new Color(m.color_sliderback);
-		color_outline = new Color(m.color_outline);
-		color_outline_selected = new Color(m.color_outline_selected);
-		color_shadow = new Color(m.color_shadow);
-		color_switch_on = new Color(m.color_switch_on);
-		color_switch_off = new Color(m.color_switch_off);
-		color_text = new Color(m.color_text);
+		color_background = getColor(m.color_background);
+		color_pressed = getColor(m.color_pressed);
+		color_hovered = getColor(m.color_hovered);
+		color_standby = getColor(m.color_standby);
+		color_sliderback = getColor(m.color_sliderback);
+		color_outline = getColor(m.color_outline);
+		color_outline_selected = getColor(m.color_outline_selected);
+		color_shadow = getColor(m.color_shadow);
+		color_switch_on = getColor(m.color_switch_on);
+		color_switch_off = getColor(m.color_switch_off);
+		color_text = getColor(m.color_text);
 		return this;
 	}
 	
 	public nModel copyLookFrom(nModel m) {
-		color_background = new Color(m.color_background);
-		color_pressed = new Color(m.color_pressed);
-		color_hovered = new Color(m.color_hovered);
-		color_standby = new Color(m.color_standby);
-		color_sliderback = new Color(m.color_sliderback);
-		color_outline = new Color(m.color_outline);
-		color_outline_selected = new Color(m.color_outline_selected);
-		color_shadow = new Color(m.color_shadow);
-		color_switch_on = new Color(m.color_switch_on);
-		color_switch_off = new Color(m.color_switch_off);
-		color_text = new Color(m.color_text);
+		color_background = getColor(m.color_background);
+		color_pressed = getColor(m.color_pressed);
+		color_hovered = getColor(m.color_hovered);
+		color_standby = getColor(m.color_standby);
+		color_sliderback = getColor(m.color_sliderback);
+		color_outline = getColor(m.color_outline);
+		color_outline_selected = getColor(m.color_outline_selected);
+		color_shadow = getColor(m.color_shadow);
+		color_switch_on = getColor(m.color_switch_on);
+		color_switch_off = getColor(m.color_switch_off);
+		color_text = getColor(m.color_text);
 		
 		showOutline = m.showOutline; hoverOutline = m.hoverOutline;
 		constantOutlineWeight = m.constantOutlineWeight; 
@@ -619,23 +621,32 @@ public class nModel extends nLauncher {
 		}
 		return v; }
 	
-	public nModel set_color_background(Color o) { color_background = o; return this; }
-	public nModel set_color_pressed(Color o) { color_pressed = o; return this; }
-	public nModel set_color_hovered(Color o) { color_hovered = o; return this; }
-	public nModel set_color_standby(Color o) { color_standby = o; return this; }
-	public nModel set_color_sliderback(Color o) { color_sliderback = o; return this; }
-	public nModel set_color_outline(Color o) { color_outline = o; return this; }
-	public nModel set_color_outline_selected(Color o) { color_outline_selected = o; return this; }
+	public nModel set_color_background(Color o) { color_background = getColor(o); return this; }
+	public nModel set_color_pressed(Color o) { color_pressed = getColor(o); return this; }
+	public nModel set_color_hovered(Color o) { color_hovered = getColor(o); return this; }
+	public nModel set_color_standby(Color o) { color_standby = getColor(o); return this; }
+	public nModel set_color_sliderback(Color o) { color_sliderback = getColor(o); return this; }
+	public nModel set_color_outline(Color o) { color_outline = getColor(o); return this; }
+	public nModel set_color_outline_selected(Color o) { color_outline_selected = getColor(o); return this; }
 	
-	public nModel set_color_shadow(Color o) { color_shadow = o; return this; }
-	public nModel set_color_switch_on(Color o) { color_switch_on = o; return this; }
-	public nModel set_color_switch_off(Color o) { color_switch_off = o; return this; }
-	public nModel set_color_text(Color o) { color_text = o; return this; }
+	public nModel set_color_shadow(Color o) { color_shadow = getColor(o); return this; }
+	public nModel set_color_switch_on(Color o) { color_switch_on = getColor(o); return this; }
+	public nModel set_color_switch_off(Color o) { color_switch_off = getColor(o); return this; }
+	public nModel set_color_text(Color o) { color_text = getColor(o); return this; }
 
 	@Override
 	public void build_lauchables() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private static HashMap<Integer,Color> colors = new HashMap<Integer,Color>();
+	private Color getColor(Color c) {
+		int id = Utl.rgbToInt((int)(255.0f*c.r), (int)(255.0f*c.g), 
+				(int)(255.0f*c.b), (int)(255.0f*c.a));
+		if (colors.get(id) != null) return colors.get(id);
+		colors.put(id,c);
+		return c;
 	}
 	
 	

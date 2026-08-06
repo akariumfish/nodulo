@@ -77,7 +77,7 @@ public class sDataBook {
 	
 	public static void build_fileexplo(Applet app) {
 		
-		nModelBook book = app.gui.book;
+		nModelBook book = nGUI.book;
 		float RS = book.RS;
 		
 		file_builder = new sBloc_Builder(app.data, "file_explorer")
@@ -348,7 +348,7 @@ public class sDataBook {
 //	 
 //	public static void build_interf_editor(Applet app, nWidgetGroup g, nWidget cont, 
 //			nInterface main_interf, sValueBloc context_bloc) {
-//		nModelBook book = app.gui.book;
+//		nModelBook book = nGUI.book;
 //		float RS = book.RS;
 //		nGUI gui = app.gui;
 //		
@@ -1163,7 +1163,7 @@ public class sDataBook {
 //	}
 //	
 //	public static void build_blocinterf(Applet app) {
-//		nModelBook book = app.gui.book;
+//		nModelBook book = nGUI.book;
 //		float RS = book.RS;
 //		
 //		blocinterf_builder = new sBloc_Builder(app.data, "blocinterf")
@@ -1325,7 +1325,7 @@ public class sDataBook {
 //	//-------------------------------------//
 //	
 //	public static void build_blocmenu(Applet app) {
-//		nModelBook book = app.gui.book;
+//		nModelBook book = nGUI.book;
 //		float RS = book.RS;
 //
 //		book.newModel("BM_quicktoolref")
@@ -1690,7 +1690,7 @@ public class sDataBook {
 //		
 //	
 //	public static void build_dataview(Applet app) {
-//		nModelBook book = app.gui.book;
+//		nModelBook book = nGUI.book;
 //		float RS = book.RS;
 //		
 //		dataview_builder = new sBloc_Builder(app.data, "dataview")
@@ -2318,7 +2318,7 @@ public class sDataBook {
 		
 	public static void build_explorer(Applet app) {
 
-		nModelBook book = app.gui.book;
+		nModelBook book = nGUI.book;
 		float RS = book.RS;
 		
 		book.newModel("EXPL_back")

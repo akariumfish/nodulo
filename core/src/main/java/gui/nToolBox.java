@@ -1,12 +1,13 @@
-package aa_nodulo;
+package gui;
 
 import java.util.ArrayList;
 
 import com.badlogic.gdx.math.Vector2;
 
+import aa_nodulo.PlaneApplet;
+import app.App;
 import app.GdxApp;
 import data.*;
-import gui.*;
 import util.Utl;
 import util.nRun;
 
@@ -22,10 +23,10 @@ public class nToolBox {
 	public sValueBloc toolbox_bloc;
 	public sBoo val_toolbox_open;
 	public sFlt val_toolbox_scroll;
-	public sInt val_toolbox_stackindex;
+//	public sInt val_toolbox_stackindex;
 	
 	public nToolBox(nMenu a) {
-		menu = a; app = a.app; book = app.gui.book; RS = book.RS;
+		menu = a; app = a.app; book = nGUI.book; RS = book.RS;
 		gui = app.gui; data = app.data;
 		
 		toolbox_bloc = data.setting_bloc.obtainBloc("toolbox_bloc");
@@ -34,9 +35,8 @@ public class nToolBox {
 				!app.config.RELEASE 
 				|| app.config.TOOLBOX_OPEN);
 		val_toolbox_scroll = toolbox_bloc.obtainFlt("val_toolbox_scroll", "toolbox scroll", 1);
-		val_toolbox_stackindex = toolbox_bloc.obtainInt("val_toolbox_stackindex", "toolbox stackindex", 0);
+//		val_toolbox_stackindex = toolbox_bloc.obtainInt("val_toolbox_stackindex", "toolbox stackindex", 0);
 
-		build_book();
 		build_toolbox();
 	}
 
@@ -84,10 +84,16 @@ public class nToolBox {
 	public nWidget addWidget(nWidgetGroup sec, String ref, nWidget w) {
 		sec.addWidget(ref, w); return w; }
 	
+	
+	
+	ArrayList<nRun> eventOpen = new ArrayList<nRun>();
+
+	public void addEventOpen(nRun n) { eventOpen.add(n); }
+	public void removeEventOpen(nRun n) { eventOpen.remove(n); }
+	
 	private void build_toolbox() {
 		tool_group = gui.addWidgetGroup("toolbox");
-		tool_group.get("back").setStackIndexLink(val_toolbox_stackindex);
-		
+		tool_group.metode("set_toolbox", this);
 
 		if (app.config.TOOLBOX_OPEN)
 			app.addDelayEvent(30, new nRun() { public void run() {
@@ -114,7 +120,7 @@ public class nToolBox {
 		
 
 		app.gdx.addEventScreen(new nRun() { public void run() {
-			tool_group.get("back").setRect(0,40,RS*12,app.gdx.getscreenheight() - 80); 
+			tool_group.get("back").setRect(0,0,RS*12,app.gdx.getscreenheight()); 
 			tool_group.getGroup("list").get("space").setSize(tool_group.get("back").getLocalSX() - RS, 
 					tool_group.get("back").getLocalSY());
 			tool_group.getGroup("list").get("slider").setSize(RS,tool_group.get("back").getLocalSY());
@@ -152,11 +158,11 @@ public class nToolBox {
 
 	}
 	
-	public void build_quicktool() {
-		toolbox_quicktool_sec = addSection(" QUICK TOOLS ", true);
-	}
-	
-	public nWidgetGroup toolbox_quicktool_sec;
+//	public void build_quicktool() {
+//		toolbox_quicktool_sec = addSection(" QUICK TOOLS ", true);
+//	}
+//	
+//	public nWidgetGroup toolbox_quicktool_sec;
 //	
 //	nWidget bar_back, bar_ref;
 //	ArrayList<nWidget> bar_entrys;
@@ -184,35 +190,38 @@ public class nToolBox {
 	
 	
 	
-	private void build_book() {
+	static void build_book() {
+		
+		nModelBook book = nGUI.book;
+		float RS = book.RS;
 		
 		// -----------  WINDOW BAR -----------
 		
-		book.newModel("taskbar_back")
-		.copyFrom(book.getModel("ref"))
-		.setBackground()
-		.setOutline(true)
-		.setDrawstackPriority(true)
-		;
-		book.newModel("taskbar_ref")
-		.copyFrom(book.getModel("ref"))
-		.setBoundChild(true)
-		.setStackAxis(nAlign.HORIZONTAL) // HORIZONTAL   VERTICAL
-		.setStackDirection(nAlign.RIGHT) // RIGHT   LEFT   UP   DOWN
-		.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM) // TOP   BOTTOM
-		.setBoundOutspace(5)
-		.setStackSpacing(5)
-		.set_color_background(Utl.color(0, 0))
-		;
-
-		book.newModel("taskbar_entry")
-		.copyFrom(book.getModel("ref"))
-		.setRect(0,0,RS*5,RS)
-		.setBoundParent(true)
-		.setStacked(true)
-		.setFont(22)
-		.setSwitch()
-		;
+//		book.newModel("taskbar_back")
+//		.copyFrom(book.getModel("ref"))
+//		.setBackground()
+//		.setOutline(true)
+//		.setDrawstackPriority(true)
+//		;
+//		book.newModel("taskbar_ref")
+//		.copyFrom(book.getModel("ref"))
+//		.setBoundChild(true)
+//		.setStackAxis(nAlign.HORIZONTAL) // HORIZONTAL   VERTICAL
+//		.setStackDirection(nAlign.RIGHT) // RIGHT   LEFT   UP   DOWN
+//		.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM) // TOP   BOTTOM
+//		.setBoundOutspace(5)
+//		.setStackSpacing(5)
+//		.set_color_background(Utl.color(0, 0))
+//		;
+//
+//		book.newModel("taskbar_entry")
+//		.copyFrom(book.getModel("ref"))
+//		.setRect(0,0,RS*5,RS)
+//		.setBoundParent(true)
+//		.setStacked(true)
+//		.setFont(22)
+//		.setSwitch()
+//		;
 		
 		
 		// -----------   TOOLBOX   -----------
@@ -220,7 +229,7 @@ public class nToolBox {
 		book.newModel("tool_back")
 		.copyFrom(book.getModel("ref"))
 		.setBackground()
-		.setRect(0,40,RS*12,GdxApp.HEIGHT - 80)
+		.setRect(0,0,RS*12,GdxApp.HEIGHT - 40)
 		;
 		
 		book.newModel("toolbox_section_space")
@@ -297,7 +306,7 @@ public class nToolBox {
 		.setSwitch()
 		;
 		
-		book.newModelGroup("toolbox_section", new nModelGroup(app) { 
+		book.newModelGroup("toolbox_section", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup();
 				
@@ -318,7 +327,7 @@ public class nToolBox {
 				}}) ;
 				
 				back.addEventVisibility(new nRun() { public void run() {
-					app.addEventNextFrame(new nRun() { public void run() {
+					App.ap.addEventNextFrame(new nRun() { public void run() {
 						nWidgetGroup tool = (nWidgetGroup)g.object("toolbox");
 						tool.getGroup("list").metode("slide_calc");
 					}});
@@ -326,7 +335,7 @@ public class nToolBox {
 				
 				g.addMetode("tool_scroll_calc", new nRun() {
 					public void run() {
-						app.addDelayEvent(2, new nRun() { public void run() {
+						App.ap.addDelayEvent(2, new nRun() { public void run() {
 							nWidgetGroup tool = (nWidgetGroup)g.object("toolbox");
 							tool.getGroup("list").metode("slide_calc");
 						}});
@@ -353,7 +362,7 @@ public class nToolBox {
 						tool.metodeGet("add_widget_as_entry", space);
 						tool.metodeGet("add_widget_as_entry", sep);
 						g.addObject("toolbox", tool);
-						app.addDelayEvent(2, new nRun() { public void run() {
+						App.ap.addDelayEvent(2, new nRun() { public void run() {
 							tool.getGroup("list").metode("slide_calc");
 						}});
 					} } );
@@ -361,7 +370,7 @@ public class nToolBox {
 				g.addMetode("add_widget_as_entry", new nRun() {
 					public Object get(Object o) {
 						Object ob = ((nWidget)o).setParent(back);
-						app.addDelayEvent(2, new nRun() { public void run() {
+						App.ap.addDelayEvent(2, new nRun() { public void run() {
 							((nWidgetGroup)g.object("toolbox"))
 								.getGroup("list").metode("slide_calc");
 						}});
@@ -371,7 +380,7 @@ public class nToolBox {
 			} 
 		} );
 		
-		book.newModelGroup("toolbox", new nModelGroup(app) { 
+		book.newModelGroup("toolbox", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup();
 				
@@ -382,13 +391,13 @@ public class nToolBox {
 				g.addWidgetGroup("list",list);
 				
 				tool_back.addEventVisibility(new nRun() { public void run() {
-					app.addEventNextFrame(new nRun() { public void run() {
+					App.ap.addEventNextFrame(new nRun() { public void run() {
 						list.metode("slide_calc"); }}); }});
 				
 				nWidget list_ref = list.get("ref").setParent(tool_back);
 				
 				nRun r = new nRun() { public void run() {
-					if (list_ref.mouseOverZone && app.input.mouseLeft.trigClick) {
+					if (list_ref.mouseOverZone && App.ap.input.mouseLeft.trigClick) {
 						tool_back.toFront(); }  }};
 				list_ref.addEventLogic(r);
 				
@@ -396,12 +405,14 @@ public class nToolBox {
 							tool_back.getLocalSY());
 				list.get("slider").setSize(RS,tool_back.getLocalSY());
 				
-				list.get("slider").setLinkSlider(val_toolbox_scroll);
-				
 				g.addMetode("add_widget_as_entry", new nRun() {
 					public Object get(Object o) {
 						Object ob = list.metodeGet("add_widget_as_entry", o);
 						return ob; } } );
+				
+				g.addMetode("set_toolbox", new nRun() {public void run(Object o) {
+					list.get("slider").setLinkSlider(((nToolBox)o).val_toolbox_scroll);
+				}});
 				
 				return g;
 			} 

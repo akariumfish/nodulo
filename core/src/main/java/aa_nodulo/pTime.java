@@ -23,7 +23,7 @@ import util.nRun;
 
 public class pTime {
 	
-	public static void build_node(PlaneApplet app) {
+	public static void build_node() {
 		
 		pNode.newNodeModel("time")
 		.newRun("do_step", new nRun() {public void run() { 
@@ -43,10 +43,10 @@ public class pTime {
 		}})
 		.process()
 			.commande(new nRun() {public void run() { 
-				app.time.addTickBric(instance);
+				PlaneApplet.app.time.addTickBric(instance);
 			}})
 			.useClear().commande(new nRun() {public void run() { 
-				app.time.removeTickBric(instance);
+				PlaneApplet.app.time.removeTickBric(instance);
 			}}).useInit()
 			.openSec()
 				.param("logic_event", new nRun() {public void run() { 

@@ -36,6 +36,7 @@ public class GdxApp implements Screen ,nDrawer.DrawContext {
 		public void drawer_draw();
 		public void draw_end();
 		public void post_draw();
+		public void setInputProcessor();
 		
 	}
 	
@@ -66,17 +67,20 @@ public class GdxApp implements Screen ,nDrawer.DrawContext {
 	public ScreenViewport viewport; 
 
 	public long frame_counter = 0;
-	public Rectangle screenrect = new Rectangle(0,0,GdxApp.WIDTH,GdxApp.HEIGHT);
+	public Rectangle screenrect = new Rectangle();//0,0,GdxApp.WIDTH,GdxApp.HEIGHT
 
 	public nDrawer drawer;
 	
 	nAppListener listener;
 	
+	public void setInputProcessor() {
+		if (listener != null) listener.setInputProcessor();
+	}
+	
 	public void create() {
-		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		
-		camera = new OrthographicCamera(WIDTH, HEIGHT);
-		viewport = new ScreenViewport(camera);
+		camera = main.camera;
+		viewport = main.viewport;
 
 		camera.position.set(WIDTH / 2, HEIGHT / 2, 0);
 		camera.update();
@@ -104,13 +108,22 @@ public class GdxApp implements Screen ,nDrawer.DrawContext {
 	private boolean close_app_flag = false;
 	public void close_app() { close_app_flag = true; }
 
+	private boolean to_title_flag = false, to_title_flag2 = false;
+	public void to_title() { to_title_flag = true; }
+
 	public void closing() {}
 
 	@Override
 	public void dispose() {
+		 
+		if (Gdx.graphics.isFullscreen()) {
+	            Gdx.graphics.setWindowedMode(WIDTH, HEIGHT);
+	            screenwidth = WIDTH; screenheight = HEIGHT;
+		        resize(screenwidth, screenheight); }
+		
 		closing();
 		if (listener != null) listener.closing();
-
+		 
 		drawer.dispose();
 		
 	}
@@ -155,7 +168,7 @@ public class GdxApp implements Screen ,nDrawer.DrawContext {
 		
 		try_nodraw_frame();
 		
-		if (close_app_flag) Gdx.app.exit();
+		if (close_app_flag) main.exit();
 		
 		frame_counter++;
 		
@@ -224,6 +237,9 @@ public class GdxApp implements Screen ,nDrawer.DrawContext {
 		if (ask_fs) do_fullscreen();
 		if (ask_wn) do_window();
 		if (ask_sw) do_switchscreen();
+
+		if (to_title_flag2) { to_title_flag2 = false; main.close_nodulo(); }
+		if (to_title_flag) { to_title_flag = false; to_title_flag2 = true; }
 		
 	}
 	

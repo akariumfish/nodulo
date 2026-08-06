@@ -45,6 +45,7 @@ public class pMacro {
 		public ArrayList<nRun> runs = new ArrayList<nRun>();
 		public Macro(String r) {
 			ref = r; 
+			if (all_macros.hasKey(r)) all_macros.remove(r);
 			all_macros.put(r, this);
 //			newMacro(r, new nRun() { public Object get() {
 //				pSheet sheet = arg(0, pSheet.class);

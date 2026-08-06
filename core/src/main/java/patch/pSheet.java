@@ -20,13 +20,9 @@ import app.*;
 public class pSheet {
 
 
-	public static PlaneApplet sheet_app;
-
-	public static void build(PlaneApplet app) {
+	public static void build() {
 		
-		sheet_app = app;
-		
-		build_book(app);
+		build_book();
 		
 	}
 	
@@ -62,12 +58,10 @@ public class pSheet {
 	public static nMap<sBloc_Builder> sheet_builders = new nMap<sBloc_Builder>();
 	public static nMap<pMacro.Macro> sheet_macros = new nMap<pMacro.Macro>();
 	public static nMap<nRun> sheet_setup_runs = new nMap<nRun>();
-	public static SheetModel newSheet(String ref) { return newSheet(ref, false); }
-	public static SheetModel newSheet(String ref, boolean def_collapse) {
-		if (sheet_builders.hasKey("sheet_builder_"+ref)) {
-			Utl.logn("ERROR: cant create sheet bloc_builder, <"+ref+"> allready exist"); return null; }
-		
-		sBloc_Builder new_builder = new sBloc_Builder(sheet_app.data, "sheet_builder_"+ref)
+	public static SheetModel newSheet(sData data, String ref) { return newSheet(data, ref, false); }
+	public static SheetModel newSheet(sData data, String ref, boolean def_collapse) {
+
+		sBloc_Builder new_builder = new sBloc_Builder(data, "sheet_builder_"+ref)
 			.setInitRun(new nRun() { public void run(Object o) {
 				sValueBloc b = (sValueBloc)o; newObject(b, ref); }})
 			.setLoadRun(new nRun() { public void run(Object o) {
@@ -79,6 +73,11 @@ public class pSheet {
 			.setClearRun(new nRun() { public void run(Object o) {
 				sValueBloc b = (sValueBloc)o; b.run("clearing");  }})
 			;
+		
+		if (sheet_models.hasKey(ref)) {
+			SheetModel sm = sheet_models.get(ref);
+			sm.def_collapse = def_collapse;
+			return sm; }
 		
 		pPatch.addEventInit(new nRun() { public void run(Object o) {
 			sValueBloc b = (sValueBloc)o; b.addBlocBuilder(new_builder); 
@@ -610,8 +609,8 @@ public class pSheet {
 
 	
 	
-	public static void build_book(PlaneApplet app) {
-		nModelBook book = app.gui.book;
+	public static void build_book() {
+		nModelBook book = nGUI.book;
 		float RS = book.RS;
 		
 //		book.newModel("S_ref")
@@ -705,7 +704,7 @@ public class pSheet {
 		;
 		
 		
-		book.newModelGroup("sheet_bound", new nModelGroup(app) { 
+		book.newModelGroup("sheet_bound", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup();
 
@@ -734,7 +733,7 @@ public class pSheet {
 				nWidget botback = g.addWidget("botback", "SB_botinterf_back")
 						.setParent(botbar);
 				
-				nInterface interf = app.gui.addInterface();
+				nInterface interf = PlaneApplet.app.gui.addInterface();
 				interf.pop(botback);
 				
 				g.addMetode("set_sheet", new nRun() { public void run(Object o) {
@@ -774,13 +773,13 @@ public class pSheet {
 					for (String mr : sheet.model.macros.allKey()) {
 						if (i%2 == 0) {
 							nWidget w = interf.add_list_entry("");
-							w.setSY(app.gui.book.RS/5f);
+							w.setSY(nGUI.book.RS/5f);
 							ent = interf.add_list_entry("");
 							ent.setBoundChild(true).setBoundOutspace(0);
 						} else {
 							nWidget w = interf.get_row_entry_widget(1);
 							w.setParent(ent);
-							w.setSX(app.gui.book.RS/2f);
+							w.setSX(nGUI.book.RS/2f);
 						}
 						nWidget w = interf.get_row_button_widget(4);
 						w.setText(mr);

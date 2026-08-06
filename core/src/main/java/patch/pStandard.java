@@ -14,21 +14,21 @@ import com.badlogic.gdx.math.Vector2;
 
 public class pStandard {
 	
-	public static nMap<pStandard> standards;
-	public static PlaneApplet app;
+	public static nMap<pStandard> standards = new nMap<pStandard>(); 
+//	public static PlaneApplet app;
 	
-	public static void build(PlaneApplet a) {
-		app = a; 
-		standards = new nMap<pStandard>(); 
-	}
+//	public static void build(PlaneApplet a) {
+////		app = a; 
+//		standards = new nMap<pStandard>(); 
+//	}
 
+	public static int abstract_cnt = 0;
 	public static pStandard newAbstractStandard() {
-		int c = 0; String r = "abstract_"; String ref = r+c;
-		while (standards.hasKey(ref)) { c++; ref = r+c; }
-		pStandard p = new pStandard(ref, ""); return p; }
+		String ref = "abstract_"+abstract_cnt; abstract_cnt++;
+		pStandard p = newStandard(ref, ""); return p; }
 	public static pStandard newStandard(String ref, String pool_ref) {
 		if (standards.hasKey(ref)) {
-			Utl.logn("ERROR: cant create standard, <"+ref+"> allready exist"); return null; }
+			Utl.logn("ERROR: cant create standard, <"+ref+"> allready exist"); return standards.get(ref); }
 		pStandard p = new pStandard(ref, pool_ref); return p; }
 	public static pStandard get(String r) {
 		return standards.get(r); }
@@ -47,7 +47,6 @@ public class pStandard {
 	public String pool_ref;
 	
 	
-	
 	public pStandard(String r, String pr) {
 		ref = r; 
 		pool_ref = pr; 
@@ -61,9 +60,9 @@ public class pStandard {
 	
 	public pStandard initInstanceObj(pInstance cont) {
 		if (cont.obj_is_init) return this;
-		for (ObjDef od : objdefs) {
-			Object o = od.newobj.do_get(cont, od.param);
-			cont.setObject(od.ref,o); }
+//		for (ObjDef od : objdefs) {
+//			Object o = od.newobj.do_get(cont, od.param);
+//			cont.setObject(od.ref,o); }
 		cont.obj_is_init = true;
 		return this; }
 
@@ -99,6 +98,7 @@ public class pStandard {
 		for (pProcess p : procs.all()) p.useClear().exec(cont, proc_pars.get(p.ref));
 		return this; }
 
+	
 	public ArrayList<nRun> create_runs = new ArrayList<nRun>();
 	public ArrayList<nRun> init_runs = new ArrayList<nRun>();
 	public ArrayList<nRun> load_runs = new ArrayList<nRun>();
@@ -109,7 +109,7 @@ public class pStandard {
 	public pStandard addLoadRun(nRun r) { load_runs.add(r); return this; }
 	public pStandard addSaveRun(nRun r) { save_runs.add(r); return this; }
 	public pStandard addClearRun(nRun r) { clear_runs.add(r); return this; }
-
+	
 	public nRun create_run = new nRun() {};
 	public nRun init_run = new nRun() {};
 	public nRun load_run = new nRun() {};
@@ -132,9 +132,7 @@ public class pStandard {
 		return this; }
 	
 
-	
-	
-	
+
 	public nMap<pProcess> procs = new nMap<pProcess>();
 
 	public nMap<pPar> proc_pars = new nMap<pPar>();
@@ -154,7 +152,6 @@ public class pStandard {
 		p.creator_stand = this;
 		p.append(r);
 		procs.put(p.ref, p); proc_pars.put(p.ref, new pPar(par)); return p; }
-	
 	
 
 	public pPar def_param = new pPar();
@@ -178,7 +175,7 @@ public class pStandard {
 	public ArrayList<Section> all_sections = new ArrayList<Section>();
 	public ArrayList<Section> sections = new ArrayList<Section>();
 	public Section current_sec = null; 
-
+	
 	public pStandard openSec() {
 		if (current_sec == null) {
 			Section s = new Section(this);
@@ -223,7 +220,7 @@ public class pStandard {
 	}
 	
 	
-	
+
 	private RunDef new_rundef = null;
 	public pStandard newRun(String r, nRun run) {
 		RunDef rd = new RunDef(r, null, run);
@@ -270,7 +267,7 @@ public class pStandard {
 		return null; }
 	
 	public ArrayList<RunDef> rundefs = new ArrayList<RunDef>(); 
-	
+
 	// crun in context.runs 
 	public class RunDef {
 		public String ref;
@@ -332,44 +329,38 @@ public class pStandard {
 	
 	
 
-	private ObjDef new_objdef = null;
-	
-	public pStandard newObj(String r, nRun newobj) { //, Class<?> ct
-		ObjDef rd = new ObjDef(r, newobj);
-		new_objdef = rd; return this;
-	}
+//	private ObjDef new_objdef = null;
+//	
+//	public pStandard newObj(String r, nRun newobj) { //, Class<?> ct
+//		ObjDef rd = new ObjDef(r, newobj);
+//		new_objdef = rd; return this;
+//	}
+//
+//	public ObjDef getObjDef(String r) {
+//		for (ObjDef d : objdefs) if (d.ref.equals(r)) return d;
+//		return null; }
+//	
+//	public ArrayList<ObjDef> objdefs = new ArrayList<ObjDef>(); 
+//	
+//	// object in context.objects 
+//	public class ObjDef {
+//		public String ref;
+//		public String comment = "";
+//		public pPar param;
+////		public Class<?> obj_class;
+//		public nRun newobj;
+//		public ObjDef(ObjDef o) { //, Class<?> ct
+//			ref = Utl.copy(o.ref); newobj = o.newobj; //obj_class = ct; 
+//			objdefs.add(this);
+//			param = new pPar(o.param);
+//		}
+//		public ObjDef(String r, nRun nwob) { //, Class<?> ct
+//			ref = r; newobj = nwob; //obj_class = ct; 
+//			objdefs.add(this);
+//			param = new pPar(current_param);
+//		}
+//	}
 
-	public ObjDef getObjDef(String r) {
-		for (ObjDef d : objdefs) if (d.ref.equals(r)) return d;
-		return null; }
-	
-	public ArrayList<ObjDef> objdefs = new ArrayList<ObjDef>(); 
-	
-	// object in context.objects 
-	public class ObjDef {
-		public String ref;
-		public String comment = "";
-		public pPar param;
-//		public Class<?> obj_class;
-		public nRun newobj;
-		public ObjDef(ObjDef o) { //, Class<?> ct
-			ref = Utl.copy(o.ref); newobj = o.newobj; //obj_class = ct; 
-			objdefs.add(this);
-			param = new pPar(o.param);
-		}
-		public ObjDef(String r, nRun nwob) { //, Class<?> ct
-			ref = r; newobj = nwob; //obj_class = ct; 
-			objdefs.add(this);
-			param = new pPar(current_param);
-		}
-	}
-
-	
-	
-	
-	
-	
-	
 	
 	
 	
@@ -604,7 +595,7 @@ public class pStandard {
 			process(me.getValue(), s.proc_pars.get(me.getKey()));
 		
 		for (RunDef r : s.rundefs) new RunDef(r);
-		for (ObjDef r : s.objdefs) new ObjDef(r);
+//		for (ObjDef r : s.objdefs) new ObjDef(r);
 		
 		for (String r : s.used_key) used_key.add(r);
 		
@@ -687,7 +678,7 @@ public class pStandard {
 		current_param = s.current_param;
 		
 		for (RunDef r : s.rundefs) new RunDef(r);
-		for (ObjDef r : s.objdefs) new ObjDef(r);
+//		for (ObjDef r : s.objdefs) new ObjDef(r);
 		
 		for (String r : s.used_key) used_key.add(r);
 		
