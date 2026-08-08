@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.kotcrab.vis.ui.VisUI;
 
 import aa_nodulo.PlaneApplet;
 import util.Utl;
@@ -42,6 +43,8 @@ public class Main extends Game {
 		
 		if (PlaneApplet.TITLE_SCREEN) launch_title(); 
 		else launch_nodulo();
+		
+//		VisUI.load();k
 		
 	}
 	

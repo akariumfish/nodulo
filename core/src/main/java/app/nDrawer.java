@@ -168,6 +168,7 @@ public class nDrawer {
 		for (AbstractVfxEffect e : effect) e.dispose();
 		spritebatch.dispose();
 		texture.dispose();
+		transf.reset();
 	}
 	public void resize(int w, int h) {
         vfxManager.resize(w, h); buffer.reset(); buffer.initialize(w, h); }

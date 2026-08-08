@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class nTransform {
-	
+
 	class Transf {
 		Vector2 translate = new Vector2();
 		float scale = 1.0f;
@@ -203,8 +203,6 @@ public class nTransform {
 		a.rotateRad(-rt);
 		return a;
 	}
-	
-	
 	
 	
 

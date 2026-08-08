@@ -199,7 +199,7 @@ public class pSheet {
 
 		sheet_link_draw = app.gui.addWidget("S_link"); 
 		sheet_link_draw.setParent(sheet_bound.get("fx"));
-//		sheet_bound.get("fx").setVFX();
+		sheet_bound.get("fx").setVFX();
 		sheet_bound.addWidget("sheet_link_draw", sheet_link_draw);
 		sheet_link_draw.setCustomDrawer(new nDrawable() { public void drawing() {
 			Vector2 m = new Vector2(app.input.mouse);

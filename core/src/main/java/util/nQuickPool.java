@@ -54,8 +54,10 @@ public abstract class nQuickPool<T> {
 
 	public void free(T t) {
 		reset(t); 
-		freeObjects.add(t); 
-		allObjects.remove(t);
+//		if (allObjects.contains(t)) {
+			freeObjects.add(t); 
+			allObjects.remove(t); 
+//		}
 	}
 	
 	public void freeAll() {
