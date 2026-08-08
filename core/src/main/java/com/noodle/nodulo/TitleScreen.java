@@ -1,20 +1,25 @@
 package com.noodle.nodulo;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import aa_nodulo.PlaneApplet;
 import app.nDrawer;
+import data.sData;
 import gui.nDrawable;
 import util.Utl;
 
@@ -34,6 +39,14 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 
 	TextButtonStyle textbuttstyle;
 	
+	Table titletable, editortable;
+	CheckBox themeCheckBox, fullScreenCheckBox;
+
+	Table newtable;
+	Table loadtable;
+	
+	String[] app_models;
+	
 	public TitleScreen(Main m) {
 		main = m;
 
@@ -52,75 +65,153 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 		stage = new Stage(new ScreenViewport());
 		Gdx.input.setInputProcessor(stage);
 
-		Table table1 = new Table();
-		table1.setSize(m.conf.WIDTH / 1f,m.conf.HEIGHT * 4f / 5f);
-		table1.setPosition(m.conf.WIDTH * 0f / 4f,0);
-		table1.layout();
-//		table1.debug();
-		stage.addActor(table1);
-
-		Table table2 = new Table();
-		table2.setSize(m.conf.WIDTH / 1f,m.conf.HEIGHT * 4f / 5f);
-		table2.setPosition(m.conf.WIDTH * 0f / 4f,0);
-		table2.layout();
-
 		textbuttstyle = new TextButtonStyle(skin.get(TextButtonStyle.class));
 
-		makeButton("New", table1).addListener(new InputListener() { public boolean touchDown (
+		app_models = PlaneApplet.getModels();
+
+		editortable = new Table();
+		editortable.setSize(main.conf.WIDTH / 4f, main.conf.HEIGHT / 26f);
+		editortable.setPosition(m.conf.WIDTH * 3f / 4f, main.conf.HEIGHT * 24f / 26f);
+		editortable.layout();
+//		table1.debug();
+		stage.addActor(editortable);
+
+		TextButton button = new TextButton("Open Editor", textbuttstyle);
+		button.addListener(new InputListener() { public boolean touchDown (
 				InputEvent event, float x, float y, int pointer, int button) {
-			stage.addActor(table2); table1.remove(); return false; }});
-//		makeButton("Load", table1).addListener(new InputListener() { public boolean touchDown (
-//				InputEvent event, float x, float y, int pointer, int button) {
-//			return false; }});
+			main.launch_editor(); return false; }});
+		editortable.row().fill().pad(10)
+		.minWidth(main.conf.WIDTH / 5f)
+		.minHeight(main.conf.HEIGHT / 26f);
+		editortable.add(button);
+
+		titletable = new Table();
+		titletable.setSize(m.conf.WIDTH / 1f,m.conf.HEIGHT * 4f / 5f);
+		titletable.setPosition(m.conf.WIDTH * 0f / 4f,0);
+		titletable.layout();
+//		table1.debug();
+		stage.addActor(titletable);
+
+		newtable = new Table();
+		newtable.setSize(m.conf.WIDTH / 1f,m.conf.HEIGHT * 4f / 5f);
+		newtable.setPosition(m.conf.WIDTH * 0f / 4f,0);
+		newtable.layout();
+		
+		loadtable = new Table();
+		loadtable.setSize(m.conf.WIDTH / 1f,m.conf.HEIGHT * 4f / 5f);
+		loadtable.setPosition(m.conf.WIDTH * 0f / 4f,0);
+		loadtable.layout();
+
+		makeButton("New", titletable).addListener(new InputListener() { public boolean touchDown (
+				InputEvent event, float x, float y, int pointer, int button) {
+			show_new(); return false; }});
+		makeButton("Load", titletable).addListener(new InputListener() { public boolean touchDown (
+				InputEvent event, float x, float y, int pointer, int button) {
+			show_load(); return false; }});
 //		makeButton("Join", table1).addListener(new InputListener() { public boolean touchDown (
 //				InputEvent event, float x, float y, int pointer, int button) {
 //			return false; }});
 //		makeButton("Test - Net", table1).addListener(new InputListener() { public boolean touchDown (
 //				InputEvent event, float x, float y, int pointer, int button) {
 //			Lwjgl3Launcher.launch_net_apps(); return false; }});
-		makeButton("About", table1).addListener(new InputListener() { public boolean touchDown (
+		makeButton("About", titletable).addListener(new InputListener() { public boolean touchDown (
 				InputEvent event, float x, float y, int pointer, int button) {
 			return false; }});
-		makeButton("Exit", table1).addListener(new InputListener() { public boolean touchDown (
+		makeButton("Exit", titletable).addListener(new InputListener() { public boolean touchDown (
 				InputEvent event, float x, float y, int pointer, int button) {
 			main.exit(); return false; }});
 
-		CheckBox themeCheckBox = new CheckBox("Dark Theme", skin);
+		themeCheckBox = new CheckBox("Dark Theme", skin);
 		themeCheckBox.setChecked(!PlaneApplet.RELEASE);
-		table1.row().fill().pad(100,10,10,10).minWidth(main.conf.WIDTH / 5f);
-		table1.add(themeCheckBox);
-		CheckBox fullScreenCheckBox = new CheckBox("Fullscreen", skin);
+		titletable.row().fill().pad(100,10,10,10).minWidth(main.conf.WIDTH / 5f);
+		titletable.add(themeCheckBox);
+		fullScreenCheckBox = new CheckBox("Fullscreen", skin);
 		fullScreenCheckBox.setChecked(PlaneApplet.START_FULLSCREEN);
-		table1.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
-		table1.add(fullScreenCheckBox);
-		table1.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
-		table1.add(new Label("Some text, contact, ext ... ", skin));
+		titletable.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
+		titletable.add(fullScreenCheckBox);
+		titletable.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
+		titletable.add(new Label("Some text, contact, ext ... ", skin));
 
-		
-		table2.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
-		table2.add(new Label("Build Models :", skin));
-		
-		for (String nm : PlaneApplet.getModels()) {
-			makeButton(nm, table2).addListener(new InputListener() { public boolean touchDown (
-					InputEvent event, float x, float y, int pointer, int button) {
-				main.launch_nodulo(nm, themeCheckBox.isChecked(), 
-						fullScreenCheckBox.isChecked()); return false; }}); }
-		
-		makeButton("Back", table2).addListener(new InputListener() { public boolean touchDown (
-				InputEvent event, float x, float y, int pointer, int button) {
-			stage.addActor(table1); table2.remove(); return false; }});
-		
-		
 	}
 	
+
+	private void show_new() {
+		
+		FileHandle[] files = Gdx.files.local("/").list();
+		String new_name = "nodulo";
+		int i = 1;
+		boolean found = false;
+		while(found || i == 1) {
+			found = false;
+			for(FileHandle fl : files) 
+				if (fl.extension().equals(sData.file_ext_txt)
+					&& fl.name().equals(new_name+"."+sData.file_ext_txt)) {
+				found = true; new_name = "nodulo_"+i; break; }			
+			i++; }
+		
+		newtable.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
+		newtable.add(new Label("New file name:", skin));
+		newtable.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
+		TextField textfield = new TextField(new_name, skin);
+		newtable.add(textfield);
+		
+		newtable.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
+		newtable.add(new Label("Build Models :", skin));
+		
+		for (String nm : app_models) {
+			makeButton(nm, newtable).addListener(new InputListener() { public boolean touchDown (
+					InputEvent event, float x, float y, int pointer, int button) {
+				String file = textfield.getText()+"."+sData.file_ext_txt;
+				new_to_title(); 
+				main.launch_nodulo(nm, file, themeCheckBox.isChecked(), 
+						fullScreenCheckBox.isChecked()); return false; }}); }
+		
+		makeButton("Back", newtable, true).addListener(new InputListener() { public boolean touchDown (
+				InputEvent event, float x, float y, int pointer, int button) {
+			new_to_title(); return false; }});
+		
+		stage.addActor(newtable); titletable.remove(); editortable.remove(); 
+	}
+	private void new_to_title() {
+		newtable.clearChildren(); 
+		stage.addActor(titletable); stage.addActor(editortable); newtable.remove(); 
+	}
+	
+	private void show_load() {
+
+		FileHandle[] files = Gdx.files.local("/").list();
+		for(FileHandle fl : files) {
+			if (fl.extension().equals(sData.file_ext_txt)) {
+				String s = fl.name();
+				makeButton(s, loadtable).addListener(new InputListener() { public boolean touchDown (
+						InputEvent event, float x, float y, int pointer, int button) {
+					load_to_title(); 
+					main.launch_nodulo_save(s, themeCheckBox.isChecked(), 
+							fullScreenCheckBox.isChecked()); return false; }});				
+			}
+		}
+		
+		makeButton("Back", loadtable, true).addListener(new InputListener() { public boolean touchDown (
+				InputEvent event, float x, float y, int pointer, int button) {
+			load_to_title(); return false; }});
+		
+		stage.addActor(loadtable); titletable.remove(); editortable.remove(); 
+	}
+	private void load_to_title() {
+		loadtable.clearChildren(); 
+		stage.addActor(titletable); stage.addActor(editortable); loadtable.remove(); 
+	}
+
 	private TextButton makeButton(String t, Table table) {
+		return makeButton(t, table, false); }
+	private TextButton makeButton(String t, Table table, boolean pad) {
 		TextButton button = new TextButton(t, textbuttstyle);
-		table.row()
-		.fill()
-		.pad(10)
+		if (pad) table.row().fill().pad(30,10,10,10)
 		.minWidth(main.conf.WIDTH / 4f)
-		.minHeight(main.conf.HEIGHT / 18f)
-		;
+		.minHeight(main.conf.HEIGHT / 24f);
+		else table.row().fill().pad(10)
+		.minWidth(main.conf.WIDTH / 4f)
+		.minHeight(main.conf.HEIGHT / 26f);
 		table.add(button);
 		return button; }
 	

@@ -7,9 +7,9 @@ import java.util.Map.Entry;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool.Poolable;
+import com.noodle.nodulo.GdxApp;
 
 import app.App;
-import app.GdxApp;
 import data.sValueBloc;
 import util.Utl;
 import util.nClearable;

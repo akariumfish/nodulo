@@ -207,11 +207,6 @@ public class pTileHead {
 		
 		
 		pStandard stack_head = pStandard.newStandard("stack_head_abstract", "inst")
-		.addInst("head_tile", "tile")
-		.addCollec("script_com", String.class)
-		.addCollec("script_arg", String.class)
-		.addCollec("script_arg_class", String.class)
-		.addCollecInst("tiles", "tile")
 		.newRun("get_instruction_script", new nRun() {public Object get() { 
 			if (instance.getInst("head_tile") != null) { 
 				if (!instance.hasObject("run_script")) {
@@ -249,10 +244,11 @@ public class pTileHead {
 				head.run("build_script", script); }}); }
 		}})
 		.newRun("build_saved_script", new nRun() {public void run() { 
+//			Utl.logn("loading "+instance.getCollecSize("script_code")+" "+instance.pool_ref);
 			Script script = new Script();
-			int com_nb = instance.getCollecSize("script_com");
+			int com_nb = instance.getCollecSize("script_code");
 			for (int i = 0 ; i < com_nb ; i++) {
-				String com = instance.collecGet("script_com", i, String.class);
+				String com = instance.collecGet("script_code", i, String.class);
 				String str_arg1 = instance.collecGet("script_arg", (i*3), String.class);
 				String str_arg2 = instance.collecGet("script_arg", (i*3)+1, String.class);
 				String str_arg3 = instance.collecGet("script_arg", (i*3)+2, String.class);
@@ -260,13 +256,13 @@ public class pTileHead {
 				String str_arg_class2 = instance.collecGet("script_arg_class", (i*3)+1, String.class);
 				String str_arg_class3 = instance.collecGet("script_arg_class", (i*3)+2, String.class);
 				Object arg1 = null, arg2 = null, arg3 = null;
-				if (str_arg_class1 != null && str_arg_class1.length() > 0) {
+				if (str_arg_class1 != null && str_arg_class1.length() > 0 && !str_arg_class1.equals("null")) {
 					Class<?> arg_class1 = Utl.type_ref_class.get(str_arg_class1);
 					arg1 = Utl.from_string(str_arg1, arg_class1); }
-				if (str_arg_class2 != null && str_arg_class2.length() > 0) {
+				if (str_arg_class2 != null && str_arg_class2.length() > 0 && !str_arg_class2.equals("null")) {
 					Class<?> arg_class2 = Utl.type_ref_class.get(str_arg_class2);
 					arg2 = Utl.from_string(str_arg2, arg_class2); }
-				if (str_arg_class3 != null && str_arg_class3.length() > 0) {
+				if (str_arg_class3 != null && str_arg_class3.length() > 0 && !str_arg_class3.equals("null")) {
 					Class<?> arg_class3 = Utl.type_ref_class.get(str_arg_class3);
 					arg3 = Utl.from_string(str_arg3, arg_class3); }
 				if (arg3 != null) script.commande(com,arg1,arg2,arg3);
@@ -274,14 +270,70 @@ public class pTileHead {
 				else if (arg1 != null) script.commande(com,arg1);
 				else script.commande(com);
 			}
-			instance.run("build_script", script, instance.getVar("script", Boolean.class));
+			if (script.coms.size() > 0) {
+				App.ap.addDelayEvent(1, new nRun(instance) { public void run() {
+					pInstance inst = (pInstance)builder;
+					pInstance head = inst.getInst("head_tile");
+					if (head == null) return;
+					boolean ts = inst.getVar("script", Boolean.class);
+					head.setData("gui", true);
+					inst.setObject("is_script", false);
+					inst.setVar("script", false);
+					ArrayList<pInstance> all_tile = 
+							head.get("get_all_tile", ArrayList.class);
+					for (pInstance s : Utl.duplic(all_tile)) s.clear(); 
+					App.ap.addDelayEvent(1, new nRun() { public void run() {
+						head.run("build_script", script);
+						if (ts) {
+							App.ap.addDelayEvent(1, new nRun(inst) { public void run() {
+								pInstance ins = (pInstance)builder;
+								ins.setVar("script", true); 
+								ins.run("update_script");
+							}});
+						}
+					}});
+				}});
+			}
+		}})
+		.newRun("save_script", new nRun() {public void run() { 
+			if (instance.getInst("head_tile") != null) { 
+				pInstance head = instance.getInst("head_tile");
+				head.run("calc_script");
+				Script script = head.object("script", Script.class);
+				instance.getCollec("script_code").empty();
+				instance.getCollec("script_arg").empty();
+				instance.getCollec("script_arg_class").empty();
+				for (ScriptCom sc : script.coms) {
+					instance.getCollec("script_code").add(Utl.copy(sc.com));
+					String arg = "null", arg_class = "null";
+					if (sc.arg1 != null) {
+						arg = Utl.to_string(sc.arg1);
+						arg_class = sc.arg1.getClass().getName(); } 
+					instance.getCollec("script_arg").add(arg);
+					instance.getCollec("script_arg_class").add(arg_class);
+					arg = "null"; arg_class = "null";
+					if (sc.arg2 != null) {
+						arg = Utl.to_string(sc.arg2);
+						arg_class = sc.arg2.getClass().getName(); }
+					instance.getCollec("script_arg").add(arg);
+					instance.getCollec("script_arg_class").add(arg_class);
+					arg = "null"; arg_class = "null";
+					if (sc.arg3 != null) {
+						arg = Utl.to_string(sc.arg3);
+						arg_class = sc.arg3.getClass().getName(); }
+					instance.getCollec("script_arg").add(arg);
+					instance.getCollec("script_arg_class").add(arg_class);
+				}
+//				Utl.logn("saved "+instance.getCollecSize("script_com")+" "+instance.pool_ref);
+			}
 		}})
 		.newRun("update_script", new nRun() {public void run() { 
 			if (instance.getInst("head_tile") == null) return;
 			if (instance.getVar("script", Boolean.class) && 
 					!instance.object("is_script", Boolean.class)) {
+				instance.run("save_script");
 				pInstance head = instance.getInst("head_tile");
-				head.run("calc_script");
+//				head.run("calc_script");
 				Script script = head.object("script", Script.class);
 				instance.run("build_script", script, false);
 			} else if (!instance.getVar("script", Boolean.class) && 
@@ -294,6 +346,7 @@ public class pTileHead {
 		.process()
 		.commande(new nRun() {public void run() { 
 			instance.addObject("is_script", false);
+
 			nRun run_frame = new nRun(instance) {public void run() { 
 				pInstance inst = (pInstance)builder;
 				inst.setVar("tile_co_node_cnt", (int)0);
@@ -330,35 +383,8 @@ public class pTileHead {
 			instance.patch.addEventFrame(run_frame);
 		}})
 		.useSave().commande(new nRun() {public void run() { 
-			if (instance.getInst("head_tile") != null) { 
-				pInstance head = instance.getInst("head_tile");
-				head.run("calc_script");
-				Script script = head.object("script", Script.class);
-				instance.getCollec("script_com").empty();
-				instance.getCollec("script_arg").empty();
-				instance.getCollec("script_arg_class").empty();
-				for (ScriptCom sc : script.coms) {
-					instance.getCollec("script_com").add(sc.com);
-					String arg = "", arg_class = "";
-					if (sc.arg1 != null) {
-						arg = Utl.to_string(sc.arg1);
-						arg_class = sc.arg1.getClass().getName(); } 
-					instance.getCollec("script_arg").add(arg);
-					instance.getCollec("script_arg_class").add(arg_class);
-					arg = ""; arg_class = "";
-					if (sc.arg2 != null) {
-						arg = Utl.to_string(sc.arg2);
-						arg_class = sc.arg2.getClass().getName(); }
-					instance.getCollec("script_arg").add(arg);
-					instance.getCollec("script_arg_class").add(arg_class);
-					arg = ""; arg_class = "";
-					if (sc.arg3 != null) {
-						arg = Utl.to_string(sc.arg3);
-						arg_class = sc.arg3.getClass().getName(); }
-					instance.getCollec("script_arg").add(arg);
-					instance.getCollec("script_arg_class").add(arg_class);
-				}
-			}
+			if (!instance.object("is_script", Boolean.class)) 
+				instance.run("save_script");
 		}})
 		.useClear().commande(new nRun() {public void run() { 
 			instance.patch.removeEventFrame(
@@ -376,6 +402,11 @@ public class pTileHead {
 
 		pNode.newNodeModel("branch", "tile")
 		.append(stack_head)
+		.addInst("head_tile", "tile")
+		.addCollec("script_code", String.class)
+		.addCollec("script_arg", String.class)
+		.addCollec("script_arg_class", String.class)
+		.addCollecInst("tiles", "tile")
 		.process()
 		.useLoad().commande(new nRun() {public void run() { 
 			if (instance.getInst("head_tile") == null) {
@@ -386,13 +417,14 @@ public class pTileHead {
 				if (!instance.collecInstContains("tiles", t)) 
 					instance.collecInstAdd("tiles", t);
 			}
-			if (instance.getInst("head_tile") != null) { 
-				if (!instance.is_new) instance.run("build_saved_script"); }
 			if (!instance.hasVar("branch_ref")) {
 				instance.obtainVar("branch_ref", "branch_"+func_counter);
 				func_counter++; }
 			instance.patch.common_branchs.put(
 					instance.getVar("branch_ref", String.class), instance);
+
+			instance.run("build_saved_script");
+			
 		}})
 		.useClear().commande(new nRun() {public void run() { 
 			instance.patch.common_branchs.remove(instance);
@@ -423,8 +455,13 @@ public class pTileHead {
 		
 
 		pNode.newNodeModel("function", "tile")
-		.append(stack_head)
 		.append(exec_context)
+		.append(stack_head)
+		.addInst("head_tile", "tile")
+		.addCollec("script_code", String.class)
+		.addCollec("script_arg", String.class)
+		.addCollec("script_arg_class", String.class)
+		.addCollecInst("tiles", "tile")
 		.process()
 		.useLoad().commande(new nRun() {public void run() { 
 			if (instance.getInst("head_tile") == null) {
@@ -435,13 +472,14 @@ public class pTileHead {
 				if (!instance.collecInstContains("tiles", t)) 
 					instance.collecInstAdd("tiles", t);
 			}
-			if (instance.getInst("head_tile") != null) { 
-				if (!instance.is_new) instance.run("build_saved_script"); }
 			if (!instance.hasVar("func_ref")) {
 				instance.obtainVar("func_ref", "function_"+func_counter);
 				func_counter++; }
 			instance.patch.common_functions.put(
 					instance.getVar("func_ref", String.class), instance);
+
+			instance.run("build_saved_script");
+			
 		}})
 		.useClear().commande(new nRun() {public void run() { 
 			instance.patch.common_functions.remove(instance);

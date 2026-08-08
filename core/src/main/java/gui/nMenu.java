@@ -9,10 +9,10 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.noodle.nodulo.GdxApp;
 
 import aa_nodulo.PlaneApplet;
 import app.App;
-import app.GdxApp;
 import data.*;
 import util.Utl;
 import util.nMap;
@@ -95,7 +95,7 @@ public class nMenu {
 				.setLink(app.input.val_fullscreen)
 				;
 
-		val_hide_bar = app.data.setting_bloc.newBoo("val_hide_bar", true);
+		val_hide_bar = app.data.root_bloc.newBoo("val_hide_bar", true);
 
 		hidebar = gui.addWidget("ref")
 				.setRect(GdxApp.WIDTH - 21f*RS/6f, RS/6f, RS, RS)
@@ -107,7 +107,7 @@ public class nMenu {
 				.setLink(val_hide_bar)
 				;
 
-		val_hide_info = app.data.setting_bloc.newBoo("val_hide_info", false);
+		val_hide_info = app.data.root_bloc.newBoo("val_hide_info", false);
 
 		hideinfo = gui.addWidget("ref")
 				.setRect(GdxApp.WIDTH - 28f*RS/6f, RS/6f, RS, RS)
@@ -119,7 +119,7 @@ public class nMenu {
 				.setLink(val_hide_info)
 				;
 
-		val_fx = app.data.setting_bloc.newBoo("val_fx", app.config.START_FX);
+		val_fx = app.data.root_bloc.newBoo("val_fx", app.config.START_FX);
 		val_fx.addEventChangeLastFrame(new nRun() { public void run() {
 			app.use_fx(val_fx.get()); }});
 		
@@ -134,7 +134,7 @@ public class nMenu {
 				;
 		
 		save_path_viewer = gui.addWidget("ref")
-				.setRect(GdxApp.WIDTH - RS*16f, RS/6f, RS*10f, RS)
+				.setRect(GdxApp.WIDTH - RS*20f, RS/6f, RS*10f, RS)
 				.setPassif()
 				.set_color_background(Utl.color(0,0))
 				.asWidget()
@@ -239,7 +239,7 @@ public class nMenu {
 			info_back.setPos(app.gdx.getscreenwidth() - 190,0); 
 			close.setRect(app.gdx.getscreenwidth() - 7f*RS/6f, RS/6f, RS, RS);
 			fullscreen.setRect(app.gdx.getscreenwidth() - 14f*RS/6f, RS/6f, RS, RS);
-			save_path_viewer.setRect(app.gdx.getscreenwidth() - RS*16f, RS/6f, RS*10f, RS);
+			save_path_viewer.setRect(app.gdx.getscreenwidth() - RS*20f, RS/6f, RS*10f, RS);
 			hidebar.setRect(app.gdx.getscreenwidth() - 21f*RS/6f, RS/6f, RS, RS);
 			hideinfo.setRect(app.gdx.getscreenwidth() - 28f*RS/6f, RS/6f, RS, RS);
 			fx.setRect(app.gdx.getscreenwidth() - 35f*RS/6f, RS/6f, RS, RS);
@@ -274,13 +274,15 @@ public class nMenu {
 
 		add_file_menu_trigg("save", new nRun() { public void run() { 
 			app.data.full_save(); }});
-		add_file_menu_trigg("save to", new nRun() { public void run() {
-			pop_saveas(); }});
+//		add_file_menu_trigg("save to", new nRun() { public void run() {
+////			pop_saveas(); 
+//		}});
 
 		add_file_menu_separator();
 		
-		add_file_menu_trigg("Settings", new nRun() { public void run() {
-			pop_setting(); }});
+//		add_file_menu_trigg("Settings", new nRun() { public void run() {
+////			pop_setting(); 
+//		}});
 		
 		add_file_menu_trigg("Shortcut", new nRun() { public void run() {
 			pop_shortcut(); }});
@@ -476,198 +478,198 @@ public class nMenu {
 		gui.pop_popwindow("Exit ?");
 		
 	}
-
-	public void pop_saveas() {
-		
-		nInterface interf = gui.get_popWindow();
-
-		interf.add_row();
-		interf.add_row_label(7," Select File : ");
-		nWidget refresh_w = interf.add_row_trigg(3,"REFRESH");
-		interf.add_row();
-		nWidgetGroup file_list = interf.add_picklist(8,4);
-		interf.add_row();
-		interf.add_row_label(2,"New :");
-		nWidget new_f_w = interf.add_row_field(6,"");
-		nWidget new_w = interf.add_row_trigg(2,"NEW");
-		
-		interf.add_row();
-		interf.add_row_label(6,"");
-		nWidget load_w = interf.add_row_trigg(4,"SAVE TO");
-
-		interf.add_col_separator();
-
-		nRun run_list_files = new nRun() { public void run() {
-			interf.change_current_list(file_list);
-			FileHandle[] files = Gdx.files.local("/").list();
-			for(FileHandle fl : files) {
-				if (fl.extension().equals(app.data.file_ext_txt)) { 
-					nWidget le = interf.add_list_entry(fl.name());
-					if (app.data.val_root_savepath.get().equals(fl.name())) le.setOn();
-				}
-			}
-		}};
-		run_list_files.run();
-
-		nRun run_new_file = new nRun() { public void run() {
-			String file_name = new_f_w.getText();
-			if (file_name.length() == 0) return;
-			file_name += sData.file_extension;
-			FileHandle fl = Gdx.files.local(file_name);
-			if (!fl.exists()) fl.writeString(" ", false);
-			app.data.val_root_savepath.set(file_name);
-			run_list_files.run();
-		}};
-		
-		nRun run_save_file = new nRun() { public void run() {
-			String file_name = (String)file_list.metodeGet("get_pick");
-			if (file_name.length() == 0 || !Utl.file_exist(file_name)) return;
-			app.data.val_root_savepath.set(file_name);
-			app.data.full_save();
-			gui.close_popwindow();
-		}};
-		
-		refresh_w.addEventTrigger(new nRun() { public void run() {
-			run_list_files.run(); }});
-		new_w.addEventTrigger(new nRun() { public void run() {
-			run_new_file.run(); }});
-		load_w.addEventTrigger(new nRun() { public void run() {
-			run_save_file.run(); }});
-		
-		app.addEventNextFrame(new nRun() { public void run() {
-			gui.pop_popwindow("Save"); }});
-	}
-	public void pop_loadfrom() {
-
-		nInterface interf = gui.get_popWindow();
-
-		interf.add_row();
-		interf.add_row_label(7," Select File : ");
-		nWidget refresh_w = interf.add_row_trigg(3,"REFRESH");
-		interf.add_row();
-		nWidgetGroup file_list = interf.add_picklist(8,4);
-		
-		interf.add_row();
-		interf.add_row_label(6,"");
-		nWidget load_w = interf.add_row_trigg(4,"LOAD");
-
-		interf.add_col_separator();
-
-		nRun run_list_files = new nRun() { public void run() {
-			interf.change_current_list(file_list);
-			FileHandle[] files = Gdx.files.local("/").list();
-			for(FileHandle fl : files) {
-				if (fl.extension().equals(data.file_ext_txt)) {
-					interf.add_list_entry(fl.name());
-				}
-			}
-		}};
-		run_list_files.run();
-
-		nRun run_load_file = new nRun() { public void run() {
-			String file_name = (String)file_list.metodeGet("get_pick");
-			if (file_name.length() == 0 || !Utl.file_exist(file_name)) return;
-			data.val_root_savepath.set(file_name);
-			data.setting_load();
-			gui.close_popwindow();
-			data.re_full_load();
-		}};
-		
-		refresh_w.addEventTrigger(new nRun() { public void run() {
-			run_list_files.run(); }});
-		load_w.addEventTrigger(new nRun() { public void run() {
-			run_load_file.run(); }});
-		
-		App.ap.addEventNextFrame(new nRun() { public void run() {
-			gui.pop_popwindow("Load"); }});
-	}
-	
-	
-
-	public void pop_setting() {
-		
-		float RS = nGUI.book.RS;
-
-		nInterface interf = gui.get_popWindow();
-		interf.add_row();
-		interf.add_row_label(10, "Settings");
-
-		interf.add_col_separator();
-		interf.add_col_separator();
-		
-		interf.setContext(data.setting_bloc);
-
-		interf.add_row();
-		interf.add_row_label(6, "Database Savepath:");
-		interf.add_row_label(4, "");
-		interf.add_row();
-		interf.add_row_field_str(8, "", "val_datab_savepath");
-		nRun run_pick_data = new nRun() { public void run(Object o) {
-			String file_name = (String)o;
-			data.val_datab_savepath.set(file_name); }};
-		interf.add_row_trigg(2, "Pick", new nRun() { public void run() {
-			pop_pickfile(sData.data_ext_txt, run_pick_data); }});
-
-		interf.add_col_separator();
-		interf.add_col_separator();
-
-		interf.add_row();
-		interf.add_row_label(6, "Root Savepath:");
-		interf.add_row_label(4, "");
-		interf.add_row();
-		interf.add_row_field_str(8, "", "val_root_savepath");
-		nRun run_pick_root = new nRun() { public void run(Object o) {
-			String file_name = (String)o;
-			data.val_root_savepath.set(file_name); }};
-		interf.add_row_trigg(2, "Pick", new nRun() { public void run() {
-			pop_pickfile(sData.file_ext_txt, run_pick_root);
-		}});
-
-		interf.add_col_separator();
-		interf.add_col_separator();
-
-		interf.add_row();
-		interf.add_row_label(6, "");
-		interf.add_row_trigg(4, "Save Settings", new nRun() { public void run() {
-			data.space_save(data.setting_space, 
-					data.setting_savepath, true); }});
-		
-		
-		interf.add_col();
-		interf.add_row();
-		interf.add_row_label(10, "Setting Value :");
-
-		interf.add_row();
-		nWidgetGroup vallist = interf.add_scrollist(8, 4);
-		
-		nRun run_update_vllist = new nRun() { public void run() {
-			interf.change_current_list(vallist);
-			for (Map.Entry<String,sValue> me : 
-				data.setting_space.root.values.entrySet()) {
-				sValue val = me.getValue();
-				String key = me.getKey();
-				nWidget w = interf.add_list_entry(
-						key + " : " + val.getString());
-				w.setTextAlignment(nAlign.LEFT, nAlign.CENTER);
-				
-				if (val.isBoo()) {
-					nWidget bp_w = interf.get_row_button_widget(3);
-					bp_w.setParent(w)
-					.setLink((sBoo)val)
-					.setStacked(false)
-					.setText("I/O")
-					.setRect(15f*RS/2f, 0, 3f*RS/2f, RS)
-					.setSwitch();
-				}
-			}
-		}};
-		data.setting_space.root.addEventChangeThisFrame(run_update_vllist);
-		run_update_vllist.run();
-		
-		App.ap.addEventNextFrame(new nRun() { public void run() {
-			gui.pop_popwindow("Setting"); }});
-	}
-	
+//
+//	public void pop_saveas() {
+//		
+//		nInterface interf = gui.get_popWindow();
+//
+//		interf.add_row();
+//		interf.add_row_label(7," Select File : ");
+//		nWidget refresh_w = interf.add_row_trigg(3,"REFRESH");
+//		interf.add_row();
+//		nWidgetGroup file_list = interf.add_picklist(8,4);
+//		interf.add_row();
+//		interf.add_row_label(2,"New :");
+//		nWidget new_f_w = interf.add_row_field(6,"");
+//		nWidget new_w = interf.add_row_trigg(2,"NEW");
+//		
+//		interf.add_row();
+//		interf.add_row_label(6,"");
+//		nWidget load_w = interf.add_row_trigg(4,"SAVE TO");
+//
+//		interf.add_col_separator();
+//
+//		nRun run_list_files = new nRun() { public void run() {
+//			interf.change_current_list(file_list);
+//			FileHandle[] files = Gdx.files.local("/").list();
+//			for(FileHandle fl : files) {
+//				if (fl.extension().equals(app.data.file_ext_txt)) { 
+//					nWidget le = interf.add_list_entry(fl.name());
+//					if (app.data.val_root_savepath.get().equals(fl.name())) le.setOn();
+//				}
+//			}
+//		}};
+//		run_list_files.run();
+//
+//		nRun run_new_file = new nRun() { public void run() {
+//			String file_name = new_f_w.getText();
+//			if (file_name.length() == 0) return;
+//			file_name += sData.file_extension;
+//			FileHandle fl = Gdx.files.local(file_name);
+//			if (!fl.exists()) fl.writeString(" ", false);
+//			app.data.val_root_savepath.set(file_name);
+//			run_list_files.run();
+//		}};
+//		
+//		nRun run_save_file = new nRun() { public void run() {
+//			String file_name = (String)file_list.metodeGet("get_pick");
+//			if (file_name.length() == 0 || !Utl.file_exist(file_name)) return;
+//			app.data.val_root_savepath.set(file_name);
+//			app.data.full_save();
+//			gui.close_popwindow();
+//		}};
+//		
+//		refresh_w.addEventTrigger(new nRun() { public void run() {
+//			run_list_files.run(); }});
+//		new_w.addEventTrigger(new nRun() { public void run() {
+//			run_new_file.run(); }});
+//		load_w.addEventTrigger(new nRun() { public void run() {
+//			run_save_file.run(); }});
+//		
+//		app.addEventNextFrame(new nRun() { public void run() {
+//			gui.pop_popwindow("Save"); }});
+//	}
+//	public void pop_loadfrom() {
+//
+//		nInterface interf = gui.get_popWindow();
+//
+//		interf.add_row();
+//		interf.add_row_label(7," Select File : ");
+//		nWidget refresh_w = interf.add_row_trigg(3,"REFRESH");
+//		interf.add_row();
+//		nWidgetGroup file_list = interf.add_picklist(8,4);
+//		
+//		interf.add_row();
+//		interf.add_row_label(6,"");
+//		nWidget load_w = interf.add_row_trigg(4,"LOAD");
+//
+//		interf.add_col_separator();
+//
+//		nRun run_list_files = new nRun() { public void run() {
+//			interf.change_current_list(file_list);
+//			FileHandle[] files = Gdx.files.local("/").list();
+//			for(FileHandle fl : files) {
+//				if (fl.extension().equals(data.file_ext_txt)) {
+//					interf.add_list_entry(fl.name());
+//				}
+//			}
+//		}};
+//		run_list_files.run();
+//
+//		nRun run_load_file = new nRun() { public void run() {
+//			String file_name = (String)file_list.metodeGet("get_pick");
+//			if (file_name.length() == 0 || !Utl.file_exist(file_name)) return;
+//			data.val_root_savepath.set(file_name);
+//			data.setting_load();
+//			gui.close_popwindow();
+//			data.re_full_load();
+//		}};
+//		
+//		refresh_w.addEventTrigger(new nRun() { public void run() {
+//			run_list_files.run(); }});
+//		load_w.addEventTrigger(new nRun() { public void run() {
+//			run_load_file.run(); }});
+//		
+//		App.ap.addEventNextFrame(new nRun() { public void run() {
+//			gui.pop_popwindow("Load"); }});
+//	}
+//	
+//	
+//
+//	public void pop_setting() {
+//		
+//		float RS = nGUI.book.RS;
+//
+//		nInterface interf = gui.get_popWindow();
+//		interf.add_row();
+//		interf.add_row_label(10, "Settings");
+//
+//		interf.add_col_separator();
+//		interf.add_col_separator();
+//		
+//		interf.setContext(data.setting_bloc);
+//
+//		interf.add_row();
+//		interf.add_row_label(6, "Database Savepath:");
+//		interf.add_row_label(4, "");
+//		interf.add_row();
+//		interf.add_row_field_str(8, "", "val_datab_savepath");
+//		nRun run_pick_data = new nRun() { public void run(Object o) {
+//			String file_name = (String)o;
+//			data.val_datab_savepath.set(file_name); }};
+//		interf.add_row_trigg(2, "Pick", new nRun() { public void run() {
+//			pop_pickfile(sData.data_ext_txt, run_pick_data); }});
+//
+//		interf.add_col_separator();
+//		interf.add_col_separator();
+//
+//		interf.add_row();
+//		interf.add_row_label(6, "Root Savepath:");
+//		interf.add_row_label(4, "");
+//		interf.add_row();
+//		interf.add_row_field_str(8, "", "val_root_savepath");
+//		nRun run_pick_root = new nRun() { public void run(Object o) {
+//			String file_name = (String)o;
+//			data.val_root_savepath.set(file_name); }};
+//		interf.add_row_trigg(2, "Pick", new nRun() { public void run() {
+//			pop_pickfile(sData.file_ext_txt, run_pick_root);
+//		}});
+//
+//		interf.add_col_separator();
+//		interf.add_col_separator();
+//
+//		interf.add_row();
+//		interf.add_row_label(6, "");
+//		interf.add_row_trigg(4, "Save Settings", new nRun() { public void run() {
+//			data.space_save(data.setting_space, 
+//					data.setting_savepath, true); }});
+//		
+//		
+//		interf.add_col();
+//		interf.add_row();
+//		interf.add_row_label(10, "Setting Value :");
+//
+//		interf.add_row();
+//		nWidgetGroup vallist = interf.add_scrollist(8, 4);
+//		
+//		nRun run_update_vllist = new nRun() { public void run() {
+//			interf.change_current_list(vallist);
+//			for (Map.Entry<String,sValue> me : 
+//				data.setting_space.root.values.entrySet()) {
+//				sValue val = me.getValue();
+//				String key = me.getKey();
+//				nWidget w = interf.add_list_entry(
+//						key + " : " + val.getString());
+//				w.setTextAlignment(nAlign.LEFT, nAlign.CENTER);
+//				
+//				if (val.isBoo()) {
+//					nWidget bp_w = interf.get_row_button_widget(3);
+//					bp_w.setParent(w)
+//					.setLink((sBoo)val)
+//					.setStacked(false)
+//					.setText("I/O")
+//					.setRect(15f*RS/2f, 0, 3f*RS/2f, RS)
+//					.setSwitch();
+//				}
+//			}
+//		}};
+//		data.setting_space.root.addEventChangeThisFrame(run_update_vllist);
+//		run_update_vllist.run();
+//		
+//		App.ap.addEventNextFrame(new nRun() { public void run() {
+//			gui.pop_popwindow("Setting"); }});
+//	}
+//	
 
 	public void pop_pickfile(String extention, nRun run_pick) {
 
@@ -909,44 +911,44 @@ public class nMenu {
 		float RS = book.RS;
 		
 		
-		book.newModel("title_screen_back")
-		.copyFrom(book.getModel("ref"))
-		.setBackground()
-		.setDrawstackPriority(true)
-		;
-
-		book.newModel("title_screen_stack")
-		.copyFrom(book.getModel("ref"))
-		.setPassif()
-		.set_color_background(Utl.color(0,0,0,0))
-		.setBoundChild(true)
-		.setStackAxis(nAlign.VERTICAL) // HORIZONTAL   VERTICAL
-		.setStackDirection(nAlign.DOWN) // RIGHT   LEFT   UP   DOWN
-		.setRectOrigin(nAlign.CENTER,nAlign.CENTER) // TOP   BOTTOM
-		.setBoundOutspace(RS/6f)
-		.setStackSpacing(RS/5f)
-		;
-		
-		book.newModel("title_screen_title")
-		.copyFrom(book.getModel("ref"))
-		.setRect(0,0,24f*RS,6f*RS)
-		.setBoundParent(true)
-		.setStacked(true)
-		.setFont(90)
-		.set_color_text(Utl.color(220,220,218))
-		.set_color_background(Utl.color(12,10,10))
-		.set_color_outline(Utl.color(200))
-		.setOutline(true)
-		.setOutlineWeight(RS/4f)
-		;
-		book.newModel("title_screen_trigg")
-		.copyFrom(book.getModel("ref"))
-		.setRect(0,0,8f*RS,2f*RS)
-		.setBoundParent(true)
-		.setStacked(true)
-		.setFont(30)
-		.setTrigger()
-		;
+//		book.newModel("title_screen_back")
+//		.copyFrom(book.getModel("ref"))
+//		.setBackground()
+//		.setDrawstackPriority(true)
+//		;
+//
+//		book.newModel("title_screen_stack")
+//		.copyFrom(book.getModel("ref"))
+//		.setPassif()
+//		.set_color_background(Utl.color(0,0,0,0))
+//		.setBoundChild(true)
+//		.setStackAxis(nAlign.VERTICAL) // HORIZONTAL   VERTICAL
+//		.setStackDirection(nAlign.DOWN) // RIGHT   LEFT   UP   DOWN
+//		.setRectOrigin(nAlign.CENTER,nAlign.CENTER) // TOP   BOTTOM
+//		.setBoundOutspace(RS/6f)
+//		.setStackSpacing(RS/5f)
+//		;
+//		
+//		book.newModel("title_screen_title")
+//		.copyFrom(book.getModel("ref"))
+//		.setRect(0,0,24f*RS,6f*RS)
+//		.setBoundParent(true)
+//		.setStacked(true)
+//		.setFont(90)
+//		.set_color_text(Utl.color(220,220,218))
+//		.set_color_background(Utl.color(12,10,10))
+//		.set_color_outline(Utl.color(200))
+//		.setOutline(true)
+//		.setOutlineWeight(RS/4f)
+//		;
+//		book.newModel("title_screen_trigg")
+//		.copyFrom(book.getModel("ref"))
+//		.setRect(0,0,8f*RS,2f*RS)
+//		.setBoundParent(true)
+//		.setStacked(true)
+//		.setFont(30)
+//		.setTrigger()
+//		;
 		
 		
 		

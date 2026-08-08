@@ -56,14 +56,14 @@ public class pSpace {
 	
 	
 	
-
-	public void build_param_database(sTab db) {
-		db.setWidth(pProperty.body_common_propertys.size());
-		int i = 0;
-		for (pProperty model : pProperty.body_common_propertys.all()) {
-			model.def_to_tab(db,i); i++; }
-	}
-	
+//
+//	public void build_param_database(sTab db) {
+//		db.setWidth(pProperty.body_common_propertys.size());
+//		int i = 0;
+//		for (pProperty model : pProperty.body_common_propertys.all()) {
+//			model.def_to_tab(db,i); i++; }
+//	}
+//	
 
 	public sPool<pBody> body_pool;
 	public sPool<pCollec> collec_pool;
@@ -300,7 +300,7 @@ public class pSpace {
 	
 	public Random seed_rng;
 
-	sTab val_body_tab, val_collec_tab, val_param_database;
+	sTab val_body_tab, val_collec_tab;
 	sInt val_body_nb, val_body_pool, 
 		val_param_nb, val_param_pool, 
 		val_collec_nb, val_collec_pool;
@@ -310,7 +310,7 @@ public class pSpace {
 	public boolean use_net_frame = false;
 	
 	public void init() {
-		bloc = app.data.obtainBloc("space_bloc");
+		bloc = app.data.root_bloc.obtainBloc("space_bloc");
 		bloc.addObject("space", this);
 
 		bloc.addMetode("clearing", new nRun() { public void run() {
@@ -330,8 +330,8 @@ public class pSpace {
 //			save_contents(); 
 //		}});
 //
-//		plane.addEventEmpty(new nRun() { public void run() {
-//			clear_all_obj(); }});
+//		app.addEventEmpty(new nRun() { public void run() {
+//			clear_all_body(); }});
 //
 //		plane.addEventLoad(new nRun() { public void run() {
 //			app.log("space "+bloc.ref+" load_contents");
@@ -340,9 +340,9 @@ public class pSpace {
 
 		seed_rng = new Random(123456789);
 		
-		val_param_database = bloc.obtainTab("val_param_database");
-		bloc.data.databases.put("space_param", val_param_database);
-		build_param_database(val_param_database);
+//		val_param_database = bloc.obtainTab("val_param_database");
+//		bloc.data.databases.put("space_param", val_param_database);
+//		build_param_database(val_param_database);
 		
 //		app.addDelayEvent(2, new nRun() { public void run() {			
 //			bloc.run("add_menu"); 
@@ -368,7 +368,7 @@ public class pSpace {
 			families.put(fam, list);
 		}
 		
-		space_content_bloc = app.data.root_bloc.obtainBloc("space_"+bloc.ref+"_content");
+		space_content_bloc = bloc.obtainBloc("space_content");
 		val_body_tab = space_content_bloc.obtainTab("val_body_tab");
 		val_collec_tab = space_content_bloc.obtainTab("val_collec_tab");
 
@@ -572,7 +572,7 @@ public class pSpace {
 	
 	public void save_contents() {
 
-		space_content_bloc = app.data.root_bloc.obtainBloc("space_"+bloc.ref+"_content");
+		space_content_bloc = bloc.obtainBloc("space_content");
 		val_body_tab = space_content_bloc.obtainTab("val_body_tab");
 		val_collec_tab = space_content_bloc.obtainTab("val_collec_tab");
 		body_pool.tab = val_body_tab;
@@ -594,8 +594,8 @@ public class pSpace {
 		collec_pool.freeAll();
 		for (sPool<pParam> p : param_pools.all()) p.freeAll();
 		body_pool.freeAll();
-		
-		space_content_bloc = app.data.root_bloc.obtainBloc("space_"+bloc.ref+"_content");
+
+		space_content_bloc = bloc.obtainBloc("space_content");
 		val_body_tab = space_content_bloc.obtainTab("val_body_tab");
 		val_collec_tab = space_content_bloc.obtainTab("val_collec_tab");
 		body_pool.tab = val_body_tab;

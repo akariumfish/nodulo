@@ -36,6 +36,7 @@ import com.crashinvaders.vfx.effects.util.MixEffect;
 import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
 import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer.Renderer;
 import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer.RendererAdapter;
+import com.noodle.nodulo.GdxApp;
 
 import gui.nAlign;
 import space.earlygrey.shapedrawer.JoinType;

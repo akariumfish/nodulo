@@ -25,9 +25,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
 import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer.Renderer;
+import com.noodle.nodulo.GdxApp;
 
 import app.App;
-import app.GdxApp;
 import app.nDrawer.PolygonSpriteBatchRendererAdapter;
 import box2dLight.*;
 import data.*;

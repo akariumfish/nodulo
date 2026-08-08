@@ -1,8 +1,8 @@
 package util;
 
 import com.badlogic.gdx.math.Vector2;
+import com.noodle.nodulo.GdxApp;
 
-import app.GdxApp;
 import app.nDrawer;
 
 public class nPainting extends nScripted {

@@ -146,7 +146,7 @@ public class nGUI {
 		
 		new_param("entry_width", "2.0");
 		new_param("entry_height", "1.0");
-		if (PlaneApplet.app.config.RELEASE) 
+		if (PlaneApplet.app != null && PlaneApplet.app.config.RELEASE) 
 			new_param("entry_colors", "CL_release");
 		else new_param("entry_colors", "CL_def");
 		new_param("spacing", "2.0");
@@ -190,8 +190,8 @@ public class nGUI {
 		
 		helper_light = Utl.color(240,230,220,150);
 
-		val_interf_nb = data.setting_bloc.newInt("val_interf_nb", "", 0);
-		val_free_interf_nb = data.setting_bloc.newInt("val_free_interf_nb", "", 0);
+		val_interf_nb = data.system_bloc.newInt("val_interf_nb", "", 0);
+		val_free_interf_nb = data.system_bloc.newInt("val_free_interf_nb", "", 0);
 		
 		runner.addRunFrameStart(new nRun() { public void run() {
 			val_interf_nb.set(interf_pool.all().size());
@@ -200,7 +200,7 @@ public class nGUI {
 		
 		setup_params();
 		
-		add_info_svalues_in(data.setting_bloc);
+		add_info_svalues_in(data.system_bloc);
 
 		boolean has_static = true;
 		if (book == null) {
@@ -217,7 +217,7 @@ public class nGUI {
 			nToolBox.build_book();
 		}
 
-		if (PlaneApplet.app.config.RELEASE) {
+		if (PlaneApplet.app != null && PlaneApplet.app.config.RELEASE) {
 			App.ap.gdx.drawer.color_back = new Color(
 					nGUI.book.getModel("CL_release").color_background);
 			App.ap.gdx.drawer.buffer_clear_color = new Color(

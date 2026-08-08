@@ -3,10 +3,10 @@ package gui;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.math.Vector2;
+import com.noodle.nodulo.GdxApp;
 
 import aa_nodulo.PlaneApplet;
 import app.App;
-import app.GdxApp;
 import data.*;
 import util.Utl;
 import util.nRun;
@@ -29,7 +29,7 @@ public class nToolBox {
 		menu = a; app = a.app; book = nGUI.book; RS = book.RS;
 		gui = app.gui; data = app.data;
 		
-		toolbox_bloc = data.setting_bloc.obtainBloc("toolbox_bloc");
+		toolbox_bloc = data.root_bloc.obtainBloc("toolbox_bloc");
 
 		val_toolbox_open = toolbox_bloc.obtainBoo("val_toolbox_open", "toolbox open", 
 				app.config.TOOLBOX_OPEN);

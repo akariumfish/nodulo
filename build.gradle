@@ -23,9 +23,6 @@ allprojects {
       testOutputDir = file('build/classes/java/test')
     }
   }
-  ext {
-    visuiVersion = '1.5.9'
-  }
 }
 
 configure(subprojects) {

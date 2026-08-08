@@ -125,7 +125,7 @@ public class pTime {
 	public void removeTickBric(pInstance b) { tick_bric.remove(b); }
 	
 	public void init() {
-		bloc = app.data.obtainBloc("time_bloc");
+		bloc = app.data.root_bloc.obtainBloc("time_bloc");
 		bloc.addObject("tick", this);
 
 		bloc.addMetode("clearing", new nRun() { public void run() {

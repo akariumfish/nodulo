@@ -1,4 +1,4 @@
-package app;
+package com.noodle.nodulo;
 
 import java.util.ArrayList;
 
@@ -18,8 +18,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.noodle.nodulo.Main;
 
+import app.AppConfig;
+import app.nDrawer;
+import app.nDrawer.DrawContext;
 import util.*;
 
 //public class GdxApp implements ApplicationListener {
@@ -95,6 +97,8 @@ public class GdxApp implements Screen ,nDrawer.DrawContext {
 		
 		setup();
 		if (listener != null) listener.setup(this);
+
+		Gdx.graphics.setTitle(window_title);
 		
 		cursor(false);
 	}

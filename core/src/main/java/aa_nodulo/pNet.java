@@ -68,7 +68,7 @@ public class pNet {
 	public boolean is_server = false, is_client = false;
 
 	public void init() {
-		bloc = app.data.obtainBloc("net_bloc");
+		bloc = app.data.root_bloc.obtainBloc("net_bloc");
 		bloc.addObject("net", this);
 
 //		plane.storeSystemType(bloc.ref, this.getClass());

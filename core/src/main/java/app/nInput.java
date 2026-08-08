@@ -79,24 +79,24 @@ public class nInput implements InputProcessor {
 
 		Gdx.input.setInputProcessor(this);
 		
-		val_mouse_pos = app.data.setting_bloc.newVec("val_mouse_pos");
-		val_mouse_prev = app.data.setting_bloc.newVec("val_mouse_prev");
-		val_mouse_move = app.data.setting_bloc.newVec("val_mouse_move");
+		val_mouse_pos = app.data.system_bloc.newVec("val_mouse_pos");
+		val_mouse_prev = app.data.system_bloc.newVec("val_mouse_prev");
+		val_mouse_move = app.data.system_bloc.newVec("val_mouse_move");
 
-	    val_framerate = app.data.setting_bloc.newInt("val_framerate");
+	    val_framerate = app.data.system_bloc.newInt("val_framerate");
 	    fps_stack = new int[fps_stack_size];
 	    for (int i = 0 ; i < fps_stack_size ; i++) fps_stack[i] = 60;
 	    
-	    val_seed = app.data.setting_bloc.newInt("val_seed", 123456);
+	    val_seed = app.data.root_bloc.newInt("val_seed", 123456);
 		rng = new Random(val_seed.get());
 	    
-		val_fullscreen = app.data.setting_bloc.newBoo("val_fullscreen", false);
+		val_fullscreen = app.data.root_bloc.newBoo("val_fullscreen", false);
 		nRun run_fs = new nRun() { public void run() {
 			if (val_fullscreen.get()) app.gdx.fullscreen();
 			else app.gdx.window(); }};
 
-		val_javaHeap = app.data.setting_bloc.newInt("val_javaHeap", 0);
-		val_nativeHeap = app.data.setting_bloc.newInt("val_nativeHeap", 0);
+		val_javaHeap = app.data.system_bloc.newInt("val_javaHeap", 0);
+		val_nativeHeap = app.data.system_bloc.newInt("val_nativeHeap", 0);
 			
 		app.addEventNextFrame(new nRun() { public void run() {
 			run_fs.run();

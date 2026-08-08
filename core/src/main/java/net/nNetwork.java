@@ -227,10 +227,10 @@ public class nNetwork {
 	public nNetwork(App a) {
 		app = a;
 
-		val_net_mode = app.data.setting_bloc.newStr("val_net_mode", "network mode", "");
-		val_net_started = app.data.setting_bloc.newBoo("val_net_started", "network started", false);
-		val_connected_player = app.data.setting_bloc.newInt("val_connected_player", (int)0);
-		val_connected_to_server = app.data.setting_bloc.newBoo("val_connected_to_server", false);
+		val_net_mode = app.data.root_bloc.newStr("val_net_mode", "network mode", "");
+		val_net_started = app.data.root_bloc.newBoo("val_net_started", "network started", false);
+		val_connected_player = app.data.root_bloc.newInt("val_connected_player", (int)0);
+		val_connected_to_server = app.data.root_bloc.newBoo("val_connected_to_server", false);
 
 //		app.menu.add_tool_menu_trigg("Network", new nRun() { public void run() {
 //			pop_net_window(); }});

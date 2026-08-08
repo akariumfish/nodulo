@@ -12,9 +12,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.noodle.nodulo.GdxApp;
 
 import app.App;
-import app.GdxApp;
 import data.sBoo;
 import data.sFlt;
 import data.sInt;

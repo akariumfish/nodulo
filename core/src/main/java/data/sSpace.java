@@ -3,6 +3,7 @@ package data;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
+import util.Utl;
 import util.nRun;
 
 
@@ -34,39 +35,6 @@ public class sSpace {
 	public sValueBloc newRootBloc(String ref) {
 		return root.newBloc(ref); }
 	
-//	public void save_to(Save_Bloc sb) {
-//		root.preset_to_save_bloc(sb); 
-//	}
-//	public void setup_from(Save_Bloc sb) {
-//		if (use == Use.SETTING) {
-//			root.load_params_from_bloc(sb);
-//		} else if (use == Use.WORK) {
-//			root.empty();
-//			
-////			data.app.gui.clearPoolsFreeObjects(); 
-//			
-////			data.app.addDelayEvent(4, new nRunnable() { public void run() {
-////				data.app.gui.clearPoolsFreeObjects(); }});
-//			
-//			
-//			data.app.addDelayEvent(6, new nRunnable() { public void run() {
-//				for (sBloc_Builder b : root_bloc_builders) root.addBlocBuilder(b);
-//				for (sBloc_Builder b : data.common_bloc_builders) root.addBlocBuilder(b);
-//				root.load_from_bloc(sb);
-//			}});
-//		} else if (use == Use.DATABASE) {
-//			for (Entry<String, sValueBloc> mev : root.blocs.entrySet()) {
-//				sValueBloc base = mev.getValue();
-//				base.empty();
-//				Save_Bloc base_save = sb.getBloc(base.ref);
-//				if (base_save != null) {
-//					base.load_from_bloc(base_save);
-//				}
-//			}
-//		}
-//	}
-	
-
 	public void save_to(File_Bloc sb) {
 		root.preset_to_save_bloc(sb); 
 	}
@@ -76,15 +44,8 @@ public class sSpace {
 		} else if (use == Use.WORK) {
 			root.empty();
 			
-//			data.app.gui.clearPoolsFreeObjects(); 
-			
-//			data.app.addDelayEvent(4, new nRunnable() { public void run() {
-//				data.app.gui.clearPoolsFreeObjects(); }});
-			
-			
 			data.app.addDelayEvent(6, new nRun() { public void run() {
 				for (sBloc_Builder b : root_bloc_builders) root.addBlocBuilder(b);
-				for (sBloc_Builder b : data.common_bloc_builders) root.addBlocBuilder(b);
 				root.load_from_bloc(sb);
 			}});
 		} else if (use == Use.DATABASE) {
@@ -100,7 +61,21 @@ public class sSpace {
 	}
 	
 	
+
+	public void space_save(String path, boolean auto_add_file) {
+		if (!data.file.open(path, auto_add_file)) return; 
+		data.file.empty();
+		save_to(data.file.getBloc());
+		data.file.save();
+		data.file.close();
+	}
 	
+	public void space_load(String path) {
+		if (!data.file.open(path)) return;
+		data.file.load();
+		setup_from(data.file.getBloc());
+	}
+
 	
 	
 }

@@ -13,75 +13,42 @@ import util.nRun;
 public class pMacroBook {
 
 
-//	private static void build_test() {
-//
-//		new MacroScript("test")
-//		.com("add_set_param", "ctrl_move", "accelerate")
-//		.com("add_get_reg_in_at", "body", "body")
-//		.com("add_get_input_at", "data", "keycross_press")
-//		.com("add_set_param", "ctrl_move", "acc_pos")
-//		.com("add_get_reg_in_at", "body", "body")
-//		.com("add_at", "data", "rot", "out")
-//		.com("add_flt_at", "rot", 0f)//-((float)Math.PI) / 2f)
-//		.com("add_get_input_at", "in", "keycross_dir")
-//		.com("get_last")
-//		.com("add_set_param", "ctrl_move", "decelerate")
-//		.com("add_get_reg_in_at", "body", "body")
-//		.com("add_at", "data", "not", "out")
-//		.com("add_get_input_at", "in", "keycross_press")
-//		.com("get_last")
-//		.com("add_set_output", "cam_pos")
-//		.com("add_branch_at", "data", "get_body_param")
-//		.com("add_arr", "arg", "ref", "pos").com("get_last")
-//		;
-//
-//		Macro func_test = new Macro("func_test")
-//			.addNode("get_body_param", "branch", 				0f,		-300f)
-//			.addSetVar("branch_ref", "get_body_param").getMacro()
-//			.addTileScript("get_body_param", "get_body_param")
-//			.addNode("tile", "function", 		0f, 	0f)
-//			.addSetVar("func_ref", "func_test")
-//			.addTileScript("test").getMacro()
-//			;
-//		
-//		Macro test = new Macro("TEST")
-//			.addNode("sel_body", "sel_body", 	780f, 	60f).getMacro()
-//			.addNode("from", "from", 		450f, 	60f)
-//			.addSetVar("this_ref", "from1").addSetVar("target_ref", "to1").getMacro()
-//			.addLink("sel_body", "in", "from", "out")
-//			.addNode("register", "register", 	1380f, 	-300f).getMacro()
-//			.addNode("ank", "ank", 				0f, 		-450f).getMacro()
-//			.addNode("reg_in_ank", "reg_in", 	450f,	-450f).addSetVar("reg_ref", "pointmouse").getMacro()
-//			.addNode("reg_in_bod", "reg_in", 	1200f,	-60f).addSetVar("reg_ref", "body").getMacro()
-//			.addMacro("exec", pMacro.getMacro("executor"), 		1800f, 	60f)
-//			.addSetVar("exec_exec", "target_ref", "func_test")
-//			.addLink("sel_body", "co_sel_bod", "reg_in_bod", "co_in")
-//			.addLink("ank", "co_mouse", "reg_in_ank", "co_in")
-//			.addLink("reg_in_bod", "co_reg", "register", "co_reg")
-//			.addLink("reg_in_ank", "co_reg", "register", "co_reg")
-//			.addLink("register", "co_register", "exec_exec", "co_reg")
-//			.addRun(new nRun() { public void run() {
-//				nMap<pInstance> list = arg(0, nMap.class);
-//			}})
-//			;
-//		
-//
-//
-//		PlaneApplet.newStartupModel("TEST")
-//		.setSetupRun(new nRun() { public void run() {
-//			
-//			pSheet.setDefMacro("main", test);
-//			pSheet.setDefMacro("function", func_test);
-//			pSheet.setDefCollapse("main", false);
-//			pSheet.setDefCollapse("function", false);
-//			pSheet.setDefCollapse("common_param", false);
-//			pSheet.setDefCollapse("init_space", false);
-//			
-//		}})
-//		;
-//		
-//		
-//	}
+	private static void build_test() {
+
+
+		Macro func_test = new Macro("func_test")
+			.addNode("get_body_param", "branch", 				0f,		-300f)
+			.addSetVar("branch_ref", "get_body_param").getMacro()
+			.addTileScript("get_body_param", "get_body_param")
+			.addNode("tile", "function", 		0f, 	0f)
+			.addSetVar("func_ref", "func_test")
+			.addTileScript("test").getMacro()
+			;
+		
+		Macro test = new Macro("main_test")
+			.addNode("sel_body", "sel_body", 	780f, 	60f).getMacro()
+			.addNode("from", "from", 		450f, 	60f)
+			.addSetVar("this_ref", "from1").addSetVar("target_ref", "to1").getMacro()
+			.addLink("sel_body", "in", "from", "out")
+			.addNode("register", "register", 	1380f, 	-300f).getMacro()
+			.addNode("ank", "ank", 				0f, 		-450f).getMacro()
+			.addNode("reg_in_ank", "reg_in", 	450f,	-450f).addSetVar("reg_ref", "pointmouse").getMacro()
+			.addNode("reg_in_bod", "reg_in", 	1200f,	-60f).addSetVar("reg_ref", "body").getMacro()
+			.addMacro("exec", pMacro.getMacro("executor"), 		1800f, 	60f)
+			.addSetVar("exec_exec", "target_ref", "func_test")
+			.addLink("sel_body", "co_sel_bod", "reg_in_bod", "co_in")
+			.addLink("ank", "co_mouse", "reg_in_ank", "co_in")
+			.addLink("reg_in_bod", "co_reg", "register", "co_reg")
+			.addLink("reg_in_ank", "co_reg", "register", "co_reg")
+			.addLink("register", "co_register", "exec_exec", "co_reg")
+			.addRun(new nRun() { public void run() {
+				nMap<pInstance> list = arg(0, nMap.class);
+			}})
+			;
+		
+
+		
+	}
 	
 	
 	
@@ -455,7 +422,7 @@ public class pMacroBook {
 
 		
 		
-//		build_test();
+		build_test();
 		
 	}
 	
@@ -466,6 +433,28 @@ public class pMacroBook {
 	
 	
 	private static void build_tile_scripts() {
+		
+
+		new MacroScript("test")
+		.com("add_set_param", "ctrl_move", "accelerate")
+		.com("add_get_reg_in_at", "body", "body")
+		.com("add_get_input_at", "data", "keycross_press")
+		.com("add_set_param", "ctrl_move", "acc_pos")
+		.com("add_get_reg_in_at", "body", "body")
+		.com("add_at", "data", "rot", "out")
+		.com("add_flt_at", "rot", 0f)//-((float)Math.PI) / 2f)
+		.com("add_get_input_at", "in", "keycross_dir")
+		.com("get_last")
+		.com("add_set_param", "ctrl_move", "decelerate")
+		.com("add_get_reg_in_at", "body", "body")
+		.com("add_at", "data", "not", "out")
+		.com("add_get_input_at", "in", "keycross_press")
+		.com("get_last")
+		.com("add_set_output", "cam_pos")
+		.com("add_branch_at", "data", "get_body_param")
+		.com("add_arr", "arg", "ref", "pos").com("get_last")
+		;
+
 
 
 		new MacroScript("get_body_param") 

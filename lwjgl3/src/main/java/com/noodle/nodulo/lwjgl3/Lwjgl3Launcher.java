@@ -5,11 +5,11 @@ import java.util.LinkedList;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.noodle.nodulo.GdxApp;
 import com.noodle.nodulo.Main;
 
 import aa_nodulo.PlaneApplet;
 import app.AppConfig;
-import app.GdxApp;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
@@ -122,7 +122,7 @@ public class Lwjgl3Launcher {
 
 	private static Lwjgl3ApplicationConfiguration getConfiguration(int px, int py, int sx, int sy) {
 		Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
-		configuration.setTitle("Applet");
+		configuration.setTitle("Nodulo");
 		configuration.useVsync(true);
 		configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
 //		configuration.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
@@ -134,7 +134,7 @@ public class Lwjgl3Launcher {
 
 	private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {
 		Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
-		configuration.setTitle("Applet");
+		configuration.setTitle("Nodulo");
 		//// Vsync limits the frames per second to what your hardware can display, and helps eliminate
 		//// screen tearing. This setting doesn't always work on Linux, so the line after is a safeguard.
 		configuration.useVsync(true);

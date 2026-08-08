@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import app.App;
 import app.nInput;
+import data.sSpace.Use;
 import util.Utl;
 import util.nMap;
 import util.nPool;
@@ -29,50 +31,6 @@ import util.nRun;
 
 
 public class sData extends sValueBloc {
-	
-	
-	
-	public void build_def_files() {
-
-//		boolean stl = app.STARTUP_LOAD;
-//		boolean smu = app.STARTUP_MODEL_USE;
-//		boolean pb = app.PATCH_BUILD;
-//		app.STARTUP_LOAD = false;
-//		app.STARTUP_MODEL_USE = false;
-//		app.PATCH_BUILD = false;
-//
-////		sValueBloc strt = app.startup_buildbloc();
-////
-////		app.force_nodraw_frame(40);
-////		
-////		space_save(setting_space, "setting_default"+setting_extension, true);
-////		
-////		space_save(data_space, "database_default"+data_extension, true);
-////		space_save(root_space, "root_default"+file_extension, true);
-////		
-////		strt.clear();
-////
-////		app.force_nodraw_frame(10);
-////		
-//////		space_load(setting_space, "setting_default"+setting_extension);
-//		
-//		app.STARTUP_LOAD = stl;
-//		app.STARTUP_MODEL_USE = smu;
-//		app.PATCH_BUILD = pb;
-	}
-	
-	
-	
-	public nMap<sTab> databases = new nMap<sTab>();
-	
-	
-	
-	
-	
-
-	
-	
-	
 	
 	
 	
@@ -100,25 +58,10 @@ public class sData extends sValueBloc {
 	public sBloc_Builder getBuilder(String r) {
 		return bloc_builders.get(r); }
 	
-	public void collapse_all_in_dataview() {
-		for (sValueBloc b : bloc_pool.all()) b.open_in_dataview = false; }
-	
-
-	public void addCommonBlocBuilder(sBloc_Builder b) { common_bloc_builders.add(b); }
-	
-	public void addRootBlocBuilder(sBloc_Builder b) {
-//		nWidget ent = app.menu.add_build_menu_trigg("new "+b.ref, new nRun() { public void run() {
-//			buildRootBloc(b.ref, b.ref); }});
-//		b.root_interf_w = ent;
-		root_space.addRootBlocBuilder(b); }
-	public sValueBloc buildRootBloc(String builder, String ref) {
-		return root_space.buildRootBloc(builder, ref); }
-
-	
-	public boolean USE_BUILDER = true;
-
-	public void do_build() { USE_BUILDER = true; }
-	public void no_build() { USE_BUILDER = false; }
+//	public boolean USE_BUILDER = true;
+//
+//	public void do_build() { USE_BUILDER = true; }
+//	public void no_build() { USE_BUILDER = false; }
 	
 	
 	
@@ -146,36 +89,27 @@ public class sData extends sValueBloc {
 	public final nPool<sArr> arr_pool;
 	public final nPool<sTab> tab_pool;
 	public final nPool<sBoo> boo_pool;
-//	public final nPool<sRun> run_pool;
 
 	public HashMap<String, sBloc_Builder> bloc_builders;
-	public ArrayList<sBloc_Builder> common_bloc_builders;
 	
 	public ArrayList<sSpace> load_delay_space = new ArrayList<sSpace>();
 	
-	public sSpace setting_space, data_space, root_space; 
-	public sValueBloc setting_bloc, data_bloc, root_bloc;
-	
 	boolean doevent = true;
 
-	public sValueBloc dataview_bloc = null;
+	public sValueBloc system_bloc;
 	
 	public nAutoID autoid;
-
-//	public File byteFile;
 	
-	
+	public sSpace root_space;
+	public sValueBloc root_bloc;
 
 	public sData(App a) {
 		super(); 
 		app = a; input = app.input; ref = ""; base_ref = ""; 
 		parent = this; data = this; 
-//		Save_Bloc.app = app; Save_Data.app = app; Save_List.app = app;
 		adress = ""+adress_token;
 		
 		autoid = new nAutoID();
-		
-//		byteFile = new File(app);
 		
 		filebloc_pool = new nPool<File_Bloc>() {
 			protected File_Bloc newObject() { return new File_Bloc(data); } };
@@ -198,35 +132,22 @@ public class sData extends sValueBloc {
 			protected sArr newObject() { return new sArr(); } };
 		tab_pool = new nPool<sTab>() {
 			protected sTab newObject() { return new sTab(); } };
-//		run_pool = new nPool<sRun>() {
-//			protected sRun newObject() { return new sRun(); } };
-			
-		bloc_builders = new HashMap<String, sBloc_Builder>();
-		common_bloc_builders = new ArrayList<sBloc_Builder>();
 		
-		setting_space = newSpace("setting", sSpace.Use.SETTING);
-	    setting_bloc = setting_space.root;
-
-		data_space = newSpace("database", sSpace.Use.DATABASE);
-		data_bloc = data_space.root;
-
-	    root_space = newSpace("root", sSpace.Use.WORK);
+		system_bloc = newBloc("__system");
+		
+		bloc_builders = new HashMap<String, sBloc_Builder>();
+	    root_space = newSpace("root", sSpace.Use.SETTING);
 	    root_bloc = root_space.root;
-	    root_bloc.open_in_dataview = true;
-
-	    // file_init()
-		setting_savepath = Utl.copy(App.setting_file);
-		def_root_savepath = "root_" + app.gdx.window_title + file_extension;
-		def_db__savepath = "database_" + app.gdx.window_title + data_extension;
+	    
+		def_root_savepath = "save" + file_extension;
 		
 		file = new sFile(this);
-		val_datab_savepath = setting_bloc.obtainStr("val_datab_savepath", def_db__savepath);
-		val_root_savepath = setting_bloc.obtainStr("val_root_savepath", def_root_savepath);
+
+		val_root_savepath = obtainStr("val_root_savepath", def_root_savepath);
 		
 	}
 	
 	public void dispose() {
-//		byteFile.dispose();
 		filebloc_pool.dispose(); 
 		filedata_pool.dispose();
 		
@@ -252,67 +173,19 @@ public class sData extends sValueBloc {
 	}
 
 	public final static String file_ext_txt = "sdt";
-	public final static String data_ext_txt = "sdb";
-	public final static String setting_ext_txt = "sdb";
 	public final static String file_extension = "."+file_ext_txt;
-	public final static String data_extension = "."+data_ext_txt;
-	public final static String setting_extension = "."+setting_ext_txt;
 	public sFile file = null;
-	public String setting_savepath;
 	public String def_root_savepath;
-	public String def_db__savepath;
-	public sStr val_datab_savepath;
 	public sStr val_root_savepath;
-	
-	public void space_save(sSpace sp, String path, boolean auto_add_file) {
-//		app.log("sData space_save "+sp.ref);
-		file.open(path, auto_add_file); 
-		file.empty();
-		sp.save_to(file.getBloc());
-		file.save();
-		file.close();
-	}
-	
-	public void space_load(sSpace sp, String path) {
-		file.open(path);
-		file.load();
-		sp.setup_from(file.getBloc());
-//		file.close();
-	}
-
-	public void setting_save() {
-		space_save(setting_space, setting_savepath, true);
-	}
-
-	public void setting_load() { 
-		space_load(setting_space, setting_savepath);
-	}
 
 	public void full_save() { 
-//		app.log("sData full_save");
-		setting_save();
-		space_save(data_space, val_datab_savepath.get(), true);
-		space_save(root_space, val_root_savepath.get(), true);
+		root_space.space_save(val_root_savepath.get(), true);
 	}
 	public void full_load() { 
-		setting_load();
-		space_load(data_space, val_datab_savepath.get());
-		space_load(root_space, val_root_savepath.get()); // load delayed, keep file 6 frame
-		app.addDelayEvent(7, new nRun() { public void run() {
-			file.close(); }});
-	}
-
-
-//	public void empty_all() {
-//		
-//	}
-
-	public void re_full_load() {
-//		app.LOADING_SCREEN_FRAME = 30;
-		data.app.addDelayEvent(1, new nRun() { public void run() {
-//			empty_all();
-			full_load(); 
-		}});
+		root_space.space_load(val_root_savepath.get());
+		// load delayed, keep file 6 frame
+//		app.addDelayEvent(10, new nRun() { public void run() {
+//			file.close(); }});
 	}
 	
 	
@@ -589,156 +462,4 @@ public class sData extends sValueBloc {
 	
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-//void mysetup() {
-//  Save_List sl = new Save_List();
-//  Save_Bloc sb = new Save_Bloc("save data");
-
-//  int a = 0, b = 1, c = 2;
-//  println("start: a " + a + " b " + b + " c " + c);
-
-//  //gather datas
-//  sb.newData("a",str(a));
-//  sb.newData("b",str(b));
-//  sb.newData("c",str(c));
-
-//  //change data
-//  sb.setData("b",str(5));
-
-//  //save
-//  sb.save_to("savetest.txt");
-
-//  //load
-//  sb.load_from("savetest.txt");
-
-//  //retrieve data
-//  a = int(sb.getData("a"));
-//  b = int(sb.getData("b"));
-//  c = int(sb.getData("c"));
-
-//  println("end: a " + a + " b " + b + " c " + c);
-//}
-
-/*
- //* Listing files in directories and subdirectories
- //* by Daniel Shiffman.  
- //* 
- //* This example has three functions:<br />
- //* 1) List the names of files in a directory<br />
- //* 2) List the names along with metadata (size, lastModified)<br /> 
- //*    of files in a directory<br />
- //* 3) List the names along with metadata (size, lastModified)<br />
- //*    of files in a directory and all subdirectories (using recursion) 
-
-
-
-import java.util.Date;
-
-void setup() {
-
-  // Using just the path of this sketch to demonstrate,
-  // but you can list any directory you like.
-  String path = sketchPath();
-
-  println("Listing all filenames in a directory: ");
-  String[] filenames = listFileNames(path);
-  printArray(filenames);
-
-  println("\nListing info about all files in a directory: ");
-  File[] files = listFiles(path);
-  for (int i = 0; i < files.length; i++) {
-    File f = files[i];    
-    println("Name: " + f.getName());
-    println("Is directory: " + f.isDirectory());
-    println("Size: " + f.length());
-    String lastModified = new Date(f.lastModified()).toString();
-    println("Last Modified: " + lastModified);
-    println("-----------------------");
-  }
-
-  println("\nListing info about all files in a directory and all subdirectories: ");
-  ArrayList<File> allFiles = listFilesRecursive(path);
-
-  for (File f : allFiles) {
-    println("Name: " + f.getName());
-    println("Full path: " + f.getAbsolutePath());
-    println("Is directory: " + f.isDirectory());
-    println("Size: " + f.length());
-    String lastModified = new Date(f.lastModified()).toString();
-    println("Last Modified: " + lastModified);
-    println("-----------------------");
-  }
-
-  noLoop();
-}
-
-// Nothing is drawn in this program and the draw() doesn't loop because
-// of the noLoop() in setup()
-void draw() {
-}
-
-// This function returns all the files in a directory as an array of Strings  
-String[] listFileNames(String dir) {
-  File file = new File(dir);
-  if (file.isDirectory()) {
-    String names[] = file.list();
-    return names;
-  } else {
-    // If it's not a directory
-    return null;
-  }
-}
-
-// This function returns all the files in a directory as an array of File objects
-// This is useful if you want more info about the file
-File[] listFiles(String dir) {
-  File file = new File(dir);
-  if (file.isDirectory()) {
-    File[] files = file.listFiles();
-    return files;
-  } else {
-    // If it's not a directory
-    return null;
-  }
-}
-
-// Function to get a list of all files in a directory and all subdirectories
-ArrayList<File> listFilesRecursive(String dir) {
-  ArrayList<File> fileList = new ArrayList<File>(); 
-  recurseDir(fileList, dir);
-  return fileList;
-}
-
-// Recursive function to traverse subdirectories
-void recurseDir(ArrayList<File> a, String dir) {
-  File file = new File(dir);
-  if (file.isDirectory()) {
-    // If you want to include directories in the list
-    a.add(file);  
-    File[] subfiles = file.listFiles();
-    for (int i = 0; i < subfiles.length; i++) {
-      // Call this function on all files in this directory
-      recurseDir(a, subfiles[i].getAbsolutePath());
-    }
-  } else {
-    a.add(file);
-  }
-}
- */
-
-
-
-
-
 

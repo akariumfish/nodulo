@@ -9,10 +9,12 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.codedisaster.steamworks.SteamAPI;
+import com.noodle.nodulo.GdxApp;
+import com.noodle.nodulo.GdxApp.nAppListener;
 
-import app.GdxApp.nAppListener;
 import data.sData;
 import gui.nAlign;
+import gui.nGUI;
 import util.Utl;
 import util.nRun;
 import util.nTransform;
@@ -21,23 +23,22 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 	
 	public int LOADING_SCREEN_FRAME = 1;
 	
-	public static String setting_file = "setting"+sData.setting_extension;
-	
 	public GdxApp gdx;
 	public nInput input;
 	public sData data;
+	public nGUI gui;
 	
 	public static App ap;
 
 	ArrayList<nRun> eventInit = new ArrayList<nRun>();
+	ArrayList<nRun> eventInitEnd = new ArrayList<nRun>();
 
 	public void addEventInit(nRun n) { eventInit.add(n); }
+	public void addEventInitEnd(nRun n) { eventInitEnd.add(n); }
 	
 	@Override
 	public void setup(GdxApp a) {
-		gdx = a;
-		setting_file = gdx.window_title + sData.setting_extension;
-		ap = this;
+		gdx = a; ap = this;
 		
 //		try {
 //			// with libGDX - requires steamworks4j-gdx
@@ -65,13 +66,17 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 	    data = new sData(this);
 	    
 		input = new nInput(this);
-		
+
+		gui = new nGUI(this);
+
 	}
 
 	@Override
 	public void closing() {
 		
 		data.dispose();
+
+		gui.dispose();
 		
 //		SteamAPI.shutdown();
 	}
@@ -83,15 +88,28 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 		
 		LOADING_SCREEN_FRAME = 3;
 
-		nRun.runEvents(eventInit, data.setting_bloc);
+		nRun.runEvents(eventInit, data.root_bloc);
 		
 		addDelayEvent(1, new nRun() { public void run() {
 			gdx.add_nodraw_frame(40); 
 		}});
+		addDelayEvent(42, new nRun() { public void run() {
+
+			LOADING_SCREEN_FRAME = 3;
+
+			addDelayEvent(1, new nRun() { public void run() {
+				gdx.add_nodraw_frame(40); 
+			}});
+			addDelayEvent(2, new nRun() { public void run() {
+
+				nRun.runEvents(eventInitEnd, data.root_bloc);
+				
+			}});
+		}});
 	}
 	
-	protected void gui_frame() {}
-	protected void gui_draw() {}
+	protected void gui_frame() { }
+	protected void gui_draw() { }
 	public void draw_start() {}
 	public void draw_end() {}
 	public void setInputProcessor() {}
@@ -136,7 +154,7 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 		}});
 		
 		gdx.exec_nothrow("gui_frame()", new nRun() { public void run() {	
-			gui_frame();
+			gui.frame(); gui_frame(); 
 		}});
 
 		gdx.exec_nothrow("runEvents(runFrame, delta)", new nRun() { public void run() {	
@@ -150,7 +168,11 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 	public void drawer_draw() {
 
 		gdx.exec_nothrow("gui_draw()", new nRun() { public void run() {	
+			
+			gui.draw(); 
+			
 			gui_draw();
+			
 		}});
 		
 		if (LOADING_SCREEN_FRAME > 0) {

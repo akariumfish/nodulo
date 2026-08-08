@@ -9,9 +9,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.noodle.nodulo.GdxApp;
 
 import app.App;
-import app.GdxApp;
 import data.*;
 import gui.*;
 import util.Utl;
@@ -243,7 +243,7 @@ public class pView {
 	}
 	
 	public void init() {
-		bloc = app.data.obtainBloc("view_bloc");
+		bloc = app.data.root_bloc.obtainBloc("view_bloc");
 		bloc.addObject("view", this);
 
 		bloc.addMetode("clearing", new nRun() { public void run() {
@@ -254,7 +254,7 @@ public class pView {
 		view.metode("link_to_bloc", bloc);
 		view.get("fx").setVFX();
 		
-		view.metode("set_title", app.gdx.window_title+" view");
+		view.metode("set_title", "space view");
 		
 		val_pos = view.object("val_pos", sVec.class);
 		val_view_size = view.object("val_view_size", sVec.class);
@@ -263,7 +263,7 @@ public class pView {
 		val_cam_rot = view.object("val_cam_rot", sFlt.class);
 		val_wallp = view.object("val_wallp", sBoo.class);
 		
-//		if (!app.getPref("STARTUP_LOAD", Boolean.class)) {
+		if (!app.config.STARTUP_LOAD) {
 			if (app.config.RELEASE) {
 				if (GdxApp.START_FULLSCREEN) 
 					set_viewspace(690f,1030f, 1210f,950f, app.config.DEF_VIEW_ZOOM);
@@ -280,9 +280,10 @@ public class pView {
 							app.config.DEF_VIEW_ZOOM);
 				} else set_viewspace(370f,445f, 510f,270f, app.config.DEF_VIEW_ZOOM);
 			}
-//		}
+			if (app.config.VIEW_START_COLLAPSED) view.metode("run_collapse");
+		}
 
-		if (app.config.VIEW_START_COLLAPSED) view.metode("run_collapse");
+		
 			
 		app.menu.add_info_text("space zoom: ", view.object("val_cam_scale", sFlt.class));
 		
@@ -342,7 +343,8 @@ public class pView {
 			
 			app.time.addEventTick(tick_run);
 			
-			if (app.config.VIEW_START_WALLPAPER) val_wallp.set(true);
+			if (!app.config.STARTUP_LOAD && app.config.VIEW_START_WALLPAPER) 
+				val_wallp.set(true);
 //			if (!app.start_solo) {
 //				plane.getSystem(pNet.class).net
 //					.addSyncVal(view.object("val_cam_pos", sVec.class));

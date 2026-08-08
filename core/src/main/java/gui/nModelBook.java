@@ -1,8 +1,8 @@
 package gui;
 
 import com.badlogic.gdx.math.Vector2;
+import com.noodle.nodulo.GdxApp;
 
-import app.GdxApp;
 import util.Utl;
 import util.nMap;
 

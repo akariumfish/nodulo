@@ -1,6 +1,6 @@
 package com.noodle.nodulo.lwjgl3;
 
-import app.GdxApp;
+import com.noodle.nodulo.GdxApp;
 
 public class Lwjgl3LauncherDouble1 extends Lwjgl3LauncherDouble {
 

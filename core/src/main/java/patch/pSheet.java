@@ -218,18 +218,19 @@ public class pSheet {
 		}});
 		sheet_link_draw.toFront();
 
-		val_inst_nb = bloc.obtainInt("val_inst_nb");
-		val_inst_free = bloc.obtainInt("val_inst_free");
-		val_tile_nb = bloc.obtainInt("val_tile_nb");
-		val_tile_free = bloc.obtainInt("val_tile_free");
-		val_ent_nb = bloc.obtainInt("val_ent_nb");
-		val_ent_free = bloc.obtainInt("val_ent_free");
-		val_collec_nb = bloc.obtainInt("val_collec_nb");
-		val_collec_free = bloc.obtainInt("val_collec_free");
-		val_link_nb = bloc.obtainInt("val_link_nb");
-		val_link_free = bloc.obtainInt("val_link_free");
+		val_inst_nb = app.data.system_bloc.obtainInt("val_inst_nb_"+bloc.ref);
+		val_inst_free = app.data.system_bloc.obtainInt("val_inst_free_"+bloc.ref);
+		val_tile_nb = app.data.system_bloc.obtainInt("val_tile_nb_"+bloc.ref);
+		val_tile_free = app.data.system_bloc.obtainInt("val_tile_free_"+bloc.ref);
+		val_ent_nb = app.data.system_bloc.obtainInt("val_ent_nb_"+bloc.ref);
+		val_ent_free = app.data.system_bloc.obtainInt("val_ent_free_"+bloc.ref);
+		val_collec_nb = app.data.system_bloc.obtainInt("val_collec_nb_"+bloc.ref);
+		val_collec_free = app.data.system_bloc.obtainInt("val_collec_free_"+bloc.ref);
+		val_link_nb = app.data.system_bloc.obtainInt("val_link_nb_"+bloc.ref);
+		val_link_free = app.data.system_bloc.obtainInt("val_link_free_"+bloc.ref);
 		
-		sheet_content_bloc = app.data.root_bloc.obtainBloc("sheet_"+bloc.ref+"_content");
+//		sheet_content_bloc = app.data.root_bloc.obtainBloc("sheet_"+bloc.ref+"_content");
+		sheet_content_bloc = bloc.obtainBloc("sheet_"+bloc.ref+"_content");
 		val_inst_tab = sheet_content_bloc.obtainTab("val_inst_tab");
 		val_ent_tab = sheet_content_bloc.obtainTab("val_ent_tab");
 		val_collec_tab = sheet_content_bloc.obtainTab("val_collec_tab");
@@ -450,7 +451,7 @@ public class pSheet {
 	
 
 	public void get_svalues() {
-		sheet_content_bloc = app.data.root_bloc.obtainBloc("sheet_"+bloc.ref+"_content");
+		sheet_content_bloc = bloc.obtainBloc("sheet_"+bloc.ref+"_content");
 		val_inst_tab = sheet_content_bloc.obtainTab("val_inst_tab");
 		val_ent_tab = sheet_content_bloc.obtainTab("val_ent_tab");
 		val_collec_tab = sheet_content_bloc.obtainTab("val_collec_tab");
@@ -462,138 +463,130 @@ public class pSheet {
 	}
 	
 	public void save_sheet_contents() {
-		sheet_content_bloc = app.data.root_bloc.obtainBloc("sheet_"+bloc.ref+"_content");
-		val_inst_tab = sheet_content_bloc.obtainTab("val_inst_tab");
-		val_ent_tab = sheet_content_bloc.obtainTab("val_ent_tab");
-		val_collec_tab = sheet_content_bloc.obtainTab("val_collec_tab");
-		val_link_tab = sheet_content_bloc.obtainTab("val_link_tab");
-		inst_pool.tab = val_inst_tab;
-		ent_pool.tab = val_ent_tab;
-		collec_pool.tab = val_collec_tab;
-		link_pool.tab = val_link_tab;
-		
-		collec_pool.save();
-		ent_pool.save();
+		get_svalues();
 		tile_pool.save();
+		ent_pool.save();
 		inst_pool.save();
 		link_pool.save();
+		collec_pool.save();
 	}
 	
-	public void load_sheet_contents() {
-		link_pool.freeAll();
-		inst_pool.freeAll();
-		tile_pool.freeAll();
-		ent_pool.freeAll();
-		collec_pool.freeAll();
-		
-		sheet_content_bloc = app.data.root_bloc.obtainBloc("sheet_"+bloc.ref+"_content");
-		val_inst_tab = sheet_content_bloc.obtainTab("val_inst_tab");
-		val_ent_tab = sheet_content_bloc.obtainTab("val_ent_tab");
-		val_collec_tab = sheet_content_bloc.obtainTab("val_collec_tab");
-		val_link_tab = sheet_content_bloc.obtainTab("val_link_tab");
-		inst_pool.tab = val_inst_tab;
-		ent_pool.tab = val_ent_tab;
-		collec_pool.tab = val_collec_tab;
-		link_pool.tab = val_link_tab;
-		
-		collec_pool.load();
-		ent_pool.load_1();
-		inst_pool.load_1();
-		link_pool.load_1();
-		ent_pool.load_2();
-		inst_pool.load_2();
-		link_pool.load_2();
-		ent_pool.load_3();
-		inst_pool.load_3();
-		link_pool.load_3();
-
-		for (pInstance b : Utl.duplic(inst_pool.all())) b.do_point_after_load();
-		for (pInstance b : Utl.duplic(ent_pool.all())) b.do_point_after_load();
-		for (pInstance b : Utl.duplic(link_pool.all())) b.do_point_after_load();
-
-		app.addDelayEvent(1, new nRun() { public void run() {
-			for (pInstance b : Utl.duplic(cos)) b.run("run_event_link"); 
-			for (pInstance b : Utl.duplic(plugs)) b.run("run_event_link");
-			for (pInstance b : Utl.duplic(node_plugs)) b.run("run_event_link");  }});
-
-		run_collapse.run();
-	}
+//	public void load_sheet_contents() {
+//		link_pool.freeAll();
+//		inst_pool.freeAll();
+//		tile_pool.freeAll();
+//		ent_pool.freeAll();
+//		collec_pool.freeAll();
+//
+////		sheet_content_bloc = app.data.root_bloc.obtainBloc("sheet_"+bloc.ref+"_content");
+//		sheet_content_bloc = bloc.obtainBloc("sheet_"+bloc.ref+"_content");
+//		val_inst_tab = sheet_content_bloc.obtainTab("val_inst_tab");
+//		val_ent_tab = sheet_content_bloc.obtainTab("val_ent_tab");
+//		val_collec_tab = sheet_content_bloc.obtainTab("val_collec_tab");
+//		val_link_tab = sheet_content_bloc.obtainTab("val_link_tab");
+//		inst_pool.tab = val_inst_tab;
+//		ent_pool.tab = val_ent_tab;
+//		collec_pool.tab = val_collec_tab;
+//		link_pool.tab = val_link_tab;
+//		
+//		collec_pool.load();
+//		ent_pool.load_1();
+//		inst_pool.load_1();
+//		link_pool.load_1();
+//		ent_pool.load_2();
+//		inst_pool.load_2();
+//		link_pool.load_2();
+//		ent_pool.load_3();
+//		inst_pool.load_3();
+//		link_pool.load_3();
+//
+//		for (pInstance b : Utl.duplic(inst_pool.all())) b.do_point_after_load();
+//		for (pInstance b : Utl.duplic(ent_pool.all())) b.do_point_after_load();
+//		for (pInstance b : Utl.duplic(link_pool.all())) b.do_point_after_load();
+//
+//		app.addDelayEvent(1, new nRun() { public void run() {
+//			for (pInstance b : Utl.duplic(cos)) b.run("run_event_link_from_node"); 
+////			for (pInstance b : Utl.duplic(plugs)) b.run("run_event_link");
+////			for (pInstance b : Utl.duplic(node_plugs)) b.run("run_event_link");  }});
+//
+//		run_collapse.run();
+//	}
 	
 
-	public ArrayList<pInstance> build_insts_from_tab(sTab tab) {
-		
-//		app.log("Paste");
-
-		ArrayList<pInstance> insts = new ArrayList<pInstance>();
-		
-		if (tab == null || tab.width() < 2) return insts; 
-
-		ArrayList<pInstance> ents = new ArrayList<pInstance>();
-		ArrayList<pInstance> links = new ArrayList<pInstance>();
-		ArrayList<pColl> cols = new ArrayList<pColl>();
-		
-		HashMap<String,String> old_new = new HashMap<String,String>();
-		
-		int inst_nb = tab.getInt(0,0);
-		int ent_nb = tab.getInt(0,1);
-		int link_nb = tab.getInt(0,2);
-		int col_nb = tab.getInt(0,3);
-
-		int cnt = 4;
-		
-		for (int i = 0 ; i < inst_nb ; i++) {
-			pInstance b = inst_pool.obtain_uninit();
-			String old_name = tab.getStr(0,cnt); cnt++;
-			old_new.put(old_name,b.pool_ref);
-			insts.add(b); }
-		for (int i = 0 ; i < ent_nb ; i++) {
-			pInstance b = ent_pool.obtain_uninit();
-			String old_name = tab.getStr(0,cnt); cnt++;
-			old_new.put(old_name,b.pool_ref);
-			ents.add(b); }
-		for (int i = 0 ; i < link_nb ; i++) {
-			pInstance b = link_pool.obtain_uninit();
-			String old_name = tab.getStr(0,cnt); cnt++;
-			old_new.put(old_name,b.pool_ref);
-			links.add(b); }
-		for (int i = 0 ; i < col_nb ; i++) {
-			pColl b = collec_pool.obtain_uninit();
-			String old_name = tab.getStr(0,cnt); cnt++;
-			old_new.put(old_name,b.pool_ref);
-			cols.add(b); }
-		
-		cnt = 1;
-		for (int i = 0 ; i < inst_nb ; i++) {
-			insts.get(i).from_tab(tab, cnt, old_new); cnt++; }
-		for (int i = 0 ; i < ent_nb ; i++) {
-			ents.get(i).from_tab(tab, cnt, old_new); cnt++; }
-		for (int i = 0 ; i < link_nb ; i++) {
-			links.get(i).from_tab(tab, cnt, old_new); cnt++; }
-		for (int i = 0 ; i < col_nb ; i++) {
-			cols.get(i).from_tab(tab, cnt, old_new); cnt++; }
-
-		for (pColl b : cols) if (b.stand == null) { cols.remove(b); b.clear(); }
-		for (pInstance b : links) if (b.stand == null) { links.remove(b); b.clear(); }
-		for (pInstance b : ents) if (b.stand == null) { ents.remove(b); b.clear(); }
-		for (pInstance b : insts) if (b.stand == null) { insts.remove(b); b.clear(); }
-		
-		for (pColl b : cols) { b.do_init(); }
-		for (pInstance b : ents) { b.do_init(); }
-		for (pInstance b : insts) { b.do_init(); }
-		for (pInstance b : links) { b.do_init(); }
-		for (pColl b : cols) { b.do_load(); }
-		for (pInstance b : ents) { b.do_load(); }
-		for (pInstance b : insts) { b.do_load(); }
-		for (pInstance b : links) { b.do_load(); }
-
-		for (pInstance b : ents) b.do_point_after_load();
-		for (pInstance b : insts) b.do_point_after_load();
-		for (pInstance b : links) b.do_point_after_load();
-
-		run_collapse.run();
-		
-		return insts;
-	}
+//	public ArrayList<pInstance> build_insts_from_tab(sTab tab) {
+//		
+////		app.log("Paste");
+//
+//		ArrayList<pInstance> insts = new ArrayList<pInstance>();
+//		
+//		if (tab == null || tab.width() < 2) return insts; 
+//
+//		ArrayList<pInstance> ents = new ArrayList<pInstance>();
+//		ArrayList<pInstance> links = new ArrayList<pInstance>();
+//		ArrayList<pColl> cols = new ArrayList<pColl>();
+//		
+//		HashMap<String,String> old_new = new HashMap<String,String>();
+//		
+//		int inst_nb = tab.getInt(0,0);
+//		int ent_nb = tab.getInt(0,1);
+//		int link_nb = tab.getInt(0,2);
+//		int col_nb = tab.getInt(0,3);
+//
+//		int cnt = 4;
+//		
+//		for (int i = 0 ; i < inst_nb ; i++) {
+//			pInstance b = inst_pool.obtain_uninit();
+//			String old_name = tab.getStr(0,cnt); cnt++;
+//			old_new.put(old_name,b.pool_ref);
+//			insts.add(b); }
+//		for (int i = 0 ; i < ent_nb ; i++) {
+//			pInstance b = ent_pool.obtain_uninit();
+//			String old_name = tab.getStr(0,cnt); cnt++;
+//			old_new.put(old_name,b.pool_ref);
+//			ents.add(b); }
+//		for (int i = 0 ; i < link_nb ; i++) {
+//			pInstance b = link_pool.obtain_uninit();
+//			String old_name = tab.getStr(0,cnt); cnt++;
+//			old_new.put(old_name,b.pool_ref);
+//			links.add(b); }
+//		for (int i = 0 ; i < col_nb ; i++) {
+//			pColl b = collec_pool.obtain_uninit();
+//			String old_name = tab.getStr(0,cnt); cnt++;
+//			old_new.put(old_name,b.pool_ref);
+//			cols.add(b); }
+//		
+//		cnt = 1;
+//		for (int i = 0 ; i < inst_nb ; i++) {
+//			insts.get(i).from_tab(tab, cnt, old_new); cnt++; }
+//		for (int i = 0 ; i < ent_nb ; i++) {
+//			ents.get(i).from_tab(tab, cnt, old_new); cnt++; }
+//		for (int i = 0 ; i < link_nb ; i++) {
+//			links.get(i).from_tab(tab, cnt, old_new); cnt++; }
+//		for (int i = 0 ; i < col_nb ; i++) {
+//			cols.get(i).from_tab(tab, cnt, old_new); cnt++; }
+//
+//		for (pColl b : cols) if (b.stand == null) { cols.remove(b); b.clear(); }
+//		for (pInstance b : links) if (b.stand == null) { links.remove(b); b.clear(); }
+//		for (pInstance b : ents) if (b.stand == null) { ents.remove(b); b.clear(); }
+//		for (pInstance b : insts) if (b.stand == null) { insts.remove(b); b.clear(); }
+//		
+//		for (pColl b : cols) { b.do_init(); }
+//		for (pInstance b : ents) { b.do_init(); }
+//		for (pInstance b : insts) { b.do_init(); }
+//		for (pInstance b : links) { b.do_init(); }
+//		for (pColl b : cols) { b.do_load(); }
+//		for (pInstance b : ents) { b.do_load(); }
+//		for (pInstance b : insts) { b.do_load(); }
+//		for (pInstance b : links) { b.do_load(); }
+//
+//		for (pInstance b : ents) b.do_point_after_load();
+//		for (pInstance b : insts) b.do_point_after_load();
+//		for (pInstance b : links) b.do_point_after_load();
+//
+//		run_collapse.run();
+//		
+//		return insts;
+//	}
 	
 	
 

@@ -7,9 +7,9 @@ import java.util.Map;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool.Poolable;
+import com.noodle.nodulo.GdxApp;
 
 import app.App;
-import app.GdxApp;
 import app.nLauncher;
 import gui.nWidget;
 import gui.nWidgetGroup;
@@ -272,8 +272,8 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 		eventsDelBloc = newEventList("eventsDelBloc", new ArrayList<nRun>());
 		eventsDelete = newEventList("eventsDelete", new ArrayList<nRun>());
 		eventsChangeThisFrame = newEventList("eventsChangeThisFrame", new ArrayList<nRun>());
-		eventsSelect = newEventList("eventsSelect", new ArrayList<nRun>());
-		eventsUnselect = newEventList("eventsUnselect", new ArrayList<nRun>());
+//		eventsSelect = newEventList("eventsSelect", new ArrayList<nRun>());
+//		eventsUnselect = newEventList("eventsUnselect", new ArrayList<nRun>());
 		eventsSave = newEventList("eventsSave", new ArrayList<nRun>());
 		eventsLoadEnd = newEventList("eventsLoadEnd", new ArrayList<nRun>());
 		eventsLoadParam = newEventList("eventsLoadParam", new ArrayList<nRun>());
@@ -286,8 +286,8 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 	ArrayList<nRun> eventsDelBloc;
 	ArrayList<nRun> eventsDelete;
 	ArrayList<nRun> eventsChangeThisFrame;
-	ArrayList<nRun> eventsSelect;
-	ArrayList<nRun> eventsUnselect;
+//	ArrayList<nRun> eventsSelect;
+//	ArrayList<nRun> eventsUnselect;
 	ArrayList<nRun> eventsSave;
 	ArrayList<nRun> eventsLoadEnd;
 	ArrayList<nRun> eventsLoadParam;
@@ -301,10 +301,10 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 	public sValueBloc removeEventDelete(nRun r) { eventsDelete.remove(r); return this; }
 	public sValueBloc addEventChangeThisFrame(nRun r) { eventsChangeThisFrame.add(r); return this; }
 	public sValueBloc removeEventChangeThisFrame(nRun r) { eventsChangeThisFrame.remove(r); return this; }
-	public sValueBloc addEventSelect(nRun r) { eventsSelect.add(r); return this; }
-	public sValueBloc removeEventSelect(nRun r) { eventsSelect.remove(r); return this; }
-	public sValueBloc addEventUnselect(nRun r) { eventsUnselect.add(r); return this; }
-	public sValueBloc removeEventUnselect(nRun r) { eventsUnselect.remove(r); return this; }
+//	public sValueBloc addEventSelect(nRun r) { eventsSelect.add(r); return this; }
+//	public sValueBloc removeEventSelect(nRun r) { eventsSelect.remove(r); return this; }
+//	public sValueBloc addEventUnselect(nRun r) { eventsUnselect.add(r); return this; }
+//	public sValueBloc removeEventUnselect(nRun r) { eventsUnselect.remove(r); return this; }
 	public sValueBloc addEventSave(nRun r) { eventsSave.add(r); return this; }
 	public sValueBloc removeEventSave(nRun r) { eventsSave.remove(r); return this; }
 	public sValueBloc addEventLoadEnd(nRun r) { eventsLoadEnd.add(r); return this; }
@@ -332,35 +332,35 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 	
 	public boolean clearing = false;
 
-	public boolean open_in_dataview = false;
-	public nWidgetGroup box_in_dataview = null;
+//	public boolean open_in_dataview = false;
+//	public nWidgetGroup box_in_dataview = null;
 
-	public boolean is_selected = false;
+//	public boolean is_selected = false;
 
 	public boolean is_loading = false;
 	
 	public boolean is_new_bloc = false;
 	
-	public boolean is_selected() { return is_selected; }
-	public void select_bloc() {
-		if (!is_selected) {
-//			app.log("select bloc "+ref);
-			is_selected = true;
-			if (data.selected_bloc != null) {
-				data.selected_bloc.unselect_bloc();
-			}
-			data.selected_bloc = this;
-			runEventList("eventsSelect");
-		}
-	}
-	public void unselect_bloc() {
-		if (is_selected) { 
-//			app.log("unselect bloc "+ref);
-			is_selected = false;
-			data.selected_bloc = null;
-			runEventList("eventsUnselect");
-		}
-	}
+//	public boolean is_selected() { return is_selected; }
+//	public void select_bloc() {
+//		if (!is_selected) {
+////			app.log("select bloc "+ref);
+//			is_selected = true;
+//			if (data.selected_bloc != null) {
+//				data.selected_bloc.unselect_bloc();
+//			}
+//			data.selected_bloc = this;
+//			runEventList("eventsSelect");
+//		}
+//	}
+//	public void unselect_bloc() {
+//		if (is_selected) { 
+////			app.log("unselect bloc "+ref);
+//			is_selected = false;
+//			data.selected_bloc = null;
+//			runEventList("eventsUnselect");
+//		}
+//	}
 
 	// constructor called by pool to fill it
 	sValueBloc() {
@@ -412,8 +412,9 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 		else adress = b.adress + sData.adress_token + ref;
 		if (!sData.refIsValid(ref)) Utl.logn("ERROR Invalid valbloc ref");
 		b.blocs.put(ref, this); 
-		for (sBloc_Builder bb : data.common_bloc_builders) addBlocBuilder(bb); 
-		create_common_metodes(); }
+//		for (sBloc_Builder bb : data.common_bloc_builders) addBlocBuilder(bb); 
+//		create_common_metodes(); 
+	}
 	
 	//called when obtained from pool
 	public sValueBloc init(sValueBloc b, String r) { 
@@ -459,37 +460,37 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 		}
 	}
 
-	// view this bloc in dataview
-	public void view_bloc_in_dataview() {
-		app.addDelayEvent(1, new nRun() { public void run() {
-			data.collapse_all_in_dataview();
-			open_in_dataview = true;
-			open_parents_in_dataview();
-			select_bloc();
-			if (data.dataview_bloc != null) {
-				app.addDelayEvent(2, new nRun() { public void run() {
-					data.dataview_bloc.run("populate_run");
-					app.addDelayEvent(2, new nRun() { public void run() {
-						data.dataview_bloc.run("center_on_bloc", thisBloc);
-					}}); 
-				}});
-			}
-		}});
-	}
+//	// view this bloc in dataview
+//	public void view_bloc_in_dataview() {
+//		app.addDelayEvent(1, new nRun() { public void run() {
+//			data.collapse_all_in_dataview();
+//			open_in_dataview = true;
+//			open_parents_in_dataview();
+//			select_bloc();
+//			if (data.dataview_bloc != null) {
+//				app.addDelayEvent(2, new nRun() { public void run() {
+//					data.dataview_bloc.run("populate_run");
+//					app.addDelayEvent(2, new nRun() { public void run() {
+//						data.dataview_bloc.run("center_on_bloc", thisBloc);
+//					}}); 
+//				}});
+//			}
+//		}});
+//	}
 	
-	// create common metodes
-	public void create_common_metodes() {
-		addMetode("view_bloc_in_dataview", new nRun() { public void run(Object o) {
-			view_bloc_in_dataview(); }});
-		addMetode("clear_bloc", new nRun() { public void run(Object o) {
-			clear(); }});
-	}
+//	// create common metodes
+//	public void create_common_metodes() {
+//		addMetode("view_bloc_in_dataview", new nRun() { public void run(Object o) {
+//			view_bloc_in_dataview(); }});
+//		addMetode("clear_bloc", new nRun() { public void run(Object o) {
+//			clear(); }});
+//	}
 	
-	// recursive open all parents
-	public void open_parents_in_dataview() {
-		if (parent != null && parent != this) { 
-			parent.open_in_dataview = true;
-			parent.open_parents_in_dataview(); } }
+//	// recursive open all parents
+//	public void open_parents_in_dataview() {
+//		if (parent != null && parent != this) { 
+//			parent.open_in_dataview = true;
+//			parent.open_parents_in_dataview(); } }
 	
 	//called when freed by pool
 	@Override
@@ -506,7 +507,7 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 
 			clearing = true;
 
-			if (is_selected) unselect_bloc();
+//			if (is_selected) unselect_bloc();
 			
 			if (builder != null) { 
 				builder.run_clear(this);
@@ -548,9 +549,9 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 			builder = null; build_ref = "";
 			doevent = true;
 			clearing = false;
-			open_in_dataview = false;
-			box_in_dataview = null;
-			is_selected = false;
+//			open_in_dataview = false;
+//			box_in_dataview = null;
+//			is_selected = false;
 
 			flags.clear();
 
@@ -563,8 +564,8 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 			eventsDelBloc.clear();
 			eventsDelete.clear();
 			eventsChangeThisFrame.clear();
-			eventsSelect.clear();
-			eventsUnselect.clear();
+//			eventsSelect.clear();
+//			eventsUnselect.clear();
 			eventsSave.clear();
 			eventsLoadEnd.clear();
 
@@ -861,7 +862,7 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 //			flags.clear();
 //			load_flags_to_bloc(sb, this);
 			
-			open_in_dataview = sb.getBoolean("__bloc_collapseview");
+//			open_in_dataview = sb.getBoolean("__bloc_collapseview");
 		
 			ArrayList<File_Bloc> unfound = new ArrayList<File_Bloc>();
 			for (File_Bloc b : sb.getBlocList()) unfound.add(b);
@@ -948,7 +949,7 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 		sb.newData("__bloc_use", use);
 		sb.newData("__bloc_build", build_ref);
 		sb.newData("__bloc_flag_nb", (int)flags.size());
-		sb.newData("__bloc_collapseview", open_in_dataview);
+//		sb.newData("__bloc_collapseview", open_in_dataview);
 		for (int i = 0 ; i < flags.size() ; i++) {
 			sb.newData("__bloc_flag_"+i, flags.get(i));
 		}
@@ -1048,7 +1049,9 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 			String build = sb.getString("__bloc_build");
 			sValueBloc vb = null;
 			boolean isbuild = false;
-			if (!data.USE_BUILDER || build.length() == 0) vb = data.newBloc(this, r); 
+			if (
+//					!data.USE_BUILDER || 
+					build.length() == 0) vb = data.newBloc(this, r); 
 			else { isbuild = true;
 				sBloc_Builder bld = getBlocBuilder(build);
 				if (bld == null) { isbuild = false; vb = data.newBloc(this, r); }
@@ -1063,7 +1066,7 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 				}
 			}
 			vb.use = u;
-			vb.open_in_dataview = sb.getBoolean("__bloc_collapseview");
+//			vb.open_in_dataview = sb.getBoolean("__bloc_collapseview");
 			load_flags_to_bloc(sb, vb);
 			for (File_Bloc csb : sb.getBlocList()) {
 				String type = csb.getString("__bloc_type");
@@ -1093,7 +1096,9 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 			String build = sb.getString("__bloc_build");
 			sValueBloc vb = null;
 			boolean isbuild = false;
-			if (!data.USE_BUILDER || build.length() == 0) vb = data.newBloc(this, n);
+			if (
+//					!data.USE_BUILDER || 
+					build.length() == 0) vb = data.newBloc(this, n);
 			else { isbuild = true;
 				sBloc_Builder bld = getBlocBuilder(build);
 				if (bld == null) { isbuild = false; vb = data.newBloc(this, n); }
@@ -1108,7 +1113,7 @@ public class sValueBloc extends nLauncher implements nClearable, Poolable {
 				}
 			}
 			vb.use = u;
-			vb.open_in_dataview = sb.getBoolean("__bloc_collapseview");
+//			vb.open_in_dataview = sb.getBoolean("__bloc_collapseview");
 			load_flags_to_bloc(sb, vb);
 			for (File_Bloc csb : sb.getBlocList()) {
 				String type = csb.getString("__bloc_type");

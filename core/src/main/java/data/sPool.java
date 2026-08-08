@@ -144,9 +144,11 @@ public abstract class sPool <T extends sPoolable> {
 	}
 
 	public void save() {
-		if (tab == null) return;
 		for (int i = 0 ; i < objects.length ; i++) if (use[i]) {
 			objects[i].do_save(); }
+		
+		if (tab == null) return;
+		
 		calc_last_use();
 		if (all_used.size() > 0) {
 //			int max_bod_size = 0;

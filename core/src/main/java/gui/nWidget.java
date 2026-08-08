@@ -9,9 +9,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Pool.Poolable;
+import com.noodle.nodulo.GdxApp;
 
 import app.App;
-import app.GdxApp;
 import app.nDrawer;
 import data.*;
 import util.Utl;

@@ -399,6 +399,17 @@ public class pStandard {
 		return this;
 	}
 
+	private pStandard addCollec(String ref, pPar prm) {
+		if (add_key(ref)) {
+			Utl.logn("ERROR : pStandard "+this.ref+" has allready the key "+ref);
+			return this;
+		}
+		collec_vals.put(ref, collec_used);
+		collec_used++; 
+		collec_pars.put(ref, new pPar(prm));
+		return this;
+	}
+
 	public pStandard addCollec(String ref, Object ... args) {
 		addCollec(ref);
 		if (args == null) return this; 
@@ -418,6 +429,12 @@ public class pStandard {
 	public pStandard addCollec(String ref_in_param, Class<?> ct) {
 		addCollec(ref_in_param);
 		collec_datas.put(ref_in_param, ct.getName());
+		return this;
+	}
+
+	public pStandard addCollecData(String ref_in_param, String ct) {
+		addCollec(ref_in_param);
+		collec_datas.put(ref_in_param, ct);
 		return this;
 	}
 
@@ -442,7 +459,14 @@ public class pStandard {
 		collec_insts.add(ref_in_param);
 		collec_inst_pools.put(ref_in_param, pool_ref);
 		return this;
-	}
+	} 
+
+	public pStandard addCollecInst(String ref_in_param, String pool_ref, pPar prm) {
+		addCollec(ref_in_param, prm);
+		collec_insts.add(ref_in_param);
+		collec_inst_pools.put(ref_in_param, pool_ref);
+		return this;
+	} 
 
 	public pStandard addCollecInst(String ref_in_param, String pool_ref, Object ... args) {
 		addCollec(ref_in_param, args);
@@ -490,6 +514,18 @@ public class pStandard {
 		return this;
 	}
 
+	public pStandard addInst(String ref_in_param, String pool_ref, pPar par) {
+		if (add_key(ref_in_param)) {
+			Utl.logn("ERROR : pStandard "+this.ref+" has allready the key "+ref_in_param);
+			return this;
+		}
+		inst_vals.put(ref_in_param, inst_used);
+		inst_used++; 
+		inst_pars.put(ref_in_param, new pPar(par));
+		inst_pools.put(ref_in_param, pool_ref);
+		return this;
+	}
+
 	public int getInstUsed() {
 		return inst_used; }
 
@@ -509,13 +545,13 @@ public class pStandard {
 
 	public int[] data_used;
 
-	public pStandard addData(String ref, Object def) {
-		addData(ref, def.getClass());
+	private pStandard addData(String ref, Object def, pPar prm) {
+		addData(ref, def.getClass(), prm);
 		nMap<Object> vals_def = data_defs.get(def.getClass());
 		vals_def.put(ref, def);
 		return this;
 	}
-	public pStandard addData(String ref, Class<?> ct) {
+	private pStandard addData(String ref, Class<?> ct, pPar prm) {
 		if (add_key(ref)) {
 			Utl.logn("ERROR : pProperty "+this.ref+" has allready the key "+ref);
 			return this; 
@@ -533,7 +569,8 @@ public class pStandard {
 		int du = data_used[Utl.type_class_index.get(ct)];
 		vals_id.put(ref, du);
 		du++; data_used[Utl.type_class_index.get(ct)] = du;
-		data_pars.put(ref, new pPar(current_param));
+		if (prm != null) data_pars.put(ref, new pPar(prm));
+		else data_pars.put(ref, new pPar(current_param));
 		return this;
 	}
 
@@ -546,9 +583,12 @@ public class pStandard {
 		else return -1; }
 	public Object getDataValDef(String r, Class<?> ct) {
 		return data_defs.get(ct).get(r); }
-	
+
 	public pStandard addData(String ref, Object def, Object ... args) {
-		addData(ref, def); 
+		return addData(ref, def, null, args);
+	}
+	private pStandard addData(String ref, Object def, pPar prm, Object ... args) {
+		addData(ref, def, prm); 
 		if (args == null) return this; 
 		if (args.length%2 != 0) return this; 
 		String k = null;
@@ -562,7 +602,10 @@ public class pStandard {
 		}
 		return this; }
 	public pStandard addData(String ref, Class<?> ct, Object ... args) {
-		addData(ref, ct);
+		return addData(ref, ct, null, args);
+	}
+	private pStandard addData(String ref, Class<?> ct, pPar prm, Object ... args) {
+		addData(ref, ct, prm);
 		if (args == null) return this; 
 		if (args.length%2 != 0) return this; 
 		String k = null;
@@ -597,62 +640,34 @@ public class pStandard {
 		for (RunDef r : s.rundefs) new RunDef(r);
 //		for (ObjDef r : s.objdefs) new ObjDef(r);
 		
-		for (String r : s.used_key) used_key.add(r);
+		for (Map.Entry<String,Integer> me : s.collec_vals.entrySet()) {
+			String k = me.getKey();
+			if (Utl.contains(s.collec_insts, k)) {
+				String pool_ref = s.collec_inst_pools.get(k);
+				pPar par = s.collec_pars.get(k);
+				addCollecInst(k, pool_ref, par);
+			} else if (s.collec_datas.hasKey(k)) {
+				addCollecData(k,s.collec_datas.get(k));
+			}
+		}
 		
-		for (Map.Entry<String,Integer> me : s.collec_vals.entrySet()) 
-			collec_vals.put(me.getKey(), me.getValue());
-		for (String r : s.collec_insts) collec_insts.add(r);
-		for (Map.Entry<String,String> me : s.collec_datas.entrySet()) 
-			collec_datas.put(me.getKey(), me.getValue());
-
-		for (Map.Entry<String,String> me : s.collec_inst_pools.entrySet()) 
-			collec_inst_pools.put(me.getKey(), me.getValue());
+		for (Map.Entry<String,Integer> me : s.inst_vals.entrySet()) {
+			String k = me.getKey();
+			addInst(k,s.inst_pools.get(k),s.inst_pars.get(k));
+		}
 		
-		for (Map.Entry<String,pPar> me : s.collec_pars.entrySet()) 
-			collec_pars.put(me.getKey(), new pPar(me.getValue()));
-		
-		collec_used += s.collec_used;
-		inst_used += s.inst_used;
-		
-		for (Map.Entry<String,Integer> me : s.inst_vals.entrySet()) 
-			inst_vals.put(me.getKey(), me.getValue());
-
-		for (Map.Entry<String,String> me : s.inst_pools.entrySet()) 
-			inst_pools.put(me.getKey(), me.getValue());
-		
-		for (Map.Entry<String,pPar> me : s.inst_pars.entrySet()) 
-			inst_pars.put(me.getKey(), new pPar(me.getValue()));
-		
-		for (int i = 0 ; i < s.data_used.length ; i++) data_used[i] += s.data_used[i];
-
 		for (Map.Entry<Class<?>, nMap<Integer>> me : s.data_vals.entrySet()) {
 			Class<?> ct = me.getKey();
-			if (data_vals.get(ct) != null) {
-				for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) 
-					data_vals.get(ct).put(map_me.getKey(), map_me.getValue());
-			} else {
-				nMap<Integer> map = new nMap<Integer>();
-				for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) 
-					map.put(map_me.getKey(), map_me.getValue());
-				data_vals.put(ct,map);
+			for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) {
+				String k = map_me.getKey();
+				if (s.data_defs.get(ct) != null && 
+						s.data_defs.get(ct).hasKey(k)) {
+					addData(k,s.data_defs.get(ct).get(k),s.data_pars.get(k));
+				} else {
+					addData(k,ct,s.data_pars.get(k));
+				}
 			}
 		}
-		
-		for (Map.Entry<Class<?>, nMap<Object>> me : s.data_defs.entrySet()) {
-			Class<?> ct = me.getKey();
-			if (data_defs.get(ct) != null) {
-				for (Map.Entry<String,Object> map_me : me.getValue().entrySet()) 
-					data_defs.get(ct).put(map_me.getKey(), Utl.copy(map_me.getValue()));
-			} else {
-				nMap<Object> map = new nMap<Object>();
-				for (Map.Entry<String,Object> map_me : me.getValue().entrySet()) 
-					map.put(map_me.getKey(), Utl.copy(map_me.getValue()));
-				data_defs.put(ct,map);
-			}
-		}
-		
-		for (Map.Entry<String,pPar> me : s.data_pars.entrySet()) 
-			data_pars.put(me.getKey(), new pPar(me.getValue()));
 		
 		return this;
 	}

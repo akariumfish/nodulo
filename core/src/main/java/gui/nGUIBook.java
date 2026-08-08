@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.noodle.nodulo.GdxApp;
 
 import aa_nodulo.PlaneApplet;
 import app.App;
-import app.GdxApp;
 import data.sBoo;
 import data.sFlt;
 import data.sInt;
@@ -1213,6 +1213,7 @@ public class nGUIBook {
 							g.removeObject("old_size");
 						}
 					}
+					g.metode("event_corner_drag");
 				}};
 				wallpaper.addEventSwitch(run_wallpaper);
 				

@@ -3,6 +3,8 @@ package app;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.noodle.nodulo.GdxApp;
+
 import util.Utl;
 import util.nMap;
 import util.nPool;

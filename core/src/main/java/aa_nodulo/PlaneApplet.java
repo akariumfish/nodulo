@@ -10,11 +10,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.noodle.nodulo.GdxApp;
 import com.noodle.nodulo.Main;
 
 import app.App;
 import app.AppConfig;
-import app.GdxApp;
 import data.sValueBloc;
 import gui.nGUI;
 import gui.nGUIBook;
@@ -45,33 +45,45 @@ public class PlaneApplet extends App {
 	public static class AppletConfig {
 
 		public AppletConfig() {}
-		public AppletConfig(String s, boolean dark_theme) { 
+		public AppletConfig(String s, String filename, boolean dark_theme) { 
 			RELEASE = !dark_theme;
 			STARTUP_MODEL_REF = s; 
+			STARTUP_NEW_FILE = filename;
 		}
-		;
-		public boolean RELEASE = PlaneApplet.RELEASE;
+		public AppletConfig(boolean startup_load, String s, boolean dark_theme) { 
+			RELEASE = !dark_theme;
+			PATCH_BUILD = false;
+			STARTUP_LOAD = true;
+			STARTUP_LOAD_FILE = s; 
+		}
 		
+		public boolean RELEASE = PlaneApplet.RELEASE;
+
+//		public boolean STARTUP_LOAD = true;
+		public boolean STARTUP_LOAD = false;
+
 		public boolean PATCH_BUILD = true;
 //		public boolean PATCH_BUILD = false;
 
 //		public boolean AUTO_CONNECT = true;
 		public boolean AUTO_CONNECT = false;
 		
-		public boolean START_FX = true;
-//		public boolean START_FX = false;
+//		public boolean START_FX = true;
+		public boolean START_FX = false;
 		
 		public boolean START_HELP = true;
 //		public boolean START_HELP = false;
 
-//		public String STARTUP_MODEL_REF = "TEST";
+		public String STARTUP_MODEL_REF = "TEST";
 //		public String STARTUP_MODEL_REF = "box2d_exemple";
 //		public String STARTUP_MODEL_REF = "patch_exemple";
-		public String STARTUP_MODEL_REF = "atom_game";
+//		public String STARTUP_MODEL_REF = "atom_game";
 //		public String STARTUP_MODEL_REF = "";
 
+		public String STARTUP_LOAD_FILE = "";
+		public String STARTUP_NEW_FILE = "";
 
-		public boolean VIEW_START_WALLPAPER = true;
+		public boolean VIEW_START_WALLPAPER = false;
 		public boolean VIEW_START_COLLAPSED = false;
 //		public float DEF_VIEW_ZOOM = 0.07f;
 		public float DEF_VIEW_ZOOM = 0.5f;
@@ -79,13 +91,13 @@ public class PlaneApplet extends App {
 		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
 		public Vector2 DEF_VIEW_WIN_SZ = new Vector2(910f,370f);
 		public boolean PATCH_START_WALLPAPER = false;
-		public boolean PATCH_START_COLLAPSED = true;
+		public boolean PATCH_START_COLLAPSED = false;
 		public float DEF_PATCH_ZOOM = 0.2f;
 		public Vector2 DEF_PATCH_POS = new Vector2(0f,0f);
 		public Vector2 DEF_PATCH_WIN_POS = new Vector2(370f,915f);
 		public Vector2 DEF_PATCH_WIN_SZ = new Vector2(910f,450f);
 		public boolean PATCH_TOOL_AUTOCOLLAPSE = true;
-		public boolean PATCH_SHEET_COLLAPSE = true;
+		public boolean PATCH_SHEET_COLLAPSE = false;
 		public boolean TOOLBOX_OPEN = true;
 		public float DEF_TICK_BY_SEC = 60f;
 		
@@ -122,12 +134,8 @@ public class PlaneApplet extends App {
 	public static PlaneApplet app;
 	
 	public AppletConfig config;
-
-	public nGUI gui;
+	
 	public nMenu menu;
-
-//	Skin skin;
-//	Stage stage;
 	
 	public pView view;
 	public pTime time;
@@ -145,7 +153,6 @@ public class PlaneApplet extends App {
 	
 	@Override
 	public void setInputProcessor() {
-//		Gdx.input.setInputProcessor(multiplexer); 
 		Gdx.input.setInputProcessor(input);
 	}
 
@@ -187,18 +194,12 @@ public class PlaneApplet extends App {
 		if (config.start_as_client) NET_CTRL = true;
 		use_fx(config.START_FX);
 		
+		if (config.STARTUP_LOAD) 
+			data.val_root_savepath.set(config.STARTUP_LOAD_FILE);
+		else if (TITLE_SCREEN) data.val_root_savepath.set(config.STARTUP_NEW_FILE);
+		
 		bloc = data.root_bloc;
 		
-//		skin = new Skin(Gdx.files.internal("ui/skin.json"));
-//		stage = new Stage(new ScreenViewport());
-		
-//		multiplexer = new InputMultiplexer();
-//		multiplexer.addProcessor(stage);
-//		multiplexer.addProcessor(input);
-//		Gdx.input.setInputProcessor(multiplexer);
-		
-		gui = new nGUI(this);
-
 		menu = new nMenu(this);
 		
 		
@@ -227,10 +228,6 @@ public class PlaneApplet extends App {
 
 		if (config.PATCH_BUILD) {
 			run_startupmodel_setup(config.STARTUP_MODEL_REF); }
-		
-//		menu.add_tool_menu_trigg("Empty Plane", new nRun() { public void run() {
-//			empty_plane(); }});
-		
 		
 		view = new pView(this);
 		time = new pTime(this);
@@ -262,6 +259,9 @@ public class PlaneApplet extends App {
 //		
 //		Utl.logn(nScripted.buildCodeFromScript(nPainting.class, scr));
 		
+		if (config.STARTUP_LOAD) addEventInitEnd(new nRun() { public void run(Object o) {
+			sValueBloc b = (sValueBloc)o; data.full_load(); }});
+		
 		startup();
 		
 	}
@@ -269,19 +269,13 @@ public class PlaneApplet extends App {
 	@Override
 	public void closing() {
 		super.closing();
-
-//		stage.dispose();
-//		skin.dispose(); 
 		
-		gui.dispose();
-		
+		app = null; 
 	}
 	
 	@Override 
 	protected void gui_frame() { 
 		float delta = Gdx.graphics.getDeltaTime();
-
-		gui.frame(); 
 		
 		frame_inputs();
 
@@ -304,9 +298,7 @@ public class PlaneApplet extends App {
 	
 	@Override 
 	protected void gui_draw() { 
-
-		gui.draw(); 
-
+		
 //		paint.draw(gdx.drawer);
 		
 	}

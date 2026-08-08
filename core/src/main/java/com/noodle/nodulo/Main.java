@@ -11,7 +11,6 @@ import com.kotcrab.vis.ui.VisUI;
 import aa_nodulo.PlaneApplet;
 import util.Utl;
 import app.AppConfig;
-import app.GdxApp;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
@@ -49,10 +48,12 @@ public class Main extends Game {
 	}
 	
 	public void exit() { Gdx.app.exit(); }
-	
+
 	TitleScreen titleScreen = null;
 
 	GdxApp nodulo_app = null;
+
+	GdxApp editor_app = null;
 	
 	public void launch_title() {
 		if (titleScreen == null)
@@ -60,19 +61,37 @@ public class Main extends Game {
 		Gdx.input.setInputProcessor(titleScreen.stage);
 		setScreen(titleScreen); 
 	}
+
+	public void launch_editor() {
+		if (editor_app == null)
+			editor_app = EditorApp.make(this, new AppConfig("Nodulo - Editor", 1300, 960));
+		editor_app.setInputProcessor();
+		setScreen(editor_app); }
 	
 	public void launch_nodulo() {
 		if (nodulo_app == null)
-			nodulo_app = PlaneApplet.make(this, new AppConfig("nodulo", 1300, 960));
+			nodulo_app = PlaneApplet.make(this, new AppConfig("Nodulo", 1300, 960));
 		nodulo_app.setInputProcessor();
 		setScreen(nodulo_app); }
 	
-	public void launch_nodulo(String model, boolean dark_theme, boolean fullscreen) {
+	//new
+	public void launch_nodulo(String model, String file, boolean dark_theme, boolean fullscreen) {
 		if (nodulo_app == null) {
 			PlaneApplet.AppletConfig conf = 
-					new PlaneApplet.AppletConfig(model, dark_theme);
+					new PlaneApplet.AppletConfig(model, file, dark_theme);
 			nodulo_app = PlaneApplet.make(this, 
-					new AppConfig("nodulo", 1300, 960, fullscreen), conf);
+					new AppConfig("Nodulo", 1300, 960, fullscreen), conf);
+		}
+		nodulo_app.setInputProcessor();
+		setScreen(nodulo_app); }
+
+	//load
+	public void launch_nodulo_save(String save, boolean dark_theme, boolean fullscreen) {
+		if (nodulo_app == null) {
+			PlaneApplet.AppletConfig conf = 
+					new PlaneApplet.AppletConfig(true, save, dark_theme);
+			nodulo_app = PlaneApplet.make(this, 
+					new AppConfig("Nodulo", 1300, 960, fullscreen), conf);
 		}
 		nodulo_app.setInputProcessor();
 		setScreen(nodulo_app); }

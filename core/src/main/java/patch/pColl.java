@@ -28,7 +28,7 @@ public class pColl extends sPoolable {
 		String stand_ref = t.getStr(c, 1);
 		stand = pStandard.get(stand_ref); 
 		if (stand == null) return;
-		ref_in_stand = t.getStr(c, 2);
+		ref_in_stand = Utl.copy(t.getStr(c, 2));
 		
 		length = t.getInt(c, 3); 
 		
@@ -37,7 +37,7 @@ public class pColl extends sPoolable {
 		for (int i = 0 ; i < length ; i++) {
 			String data = t.getStr(c, cnt+i);
 			data = get_convert_str(data, map);
-			datas.add(data);
+			datas.add(Utl.copy(data));
 		}
 		cnt += length;
 		
@@ -108,10 +108,15 @@ public class pColl extends sPoolable {
 	public pColl() {}
 	
 	public pColl init(pSheet s, pStandard p, String r) { 
-		sheet = s; patch = s.patch; ref_in_stand = r; stand = p; empty(); 
+		sheet = s; patch = s.patch; ref_in_stand = r; stand = p; //def(); 
 		return this; }
 	
 	public void empty() {
+		datas.clear();
+		length = 0;
+	}
+
+	public void def() {
 		datas.clear();
 		length = 0;
 		if (stand != null && stand.collec_pars.get(ref_in_stand) != null) {
@@ -127,7 +132,7 @@ public class pColl extends sPoolable {
 	}
 
 	public void clear_action() {
-		empty();
+		empty(); 
 	}
 	
 	
@@ -166,6 +171,11 @@ public class pColl extends sPoolable {
 		return arr; }
 	
 	
-	
+	public void log_debug() {
+		Utl.log(pool_ref+" ");
+		if (stand != null) Utl.log(stand.ref+" "+ref_in_stand+" ");
+		for (String s : datas) Utl.log(s+" ");
+		Utl.logn();
+	}
 
 }

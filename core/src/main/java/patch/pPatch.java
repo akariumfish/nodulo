@@ -9,6 +9,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.noodle.nodulo.GdxApp;
 
 import aa_nodulo.PlaneApplet;
 import aa_nodulo.pAtom;
@@ -19,7 +20,6 @@ import aa_nodulo.pProperty;
 import aa_nodulo.pTime;
 import aa_nodulo.pView;
 import app.App;
-import app.GdxApp;
 import data.*;
 import data.sPool.State;
 import gui.*;
@@ -52,13 +52,13 @@ public class pPatch {
 		
 		if (!has_build_statics) {
 			pProperty.complete_generals();
-			build_database_book();
+//			build_database_book();
 			build_book();
 			pMacroBook.build();
 			pSheet.build();
 		}
 
-		build_database_builder(data);		
+//		build_database_builder(data);		
 		build_sheet(data);
 		pNodeSpace.build_sheet(data, has_build_statics);
 		
@@ -124,6 +124,21 @@ public class pPatch {
 			pSheet.setDefMacro("function", "FUNCTION_SETUP");
 			pSheet.setDefMacro("init_space", "init_space_def");
 			pSheet.setDefMacro("common_param", "PARAM_SETUP");
+		}})
+		;
+
+		PlaneApplet.newStartupModel("TEST")
+		.setSetupRun(new nRun() { public void run() {
+			
+			pSheet.setDefMacro("main", "main_test");
+			pSheet.setDefMacro("function", "func_test");
+			pSheet.setDefMacro("init_space", "init_space_def");
+			pSheet.setDefMacro("common_param", "PARAM_SETUP");
+			pSheet.setDefCollapse("main", false);
+			pSheet.setDefCollapse("function", false);
+			pSheet.setDefCollapse("common_param", false);
+			pSheet.setDefCollapse("init_space", false);
+			
 		}})
 		;
 		
@@ -213,14 +228,26 @@ public class pPatch {
 //	}
 
 	public void save_contents() {
-		for (pSheet s : sheets.all()) s.get_svalues();
+//		for (pSheet s : sheets.all()) s.get_svalues();
 		
-		for (pSheet s : sheets.all()) s.collec_pool.save();
-		for (pSheet s : sheets.all()) s.ent_pool.save();
-		for (pSheet s : sheets.all()) s.tile_pool.save();
-		for (pSheet s : sheets.all()) s.inst_pool.save();
-		for (pSheet s : sheets.all()) s.link_pool.save();
+//		for (pSheet s : sheets.all()) s.collec_pool.save();
+//		for (pSheet s : sheets.all()) s.ent_pool.save();
+//		for (pSheet s : sheets.all()) s.tile_pool.save();
+//		for (pSheet s : sheets.all()) s.inst_pool.save();
+//		for (pSheet s : sheets.all()) s.link_pool.save();
+
+		for (pSheet s : sheets.all()) s.save_sheet_contents();
+		
+//		Utl.logn("save"); log_debug();
+		
 	}
+	
+//	public void log_debug() {
+//		for (pSheet s : sheets.all()) if (s.bloc.ref.equals("function")) {
+//			Utl.logn("SHEET "+s.bloc.ref);
+//			for (pColl c : s.collec_pool.all()) c.log_debug();
+//		}
+//	}
 	
 	public void load_contents() {
 		for (pSheet s : sheets.all()) s.link_pool.freeAll();
@@ -229,15 +256,26 @@ public class pPatch {
 		for (pSheet s : sheets.all()) s.ent_pool.freeAll();
 		for (pSheet s : sheets.all()) s.collec_pool.freeAll();
 		
-		for (pSheet s : sheets.all()) s.get_svalues();
+//		for (pSheet s : sheets.all()) s.get_svalues();
 		
-		for (pSheet s : sheets.all()) s.collec_pool.load();
+//		Utl.logn("free"); log_debug();
+		
+//		for (pSheet s : sheets.all()) s.collec_pool.load();
+		for (pSheet s : sheets.all()) s.collec_pool.load_1();
+
+//		Utl.logn("load 1"); log_debug();
+		
 		for (pSheet s : sheets.all()) s.ent_pool.load_1();
 		for (pSheet s : sheets.all()) s.inst_pool.load_1();
 		for (pSheet s : sheets.all()) s.link_pool.load_1();
+		for (pSheet s : sheets.all()) s.collec_pool.load_2();
+
+//		Utl.logn("load 2"); log_debug();
+		
 		for (pSheet s : sheets.all()) s.ent_pool.load_2();
 		for (pSheet s : sheets.all()) s.inst_pool.load_2();
 		for (pSheet s : sheets.all()) s.link_pool.load_2();
+		for (pSheet s : sheets.all()) s.collec_pool.load_3();
 		for (pSheet s : sheets.all()) s.ent_pool.load_3();
 		for (pSheet s : sheets.all()) s.inst_pool.load_3();
 		for (pSheet s : sheets.all()) s.link_pool.load_3();
@@ -250,10 +288,13 @@ public class pPatch {
 			for (pInstance b : Utl.duplic(s.link_pool.all())) b.do_point_after_load();
 
 		app.addDelayEvent(1, new nRun() { public void run() {
-			for (pInstance b : Utl.duplic(cos)) b.run("run_event_link"); 
-			for (pInstance b : Utl.duplic(plugs)) b.run("run_event_link");
-			for (pInstance b : Utl.duplic(node_plugs)) b.run("run_event_link");  }});
+			for (pInstance b : Utl.duplic(cos)) b.run("run_event_link_from_node"); 
+//			for (pInstance b : Utl.duplic(plugs)) b.run("run_event_link");
+//			for (pInstance b : Utl.duplic(node_plugs)) b.run("run_event_link");  
+		}});
 
+//		Utl.logn("end"); log_debug();
+		
 	}
 	
 	public nMap<pSheet> sheets = new nMap<pSheet>();
@@ -379,7 +420,7 @@ public class pPatch {
 	
 	public void init() {
 		
-		bloc = app.data.obtainBloc("time_bloc");
+		bloc = app.data.root_bloc.obtainBloc("patch_bloc");
 		bloc.addObject("tick", this);
 
 		bloc.addMetode("clearing", new nRun() { public void run() {
@@ -394,23 +435,24 @@ public class pPatch {
 		
 		app.addEventSave(new nRun() { public void run() {
 			save_contents(); 
-//			app.space.save_contents(); 
+			app.space.save_contents(); 
 		}});
 
 		app.addEventEmpty(new nRun() { public void run() {
 			clear_all_inst(); 
-//			app.space.clear_all_obj();
+			app.space.clear_all_obj();
 			pTileHead.func_counter = 0;
 		}});
 
 		app.addEventLoad(new nRun() { public void run() {
 			app.addDelayEvent(1, new nRun() { public void run() {
-				Utl.logn("patch "+bloc.ref+" load_contents");
+//				Utl.logn("patch "+bloc.ref+" load_contents");
+				app.space.load_contents();
 				load_contents();
-				app.addDelayEvent(1, new nRun() { public void run() {
-//					app.space.load_contents();
-					app.space.start_space();
-				}});
+//				app.addDelayEvent(1, new nRun() { public void run() {
+////					app.space.load_contents();
+//					app.space.start_space();
+//				}});
 			}});
 		}});
 
@@ -433,7 +475,7 @@ public class pPatch {
 		view.metode("set_title", app.gdx.window_title+" patch");
 		view.get("close").setPassif().setDraw(false).setSize(0,0);
 		
-//		if (!app.config.STARTUP_LOAD) {
+		if (!app.config.STARTUP_LOAD) {
 			if (app.config.RELEASE) {
 				if (GdxApp.START_FULLSCREEN) 
 					set_viewspace(20f,1030f,660f,950f,app.config.DEF_PATCH_ZOOM);
@@ -452,9 +494,10 @@ public class pPatch {
 			}
 			sVec val_cam_pos = view.object("val_cam_pos", sVec.class);
 			val_cam_pos.set(app.config.DEF_PATCH_POS);
-//		}
+			if (app.config.PATCH_START_COLLAPSED) view.metode("run_collapse");
+		}
 
-		if (app.config.PATCH_START_COLLAPSED) view.metode("run_collapse");
+		
 		
 		app.menu.add_info_text("patch zoom: ", view.object("val_cam_scale", sFlt.class));
 		
@@ -499,18 +542,18 @@ public class pPatch {
 		add_toolbar_trigg("Pst", run_paste);
 		app.menu.add_shortcut_target("Patch - Paste", 'V', run_paste);
 		
-		val_inst_nb = bloc.obtainInt("val_inst_nb");
-		val_inst_free = bloc.obtainInt("val_inst_free");
-		val_tile_nb = bloc.obtainInt("val_tile_nb");
-		val_tile_free = bloc.obtainInt("val_tile_free");
-		val_ent_nb = bloc.obtainInt("val_ent_nb");
-		val_ent_free = bloc.obtainInt("val_ent_free");
-		val_collec_nb = bloc.obtainInt("val_collec_nb");
-		val_collec_free = bloc.obtainInt("val_collec_free");
-		val_link_nb = bloc.obtainInt("val_link_nb");
-		val_link_free = bloc.obtainInt("val_link_free");
-		val_virt_nb = bloc.obtainInt("val_virt_nb");
-		val_virt_free = bloc.obtainInt("val_virt_free");
+		val_inst_nb = app.data.system_bloc.obtainInt("val_inst_nb");
+		val_inst_free = app.data.system_bloc.obtainInt("val_inst_free");
+		val_tile_nb = app.data.system_bloc.obtainInt("val_tile_nb");
+		val_tile_free = app.data.system_bloc.obtainInt("val_tile_free");
+		val_ent_nb = app.data.system_bloc.obtainInt("val_ent_nb");
+		val_ent_free = app.data.system_bloc.obtainInt("val_ent_free");
+		val_collec_nb = app.data.system_bloc.obtainInt("val_collec_nb");
+		val_collec_free = app.data.system_bloc.obtainInt("val_collec_free");
+		val_link_nb = app.data.system_bloc.obtainInt("val_link_nb");
+		val_link_free = app.data.system_bloc.obtainInt("val_link_free");
+		val_virt_nb = app.data.system_bloc.obtainInt("val_virt_nb");
+		val_virt_free = app.data.system_bloc.obtainInt("val_virt_free");
 		
 		val_tab_copy_stack = bloc.obtainTab("val_tab_copy_stack");
 		
@@ -521,7 +564,8 @@ public class pPatch {
 		if (!app.config.RELEASE) tool_setup(false);
 		
 		app.addDelayEvent(1, new nRun() { public void run() {	
-			if (app.config.PATCH_START_WALLPAPER) val_wallp.set(true);	 }});
+			if (!app.config.STARTUP_LOAD && app.config.PATCH_START_WALLPAPER) 
+				val_wallp.set(true);	 }});
 		
 		nRun.runEvents(eventInit, bloc);
 	}
@@ -540,7 +584,7 @@ public class pPatch {
 	}
 	
 	public void tool_init(nInterface interf) {
-		interf.setContext(bloc);
+		interf.setContext(app.data.system_bloc);
 		
 		interf.add_row();
 		interf.add_row_watch(5, "inst: ", "val_inst_nb");
@@ -980,281 +1024,281 @@ public class pPatch {
 	
 	
 	
-	public static void build_database_builder(sData data) {
-		
-		nModelBook book = nGUI.book;
-		float RS = book.RS;
-		
-		sBloc_Builder database_editor_builder = new sBloc_Builder(data, "database_editor")
-			.setInitRun(new nRun() { public void run(Object o) {
-				sValueBloc b = (sValueBloc)o;
-				nWidgetGroup win = PlaneApplet.app.gui.addWidgetGroup("database_editor");
-				b.addObject("database_view_win", win);
-				win.metode("link_window_to_bloc", b);
-				win.addEventClear(new nRun() { public void run() {
-					b.clear(); }});
-				b.addEventDelete(new nRun() { public void run() {
-					win.clear(); }});
-				
-				win.metode("run_tofront");
-				
-				if (b.is_new_bloc) {
-					sVec val_pos = win.object("val_pos", sVec.class);
-					val_pos.set(20f,445f);
-				}
-				
-			}})
-			.setClearRun(new nRun() { public void run(Object o) {
-				sValueBloc b = (sValueBloc)o; 
-			}});
-
-		data.addRootBlocBuilder(database_editor_builder);
-	}
-	
-	public static void build_database_book() {
-		
-		nModelBook book = nGUI.book;
-		float RS = book.RS;
-		
-		book.newModelGroup("database_editor", new nModelGroup() { 
-			public nWidgetGroup build(nGUI gui) {
-				nWidgetGroup g = gui.addWidgetGroup("complex_window");
-
-				nInterface interf = gui.addInterface()
-						.pop(g);
-				
-				g.metode("set_title", "database editor");
-				
-				interf.add_row();
-				interf.add_row_label(10," Select Database : ");
-				interf.add_row();
-				nWidgetGroup db_list = interf.add_picklist(8,4);
-				
-				interf.add_row();
-				interf.add_row_label(4,"");
-				nWidget load_w = interf.add_row_trigg(4,"EDIT");
-				load_w.addEventTrigger(new nRun() { public void run() {
-					g.metode("edit_tab"); }});
-
-				interf.add_col_separator();
-				interf.add_col_separator();
-
-				interf.add_row();
-				nWidget tab_lb = interf.add_row_label(8,"sTab : ");
-				interf.add_row();
-				nWidget tab_h_lb = interf.add_row_label(8,"width :");
-				interf.add_row();
-				nWidget row_lb = interf.add_row_label(8,"     viewing row : ");
-				
-				interf.add_row();
-				interf.add_row_trigg(2,"<<", new nRun() { public void run() {
-					if (!g.hasObject("row")) return;
-					int row = g.object("row", Integer.class);
-					row -= 1; g.metode("view_tab_row", row);
-				}});
-				interf.add_row_label(4,"Row");
-				interf.add_row_trigg(2,">>", new nRun() { public void run() {
-					if (!g.hasObject("row")) return;
-					int row = g.object("row", Integer.class);
-					row += 1; g.metode("view_tab_row", row);
-				}});
-
-				interf.add_row();
-				interf.add_row_trigg(3,"Add Row", new nRun() { public void run() {
-					sTab tab = g.object("tab", sTab.class);
-					if (tab == null) return;
-					int row = tab.width() + 1;
-					tab.setWidth(row);
-					tab_h_lb.setText("width :"+tab.width());
-					g.metode("view_tab_row", row-1);
-				}});
-				interf.add_row_label(2,"");
-				interf.add_row_trigg(3,"Del Row", new nRun() { public void run() {
-					
-				}});
-
-				interf.add_col_separator();
-
-
-				interf.add_col();
-
-				interf.add_row();
-				interf.add_row_label(14," Database Editor : ");
-				
-				interf.add_row();
-				nWidget cell_lb = interf.add_row_label(8,"0 Cell in this row");
-				interf.add_row_label(1,"");
-				interf.add_row_trigg(4,"Add Cell", new nRun() { public void run() {
-					sTab tab = g.object("tab", sTab.class);
-					if (tab == null) return;
-					if (!g.hasObject("row")) return;
-					int row = g.object("row", Integer.class);
-					int h = tab.height(row);
-					h += 1; tab.setRowHeight(row, h); 
-					g.metode("view_tab_row", row);
-				}});
-				interf.add_row_label(1,"");
-//				interf.add_row_trigg(2,"Del", new nRunnable() { public void run() {
+//	public static void build_database_builder(sData data) {
+//		
+//		nModelBook book = nGUI.book;
+//		float RS = book.RS;
+//		
+//		sBloc_Builder database_editor_builder = new sBloc_Builder(data, "database_editor")
+//			.setInitRun(new nRun() { public void run(Object o) {
+//				sValueBloc b = (sValueBloc)o;
+//				nWidgetGroup win = PlaneApplet.app.gui.addWidgetGroup("database_editor");
+//				b.addObject("database_view_win", win);
+//				win.metode("link_window_to_bloc", b);
+//				win.addEventClear(new nRun() { public void run() {
+//					b.clear(); }});
+//				b.addEventDelete(new nRun() { public void run() {
+//					win.clear(); }});
+//				
+//				win.metode("run_tofront");
+//				
+//				if (b.is_new_bloc) {
+//					sVec val_pos = win.object("val_pos", sVec.class);
+//					val_pos.set(20f,445f);
+//				}
+//				
+//			}})
+//			.setClearRun(new nRun() { public void run(Object o) {
+//				sValueBloc b = (sValueBloc)o; 
+//			}});
+//
+//		data.addRootBlocBuilder(database_editor_builder);
+//	}
+//	
+//	public static void build_database_book() {
+//		
+//		nModelBook book = nGUI.book;
+//		float RS = book.RS;
+//		
+//		book.newModelGroup("database_editor", new nModelGroup() { 
+//			public nWidgetGroup build(nGUI gui) {
+//				nWidgetGroup g = gui.addWidgetGroup("complex_window");
+//
+//				nInterface interf = gui.addInterface()
+//						.pop(g);
+//				
+//				g.metode("set_title", "database editor");
+//				
+//				interf.add_row();
+//				interf.add_row_label(10," Select Database : ");
+//				interf.add_row();
+//				nWidgetGroup db_list = interf.add_picklist(8,4);
+//				
+//				interf.add_row();
+//				interf.add_row_label(4,"");
+//				nWidget load_w = interf.add_row_trigg(4,"EDIT");
+//				load_w.addEventTrigger(new nRun() { public void run() {
+//					g.metode("edit_tab"); }});
+//
+//				interf.add_col_separator();
+//				interf.add_col_separator();
+//
+//				interf.add_row();
+//				nWidget tab_lb = interf.add_row_label(8,"sTab : ");
+//				interf.add_row();
+//				nWidget tab_h_lb = interf.add_row_label(8,"width :");
+//				interf.add_row();
+//				nWidget row_lb = interf.add_row_label(8,"     viewing row : ");
+//				
+//				interf.add_row();
+//				interf.add_row_trigg(2,"<<", new nRun() { public void run() {
+//					if (!g.hasObject("row")) return;
+//					int row = g.object("row", Integer.class);
+//					row -= 1; g.metode("view_tab_row", row);
+//				}});
+//				interf.add_row_label(4,"Row");
+//				interf.add_row_trigg(2,">>", new nRun() { public void run() {
+//					if (!g.hasObject("row")) return;
+//					int row = g.object("row", Integer.class);
+//					row += 1; g.metode("view_tab_row", row);
+//				}});
+//
+//				interf.add_row();
+//				interf.add_row_trigg(3,"Add Row", new nRun() { public void run() {
+//					sTab tab = g.object("tab", sTab.class);
+//					if (tab == null) return;
+//					int row = tab.width() + 1;
+//					tab.setWidth(row);
+//					tab_h_lb.setText("width :"+tab.width());
+//					g.metode("view_tab_row", row-1);
+//				}});
+//				interf.add_row_label(2,"");
+//				interf.add_row_trigg(3,"Del Row", new nRun() { public void run() {
+//					
+//				}});
+//
+//				interf.add_col_separator();
+//
+//
+//				interf.add_col();
+//
+//				interf.add_row();
+//				interf.add_row_label(14," Database Editor : ");
+//				
+//				interf.add_row();
+//				nWidget cell_lb = interf.add_row_label(8,"0 Cell in this row");
+//				interf.add_row_label(1,"");
+//				interf.add_row_trigg(4,"Add Cell", new nRun() { public void run() {
 //					sTab tab = g.object("tab", sTab.class);
 //					if (tab == null) return;
 //					if (!g.hasObject("row")) return;
 //					int row = g.object("row", Integer.class);
 //					int h = tab.height(row);
-//					h -= 1; if (h < 0) h = 0;
-//					tab.setColHeight(row, h); 
+//					h += 1; tab.setRowHeight(row, h); 
 //					g.metode("view_tab_row", row);
 //				}});
-
-				interf.add_col_separator();
-
-				interf.add_row();
-				nWidgetGroup edit_list = interf.add_scrollist(14,12);
-
-				ArrayList<nWidget> ent_arr = new ArrayList<nWidget>();
-				ArrayList<nWidgetGroup> dm_arr = new ArrayList<nWidgetGroup>();
-				ArrayList<nRun> run_arr = new ArrayList<nRun>();
-				
-				g.addMetode("clear_edit_list", new nRun() { public void run() {
-					
-					interf.change_current_list(edit_list);
-					
-					row_lb.setText("");
-					cell_lb.setText("");
-
-					for (nWidget w : ent_arr) w.clear();
-					
-					if (g.hasGroup("dropmenu_type")) {
-						nWidgetGroup w = g.getGroup("dropmenu_type");
-						dm_arr.remove(w);
-						g.removeGroup(w); w.clear();
-					}
-					
-					for (nWidgetGroup w : dm_arr) w.clear();
-					
-					sTab tab = g.object("tab", sTab.class);
-					if (tab == null) return;
-					for (nRun w : run_arr) tab.removeEventChangeLastFrame(w); 
-					
-					ent_arr.clear(); dm_arr.clear(); run_arr.clear();
-				}});
-				
-				g.addEventClear(new nRun() { public void run() {
-					g.metode("clear_edit_list"); }});
-				
-				g.addMetode("view_tab_row", new nRun() { public void run(Object o) {
-					int row = (Integer)o;
-					sTab tab = g.object("tab", sTab.class);
-					
-					g.metode("clear_edit_list"); 
-					
-					if (tab == null) return;
-					if (row >= tab.width() || row < 0) { 
-						if (tab.width() > 0) g.metode("view_tab_row", 0); 
-						return; 
-					} 
-
-					g.setObject("row", row); 
-					row_lb.setText("viewing row : "+row); 
-
-					cell_lb.setText(tab.height(row)+" Cell in this row"); 
-					
-					for (int i = 0 ; i < tab.height(row) ; i++) {
-						
-						nWidget ent = interf.add_list_entry("");
-						ent.setStackAxis(nAlign.HORIZONTAL).setStackSpacing(2f);
-						
-						nWidget lab = interf.get_row_entry_widget(2);
-						nWidget fld = interf.get_row_entry_widget(8);
-						nWidget typ = interf.get_row_entry_widget(1);
-						nWidget del = interf.get_row_entry_widget(1);
-						
-						lab.setParent(ent).setText(""+i).setStacked(true);
-						fld.setParent(ent).setStacked(true);
-						fld.setField(true).copyLookFrom(interf.gui.book.getModel("text_field"));
-						typ.setParent(ent).setText("").setTrigger().setStacked(true);
-						del.setParent(ent).setText("x").setTrigger().setStacked(true);
-						
-						if (tab.getObj(row,i) == null) typ.setText("null");
-						else if (!Utl.type_is_used(tab.getObj(row,i).getClass())) 
-							typ.setText("??");
-						else typ.setText(Utl.type_class_type.get(
-								tab.getObj(row,i).getClass()));
-						
-						ent_arr.add(lab); ent_arr.add(fld); 
-						ent_arr.add(typ); ent_arr.add(del); 
-						
-						nWidgetGroup dropmenu_type = null;
-						if (g.hasGroup("dropmenu_type"))
-							dropmenu_type = g.getGroup("dropmenu_type");
-						else {
-							dropmenu_type = gui.addWidgetGroup("dropmenu");
-							g.addWidgetGroup("dropmenu_type", dropmenu_type);
-							dm_arr.add(dropmenu_type);
-						}
-								
-						
-						typ.addEventTrigger(new nRun(i) { public void run() {
-							nWidgetGroup dm_type = null;
-							if (g.hasGroup("dropmenu_type"))
-								dm_type = g.getGroup("dropmenu_type");
-							else {
-								dm_type = gui.addWidgetGroup("dropmenu");
-								g.addWidgetGroup("dropmenu_type", dm_type);
-								dm_arr.add(dm_type);
-							}
-							dm_type.metode("clear_entrys");
-							for (String sc : Utl.type_short_names) {
-								nWidget w1 = (nWidget)dm_type
-										.metodeGet("add_entry_custom", sc, 
-												RS*6f, RS*2f/3f);
-								w1.addEventTrigger(new nRun() { public void run() {
-									typ.setText(sc); }}); 
-							}
-							dm_type.metode("open", typ); 
-						}});
-						
-						fld.addEventFieldChange(new nRun(i) { public void run() {
-							tab.set(row, (int)builder, 
-									Utl.from_string(fld.getText(), 
-									Utl.type_type_class.get(typ.getText()))); 
-						}});
-
-						del.addEventTrigger(new nRun(i) { public void run() {
-							
-						}});
-						
-						nRun tab_up = new nRun(i) { public void run() {
-							fld.setText(Utl.to_string(tab.get(row,(int)builder,
-									Utl.type_type_class.get(typ.getText())))); }};
-						tab.addEventChangeLastFrame(tab_up);
-						tab_up.run();
-						run_arr.add(tab_up);
-					}
-				}});
-				
-				g.addMetode("list_db", new nRun() { public void run() {
-					interf.change_current_list(db_list);
-					for(Map.Entry<String,sTab> me : App.ap.data.databases.entrySet()) {
-						String r = me.getKey(); sTab tab = me.getValue();
-						interf.add_list_entry(r);
-					}
-				}});
-				g.metode("list_db");
-				
-				g.addMetode("edit_tab", new nRun() { public void run() {
-					String db_name = (String)db_list.metodeGet("get_pick");
-					if (db_name == null) return;
-					sTab tab = App.ap.data.databases.get(db_name);
-					if (tab == null) return;
-					g.setObject("tab", tab);
-					tab_lb.setText("sTab : "+tab.ref);
-					tab_h_lb.setText("width :"+tab.width());
-					g.metode("view_tab_row", 0);
-				}});
-
-				return g;
-			} 
-		} );
-		
-	}
+//				interf.add_row_label(1,"");
+////				interf.add_row_trigg(2,"Del", new nRunnable() { public void run() {
+////					sTab tab = g.object("tab", sTab.class);
+////					if (tab == null) return;
+////					if (!g.hasObject("row")) return;
+////					int row = g.object("row", Integer.class);
+////					int h = tab.height(row);
+////					h -= 1; if (h < 0) h = 0;
+////					tab.setColHeight(row, h); 
+////					g.metode("view_tab_row", row);
+////				}});
+//
+//				interf.add_col_separator();
+//
+//				interf.add_row();
+//				nWidgetGroup edit_list = interf.add_scrollist(14,12);
+//
+//				ArrayList<nWidget> ent_arr = new ArrayList<nWidget>();
+//				ArrayList<nWidgetGroup> dm_arr = new ArrayList<nWidgetGroup>();
+//				ArrayList<nRun> run_arr = new ArrayList<nRun>();
+//				
+//				g.addMetode("clear_edit_list", new nRun() { public void run() {
+//					
+//					interf.change_current_list(edit_list);
+//					
+//					row_lb.setText("");
+//					cell_lb.setText("");
+//
+//					for (nWidget w : ent_arr) w.clear();
+//					
+//					if (g.hasGroup("dropmenu_type")) {
+//						nWidgetGroup w = g.getGroup("dropmenu_type");
+//						dm_arr.remove(w);
+//						g.removeGroup(w); w.clear();
+//					}
+//					
+//					for (nWidgetGroup w : dm_arr) w.clear();
+//					
+//					sTab tab = g.object("tab", sTab.class);
+//					if (tab == null) return;
+//					for (nRun w : run_arr) tab.removeEventChangeLastFrame(w); 
+//					
+//					ent_arr.clear(); dm_arr.clear(); run_arr.clear();
+//				}});
+//				
+//				g.addEventClear(new nRun() { public void run() {
+//					g.metode("clear_edit_list"); }});
+//				
+//				g.addMetode("view_tab_row", new nRun() { public void run(Object o) {
+//					int row = (Integer)o;
+//					sTab tab = g.object("tab", sTab.class);
+//					
+//					g.metode("clear_edit_list"); 
+//					
+//					if (tab == null) return;
+//					if (row >= tab.width() || row < 0) { 
+//						if (tab.width() > 0) g.metode("view_tab_row", 0); 
+//						return; 
+//					} 
+//
+//					g.setObject("row", row); 
+//					row_lb.setText("viewing row : "+row); 
+//
+//					cell_lb.setText(tab.height(row)+" Cell in this row"); 
+//					
+//					for (int i = 0 ; i < tab.height(row) ; i++) {
+//						
+//						nWidget ent = interf.add_list_entry("");
+//						ent.setStackAxis(nAlign.HORIZONTAL).setStackSpacing(2f);
+//						
+//						nWidget lab = interf.get_row_entry_widget(2);
+//						nWidget fld = interf.get_row_entry_widget(8);
+//						nWidget typ = interf.get_row_entry_widget(1);
+//						nWidget del = interf.get_row_entry_widget(1);
+//						
+//						lab.setParent(ent).setText(""+i).setStacked(true);
+//						fld.setParent(ent).setStacked(true);
+//						fld.setField(true).copyLookFrom(interf.gui.book.getModel("text_field"));
+//						typ.setParent(ent).setText("").setTrigger().setStacked(true);
+//						del.setParent(ent).setText("x").setTrigger().setStacked(true);
+//						
+//						if (tab.getObj(row,i) == null) typ.setText("null");
+//						else if (!Utl.type_is_used(tab.getObj(row,i).getClass())) 
+//							typ.setText("??");
+//						else typ.setText(Utl.type_class_type.get(
+//								tab.getObj(row,i).getClass()));
+//						
+//						ent_arr.add(lab); ent_arr.add(fld); 
+//						ent_arr.add(typ); ent_arr.add(del); 
+//						
+//						nWidgetGroup dropmenu_type = null;
+//						if (g.hasGroup("dropmenu_type"))
+//							dropmenu_type = g.getGroup("dropmenu_type");
+//						else {
+//							dropmenu_type = gui.addWidgetGroup("dropmenu");
+//							g.addWidgetGroup("dropmenu_type", dropmenu_type);
+//							dm_arr.add(dropmenu_type);
+//						}
+//								
+//						
+//						typ.addEventTrigger(new nRun(i) { public void run() {
+//							nWidgetGroup dm_type = null;
+//							if (g.hasGroup("dropmenu_type"))
+//								dm_type = g.getGroup("dropmenu_type");
+//							else {
+//								dm_type = gui.addWidgetGroup("dropmenu");
+//								g.addWidgetGroup("dropmenu_type", dm_type);
+//								dm_arr.add(dm_type);
+//							}
+//							dm_type.metode("clear_entrys");
+//							for (String sc : Utl.type_short_names) {
+//								nWidget w1 = (nWidget)dm_type
+//										.metodeGet("add_entry_custom", sc, 
+//												RS*6f, RS*2f/3f);
+//								w1.addEventTrigger(new nRun() { public void run() {
+//									typ.setText(sc); }}); 
+//							}
+//							dm_type.metode("open", typ); 
+//						}});
+//						
+//						fld.addEventFieldChange(new nRun(i) { public void run() {
+//							tab.set(row, (int)builder, 
+//									Utl.from_string(fld.getText(), 
+//									Utl.type_type_class.get(typ.getText()))); 
+//						}});
+//
+//						del.addEventTrigger(new nRun(i) { public void run() {
+//							
+//						}});
+//						
+//						nRun tab_up = new nRun(i) { public void run() {
+//							fld.setText(Utl.to_string(tab.get(row,(int)builder,
+//									Utl.type_type_class.get(typ.getText())))); }};
+//						tab.addEventChangeLastFrame(tab_up);
+//						tab_up.run();
+//						run_arr.add(tab_up);
+//					}
+//				}});
+//				
+//				g.addMetode("list_db", new nRun() { public void run() {
+//					interf.change_current_list(db_list);
+//					for(Map.Entry<String,sTab> me : App.ap.data.databases.entrySet()) {
+//						String r = me.getKey(); sTab tab = me.getValue();
+//						interf.add_list_entry(r);
+//					}
+//				}});
+//				g.metode("list_db");
+//				
+//				g.addMetode("edit_tab", new nRun() { public void run() {
+//					String db_name = (String)db_list.metodeGet("get_pick");
+//					if (db_name == null) return;
+//					sTab tab = App.ap.data.databases.get(db_name);
+//					if (tab == null) return;
+//					g.setObject("tab", tab);
+//					tab_lb.setText("sTab : "+tab.ref);
+//					tab_h_lb.setText("width :"+tab.width());
+//					g.metode("view_tab_row", 0);
+//				}});
+//
+//				return g;
+//			} 
+//		} );
+//		
+//	}
 }
