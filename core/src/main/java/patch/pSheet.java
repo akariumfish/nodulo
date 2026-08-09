@@ -513,80 +513,80 @@ public class pSheet {
 //	}
 	
 
-//	public ArrayList<pInstance> build_insts_from_tab(sTab tab) {
-//		
-////		app.log("Paste");
-//
-//		ArrayList<pInstance> insts = new ArrayList<pInstance>();
-//		
-//		if (tab == null || tab.width() < 2) return insts; 
-//
-//		ArrayList<pInstance> ents = new ArrayList<pInstance>();
-//		ArrayList<pInstance> links = new ArrayList<pInstance>();
-//		ArrayList<pColl> cols = new ArrayList<pColl>();
-//		
-//		HashMap<String,String> old_new = new HashMap<String,String>();
-//		
-//		int inst_nb = tab.getInt(0,0);
-//		int ent_nb = tab.getInt(0,1);
-//		int link_nb = tab.getInt(0,2);
-//		int col_nb = tab.getInt(0,3);
-//
-//		int cnt = 4;
-//		
-//		for (int i = 0 ; i < inst_nb ; i++) {
-//			pInstance b = inst_pool.obtain_uninit();
-//			String old_name = tab.getStr(0,cnt); cnt++;
-//			old_new.put(old_name,b.pool_ref);
-//			insts.add(b); }
-//		for (int i = 0 ; i < ent_nb ; i++) {
-//			pInstance b = ent_pool.obtain_uninit();
-//			String old_name = tab.getStr(0,cnt); cnt++;
-//			old_new.put(old_name,b.pool_ref);
-//			ents.add(b); }
-//		for (int i = 0 ; i < link_nb ; i++) {
-//			pInstance b = link_pool.obtain_uninit();
-//			String old_name = tab.getStr(0,cnt); cnt++;
-//			old_new.put(old_name,b.pool_ref);
-//			links.add(b); }
-//		for (int i = 0 ; i < col_nb ; i++) {
-//			pColl b = collec_pool.obtain_uninit();
-//			String old_name = tab.getStr(0,cnt); cnt++;
-//			old_new.put(old_name,b.pool_ref);
-//			cols.add(b); }
-//		
-//		cnt = 1;
-//		for (int i = 0 ; i < inst_nb ; i++) {
-//			insts.get(i).from_tab(tab, cnt, old_new); cnt++; }
-//		for (int i = 0 ; i < ent_nb ; i++) {
-//			ents.get(i).from_tab(tab, cnt, old_new); cnt++; }
-//		for (int i = 0 ; i < link_nb ; i++) {
-//			links.get(i).from_tab(tab, cnt, old_new); cnt++; }
-//		for (int i = 0 ; i < col_nb ; i++) {
-//			cols.get(i).from_tab(tab, cnt, old_new); cnt++; }
-//
-//		for (pColl b : cols) if (b.stand == null) { cols.remove(b); b.clear(); }
-//		for (pInstance b : links) if (b.stand == null) { links.remove(b); b.clear(); }
-//		for (pInstance b : ents) if (b.stand == null) { ents.remove(b); b.clear(); }
-//		for (pInstance b : insts) if (b.stand == null) { insts.remove(b); b.clear(); }
-//		
-//		for (pColl b : cols) { b.do_init(); }
-//		for (pInstance b : ents) { b.do_init(); }
-//		for (pInstance b : insts) { b.do_init(); }
-//		for (pInstance b : links) { b.do_init(); }
-//		for (pColl b : cols) { b.do_load(); }
-//		for (pInstance b : ents) { b.do_load(); }
-//		for (pInstance b : insts) { b.do_load(); }
-//		for (pInstance b : links) { b.do_load(); }
-//
-//		for (pInstance b : ents) b.do_point_after_load();
-//		for (pInstance b : insts) b.do_point_after_load();
-//		for (pInstance b : links) b.do_point_after_load();
-//
-//		run_collapse.run();
-//		
-//		return insts;
-//	}
+	public ArrayList<pInstance> build_insts_from_tab(sTab tab) {
+		
+//		app.log("Paste");
+
+		ArrayList<pInstance> insts = new ArrayList<pInstance>();
+		
+		if (tab == null || tab.width() < 2) return insts; 
+
+		ArrayList<pInstance> ents = new ArrayList<pInstance>();
+		ArrayList<pInstance> links = new ArrayList<pInstance>();
+		ArrayList<pColl> cols = new ArrayList<pColl>();
+		
+		HashMap<String,String> old_new = new HashMap<String,String>();
+		
+		int inst_nb = tab.getInt(0,0);
+		int ent_nb = tab.getInt(0,1);
+		int link_nb = tab.getInt(0,2);
+		int col_nb = tab.getInt(0,3);
+
+		int cnt = 4;
+		
+		for (int i = 0 ; i < inst_nb ; i++) {
+			pInstance b = inst_pool.obtain_uninit();
+			String old_name = tab.getStr(0,cnt); cnt++;
+			old_new.put(old_name,b.pool_ref);
+			insts.add(b); }
+		for (int i = 0 ; i < ent_nb ; i++) {
+			pInstance b = ent_pool.obtain_uninit();
+			String old_name = tab.getStr(0,cnt); cnt++;
+			old_new.put(old_name,b.pool_ref);
+			ents.add(b); }
+		for (int i = 0 ; i < link_nb ; i++) {
+			pInstance b = link_pool.obtain_uninit();
+			String old_name = tab.getStr(0,cnt); cnt++;
+			old_new.put(old_name,b.pool_ref);
+			links.add(b); }
+		for (int i = 0 ; i < col_nb ; i++) {
+			pColl b = collec_pool.obtain_uninit();
+			String old_name = tab.getStr(0,cnt); cnt++;
+			old_new.put(old_name,b.pool_ref);
+			cols.add(b); }
+		
+		cnt = 1;
+		for (int i = 0 ; i < inst_nb ; i++) {
+			insts.get(i).from_tab(tab, cnt, old_new); cnt++; }
+		for (int i = 0 ; i < ent_nb ; i++) {
+			ents.get(i).from_tab(tab, cnt, old_new); cnt++; }
+		for (int i = 0 ; i < link_nb ; i++) {
+			links.get(i).from_tab(tab, cnt, old_new); cnt++; }
+		for (int i = 0 ; i < col_nb ; i++) {
+			cols.get(i).from_tab(tab, cnt, old_new); cnt++; }
+
+		for (pColl b : cols) if (b.stand == null) { cols.remove(b); b.clear(); }
+		for (pInstance b : links) if (b.stand == null) { links.remove(b); b.clear(); }
+		for (pInstance b : ents) if (b.stand == null) { ents.remove(b); b.clear(); }
+		for (pInstance b : insts) if (b.stand == null) { insts.remove(b); b.clear(); }
+		
+		for (pColl b : cols) { b.do_init(); }
+		for (pInstance b : ents) { b.do_init(); }
+		for (pInstance b : insts) { b.do_init(); }
+		for (pInstance b : links) { b.do_init(); }
+		for (pColl b : cols) { b.do_load(); }
+		for (pInstance b : ents) { b.do_load(); }
+		for (pInstance b : insts) { b.do_load(); }
+		for (pInstance b : links) { b.do_load(); }
+
+		for (pInstance b : ents) b.do_point_after_load();
+		for (pInstance b : insts) b.do_point_after_load();
+		for (pInstance b : links) b.do_point_after_load();
+
+		run_collapse.run();
+		
+		return insts;
+	}
 	
 	
 

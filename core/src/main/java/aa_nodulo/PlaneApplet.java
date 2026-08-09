@@ -32,8 +32,8 @@ import util.nScripted;
 public class PlaneApplet extends App {
 
 	
-//	public static boolean TITLE_SCREEN = true; 
-	public static boolean TITLE_SCREEN = false;
+	public static boolean TITLE_SCREEN = true; 
+//	public static boolean TITLE_SCREEN = false;
 
 //	public static boolean START_FULLSCREEN = true;
 	public static boolean START_FULLSCREEN = false;
@@ -74,9 +74,9 @@ public class PlaneApplet extends App {
 		public boolean START_HELP = true;
 //		public boolean START_HELP = false;
 
-		public String STARTUP_MODEL_REF = "TEST";
+//		public String STARTUP_MODEL_REF = "TEST";
 //		public String STARTUP_MODEL_REF = "box2d_exemple";
-//		public String STARTUP_MODEL_REF = "patch_exemple";
+		public String STARTUP_MODEL_REF = "patch_exemple";
 //		public String STARTUP_MODEL_REF = "atom_game";
 //		public String STARTUP_MODEL_REF = "";
 
@@ -145,17 +145,14 @@ public class PlaneApplet extends App {
 
 	public boolean NET_CTRL = false;
 	
-	nPainting paint;
+//	nPainting paint;
 	
 	public sValueBloc bloc;
-	
-	public InputMultiplexer multiplexer;
 	
 	@Override
 	public void setInputProcessor() {
 		Gdx.input.setInputProcessor(input);
 	}
-
 	
 	
 	public static void build_setup() {
@@ -168,7 +165,7 @@ public class PlaneApplet extends App {
 	private static boolean has_build_statics = false;
 	private static void build_help() {
 		if (has_build_statics) return;
-		nMenu.newHelp("help_1", "txt1")
+		nGUI.newHelp("help_1", "txt1")
 		.text(" txt2")
 		.line()
 		.text("txt3")
@@ -177,7 +174,7 @@ public class PlaneApplet extends App {
 		.line()
 		;
 		
-		nMenu.newHelp("help_2", "txt5")
+		nGUI.newHelp("help_2", "txt5")
 		.line()
 		.text("txt6")
 		.text("txt7")
@@ -305,14 +302,10 @@ public class PlaneApplet extends App {
 
 	@Override 
 	public void draw_start() {
-
-//		stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 60f));
 		
 	}
 	@Override 
 	public void draw_end() {
-		
-//		stage.draw();
 		
 	}
 	
@@ -389,7 +382,7 @@ public class PlaneApplet extends App {
 				boolean b = (boolean)o; state = b; }};
 			nRun run_clic = new nRun() { public void run(Object o) {
 				boolean b = (boolean)o; if (b) click = true; else unclick = true; }};
-			menu.add_shortcut_target(shortcut_name, key, run_clic, run_state);
+			gui.add_shortcut_target(shortcut_name, key, run_clic, run_state);
 			inputs.put(input_ref+"_state", new nRun() { public Object get() {
 				return state; }});
 			inputs.put(input_ref+"_click", new nRun() { public Object get() {
@@ -420,12 +413,12 @@ public class PlaneApplet extends App {
 		nRun run_ccw = new nRun() { public void run(Object o) {
 			boolean b = (boolean)o; key_ccw = b; }};
 
-		menu.add_shortcut_target("Input - Up", 'W', null, run_up);
-		menu.add_shortcut_target("Input - Down", 'S', null, run_down);
-		menu.add_shortcut_target("Input - Left", 'A', null, run_left);
-		menu.add_shortcut_target("Input - Right", 'D', null, run_right);
-		menu.add_shortcut_target("Input - CW", 'E', null, run_cw);
-		menu.add_shortcut_target("Input - CCW", 'Q', null, run_ccw);
+		gui.add_shortcut_target("Input - Up", 'W', null, run_up);
+		gui.add_shortcut_target("Input - Down", 'S', null, run_down);
+		gui.add_shortcut_target("Input - Left", 'A', null, run_left);
+		gui.add_shortcut_target("Input - Right", 'D', null, run_right);
+		gui.add_shortcut_target("Input - CW", 'E', null, run_cw);
+		gui.add_shortcut_target("Input - CCW", 'Q', null, run_ccw);
 		
 		new KeyInput("key_space", "Input - Space", ' ');
 		new KeyInput("key_w", "Input - W", 'Z');

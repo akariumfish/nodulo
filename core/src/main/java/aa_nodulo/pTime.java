@@ -163,8 +163,8 @@ public class pTime {
 		nRun run_pause = new nRun() { public void run(Object o) { 
 			if ((boolean)o) val_pause.set(!val_pause.get()); }};
 			
-		app.menu.add_shortcut_target("Time - Next Tick", 'N', run_do_tick);
-		app.menu.add_shortcut_target("Time - Pause", 'P', run_pause);
+		app.gui.add_shortcut_target("Time - Next Tick", 'N', run_do_tick);
+		app.gui.add_shortcut_target("Time - Pause", 'P', run_pause);
 
 		app.addEventToolInit(new nRun() { public void run(Object o) {
 			nInterface interf = (nInterface)o;

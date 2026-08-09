@@ -587,6 +587,7 @@ public class pNode {
 				patch.select_nodes.remove(instance);
 			instance.object("group", nWidgetGroup.class).get("selline").setOutline(false);
 			instance.setData("selected", false);
+//			if (patch.select_nodes.size() == 0) instance.sheet.unselect_sheet();
 		}})
 		.newRun("pop_node", new nRun() {public Object get() { 
 			String co_ref = arg(0,String.class);

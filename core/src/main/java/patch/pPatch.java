@@ -210,6 +210,7 @@ public class pPatch {
 	}
 
 	public void move_inst_group_to_cam(ArrayList<pInstance> list) {
+		if (list.size() == 0) return;
 		Vector2 center = new Vector2();
 		for (pInstance b : list) if (b.stand != null) { center.add(b.getDataVec("pos")); }
 		center.x /= list.size(); center.y /= list.size();
@@ -217,6 +218,8 @@ public class pPatch {
 		center.add(-cam_pos.x(), -cam_pos.y());
 		center.x = center.x - center.x%pNode.BRIC_GRID_SIZE + pNode.BRIC_GRID_SIZE;
 		center.y = center.y - center.y%pNode.BRIC_GRID_SIZE + pNode.BRIC_GRID_SIZE;
+		pSheet sheet = list.get(0).sheet;
+		center.add(sheet.sheet_ref.getLocalPos());
 		for (pInstance b : list) if (b.stand != null) { b.addDataVec("pos", center); }
 	}
 	
@@ -512,35 +515,38 @@ public class pPatch {
 		nRun run_del = new nRun() { public void run() {
 			clear_select(); }};
 		add_toolbar_trigg("Del", run_del);
-		app.menu.add_shortcut_target("Patch - Del", 'O', run_del);
+		app.gui.add_shortcut_target("Patch - Del", 'O', run_del);
 		nRun run_sel = new nRun() { public void run() {
 			if (select_nodes.size() == nodes.size()) unselect_all();
 			else select_all(); 
 		}};
 		add_toolbar_trigg("Sel", run_sel);
-		app.menu.add_shortcut_target("Patch - Select", 'I', run_sel);
+		app.gui.add_shortcut_target("Patch - Select", 'I', run_sel);
 		nRun run_cut = new nRun() { public void run() {
 			ArrayList<pInstance> sel = new ArrayList<pInstance>();
 			for (pInstance n : select_nodes) sel.add(n);
 			save_insts_to_tab(sel, val_tab_copy_stack); 
 			clear_select(); }};
 		add_toolbar_trigg("Ct", run_cut);
-		app.menu.add_shortcut_target("Patch - Cut", 'X', run_cut);
+		app.gui.add_shortcut_target("Patch - Cut", 'X', run_cut);
 		nRun run_copy = new nRun() { public void run() {
 			ArrayList<pInstance> sel = new ArrayList<pInstance>();
 			for (pInstance n : select_nodes) sel.add(n);
 			save_insts_to_tab(sel, val_tab_copy_stack); 
 		}};
 		add_toolbar_trigg("Cp", run_copy);
-		app.menu.add_shortcut_target("Patch - Copy", 'C', run_copy);
+		app.gui.add_shortcut_target("Patch - Copy", 'C', run_copy);
 		nRun run_paste = new nRun() { public void run() {
-//			ArrayList<pInstance> paste = build_insts_from_tab(val_tab_copy_stack); 
-//			unselect_all();
-//			for (pInstance b : paste) { b.run("select"); }
-//			move_inst_group_to_cam(paste);
+			if (select_sheet != null) {
+				ArrayList<pInstance> paste = 
+						select_sheet.build_insts_from_tab(val_tab_copy_stack); 
+				unselect_all();
+				for (pInstance b : paste) { b.run("select"); }
+				move_inst_group_to_cam(paste);
+			}
 		}};
 		add_toolbar_trigg("Pst", run_paste);
-		app.menu.add_shortcut_target("Patch - Paste", 'V', run_paste);
+		app.gui.add_shortcut_target("Patch - Paste", 'V', run_paste);
 		
 		val_inst_nb = app.data.system_bloc.obtainInt("val_inst_nb");
 		val_inst_free = app.data.system_bloc.obtainInt("val_inst_free");
@@ -644,7 +650,7 @@ public class pPatch {
 				p = sheet.sheet_bound_bound.getParentPos();
 				s = sheet.sheet_bound_bound.getBoundedSize();
 				sheet.sheet_ref.setPos(st_x-p.x,-p.y-s.y/2f);
-				st_x += s.x + 8f*app.gui.book.RS;
+				st_x += s.x + 8f*nGUI.book.RS;
 			}
 			st_x /= 2.0f;
 			for (pSheet sheet : sheets.all()) { sheet.sheet_ref.addPos(-st_x, 0); }
@@ -899,7 +905,12 @@ public class pPatch {
 					nRun run_selzone = new nRun() { public void run() {
 						
 						nWidget viewsp_bg = patch.view.get("background");
-						
+
+//						if (g.object("selzone_clic", Boolean.class)) {
+//							if (patch.select_nodes.size() == 0 && 
+//									patch.select_sheet != null) 
+//								patch.select_sheet.unselect_sheet();
+//						}
 						if (viewsp_bg.mouseOverZone) {
 							if (!g.object("selzone_clic", Boolean.class) && 
 									App.ap.input.mouseLeft.trigClick) {
@@ -966,9 +977,9 @@ public class pPatch {
 									br.run("unselect");
 								}
 							}
-							if (patch.select_nodes.size() == 0 && 
-									patch.select_sheet != null) 
-								patch.select_sheet.unselect_sheet();
+//							if (patch.select_nodes.size() == 0 && 
+//									patch.select_sheet != null) 
+//								patch.select_sheet.unselect_sheet();
 						}
 						
 					}};

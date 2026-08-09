@@ -1,11 +1,15 @@
 package gui;
 
 import java.util.ArrayList;
+import java.util.Map;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.noodle.nodulo.GdxApp;
 
 import aa_nodulo.PlaneApplet;
 import app.nDrawer;
@@ -179,6 +183,9 @@ public class nGUI {
 
 	public nWidgetGroup group_infopop = null;
 	public nWidgetGroup group_popWindow = null;
+
+	public nWidget menu_back;
+	public nWidget menu_ref;
 	
 	public nGUI(App app) {
 		in = app.input; data = app.data; context = app.gdx; drawer = app;
@@ -213,7 +220,7 @@ public class nGUI {
 		
 		if (!has_static) {
 			nGUIBook.build_all_book(book);
-			nMenu.build_book();
+			nGUIBook.build_menu_book();
 			nToolBox.build_book();
 		}
 
@@ -230,6 +237,45 @@ public class nGUI {
 	
 		group_infopop = addWidgetGroup("info_pop");
 		group_popWindow = addWidgetGroup("pop_window");
+		
+
+		app.addRunFrameStart(new nRun() { public void run() {
+			update_shortcut(); }});
+
+		float RS = book.RS;
+		
+		build_help();
+		
+
+		menu_back = gui.addWidget("menu_back")
+				.setRect(0,GdxApp.HEIGHT - 4f*RS/3f,GdxApp.WIDTH,4f*RS/3f)
+				.asWidget()
+				;
+		
+		menu_ref = gui.addWidget("menu_ref")
+				.asWidget()
+				.setParent(menu_back)
+				;
+		
+		
+		bar_entrys = new ArrayList<nWidget>();
+		
+//		bar_back = gui.addWidget("taskbar_back")
+//				.setRect(0,0,GdxApp.WIDTH,RS+10)
+//				.setDrawstackPriority(true)
+//				.asWidget()
+//				;
+		bar_ref = gui.addWidget("taskbar_ref")
+				.setRect(RS*12f,0,RS*6f,RS)
+				.asWidget()
+				.setParent(menu_back)
+				;
+
+
+		app.gdx.addEventScreen(new nRun() { public void run() {
+			menu_back.setRect(0,app.gdx.getscreenheight() - 4f*RS/3f,app.gdx.getscreenwidth(),4f*RS/3f); 
+		}});
+		
 	}
 
 	public void dispose() {
@@ -256,6 +302,7 @@ public class nGUI {
 	public final ArrayList<nWidget> drawing_stack = new ArrayList<nWidget>();
 	
 	public void frame() {
+		
 		if (val_widget_nb != null) val_widget_nb.set(widget_pool.all().size());
 		if (val_free_widget_nb != null) val_free_widget_nb.set(widget_pool.getFree());
 		if (val_wgroup_nb != null) val_wgroup_nb.set(widgetgroup_pool.all().size());
@@ -351,8 +398,606 @@ public class nGUI {
 
 	
 	
+
+	public nMap<Character> shortcut_key = new nMap<Character>();
+	public nMap<nRun> shortcut_run = new nMap<nRun>();
+	public nMap<nRun> shortcut_state_run = new nMap<nRun>();
+	public void add_shortcut_target(String ref, char def, nRun run) {
+		shortcut_key.put(ref, def);
+		if (run != null) shortcut_run.put(ref, run);
+	}
+	public void add_shortcut_target(String ref, char def, nRun run, nRun srun) {
+		shortcut_key.put(ref, def);
+		if (run != null) shortcut_run.put(ref, run);
+		if (srun != null) shortcut_state_run.put(ref, srun);
+	}
+
+	public void remove_shortcut_target(String ref, char def, nRun run) {
+		shortcut_key.remove(ref);
+		shortcut_run.remove(ref);
+		shortcut_state_run.remove(ref);
+	}
+
+	public void update_shortcut() {
+		for (Map.Entry<String,Character> me : shortcut_key.entrySet()) {
+			if (in.do_shortcut && !field_used && 
+					(in.getClick(me.getValue()) || 
+							in.getUnClick(me.getValue())) && 
+					shortcut_run.get(me.getKey()) != null) {
+				shortcut_run.get(me.getKey()).run();
+				shortcut_run.get(me.getKey()).run(in.getState(me.getValue()));
+			}
+				
+			if (in.do_shortcut && !field_used && 
+					shortcut_state_run.get(me.getKey()) != null) 
+				shortcut_state_run.get(me.getKey()).run(in.getState(me.getValue()));
+		}
+	}
+	
+
+	nWidget bar_ref; //bar_back, 
+	public ArrayList<nWidget> bar_entrys;
+	
+	public nWidget add_taskbar_entry() {
+		
+		nWidget w = gui.addWidget("taskbar_entry")
+		.setParent(bar_ref);
+		
+		for(nWidget n : bar_entrys) n.setOff();
+		
+		w.addEventSwitchOn(new nRun() { public void run() {
+			for(nWidget n : bar_entrys) if (n != w) n.setOff(); }});
+		
+		bar_entrys.add(w);
+		return w;
+	}
+	public void remove_taskbar_entry(nWidget w) {
+		bar_entrys.remove(w); }
+	
+	
+
+//
+//	public nMap<Character> shortcut_key = new nMap<Character>();
+//	public nMap<nRun> shortcut_run = new nMap<nRun>();
+//	public nMap<nRun> shortcut_state_run = new nMap<nRun>();
+//	public void add_shortcut_target(String ref, char def, nRun run) {
+//		shortcut_key.put(ref, def);
+//		if (run != null) shortcut_run.put(ref, run);
+//	}
+//	public void add_shortcut_target(String ref, char def, nRun run, nRun srun) {
+//		shortcut_key.put(ref, def);
+//		if (run != null) shortcut_run.put(ref, run);
+//		if (srun != null) shortcut_state_run.put(ref, srun);
+//	}
+//
+//	public void remove_shortcut_target(String ref, char def, nRun run) {
+//		shortcut_key.remove(ref);
+//		shortcut_run.remove(ref);
+//		shortcut_state_run.remove(ref);
+//	}
+//
+//	public void update_shortcut() {
+//		for (Map.Entry<String,Character> me : shortcut_key.entrySet()) {
+//			if (app.input.do_shortcut && !app.gui.field_used && 
+//					(app.input.getClick(me.getValue()) || 
+//							app.input.getUnClick(me.getValue())) && 
+//					shortcut_run.get(me.getKey()) != null) {
+//				shortcut_run.get(me.getKey()).run();
+//				shortcut_run.get(me.getKey()).run(app.input.getState(me.getValue()));
+//			}
+//				
+//			if (app.input.do_shortcut && !app.gui.field_used && 
+//					shortcut_state_run.get(me.getKey()) != null) 
+//				shortcut_state_run.get(me.getKey()).run(app.input.getState(me.getValue()));
+//		}
+//	}
+//	
+//	
+//
+//	nWidget bar_ref; //bar_back, 
+//	public ArrayList<nWidget> bar_entrys;
+//	
+//	public nWidget add_taskbar_entry() {
+//		
+//		nWidget w = gui.addWidget("taskbar_entry")
+//		.setParent(bar_ref);
+//		
+//		for(nWidget n : bar_entrys) n.setOff();
+//		
+//		w.addEventSwitchOn(new nRun() { public void run() {
+//			for(nWidget n : bar_entrys) if (n != w) n.setOff(); }});
+//		
+//		bar_entrys.add(w);
+//		return w;
+//	}
+//	public void remove_taskbar_entry(nWidget w) {
+//		bar_entrys.remove(w); }
+//	
+	
+
+	public void pop_shortcut() {
+
+		nInterface interf = gui.get_popWindow();
+
+		interf.add_row();
+		interf.add_row_label(10,"Shortcut : ");
+		
+		interf.add_row();
+		nWidgetGroup list = interf.add_picklist(8,4);
+		
+		interf.change_current_list(list);
+		for (Map.Entry<String,Character> me : shortcut_key.entrySet()) {
+			String ref = me.getKey();
+			nWidget w = interf.add_list_entry(ref);
+			w.setTextAlignment(nAlign.LEFT, nAlign.CENTER);
+			
+			float RS = nGUI.book.RS;
+			nWidget fld_w = interf.get_row_button_widget(4);
+			fld_w.setParent(w)
+			.setField(true)
+			.setText(""+me.getValue())
+			.setStacked(false)
+			.setRect(13f*RS/2f, 0, 4f*RS/2f, RS);
+			fld_w.addEventFieldChange(new nRun() { public void run() {
+				char c = shortcut_key.get(ref);
+				String fs = fld_w.getText();
+				if (fs.length() > 0) c = fs.charAt(0);
+				shortcut_key.remove(ref);
+				shortcut_key.put(ref, c);
+				fld_w.setText(""+c);
+			}});
+		}
+		
+		runner.addEventNextFrame(new nRun() { public void run() {
+			gui.pop_popwindow("Shortcut"); }});
+	}
+
+	
+
+	public void pop_exit() {
+
+		nInterface interf = gui.get_popWindow();
+		interf.add_row();
+		interf.add_row_label(10, "");
+		interf.add_row();
+		interf.add_row_trigg(5, "Exit", new nRun() {public void run() { 
+			GdxApp.app.close_app(); }});
+		interf.add_row_label(1, "");
+		interf.add_row_trigg(5, "Title", new nRun() {public void run() { 
+			gui.close_popwindow(); GdxApp.app.to_title(); }});
+		interf.add_row_label(1, "");
+		interf.add_row_trigg(5, "Cancel", new nRun() {public void run() { 
+			gui.close_popwindow(); }});
+		interf.add_row();
+		interf.add_row_label(10, "");
+		gui.pop_popwindow("Exit ?");
+		
+	}
+
+	public void pop_saveas() {
+		
+		nInterface interf = gui.get_popWindow();
+
+		interf.add_row();
+		interf.add_row_label(7," Select File : ");
+		nWidget refresh_w = interf.add_row_trigg(3,"REFRESH");
+		interf.add_row();
+		nWidgetGroup file_list = interf.add_picklist(8,4);
+		interf.add_row();
+		interf.add_row_label(2,"New :");
+		nWidget new_f_w = interf.add_row_field(6,"");
+		nWidget new_w = interf.add_row_trigg(2,"NEW");
+		
+		interf.add_row();
+		interf.add_row_label(6,"");
+		nWidget load_w = interf.add_row_trigg(4,"SAVE TO");
+
+		interf.add_col_separator();
+
+		nRun run_list_files = new nRun() { public void run() {
+			interf.change_current_list(file_list);
+			FileHandle[] files = Gdx.files.local("/").list();
+			for(FileHandle fl : files) {
+				if (fl.extension().equals(data.file_ext_txt)) { 
+					nWidget le = interf.add_list_entry(fl.name());
+					if (data.val_root_savepath.get().equals(fl.name())) le.setOn();
+				}
+			}
+		}};
+		run_list_files.run();
+
+		nRun run_new_file = new nRun() { public void run() {
+			String file_name = new_f_w.getText();
+			if (file_name.length() == 0) return;
+			file_name += sData.file_extension;
+			FileHandle fl = Gdx.files.local(file_name);
+			if (!fl.exists()) fl.writeString(" ", false);
+			data.val_root_savepath.set(file_name);
+			run_list_files.run();
+		}};
+		
+		nRun run_save_file = new nRun() { public void run() {
+			String file_name = (String)file_list.metodeGet("get_pick");
+			if (file_name.length() == 0 || !Utl.file_exist(file_name)) return;
+			data.val_root_savepath.set(file_name);
+			data.full_save();
+			gui.close_popwindow();
+		}};
+		
+		refresh_w.addEventTrigger(new nRun() { public void run() {
+			run_list_files.run(); }});
+		new_w.addEventTrigger(new nRun() { public void run() {
+			run_new_file.run(); }});
+		load_w.addEventTrigger(new nRun() { public void run() {
+			run_save_file.run(); }});
+		
+		runner.addEventNextFrame(new nRun() { public void run() {
+			gui.pop_popwindow("Save"); }});
+	}
+//	public void pop_loadfrom() {
+//
+//		nInterface interf = gui.get_popWindow();
+//
+//		interf.add_row();
+//		interf.add_row_label(7," Select File : ");
+//		nWidget refresh_w = interf.add_row_trigg(3,"REFRESH");
+//		interf.add_row();
+//		nWidgetGroup file_list = interf.add_picklist(8,4);
+//		
+//		interf.add_row();
+//		interf.add_row_label(6,"");
+//		nWidget load_w = interf.add_row_trigg(4,"LOAD");
+//
+//		interf.add_col_separator();
+//
+//		nRun run_list_files = new nRun() { public void run() {
+//			interf.change_current_list(file_list);
+//			FileHandle[] files = Gdx.files.local("/").list();
+//			for(FileHandle fl : files) {
+//				if (fl.extension().equals(data.file_ext_txt)) {
+//					interf.add_list_entry(fl.name());
+//				}
+//			}
+//		}};
+//		run_list_files.run();
+//
+//		nRun run_load_file = new nRun() { public void run() {
+//			String file_name = (String)file_list.metodeGet("get_pick");
+//			if (file_name.length() == 0 || !Utl.file_exist(file_name)) return;
+//			data.val_root_savepath.set(file_name);
+//			data.setting_load();
+//			gui.close_popwindow();
+//			data.re_full_load();
+//		}};
+//		
+//		refresh_w.addEventTrigger(new nRun() { public void run() {
+//			run_list_files.run(); }});
+//		load_w.addEventTrigger(new nRun() { public void run() {
+//			run_load_file.run(); }});
+//		
+//		App.ap.addEventNextFrame(new nRun() { public void run() {
+//			gui.pop_popwindow("Load"); }});
+//	}
+//	
+//	
+//
+//	public void pop_setting() {
+//		
+//		float RS = nGUI.book.RS;
+//
+//		nInterface interf = gui.get_popWindow();
+//		interf.add_row();
+//		interf.add_row_label(10, "Settings");
+//
+//		interf.add_col_separator();
+//		interf.add_col_separator();
+//		
+//		interf.setContext(data.setting_bloc);
+//
+//		interf.add_row();
+//		interf.add_row_label(6, "Database Savepath:");
+//		interf.add_row_label(4, "");
+//		interf.add_row();
+//		interf.add_row_field_str(8, "", "val_datab_savepath");
+//		nRun run_pick_data = new nRun() { public void run(Object o) {
+//			String file_name = (String)o;
+//			data.val_datab_savepath.set(file_name); }};
+//		interf.add_row_trigg(2, "Pick", new nRun() { public void run() {
+//			pop_pickfile(sData.data_ext_txt, run_pick_data); }});
+//
+//		interf.add_col_separator();
+//		interf.add_col_separator();
+//
+//		interf.add_row();
+//		interf.add_row_label(6, "Root Savepath:");
+//		interf.add_row_label(4, "");
+//		interf.add_row();
+//		interf.add_row_field_str(8, "", "val_root_savepath");
+//		nRun run_pick_root = new nRun() { public void run(Object o) {
+//			String file_name = (String)o;
+//			data.val_root_savepath.set(file_name); }};
+//		interf.add_row_trigg(2, "Pick", new nRun() { public void run() {
+//			pop_pickfile(sData.file_ext_txt, run_pick_root);
+//		}});
+//
+//		interf.add_col_separator();
+//		interf.add_col_separator();
+//
+//		interf.add_row();
+//		interf.add_row_label(6, "");
+//		interf.add_row_trigg(4, "Save Settings", new nRun() { public void run() {
+//			data.space_save(data.setting_space, 
+//					data.setting_savepath, true); }});
+//		
+//		
+//		interf.add_col();
+//		interf.add_row();
+//		interf.add_row_label(10, "Setting Value :");
+//
+//		interf.add_row();
+//		nWidgetGroup vallist = interf.add_scrollist(8, 4);
+//		
+//		nRun run_update_vllist = new nRun() { public void run() {
+//			interf.change_current_list(vallist);
+//			for (Map.Entry<String,sValue> me : 
+//				data.setting_space.root.values.entrySet()) {
+//				sValue val = me.getValue();
+//				String key = me.getKey();
+//				nWidget w = interf.add_list_entry(
+//						key + " : " + val.getString());
+//				w.setTextAlignment(nAlign.LEFT, nAlign.CENTER);
+//				
+//				if (val.isBoo()) {
+//					nWidget bp_w = interf.get_row_button_widget(3);
+//					bp_w.setParent(w)
+//					.setLink((sBoo)val)
+//					.setStacked(false)
+//					.setText("I/O")
+//					.setRect(15f*RS/2f, 0, 3f*RS/2f, RS)
+//					.setSwitch();
+//				}
+//			}
+//		}};
+//		data.setting_space.root.addEventChangeThisFrame(run_update_vllist);
+//		run_update_vllist.run();
+//		
+//		App.ap.addEventNextFrame(new nRun() { public void run() {
+//			gui.pop_popwindow("Setting"); }});
+//	}
+//	
+
+	public void pop_pickfile(String extention, nRun run_pick) {
+
+		nInterface interf = gui.get_popWindow();
+
+		interf.add_col_separator();
+
+		interf.add_row();
+		interf.add_row_label(10," Select File : ");
+		interf.add_row();
+		nWidgetGroup file_list = interf.add_picklist(8,4);
+		FileHandle[] files = Gdx.files.local("/").list();
+		for(FileHandle fl : files) {
+			if (fl.extension().equals(extention)) {
+				interf.add_list_entry(fl.name());
+			}
+		}
+		
+		interf.add_col_separator();
+
+		nRun run_pick_file = new nRun() { public void run(Object o) {
+			String file_name = (String)o;
+			if (file_name.length() == 0 || !Utl.file_exist(file_name)) return;
+			run_pick.run(file_name);
+			gui.close_popwindow();
+		}};
+
+		file_list.metode("set_pick_event", run_pick_file);
+		
+		App.ap.addEventNextFrame(new nRun() { public void run() {
+			gui.pop_popwindow("Pick File"); }});
+	}
+	
+
+	//TODO a refaire avec scene2d.ui dans un autre Screen
+//	public void pop_book_explo() {
+//		nInterface interf = gui.get_popWindow();
+//
+//		interf.add_row();
+//		interf.add_row_label(10, "Book Exploration");
+//		interf.add_row();
+//		interf.add_row_label(10, "Model nb: "+app.gui.book.models.size() + 
+//				"  ModelGroup nb: "+app.gui.book.modelgroups.size());
+//
+//		interf.add_row();
+//		interf.add_row_label(10, "nWidget Models :");
+//		interf.add_row();
+//		nWidgetGroup list = interf.add_treelist(10, 12);
+//		
+//		interf.change_current_list(list);
+//
+//		ArrayList<String> mod = new ArrayList<String>();
+//		for (Map.Entry<String,nModel> me : app.gui.book.models.entrySet()) {
+//			mod.add(me.getKey());
+//		}
+//		Collections.sort(mod);
+//		for (String s : mod) {
+//			interf.add_list_entry(s);
+//			interf.go_up_tree();
+//		}
+//
+//		interf.add_col();
+//		
+//		interf.add_row();
+//		interf.add_row_label(10, "nWidgetGroup ModelGroups :");
+//		interf.add_row();
+//		nWidgetGroup list2 = interf.add_treelist(10, 14);
+//		
+//		interf.change_current_list(list2);
+//
+//		mod.clear();
+//		for (Map.Entry<String,nModelGroup> me : app.gui.book.modelgroups.entrySet()) {
+//			mod.add(me.getKey());
+//		}
+//		Collections.sort(mod);
+//		for (String s : mod) {
+//			interf.add_list_entry(s);
+//			interf.go_up_tree();
+//		}
+//		
+//		gui.pop_popwindow("Book Explo");
+//	}
+	
+
+	//TODO a refaire avec scene2d.ui dans un autre Screen
+//	public void pop_about() {
+//		
+//		String about = "Eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"Eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+//				+ "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+//				+ "eeeeeeeeeeeeeeeeeeeeE\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeee\n" + 
+//				"eeeeeeeeeeeeeeE\n" + 
+//				"E" ;
+//		nInterface interf = gui.get_popWindow();
+//
+//		interf.add_row();
+//		
+//		nWidgetGroup list = interf.add_scrollist(8, 4);
+//		
+//		nWidget txt_w = interf.add_list_entry("");
+//		txt_w.force_calc();
+//		txt_w.setSY(app.textHeight() * txt_w.line_number(about) / 1.1f);
+//		txt_w.setText(about);
+//		txt_w.setTextAutoReturn(true)
+//		.setTextAlignment(nAlign.LEFT, nAlign.BOTTOM);
+//		txt_w.force_calc();
+//		list.metode("slide_calc");
+//		
+//		gui.pop_popwindow("  About  ");
+//	}
 	
 	
 	
 	
+	
+	
+	public void pop_help_page(Help help) {
+		
+		nInterface interf = gui.get_popWindow();
+
+		interf.add_row();
+		
+		nWidgetGroup list = interf.add_scrollist(24, 12);
+
+		nWidget txt_w = interf.add_list_entry("");
+		String txt = "";
+		boolean link = false;
+		String link_text = null;
+		String link_targ = null;
+		for (String t : help.text) {
+			if (t.equals("_____LINE")) {
+				txt_w.force_calc();
+				txt_w.setSY(drawer.textHeight() * txt_w.line_number(txt) / 1.1f);
+				txt_w.setText(txt);
+				txt_w.setTextAutoReturn(true)
+				.setTextAlignment(nAlign.LEFT, nAlign.BOTTOM);
+				txt_w.force_calc();
+				txt_w = interf.add_list_entry("");
+				txt = "";
+				link = false;
+				link_text = null;
+				link_targ = null;
+			} else if (link_text != null && link_targ == null && link) {
+				link_targ = t;
+				txt_w.force_calc();
+				txt_w.setSY(drawer.textHeight() * txt_w.line_number(txt) / 1.1f);
+				txt_w.setText(txt);
+				txt_w.setTextAutoReturn(true)
+				.setTextAlignment(nAlign.LEFT, nAlign.BOTTOM);
+				txt_w.force_calc();
+				txt_w = interf.add_list_entry("");
+				txt = link_text;
+				txt_w.force_calc();
+				txt_w.setSY(drawer.textHeight() * txt_w.line_number(txt) / 1.1f);
+				txt_w.setText(txt);
+				txt_w.setTextAutoReturn(true)
+				.setTextAlignment(nAlign.LEFT, nAlign.BOTTOM);
+				txt_w.setTrigger();
+				txt_w.addEventTrigger(new nRun(Utl.copy(link_targ)) {public void run() {
+					popHelp((String)builder); }});
+				txt_w.force_calc();
+				txt_w = interf.add_list_entry("");
+				txt = "";
+				link = false;
+				link_text = null;
+				link_targ = null;
+			} else if (link && link_text == null) {
+				link_text = t;
+			} else if (t.equals("_____LINK")) {
+				link = true;
+			} else {
+				txt += t;
+			}
+		}
+		list.metode("slide_calc");
+		
+		gui.pop_popwindow("  Help : "+help.ref);
+	}
+	
+	public static class Help {
+		public String ref;
+		public ArrayList<String> text = new ArrayList<String>();
+		public Help(String r, String t) {
+			ref = r; text.add(t);
+			helps.put(r,this);
+		}
+		public Help text(String t) { text.add(t); return this; }
+		public Help link(String link_txt, String link_targ) { 
+			text.add("_____LINK"); text.add(link_txt); text.add(link_targ); return this; }
+		public Help line() { text.add("_____LINE"); return this; }
+	}
+	
+	public static final nMap<Help> helps = new nMap<Help>();
+	
+	public static Help newHelp(String r, String t) {
+		Help h = new Help(r,t);
+		return h;
+	}
+	public void popHelp(String r) {
+		pop_help_page(helps.get(r));
+	}
+	
+
+	public boolean HELP_VIEW = false;
+	public void build_help() {
+		
+		gui.do_help = PlaneApplet.app != null && PlaneApplet.app.config.START_HELP;
+		
+		gui.add_shortcut_target("Help - view interest", 'H', null, 
+				new nRun() {public void run(Object o) {
+			boolean b = (boolean)o; 
+			HELP_VIEW = b;// && val_help.get(); 
+			do_help = HELP_VIEW; }});
+		
+	}
+
+
 }

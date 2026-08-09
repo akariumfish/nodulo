@@ -619,7 +619,7 @@ public class nGUIBook {
 				nWidget close = g.addWidget("close", "CW_close")
 						.setParent(headback); 
 
-				nWidget bar_swtch = PlaneApplet.app.menu.add_taskbar_entry();
+				nWidget bar_swtch = App.ap.gui.add_taskbar_entry();
 				g.addWidget("bar_swtch", bar_swtch);
 				
 				close.addEventTrigger(new nRun() { public void run() {
@@ -631,7 +631,7 @@ public class nGUIBook {
 				
 				nRun run_tofront = new nRun() { public void run() {
 					if (g.hasObject("no_tofront")) return;
-					for(nWidget n : PlaneApplet.app.menu.bar_entrys) 
+					for(nWidget n : App.ap.gui.bar_entrys) 
 						if (n != bar_swtch) n.setOff();
 					bar_swtch.setOn(); 
 					ref.show(); ref.toFront(); 
@@ -662,7 +662,7 @@ public class nGUIBook {
 				ref.addEventLogic(run_testfocus);
 				
 				g.addEventClear(new nRun() { public void run() {
-					PlaneApplet.app.menu.remove_taskbar_entry(bar_swtch); }});
+					App.ap.gui.remove_taskbar_entry(bar_swtch); }});
 
 				g.addMetode("run_tofront", run_tofront);
 				g.addMetode("run_collapse", run_collapse);
@@ -2161,6 +2161,108 @@ public class nGUIBook {
 		
 		
 	}
+	
+
+	static void build_menu_book() {
+		nModelBook book = nGUI.book;
+		float RS = book.RS;
+		
+		
+//		book.newModel("title_screen_back")
+//		.copyFrom(book.getModel("ref"))
+//		.setBackground()
+//		.setDrawstackPriority(true)
+//		;
+//
+//		book.newModel("title_screen_stack")
+//		.copyFrom(book.getModel("ref"))
+//		.setPassif()
+//		.set_color_background(Utl.color(0,0,0,0))
+//		.setBoundChild(true)
+//		.setStackAxis(nAlign.VERTICAL) // HORIZONTAL   VERTICAL
+//		.setStackDirection(nAlign.DOWN) // RIGHT   LEFT   UP   DOWN
+//		.setRectOrigin(nAlign.CENTER,nAlign.CENTER) // TOP   BOTTOM
+//		.setBoundOutspace(RS/6f)
+//		.setStackSpacing(RS/5f)
+//		;
+//		
+//		book.newModel("title_screen_title")
+//		.copyFrom(book.getModel("ref"))
+//		.setRect(0,0,24f*RS,6f*RS)
+//		.setBoundParent(true)
+//		.setStacked(true)
+//		.setFont(90)
+//		.set_color_text(Utl.color(220,220,218))
+//		.set_color_background(Utl.color(12,10,10))
+//		.set_color_outline(Utl.color(200))
+//		.setOutline(true)
+//		.setOutlineWeight(RS/4f)
+//		;
+//		book.newModel("title_screen_trigg")
+//		.copyFrom(book.getModel("ref"))
+//		.setRect(0,0,8f*RS,2f*RS)
+//		.setBoundParent(true)
+//		.setStacked(true)
+//		.setFont(30)
+//		.setTrigger()
+//		;
+		
+		
+		
+		
+		//      -----  MAIN MENU  -----
+		book.newModel("menu_back")
+		.copyFrom(book.getModel("CW_head_color"))
+		.setBackground()
+		.setOutline(true)
+		.setDrawstackPriority(true)
+		;
+		book.newModel("menu_ref")
+		.copyFrom(book.getModel("ref"))
+		.setBoundChild(true)
+		.setStackAxis(nAlign.HORIZONTAL) // HORIZONTAL   VERTICAL
+		.setStackDirection(nAlign.RIGHT) // RIGHT   LEFT   UP   DOWN
+		.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM) // TOP   BOTTOM
+		.setBoundOutspace(5)
+		.setStackSpacing(5)
+		.set_color_background(Utl.color(0, 0))
+		;
+		
+		book.newModel("info_back")
+		.copyFrom(book.getModel("ref"))
+		.setPassif()
+		.set_color_background(Utl.color(0,0,0,0))
+		.setBoundChild(true)
+		.setOutline(true)
+		.setStackAxis(nAlign.VERTICAL) // HORIZONTAL   VERTICAL
+		.setStackDirection(nAlign.UP) // RIGHT   LEFT   UP   DOWN
+		.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM) // TOP   BOTTOM
+		.setBoundOutspace(RS/6f)
+		.setStackSpacing(RS/15f)
+		.setDrawstackPriority(true)
+		;
+		
+		book.newModel("menu_trigg")
+		.copyFrom(book.getModel("CW_head_color"))
+		.setRect(0,0,8f*RS/3f,RS)
+		.setBoundParent(true)
+		.setStacked(true)
+		.setFont(20)
+		.setTrigger()
+		;
+		
+		book.newModel("info_text")
+		.copyFrom(book.getModel("ref"))
+		.setRect(0,0,6f*RS,2f*RS/3f)
+		.set_color_background(Utl.color(0,0,0,0))
+		.setOutline(false)
+		.setBoundParent(true)
+		.setStacked(true)
+		.setPassif()
+		;
+	}
+	
+	
 	
 	
 }

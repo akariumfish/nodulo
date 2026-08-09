@@ -96,11 +96,13 @@ public class Main extends Game {
 		nodulo_app.setInputProcessor();
 		setScreen(nodulo_app); }
 
-	public void close_nodulo() {
+	public void close_app() {
 		launch_title(); 
-		nodulo_app.dispose(); 
-		nodulo_app = null; 
+		if (nodulo_app != null) {
+			nodulo_app.dispose(); nodulo_app = null; }
+		if (editor_app != null) {
+			editor_app.dispose(); editor_app = null; }
 	}
-	
+
 	
 }

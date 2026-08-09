@@ -242,7 +242,7 @@ public class GdxApp implements Screen ,nDrawer.DrawContext {
 		if (ask_wn) do_window();
 		if (ask_sw) do_switchscreen();
 
-		if (to_title_flag2) { to_title_flag2 = false; main.close_nodulo(); }
+		if (to_title_flag2) { to_title_flag2 = false; main.close_app(); }
 		if (to_title_flag) { to_title_flag = false; to_title_flag2 = true; }
 		
 	}
