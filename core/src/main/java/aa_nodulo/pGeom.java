@@ -503,6 +503,7 @@ public class pGeom extends pSystem {
 		.setGroupFlag("draw")
 		.addData("line", true)
 		.addData("fill", true)
+		.addData("halo", false)
 		.addData("thick", thick, "min", 1f, "max", 12f, "granulo", 1f)
 		.addData("line_r", (int)(line.r*255), "def", (int)(line.r*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
 		.addData("line_g", (int)(line.g*255), "def", (int)(line.g*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
@@ -1518,6 +1519,24 @@ public class pGeom extends pSystem {
 				app.line(toRef(b, point.get(p1)), toRef(b, point.get(p2)));
 			}
 		} 
+		boolean halo = graph.getBoo("halo");
+		if (halo) {
+			draw_halo(app, b.getVec("ref", "pos"), 60, 
+					Utl.color(0,0), Utl.color(255,0,0,120));
+		}
+	}
+	
+	private static void draw_halo(App app, Vector2 p, float r, Color c1, Color c2) {
+		int arc = 8;
+		float arcrad = ((float)Math.PI) * 2f / (float)arc;
+		Vector2 rz1 = new Vector2(r,0);
+		Vector2 rz2 = new Vector2(r,0);
+		for (int i = 0 ; i < arc ; i++) {
+			rz1.set(r,0); rz2.set(r,0);
+			rz1.rotateRad(arcrad * i).add(p);
+			rz2.rotateRad(arcrad * (i+1)).add(p);
+			app.gdx.drawer.face(rz1.x,rz1.y,rz2.x,rz2.y,p.x,p.y,c1,c1,c2);
+		}
 	}
 
 	

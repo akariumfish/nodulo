@@ -31,22 +31,22 @@ public class pSheet {
 		public sBloc_Builder builder;
 		public nRun setup_run;
 		public boolean def_collapse = false;
-		public nMap<pMacro.Macro> macros = new nMap<pMacro.Macro>();
+//		public nMap<pMacro.Macro> macros = new nMap<pMacro.Macro>();
 		public SheetModel(String r) { ref = r; }
 		public sBloc_Builder getBuilder() { return builder; }
 		public SheetModel setSetupRun(nRun n) { 
 			setup_run = n; sheet_setup_runs.put(ref, n); return this; }
-		public pMacro.Macro addMacro(String r) {
-			pMacro.Macro mac = new pMacro.Macro("sheet_"+ref+"_macro_"+r);
-			macros.put(r,mac);
-			return mac; }
-		public void addMacro(String r, String mc) {
-			pMacro.Macro mac = pMacro.getMacro(mc);
-			if (mac == null) return;
-			macros.put(r,mac); }
-		public void addMacro(String r, pMacro.Macro mac) {
-			if (mac == null) return;
-			macros.put(r,mac); }
+//		public pMacro.Macro addMacro(String r) {
+//			pMacro.Macro mac = new pMacro.Macro("sheet_"+ref+"_macro_"+r);
+//			macros.put(r,mac);
+//			return mac; }
+//		public void addMacro(String r, String mc) {
+//			pMacro.Macro mac = pMacro.getMacro(mc);
+//			if (mac == null) return;
+//			macros.put(r,mac); }
+//		public void addMacro(String r, pMacro.Macro mac) {
+//			if (mac == null) return;
+//			macros.put(r,mac); }
 	}
 	public static nMap<SheetModel> sheet_models = new nMap<SheetModel>();
 
@@ -199,7 +199,7 @@ public class pSheet {
 
 		sheet_link_draw = app.gui.addWidget("S_link"); 
 		sheet_link_draw.setParent(sheet_bound.get("fx"));
-		sheet_bound.get("fx").setVFX();
+//		sheet_bound.get("fx").setVFX();
 		sheet_bound.addWidget("sheet_link_draw", sheet_link_draw);
 		sheet_link_draw.setCustomDrawer(new nDrawable() { public void drawing() {
 			Vector2 m = new Vector2(app.input.mouse);

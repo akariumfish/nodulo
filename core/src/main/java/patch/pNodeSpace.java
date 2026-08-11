@@ -22,39 +22,39 @@ public class pNodeSpace {
 		
 		float RS = nGUI.book.RS;
 
-		pSheet.SheetModel init_space_model = pSheet.newSheet(data, "init_space", true)
-			.setSetupRun(new nRun() { public void run() {
-				pSheet sheet = arg(0, pSheet.class);
-				if (sheet == null) return;
-				
-			}})
-		;
-
-		new Macro("init_space_def")
-		.addNode("space_init", "space_init", 		0f, 0f).getMacro()
-		.addMacro("const", pMacro.getMacro("constructor"), 	0f, 	-150f)
-		.addNode("to", "to", 		600f, -150f)
-		.addSetVar("this_ref", "to1").addSetVar("target_ref", "from1").getMacro()
-		.addLink("const_const", "co_body", "to", "in")
-		.addLink("const_const", "co_run", "space_init", "start_run")
-		.addRun(new nRun() { public void run() {
-			nMap<pInstance> list = arg(0, nMap.class);
-			list.get("const_const").setVar("print_name", "body_print");
-		}})
-		;
-		
-		if (!has_build_statics) {
-			init_space_model.addMacro("constructor", "constructor");
-			init_space_model.addMacro("init_space_def", "init_space_def");
-		}
+//		pSheet.SheetModel init_space_model = pSheet.newSheet(data, "init_space", true)
+//			.setSetupRun(new nRun() { public void run() {
+//				pSheet sheet = arg(0, pSheet.class);
+//				if (sheet == null) return;
+//				
+//			}})
+//		;
+//
+//		new Macro("init_space_def")
+//		.addNode("space_init", "space_init", 		0f, 0f).getMacro()
+//		.addMacro("const", pMacro.getMacro("constructor"), 	0f, 	-150f)
+//		.addNode("to", "to", 		600f, -150f)
+//		.addSetVar("this_ref", "to1").addSetVar("target_ref", "from1").getMacro()
+//		.addLink("const_const", "co_body", "to", "in")
+//		.addLink("const_const", "co_run", "space_init", "start_run")
+//		.addRun(new nRun() { public void run() {
+//			nMap<pInstance> list = arg(0, nMap.class);
+//			list.get("const_const").setVar("print_name", "body_print");
+//		}})
+//		;
+//		
+//		if (!has_build_statics) {
+//			init_space_model.addMacro("constructor", "constructor");
+//			init_space_model.addMacro("init_space_def", "init_space_def");
+//		}
 //		pSheet.setDefMacro("init_space", "init_space_def");
 		
 		
 		
 		
-		pSheet.SheetModel common_param_model = pSheet.newSheet(data, "common_param", true);
+		pSheet.SheetModel blueprint_model = pSheet.newSheet(data, "blueprint", true);
 		if (!has_build_statics) {
-			common_param_model.getBuilder()
+			blueprint_model.getBuilder()
 			.addEventLoad(new nRun() { public void run(Object o) {
 				sValueBloc b = (sValueBloc)o; 
 				pSheet sheet = b.object("sheet", pSheet.class);
@@ -135,10 +135,10 @@ public class pNodeSpace {
 			}})
 			;
 			
-			common_param_model.addMacro("bullet_blueprint", "bullet_blueprint");
-			common_param_model.addMacro("body_blueprint", "body_blueprint");
-			common_param_model.addMacro("wall_blueprint", "wall_blueprint");
-			common_param_model.addMacro("PARAM_SETUP", "PARAM_SETUP");
+//			blueprint_model.addMacro("bullet_blueprint", "bullet_blueprint");
+//			blueprint_model.addMacro("body_blueprint", "body_blueprint");
+//			blueprint_model.addMacro("wall_blueprint", "wall_blueprint");
+//			blueprint_model.addMacro("PARAM_SETUP", "PARAM_SETUP");
 			
 	//		pSheet.setDefMacro("common_param", "PARAM_SETUP");
 			

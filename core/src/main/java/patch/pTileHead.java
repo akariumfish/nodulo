@@ -348,6 +348,18 @@ public class pTileHead {
 								ins.setVar("script", true); 
 								ins.run("update_script");
 							}});
+						} else {
+							App.ap.addDelayEvent(2, new nRun(inst) { public void run() {
+								pInstance ins = (pInstance)builder;
+								ins.setVar("script", true); 
+								ins.run("update_script");
+								App.ap.addDelayEvent(2, new nRun(ins) { public void run() {
+									pInstance ins = (pInstance)builder;
+									ins.setVar("script", false); 
+									ins.run("update_script");
+								}});
+							}});
+							
 						}
 					}});
 				}});
@@ -420,13 +432,17 @@ public class pTileHead {
 					nWidgetGroup group = inst.object("group", nWidgetGroup.class);
 					Vector2 p = group.get("ref").getLocalPos();
 					Vector2 p2 = head_tile.object("group", nWidgetGroup.class).get("ref").getLocalPos();
-					p.add(0,-RS*5f);
+					p.add(0,-RS*5.5f);
 					Vector2 f = new Vector2(p).sub(p2);
 					if (f.len() > 0f) head_tile.object("group", nWidgetGroup.class)
 						.metode("move",f);
+					ArrayList<pInstance> all_tile = 
+							head_tile.get("get_all_tile", ArrayList.class);
+//					for (pInstance s : Utl.duplic(all_tile)) s.setVar("attracted", false); 
 					head_tile.run("attract_plugged");
 					
-					head_tile.run("all_flag_recursion");
+					head_tile.run("all_flag_recursion"); 
+//					for (pInstance s : Utl.duplic(all_tile)) s.setObject("recursion_flag", true);
 					Rectangle stack_bb = head_tile.get("get_bounding_box", Rectangle.class);
 					Rectangle this_rect = group.get("selline")
 							.getRectRelativeToParent(inst.sheet.sheet_ref);

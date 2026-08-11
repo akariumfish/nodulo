@@ -252,7 +252,7 @@ public class pView {
 		view = app.gui.addWidgetGroup("viewspace");
 		bloc.addObject("viewspaceGroup", view);
 		view.metode("link_to_bloc", bloc);
-		view.get("fx").setVFX();
+//		view.get("fx").setVFX();
 		
 		view.metode("set_title", "space view");
 		

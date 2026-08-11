@@ -91,8 +91,8 @@ public class pPatch {
 		
 //		pSheet.setDefMacro("function", "FUNCTION_SETUP");
 //
-		func_sheet_model.addMacro("function", "function");
-		func_sheet_model.addMacro("FUNCTION_SETUP", "FUNCTION_SETUP");
+//		func_sheet_model.addMacro("function", "function");
+//		func_sheet_model.addMacro("FUNCTION_SETUP", "FUNCTION_SETUP");
 		
 		pSheet.SheetModel main_sheet_model = pSheet.newSheet(data, "main");
 
@@ -108,8 +108,8 @@ public class pPatch {
 //		pSheet.setDefMacro("main", "main_sheet_def");
 		
 //		main_sheet_model.addMacro("main_sheet_def", "main_sheet_def");
-		main_sheet_model.addMacro("SETUP", "SETUP");
-		main_sheet_model.addMacro("sel_body", "sel_body");
+//		main_sheet_model.addMacro("SETUP", "SETUP");
+//		main_sheet_model.addMacro("sel_body", "sel_body");
 
 		
 		
@@ -118,26 +118,26 @@ public class pPatch {
 
 	public static void build_setup() {
 
-		PlaneApplet.newStartupModel("patch_exemple")
-		.setSetupRun(new nRun() { public void run() {
-			pSheet.setDefMacro("main", "SETUP");
-			pSheet.setDefMacro("function", "FUNCTION_SETUP");
-			pSheet.setDefMacro("init_space", "init_space_def");
-			pSheet.setDefMacro("common_param", "PARAM_SETUP");
-		}})
-		;
+//		PlaneApplet.newStartupModel("patch_exemple")
+//		.setSetupRun(new nRun() { public void run() {
+//			pSheet.setDefMacro("main", "SETUP");
+//			pSheet.setDefMacro("function", "FUNCTION_SETUP");
+////			pSheet.setDefMacro("init_space", "init_space_def");
+//			pSheet.setDefMacro("common_param", "PARAM_SETUP");
+//		}})
+//		;
 
-		PlaneApplet.newStartupModel("TEST")
+		PlaneApplet.newStartupModel("exemple")
 		.setSetupRun(new nRun() { public void run() {
 			
-			pSheet.setDefMacro("main", "main_test");
-			pSheet.setDefMacro("function", "func_test");
-			pSheet.setDefMacro("init_space", "empty");
-			pSheet.setDefMacro("common_param", "PARAM_SETUP");
+			pSheet.setDefMacro("main", "main_exemple");
+			pSheet.setDefMacro("function", "func_exemple");
+//			pSheet.setDefMacro("init_space", "empty");
+			pSheet.setDefMacro("blueprint", "PARAM_SETUP");
 			pSheet.setDefCollapse("main", false);
 			pSheet.setDefCollapse("function", false);
-			pSheet.setDefCollapse("common_param", false);
-			pSheet.setDefCollapse("init_space", false);
+			pSheet.setDefCollapse("blueprint", false);
+//			pSheet.setDefCollapse("init_space", false);
 			
 		}})
 		;
@@ -530,6 +530,8 @@ public class pPatch {
 		patch_pop.metode("set_patch", this);
 		view.addWidgetGroup("patch_pop", patch_pop);
 		val_wallp = view.object("val_wallp", sBoo.class);
+		
+//		patch_pop.get("fx").setVFX();
 		
 //		build_tools();
 
@@ -940,12 +942,26 @@ public class pPatch {
 		.set_color_outline(Utl.color(0,240,230,255))
 		.setShape(nModel.Shape.DIAMOND)
 		;
+
+		book.newModel("PP_fx")
+//		.setRect(0,0,RS*15f,RS*10f)
+		.set_color_background(Utl.color(0, 0, 0, 0))
+//		.setBoundParent(true)
+//		.setBoundChild(true)
+//		.setBoundOutspace(0f)
+//		.setStackSpacing(0f)
+		.setPassif()
+		.setDraw(false)
+		;
 		
 		book.newModelGroup("patch_pop", new nModelGroup() { 
 			public nWidgetGroup build(nGUI gui) {
 				nWidgetGroup g = gui.addWidgetGroup();
 
-				nWidget ref = g.addWidget("ref", "P_ref");
+				nWidget fx = g.addWidget("fx", "PP_fx");
+				nWidget ref = g.addWidget("ref", "P_ref")
+						.setParent(fx);
+				
 				nWidget select_grab = g.addWidget("select_grab", "PP_select_grab");
 				nWidget pop_close = g.addWidget("pop_close", "P_pop_close");
 				pop_close.hide();
@@ -958,7 +974,7 @@ public class pPatch {
 				
 				g.addMetode("set_patch", new nRun() { public void run(Object o) {
 					pPatch patch = (pPatch)o;
-					ref.setParent(patch.view_backref);
+					fx.setParent(patch.view_backref);
 					patch.patch_ref = ref;
 					patch.select_grab = select_grab;
 					patch.patch_pop_close = pop_close;

@@ -800,7 +800,7 @@ public class pTile {
 					
 					
 //					app.debugTransf(tile.sheet.sheet_bound_bound.warptransform);
-//					app.debugRect(bb);
+//					app.debugRect(bb); 
 					
 					
 					nWidgetGroup group = tile.object("group", nWidgetGroup.class);
@@ -1373,6 +1373,7 @@ public class pTile {
 							plugstack_left.setParent(ref)
 							.setGlueCible(back)
 							.setGlueSide(nAlign.LEFT)
+							.setStackAlign(nAlign.TOP)
 							.setStackAxis(nAlign.VERTICAL) // HORIZONTAL   VERTICAL
 							.setStackDirection(nAlign.DOWN) // RIGHT   LEFT   UP   DOWN
 							;
@@ -1384,6 +1385,7 @@ public class pTile {
 							plugstack_right.setParent(ref)
 							.setGlueCible(back)
 							.setGlueSide(nAlign.RIGHT)
+							.setStackAlign(nAlign.TOP)
 							.setStackAxis(nAlign.VERTICAL) // HORIZONTAL   VERTICAL
 							.setStackDirection(nAlign.DOWN) // RIGHT   LEFT   UP   DOWN
 							;

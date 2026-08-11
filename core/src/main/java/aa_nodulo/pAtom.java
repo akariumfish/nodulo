@@ -65,12 +65,12 @@ public class pAtom extends pSystem {
 		.setSetupRun(new nRun() { public void run() {
 			
 			pSheet.setDefMacro("main", "main_sheet_atom");
-			pSheet.setDefMacro("init_space", "init_space_atom");
-			pSheet.setDefMacro("common_param", "common_param_atom");
+//			pSheet.setDefMacro("init_space", "init_space_atom");
+			pSheet.setDefMacro("blueprint", "common_param_atom");
 			pSheet.setDefMacro("function", "common_func_atom");
 
-			pSheet.setDefCollapse("init_space", true);
-			pSheet.setDefCollapse("common_param", true);
+//			pSheet.setDefCollapse("init_space", true);
+			pSheet.setDefCollapse("blueprint", true);
 			pSheet.setDefCollapse("function", true);
 		}})
 		;
@@ -207,29 +207,42 @@ public class pAtom extends pSystem {
 		}})
 		;
 
-		Macro atom_player_tile = new Macro("atom_player_tile")
-		.addMacro("tile", pMacro.getMacro("executor"), 		0f, 	0f)
-		.addSetVar("tile_exec", "target_ref", "atom_ctrl")
-		;
-
-		Macro atom_shooter_tile = new Macro("atom_shooter_tile")
-		.addMacro("tile", pMacro.getMacro("executor"), 		0f, 	0f)
-		.addSetVar("tile_exec", "target_ref", "atom_move")
-		.addMacro("tile2", pMacro.getMacro("executor"), 		0f, 600f)
-		.addSetVar("tile2_exec", "target_ref", "atom_shoot")
-		.addSetVar("tile2_time", "delay", 15f)
-		;
+//		Macro atom_player_tile = new Macro("atom_player_tile")
+//		.addMacro("tile", pMacro.getMacro("executor"), 		0f, 	0f)
+//		.addSetVar("tile_exec", "target_ref", "atom_ctrl")
+//		;
+//
+//		Macro atom_shooter_tile = new Macro("atom_shooter_tile")
+//		.addMacro("tile", pMacro.getMacro("executor"), 		0f, 	0f)
+//		.addSetVar("tile_exec", "target_ref", "atom_move")
+//		.addMacro("tile2", pMacro.getMacro("executor"), 		0f, 600f)
+//		.addSetVar("tile2_exec", "target_ref", "atom_shoot")
+//		.addSetVar("tile2_time", "delay", 15f)
+//		;
 		
 		Macro main_sheet_atom = new Macro("main_sheet_atom")
-		.addMacro("atom_player_tile", atom_player_tile, 	600f, 	0f)
-		.addMacro("atom_shooter_tile", atom_shooter_tile, 	-600f, 	0f)
-		.addNode("from1", "from", 		0f, -60f)
-		.addSetVar("this_ref", "fp1").addSetVar("target_ref", "tp1").getMacro()
-		.addNode("from2", "from", 		-1200f, -60f)
-		.addSetVar("this_ref", "fp2").addSetVar("target_ref", "tp2").getMacro()
-		.addLink("atom_player_tile_tile_exec", "co_reg", "from1", "out")
-		.addLink("atom_shooter_tile_tile_exec", "co_reg", "from2", "out")
-		.addLink("atom_shooter_tile_tile2_exec", "co_reg", "from2", "out")
+		.addMacro("exac", pMacro.getMacro("exec_actor"), 		600f,	150f)
+			.addSetVar("exac_exec", "target_ref", "atom_ctrl")
+			.addSetVar("exac_actor", "pop_pos", new Vector2(900,0)) 
+			.addSetVar("exac_actor", "print_name", "atom_print")
+		.addMacro("exac_shoot1", pMacro.getMacro("exec_actor"), 		-900f,	600f)
+			.addSetVar("exac_shoot1_exec", "target_ref", "atom_move")
+			.addSetVar("exac_shoot1_actor", "pop_pos", new Vector2(-900,0)) 
+			.addSetVar("exac_shoot1_actor", "print_name", "atom_print")
+		.addMacro("exec_shoot1", pMacro.getMacro("executor"), 		-600f,	1050f)
+			.addSetVar("exec_shoot1_exec", "target_ref", "atom_shoot")
+			.addSetVar("exec_shoot1_time", "delay", (int)20)
+			.addLink("exac_shoot1_actor", "co_register", "exec_shoot1_exec", "co_reg")
+		
+//		.addMacro("atom_player_tile", atom_player_tile, 	600f, 	0f)
+//		.addMacro("atom_shooter_tile", atom_shooter_tile, 	-600f, 	0f)
+//		.addNode("from1", "from", 		0f, -60f)
+//		.addSetVar("this_ref", "fp1").addSetVar("target_ref", "tp1").getMacro()
+//		.addNode("from2", "from", 		-1200f, -60f)
+//		.addSetVar("this_ref", "fp2").addSetVar("target_ref", "tp2").getMacro()
+//		.addLink("atom_player_tile_tile_exec", "co_reg", "from1", "out")
+//		.addLink("atom_shooter_tile_tile_exec", "co_reg", "from2", "out")
+//		.addLink("atom_shooter_tile_tile2_exec", "co_reg", "from2", "out")
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
 			
@@ -282,98 +295,98 @@ public class pAtom extends pSystem {
 
 		
 
-		Macro atom_player = new Macro("atom_player")
-		.addNode("sel_body", "sel_body", 	0f, 		60f).getMacro()
-		.addNode("ank", "ank", 				0f, 		-450f).getMacro()
-		.addNode("register", "register", 	900f, 	-300f).getMacro()
-		.addNode("reg_in_bod", "reg_in", 	450f,	-60f).addSetVar("reg_ref", "body").getMacro()
-		.addNode("reg_in_ank", "reg_in", 	450f,	-450f).addSetVar("reg_ref", "pointmouse").getMacro()
-		.addNode("ui", "UI", 				120f, 	-210f)
-		.addRunPop("ui_label", "pop_plug_node", "UI_widg_out", "UI_label", "UI_widg_in").getMacro()
-		.addSetVar("ui_ui_label", "widg_size", new Vector2(6,1)).addSetVar("ui_ui_label", "widg_text", "HP:")
-		.addLink("sel_body", "co_sel_bod", "reg_in_bod", "co_in")
-//		.addLink("from", "out", "reg_in_bp", "co_in")
-		.addLink("reg_in_bod", "co_reg", "register", "co_reg")
-//		.addLink("reg_in_bp", "co_reg", "register", "co_reg")
-		.addLink("reg_in_ank", "co_reg", "register", "co_reg")
-		.addLink("sel_body", "co_ank", "ank", "co_this")
-		.addLink("ank", "co_mouse", "reg_in_ank", "co_in")
-		.addRun(new nRun() { public void run() {
-			nMap<pInstance> list = arg(0, nMap.class);
-
-			pInstance bod_get_data = list.get("sel_body").get("pop_plug_node", pInstance.class, 
-					"sel_bod_out", "bod_get_data", "sel_bod_in");
-			bod_get_data.setVar("param_ref", "hitzone");
-			bod_get_data.setVar("data_ref", "hitpoint");
-			pMacro.link_brics_cos(bod_get_data, "co_out", list.get("ui_ui_label"), "in");
-			
-		}})
-		;
-		
-		Macro atom_shooter = new Macro("atom_shooter")
-		.addNode("sel_body", "sel_body", 	180f, 	60f).getMacro()
-		.addNode("register", "register", 	780f, 	-300f).getMacro()
-		.addNode("reg_in_bod", "reg_in", 	600f,	-60f).addSetVar("reg_ref", "body").getMacro()
-//		.addNode("reg_in_bp", "reg_in", 		1200f, 	-510f).addSetVar("reg_ref", "blueprint").getMacro()
-//		.addNode("from", "from", 			750f, 	-750f)
-//		.addSetVar("this_ref", "").addSetVar("target_ref", "bullet_ref").getMacro()
-		.addLink("sel_body", "co_sel_bod", "reg_in_bod", "co_in")
-//		.addLink("from", "out", "reg_in_bp", "co_in")
-		.addLink("reg_in_bod", "co_reg", "register", "co_reg")
-//		.addLink("reg_in_bp", "co_reg", "register", "co_reg")
-		.addRun(new nRun() { public void run() {
-			nMap<pInstance> list = arg(0, nMap.class);
-		}})
-		;
-
-		Macro init_space_atom = new Macro("init_space_atom")
-		.addMacro("atom_player", pMacro.getMacro("atom_player"), 	1200f, 	-150f)
-		.addMacro("atom_shooter", pMacro.getMacro("atom_shooter"), 	1200f, 	-1200f)
-		.addMacro("construct1", "constructor", 	0f, 	-150f)
-		.addSetVar("construct1_const", "print_name", "atom_print")
-		.addMacro("construct2", "constructor", 	0f, 	-1200f)
-		.addSetVar("construct2_const", "print_name", "atom_print")
-		.addNode("space_init", "space_init", 		0f, 120f).getMacro()
-		.addNode("to1", "to", 		3000f, -150f)
-		.addSetVar("this_ref", "tp1").addSetVar("target_ref", "fp1").getMacro()
-		.addNode("to2", "to", 		3000f, -1200f)
-		.addSetVar("this_ref", "tp2").addSetVar("target_ref", "fp2").getMacro()
-		.addLink("atom_player_register", "co_register", "to1", "in")
-		.addLink("construct1_const", "co_run", "space_init", "start_run")
-		.addLink("atom_shooter_register", "co_register", "to2", "in")
-		.addLink("construct2_const", "co_run", "space_init", "start_run")
-		.addLink("atom_player_sel_body", "in", "construct1_const", "co_body")
-		.addLink("atom_shooter_sel_body", "in", "construct2_const", "co_body")
-		.addRun(new nRun() { public void run() {
-			nMap<pInstance> list = arg(0, nMap.class);
-			
-			list.get("construct1_ank").setVar("view_ank", false);
-			list.get("construct1_ank").setVar("ank_pos", new Vector2(900,0));
-			list.get("construct2_ank").setVar("view_ank", false);
-			list.get("construct2_ank").setVar("ank_pos", new Vector2(-900,0));
-			
-			sValue v = PlaneApplet.app.view
-				.bloc.getValue("val_grid");
-			if (v != null) ((sBoo)v).set(false);
-			v = PlaneApplet.app.getSystem(pAtom.class)
-					.bloc.getValue("val_draw");
-				if (v != null) ((sBoo)v).set(true);
-			v = PlaneApplet.app.getSystem(pAtom.class)
-					.bloc.getValue("val_play");
-				if (v != null) ((sBoo)v).set(true);
-		}})
+//		Macro atom_player = new Macro("atom_player")
+//		.addNode("sel_body", "sel_body", 	0f, 		60f).getMacro()
+//		.addNode("ank", "ank", 				0f, 		-450f).getMacro()
+//		.addNode("register", "register", 	900f, 	-300f).getMacro()
+//		.addNode("reg_in_bod", "reg_in", 	450f,	-60f).addSetVar("reg_ref", "body").getMacro()
+//		.addNode("reg_in_ank", "reg_in", 	450f,	-450f).addSetVar("reg_ref", "pointmouse").getMacro()
+//		.addNode("ui", "UI", 				120f, 	-210f)
+//		.addRunPop("ui_label", "pop_plug_node", "UI_widg_out", "UI_label", "UI_widg_in").getMacro()
+//		.addSetVar("ui_ui_label", "widg_size", new Vector2(6,1)).addSetVar("ui_ui_label", "widg_text", "HP:")
+//		.addLink("sel_body", "co_sel_bod", "reg_in_bod", "co_in")
+////		.addLink("from", "out", "reg_in_bp", "co_in")
+//		.addLink("reg_in_bod", "co_reg", "register", "co_reg")
+////		.addLink("reg_in_bp", "co_reg", "register", "co_reg")
+//		.addLink("reg_in_ank", "co_reg", "register", "co_reg")
+//		.addLink("sel_body", "co_ank", "ank", "co_this")
+//		.addLink("ank", "co_mouse", "reg_in_ank", "co_in")
+//		.addRun(new nRun() { public void run() {
+//			nMap<pInstance> list = arg(0, nMap.class);
+//
+//			pInstance bod_get_data = list.get("sel_body").get("pop_plug_node", pInstance.class, 
+//					"sel_bod_out", "bod_get_data", "sel_bod_in");
+//			bod_get_data.setVar("param_ref", "hitzone");
+//			bod_get_data.setVar("data_ref", "hitpoint");
+//			pMacro.link_brics_cos(bod_get_data, "co_out", list.get("ui_ui_label"), "in");
+//			
+//		}})
+//		;
+//		
+//		Macro atom_shooter = new Macro("atom_shooter")
+//		.addNode("sel_body", "sel_body", 	180f, 	60f).getMacro()
+//		.addNode("register", "register", 	780f, 	-300f).getMacro()
+//		.addNode("reg_in_bod", "reg_in", 	600f,	-60f).addSetVar("reg_ref", "body").getMacro()
+////		.addNode("reg_in_bp", "reg_in", 		1200f, 	-510f).addSetVar("reg_ref", "blueprint").getMacro()
+////		.addNode("from", "from", 			750f, 	-750f)
+////		.addSetVar("this_ref", "").addSetVar("target_ref", "bullet_ref").getMacro()
+//		.addLink("sel_body", "co_sel_bod", "reg_in_bod", "co_in")
+////		.addLink("from", "out", "reg_in_bp", "co_in")
+//		.addLink("reg_in_bod", "co_reg", "register", "co_reg")
+////		.addLink("reg_in_bp", "co_reg", "register", "co_reg")
+//		.addRun(new nRun() { public void run() {
+//			nMap<pInstance> list = arg(0, nMap.class);
+//		}})
 		;
 
+//		Macro init_space_atom = new Macro("init_space_atom")
+//		.addMacro("atom_player", pMacro.getMacro("atom_player"), 	1200f, 	-150f)
+//		.addMacro("atom_shooter", pMacro.getMacro("atom_shooter"), 	1200f, 	-1200f)
+//		.addMacro("construct1", "constructor", 	0f, 	-150f)
+//		.addSetVar("construct1_const", "print_name", "atom_print")
+//		.addMacro("construct2", "constructor", 	0f, 	-1200f)
+//		.addSetVar("construct2_const", "print_name", "atom_print")
+//		.addNode("space_init", "space_init", 		0f, 120f).getMacro()
+//		.addNode("to1", "to", 		3000f, -150f)
+//		.addSetVar("this_ref", "tp1").addSetVar("target_ref", "fp1").getMacro()
+//		.addNode("to2", "to", 		3000f, -1200f)
+//		.addSetVar("this_ref", "tp2").addSetVar("target_ref", "fp2").getMacro()
+//		.addLink("atom_player_register", "co_register", "to1", "in")
+//		.addLink("construct1_const", "co_run", "space_init", "start_run")
+//		.addLink("atom_shooter_register", "co_register", "to2", "in")
+//		.addLink("construct2_const", "co_run", "space_init", "start_run")
+//		.addLink("atom_player_sel_body", "in", "construct1_const", "co_body")
+//		.addLink("atom_shooter_sel_body", "in", "construct2_const", "co_body")
+//		.addRun(new nRun() { public void run() {
+//			nMap<pInstance> list = arg(0, nMap.class);
+//			
+//			list.get("construct1_ank").setVar("view_ank", false);
+//			list.get("construct1_ank").setVar("ank_pos", new Vector2(900,0));
+//			list.get("construct2_ank").setVar("view_ank", false);
+//			list.get("construct2_ank").setVar("ank_pos", new Vector2(-900,0));
+//			
+//			sValue v = PlaneApplet.app.view
+//				.bloc.getValue("val_grid");
+//			if (v != null) ((sBoo)v).set(false);
+//			v = PlaneApplet.app.getSystem(pAtom.class)
+//					.bloc.getValue("val_draw");
+//				if (v != null) ((sBoo)v).set(true);
+//			v = PlaneApplet.app.getSystem(pAtom.class)
+//					.bloc.getValue("val_play");
+//				if (v != null) ((sBoo)v).set(true);
+//		}})
+//		;
+
 		
 		
-		pSheet.getSheetModel("main").addMacro("main_sheet_atom", main_sheet_atom);
-		pSheet.getSheetModel("main").addMacro("atom_shooter_tile", atom_shooter_tile);
-		pSheet.getSheetModel("main").addMacro("atom_player_tile", atom_player_tile);
-		pSheet.getSheetModel("init_space").addMacro("init_space_atom", init_space_atom);
-		pSheet.getSheetModel("init_space").addMacro("atom_shooter", atom_shooter);
-		pSheet.getSheetModel("init_space").addMacro("atom_player", atom_player);
-		pSheet.getSheetModel("common_param").addMacro("common_param_atom", common_param_atom);
-		pSheet.getSheetModel("common_param").addMacro("atom_blueprint", atom_blueprint);
+//		pSheet.getSheetModel("main").addMacro("main_sheet_atom", main_sheet_atom);
+//		pSheet.getSheetModel("main").addMacro("atom_shooter_tile", atom_shooter_tile);
+//		pSheet.getSheetModel("main").addMacro("atom_player_tile", atom_player_tile);
+////		pSheet.getSheetModel("init_space").addMacro("init_space_atom", init_space_atom);
+////		pSheet.getSheetModel("init_space").addMacro("atom_shooter", atom_shooter);
+////		pSheet.getSheetModel("init_space").addMacro("atom_player", atom_player);
+//		pSheet.getSheetModel("blueprint").addMacro("common_param_atom", common_param_atom);
+//		pSheet.getSheetModel("blueprint").addMacro("atom_blueprint", atom_blueprint);
 		
 	}
 

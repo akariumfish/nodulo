@@ -40,6 +40,9 @@ public class PlaneApplet extends App {
 //	public static boolean RELEASE = true;
 	public static boolean RELEASE = false;
 	
+	public static boolean BLOCK_NDRAWER_FX = true;
+//	public static boolean BLOCK_NDRAWER_FX = false;
+
 	
 	public static class AppletConfig {
 
@@ -70,14 +73,15 @@ public class PlaneApplet extends App {
 //		public boolean START_FX = true;
 		public boolean START_FX = false;
 		
-		public boolean START_HELP = true;
-//		public boolean START_HELP = false; 
+//		public boolean START_HELP = true;
+		public boolean START_HELP = false; 
 
-		public String STARTUP_MODEL_REF = "TEST";
+		public String STARTUP_MODEL_REF = "exemple";
 //		public String STARTUP_MODEL_REF = "box2d_exemple";
-//		public String STARTUP_MODEL_REF = "patch_exemple";
 //		public String STARTUP_MODEL_REF = "atom_game";
 //		public String STARTUP_MODEL_REF = "";
+
+////		public String STARTUP_MODEL_REF = "patch_exemple";
 
 		public String STARTUP_LOAD_FILE = "";
 		public String STARTUP_NEW_FILE = "";
@@ -98,6 +102,7 @@ public class PlaneApplet extends App {
 //		public boolean PATCH_TOOL_AUTOCOLLAPSE = true;
 		public boolean PATCH_SHEET_COLLAPSE = false;
 		public boolean TOOLBOX_OPEN = true;
+		public boolean DRAW_GROUND = false;
 		public float DEF_TICK_BY_SEC = 60f;
 		
 		public boolean start_solo = true;

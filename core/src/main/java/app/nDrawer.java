@@ -39,6 +39,7 @@ import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer.Renderer;
 import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer.RendererAdapter;
 import com.noodle.nodulo.GdxApp;
 
+import aa_nodulo.PlaneApplet;
 import gui.nAlign;
 import space.earlygrey.shapedrawer.JoinType;
 import space.earlygrey.shapedrawer.ShapeDrawer;
@@ -47,11 +48,9 @@ import util.nTransform;
 
 public class nDrawer {
 
-	public static boolean BLOCK_FX = true;
-	
-	
+
 	public boolean USE_FX = true;
-	
+
 	public boolean vfx;
 	public final BitmapFont bitmapfont, bitmapfont_2y;
 	public BitmapFont font;
@@ -61,25 +60,25 @@ public class nDrawer {
 
 	private VfxManager vfxManager;
 	ArrayList<AbstractVfxEffect> effect = new ArrayList<AbstractVfxEffect>();
-    private VfxFrameBuffer buffer;
-//    public GdxApp app;
-    public DrawContext context;
-    
-    public interface DrawContext {
+	private VfxFrameBuffer buffer;
+	public DrawContext context;
+
+	public interface DrawContext {
 		public nDrawer getDrawer();
 		public Viewport getViewport();
-    		public Rectangle getScreenRect();
-    		public OrthographicCamera getCamera();
-    }
+		public Rectangle getScreenRect();
+		public OrthographicCamera getCamera();
+	}
 
 	public void draw_begin() {
 		transf.reset();
 		ScreenUtils.clear(color_back);
 		context.getViewport().apply(false);
-//		app.viewport.apply(false);
 		ready(); begin();
 	}
-	public void fx() { if (!BLOCK_FX && USE_FX) { end(); vfx = true; begin(); } }
+	public void fx() { if (
+			!PlaneApplet.BLOCK_NDRAWER_FX && 
+			USE_FX) { end(); vfx = true; begin(); } }
 	public void noFx() { if (vfx) { end(); vfx = false; begin(); } }
 
 	public void pause_batch() { 
@@ -102,53 +101,64 @@ public class nDrawer {
 		fontgenerator.dispose();
 		//font has 15pt, but we need to scale it to our viewport by ratio of viewport height to screen height
 		f.setUseIntegerPositions(false);
-		//		bitmapfont.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
+//		bitmapfont.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
 
 		f.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		return f;
 	}
-	
+
 	public nDrawer(DrawContext a, boolean fx) {
 		context = a; vfx = fx;
 
 		spritebatch = new PolygonSpriteBatch();
-		
+
 		bitmapfont = makeFont("Mx437_IBM_BIOS.ttf");
 		bitmapfont_2y = makeFont("Mx437_IBM_BIOS-2y.ttf");
 		font = bitmapfont_2y;
-		
+
 		Pixmap pixmap = new Pixmap(1, 1, Format.RGBA8888);
 		pixmap.setColor(Color.WHITE);
 		pixmap.drawPixel(0, 0);
 		texture = new Texture(pixmap);
 		pixmap.dispose();
-		
+
 
 		Pixmap pixmap2 = new Pixmap(1, 1, Format.RGBA8888);
 		pixmap2.setColor(new Color(0f, 0f, 0f, 0.0001f));
 		pixmap2.drawPixel(0, 0);
 		tex = new Texture(pixmap2);
 		pixmap2.dispose();
-		
-		
+
+
 		TextureRegion region = new TextureRegion(texture, 0, 0, 1, 1);
 		drawer = new ShapeDrawer(spritebatch, region);
-        vfxManager = new VfxManager(Pixmap.Format.RGBA8888);	
-        	vfxManager.setBlendingEnabled(true);
-        
+		vfxManager = new VfxManager(Pixmap.Format.RGBA8888);	
+		vfxManager.setBlendingEnabled(true);
+
 //		GaussianBlurEffect e1 = new GaussianBlurEffect();
 //		vfxManager.addEffect(e1); effect.add(e1);
-        	
+//		e1 = new GaussianBlurEffect();
+//		vfxManager.addEffect(e1); effect.add(e1);
+//		e1 = new GaussianBlurEffect();
+//		vfxManager.addEffect(e1); effect.add(e1);
+//		e1 = new GaussianBlurEffect();
+//		vfxManager.addEffect(e1); effect.add(e1);
+		
 //		BloomEffect e2 = new BloomEffect();
 //		vfxManager.addEffect(e2); effect.add(e2);
+//		e2.setBaseIntensity(1f);
+//		e2.setBaseSaturation(1f);
 ////		e2.setBaseIntensity(1f);
 ////		e2.setBaseSaturation(.85f);
-//		e2.setBloomIntensity(1.1f);
-//		e2.setBloomSaturation(.85f);
-//		e2.setBlurPasses(10);
-//		e2.setBlurAmount(1.1f);
+//		e2.setBloomIntensity(0f);
+//		e2.setBloomSaturation(0f);
+////		e2.setBloomIntensity(1.1f);
+////		e2.setBloomSaturation(.85f);
+//		e2.setBlurPasses(1);
+//		e2.setBlurAmount(1f);
+////		e2.setBlurAmount(1.1f);
 ////		e2.setThreshold(.85f);
-		
+
 //		LevelsEffect e3 = new LevelsEffect();
 //		vfxManager.addEffect(e3); effect.add(e3);
 //		e3.setBrightness(0.0f);
@@ -156,21 +166,21 @@ public class nDrawer {
 //		e3.setSaturation(1.0f);
 //		e3.setHue(1.0f);
 //		e3.setGamma(1.0f);
-		
+
 //		MotionBlurEffect e4 = new MotionBlurEffect(Pixmap.Format.RGBA8888, 
 //				MixEffect.Method.MIX, 1.0f);
 //		vfxManager.addEffect(e4); effect.add(e4);
-		
+
 //		VignettingEffect e5 = new VignettingEffect(false);
 //		vfxManager.addEffect(e5); effect.add(e5);
 //		e5.setSaturation(0.5f);
 //		e5.setCoords(0.5f,0.5f);
 
-    		buffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);		        
+		buffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);		        
 		Renderer batchRenderer = new PolygonSpriteBatchRendererAdapter(spritebatch);
-        buffer.addRenderer(batchRenderer);
-    		buffer.initialize(GdxApp.WIDTH,GdxApp.HEIGHT);
-    		vfxManager.getResultBuffer().addRenderer(batchRenderer); 
+		buffer.addRenderer(batchRenderer);
+		buffer.initialize(GdxApp.WIDTH,GdxApp.HEIGHT);
+		vfxManager.getResultBuffer().addRenderer(batchRenderer); 
 	}
 	public Matrix4 getTransformMatrix() { return spritebatch.getTransformMatrix(); }
 	public void dispose() {
@@ -183,7 +193,7 @@ public class nDrawer {
 		transf.reset();
 	}
 	public void resize(int w, int h) {
-        vfxManager.resize(w, h); buffer.reset(); buffer.initialize(w, h); }
+		vfxManager.resize(w, h); buffer.reset(); buffer.initialize(w, h); }
 	public void flush() { spritebatch.flush(); }
 	public void ready() { vfxManager.cleanUpBuffers(Utl.color(0, 0)); }
 	public void begin() {
@@ -193,14 +203,18 @@ public class nDrawer {
 		if (vfx) {
 //			vfxManager.rebind();
 //			vfxManager.update(1); 
-	        vfxManager.beginInputCapture();
-			ScreenUtils.clear(buffer_clear_color);
-	        vfxManager.endInputCapture();        
-	        vfxManager.renderToFbo(buffer);
-	        vfxManager.cleanUpBuffers(Utl.color(0,0));
-	        vfxManager.beginInputCapture();
+			vfxManager.setBlendingEnabled(false);
+			vfxManager.beginInputCapture();
+//			ScreenUtils.clear(buffer_clear_color);
+			ScreenUtils.clear(Utl.color(0,0));
+			vfxManager.endInputCapture();        
+			vfxManager.renderToFbo(buffer);
+//			vfxManager.cleanUpBuffers(buffer_clear_color);
+			vfxManager.cleanUpBuffers(Utl.color(0,0));
+			vfxManager.setBlendingEnabled(true);
+			vfxManager.beginInputCapture();
 		}
-		
+
 		//batch begin
 		spritebatch.begin();
 	}
@@ -208,10 +222,10 @@ public class nDrawer {
 		//batch end
 		spritebatch.end();
 		if (vfx) {
-	        vfxManager.endInputCapture();
-	        vfxManager.applyEffects();		        
-	        vfxManager.renderToFbo(buffer);
-	        spritebatch.begin();
+			vfxManager.endInputCapture();
+			vfxManager.applyEffects();		        
+			vfxManager.renderToFbo(buffer);
+			spritebatch.begin();
 			spritebatch.draw(buffer.getTexture(), 0, 0, 
 					(int)context.getScreenRect().width, 
 					(int)context.getScreenRect().height, 
@@ -224,11 +238,11 @@ public class nDrawer {
 
 		// cancel all drawing transforms
 		transf.reset();
-		
+
 	}
 
 	public static class PolygonSpriteBatchRendererAdapter 
-			extends RendererAdapter implements Poolable {
+	extends RendererAdapter implements Poolable {
 		private PolygonSpriteBatch batch;
 
 		public PolygonSpriteBatchRendererAdapter() { }
@@ -250,11 +264,11 @@ public class nDrawer {
 		@Override protected void setTransform(Matrix4 transform) {
 			batch.setTransformMatrix(transform); }
 	}
-	
-	
-	
+
+
+
 	public nDrawer alpha_rect(Rectangle n) {
-		
+
 //		end();
 //		
 //		flush();
@@ -284,12 +298,12 @@ public class nDrawer {
 //		noFill();
 //		stroke(255,0,0,255,20f);
 //		rect(n.x-5f,n.y-5f,n.width+10f,n.height+10f);
-		
+
 		return this; }
-	
-	
-	
-	
+
+
+
+
 	public nTransform transf = new nTransform();
 	public void push() { transf.push(); }
 	public void pop() { transf.pop(); }
@@ -298,11 +312,11 @@ public class nDrawer {
 	public void translate(Vector2 v) { transf.translate(v.x, v.y); }
 	public void scale(float s) { transf.scale(s); }
 	public void rotate(float s) { transf.rotate(s); }
-	
-	
-	
-	
-	
+
+
+
+
+
 	public static final char[] Alphabet = {'0','1','2','3','4','5','6','7','8','9',
 			'A','B','C','D','E','F','G','H','I','J','K','L','M',
 			'N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
@@ -365,13 +379,13 @@ public class nDrawer {
 		font.draw(spritebatch, t, p.x, p.y);
 		return this;
 	}
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 	public nDrawer line(float x1, float y1, float x2, float y2, Color c1, Color c2) {
 		Vector2 v1 = transf.transform(x1,y1);
 		Vector2 v2 = transf.transform(x2,y2);
@@ -392,8 +406,8 @@ public class nDrawer {
 		drawer.filledTriangle(v1, v2, v3, c1, c2, c3);
 		return this; }
 
-	
-	
+
+
 	public void grid(int size, float cell, final Color[] cl) {
 		if (cl.length < size*size) return;
 		for (int x = 0 ; x < size - 1 ; x++)
@@ -415,9 +429,9 @@ public class nDrawer {
 						color_stack.get(x+size*(y+1)));
 			}
 	}
-	
-	
-	
+
+
+
 	public void putColor(final ArrayList<Color> cl) {
 		for (Color c : cl) color_stack.add(getColor(c)); }
 	public void putColor(final Color[] cl) {
@@ -427,7 +441,7 @@ public class nDrawer {
 	public void putPoint(final Vector2[] cl) { for (Vector2 c : cl) point_stack.add(c); }
 	public void putPoint(final Vector2 c) { point_stack.add(c); }
 	public void resetStack() { color_stack.clear(); point_stack.clear(); }
-	
+
 	private ArrayList<Color> color_stack = new ArrayList<Color>();
 	private ArrayList<Vector2> point_stack = new ArrayList<Vector2>();
 
@@ -439,11 +453,11 @@ public class nDrawer {
 		colors.put(id,c);
 		return c;
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 
 	public nDrawer rect(Rectangle n) {
 		Rectangle r = transf.transform(n);
@@ -452,7 +466,7 @@ public class nDrawer {
 		return this; }
 	public nDrawer rect(float x, float y, float w, float h) {
 		rect(new Rectangle(x,y,w,h)); return this; }
-	
+
 	public nDrawer circle(Rectangle r) {
 		r = transf.transform(r);
 		circle(r.x+r.width/2f, r.y+r.height/2f, Math.min(r.width, r.height)/2f); return this; }
@@ -461,7 +475,7 @@ public class nDrawer {
 		if (do_fill) drawer.filledEllipse(c.x, c.y, c.radius, c.radius, 0, color_fill, color_fill);
 		if (do_stroke) { drawer.setColor(color_stroke); drawer.circle(c.x, c.y, c.radius, strokeW * transf.getScale()); } 
 		return this; }
-	
+
 	public nDrawer line(Vector2 p1, Vector2 p2) {
 		line(p1.x, p1.y, p2.x, p2.y); return this; }
 	public nDrawer line(float x1, float y1, float x2, float y2) {
@@ -475,7 +489,7 @@ public class nDrawer {
 			c.a = c.a * s;
 			drawer.line(v1.x, v1.y, v2.x, v2.y, 1, true, c, c); }
 		return this; }
-	
+
 	public nDrawer polygon(Polygon p) {
 		float[] v = p.getTransformedVertices(); polygon(v); return this; }
 	public nDrawer polygon(Vector2 v0, Vector2 v1, Vector2 v2) {
@@ -494,7 +508,7 @@ public class nDrawer {
 			drawer.setColor(color_stroke); 
 			drawer.polygon(v, strokeW * transf.getScale(), JoinType.SMOOTH); } 
 		return this; }
-	
+
 	public nDrawer diamond(Rectangle r) {
 		float[] v = new float[8];
 		v[0] = r.x; v[1] = r.y + r.height / 2f;
@@ -503,14 +517,14 @@ public class nDrawer {
 		v[6] = r.x + r.width / 2f; v[7] = r.y;
 		polygon(v);
 		return this; }
-	
+
 	public Color buffer_clear_color = Color.WHITE;
 	public Color color_back = new Color(40);
 	Color color_fill = new Color();
 	Color color_stroke = new Color();
 	private float strokeW = 2;
 	private boolean do_fill = true, do_stroke = false;
-	
+
 	public nDrawer fill(Color c) {
 		color_fill.set(c); do_fill = true; return this; }
 	public nDrawer fill(int c) {
@@ -536,7 +550,7 @@ public class nDrawer {
 		color_stroke.set(Utl.color(r,g,b, a)); do_stroke = true; return this; }
 	public nDrawer stroke(int r, int g, int b, int a, float w) {
 		color_stroke.set(Utl.color(r,g,b)); strokeW = w; do_stroke = true; return this; }
-	
+
 	public nDrawer noFill() { do_fill = false; return this; }
 	public nDrawer noStroke() { do_stroke = false; return this; }
 	public void strokeWeight(float strokeW) { this.strokeW = strokeW; }
@@ -548,20 +562,20 @@ public class nDrawer {
 	public nDrawer point(float x, float y, Color c) {
 		fill(c); noStroke(); circle(x,y,point_size); return this; }
 
-	
-	
+
+
 	public interface Drawer {
 
 
 		public void flush();
-		
+
 		public void fx();
 		public void noFx();
 
 		public Matrix4 getTransformMatrix();
-		
+
 		public void alpha_rect(Rectangle n);
-		
+
 		public void push();  
 		public void pop();  
 		public void transf(nTransform t);  
@@ -569,7 +583,7 @@ public class nDrawer {
 		public void translate(Vector2 v);  
 		public void scale(float s);  
 		public void rotate(float s);  
-		
+
 		public float textWidth(String t,float s);  
 		public float textWidth(char t,float s);  
 		public float textHeight();  
@@ -578,24 +592,24 @@ public class nDrawer {
 		public void text(String t, Vector2 v, float s, Color c); 
 		public void text(String t, float x, float y, float s); 
 		public void text(String t, float x, float y, float s, Color c); 
-		
+
 		public void rect(Rectangle n); 
 		public void rect(float x, float y, float w, float h); 
-		
+
 		public void circle(Rectangle r); 
 		public void circle(float x, float y, float r); 
-		
+
 		public void line(Vector2 p1, Vector2 p2); 
 		public void line(float x1, float y1, float x2, float y2); 
-		
+
 		public void polygon(Polygon p); 
 		public void polygon(Vector2 v0, Vector2 v1, Vector2 v2); 
 		public void polygon(Vector2 v0, Vector2 v1, Vector2 v2, Vector2 v3); 
 		public void polygon(Vector2[] v); 
 		public void polygon(float[] v); 
-		
+
 		public void diamond(Rectangle r); 
-		
+
 		public void fill(Color c); 
 		public void fill(int c); 
 		public void fill(int l, int a); 
@@ -609,7 +623,7 @@ public class nDrawer {
 		public void stroke(int r, int g, int b); 
 		public void stroke(int r, int g, int b, int a); 
 		public void stroke(int r, int g, int b, int a, float w); 
-		
+
 		public void noFill();  
 		public void noStroke();  
 		public void strokeWeight(float strokeW);  

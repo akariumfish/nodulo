@@ -67,12 +67,12 @@ public class pBox2d extends pSystem {
 			.setSetupRun(new nRun() { public void run() {
 
 				pSheet.setDefMacro("main", "main_sheet_b2d");
-				pSheet.setDefMacro("init_space", "init_space_b2d");
-				pSheet.setDefMacro("common_param", "common_param_b2d");
+//				pSheet.setDefMacro("init_space", "init_space_b2d");
+				pSheet.setDefMacro("blueprint", "common_param_b2d");
 				pSheet.setDefMacro("function", "common_func_b2d");
 
-				pSheet.setDefCollapse("init_space", false);
-				pSheet.setDefCollapse("common_param", false);
+//				pSheet.setDefCollapse("init_space", false);
+				pSheet.setDefCollapse("blueprint", false);
 				pSheet.setDefCollapse("main", false);
 				pSheet.setDefCollapse("function", false);
 			}})
@@ -90,21 +90,25 @@ public class pBox2d extends pSystem {
 			float RS = nGUI.book.RS;
 
 
-			Macro b2d_tile = new Macro("b2d_tile")
-					.addMacro("tile", pMacro.getMacro("executor"), 		0f, 	0f)
-					.addSetVar("tile_exec", "target_ref", "b2d_move")
-					;
+//			Macro b2d_tile = new Macro("b2d_tile")
+//					.addMacro("tile", pMacro.getMacro("executor"), 		0f, 	0f)
+//					.addSetVar("tile_exec", "target_ref", "b2d_move")
+//					;
 
 			Macro main_sheet = new Macro("main_sheet_b2d")
-					.addMacro("b2d_tile", b2d_tile, 	600f, 	0f)
-					.addNode("from1", "from", 		0f, -60f)
-					.addSetVar("this_ref", "fp1").addSetVar("target_ref", "tp1").getMacro()
-					.addLink("b2d_tile_tile_exec", "co_reg", "from1", "out")
-					.addRun(new nRun() { public void run() {
-						nMap<pInstance> list = arg(0, nMap.class);
+			.addMacro("exac", pMacro.getMacro("exec_actor"), 		0f,	0f)
+			.addSetVar("exac_exec", "target_ref", "b2d_move")
+			.addSetVar("exac_actor", "pop_pos", new Vector2(0,0)) 
+			.addSetVar("exac_actor", "print_name", "b2d_print")
+//			.addMacro("b2d_tile", b2d_tile, 	600f, 	0f)
+//			.addNode("from1", "from", 		0f, -60f)
+//			.addSetVar("this_ref", "fp1").addSetVar("target_ref", "tp1").getMacro()
+//			.addLink("b2d_tile_tile_exec", "co_reg", "from1", "out")
+			.addRun(new nRun() { public void run() {
+				nMap<pInstance> list = arg(0, nMap.class);
 
-					}})
-					;
+			}})
+			;
 
 			new MacroScript("b2d_move") 
 
@@ -152,38 +156,38 @@ public class pBox2d extends pSystem {
 					}})
 					;
 
-			Macro b2d_player = new Macro("b2d_player")
-					.addNode("sel_body", "sel_body", 	180f, 	60f).getMacro()
-					.addNode("register", "register", 	780f, 	-300f).getMacro()
-					.addNode("reg_in_bod", "reg_in", 	600f,	-60f).addSetVar("reg_ref", "body").getMacro()
-					.addLink("sel_body", "co_sel_bod", "reg_in_bod", "co_in")
-					.addLink("reg_in_bod", "co_reg", "register", "co_reg")
-					.addRun(new nRun() { public void run() {
-						nMap<pInstance> list = arg(0, nMap.class);
-					}})
-					;
+//			Macro b2d_player = new Macro("b2d_player")
+//					.addNode("sel_body", "sel_body", 	180f, 	60f).getMacro()
+//					.addNode("register", "register", 	780f, 	-300f).getMacro()
+//					.addNode("reg_in_bod", "reg_in", 	600f,	-60f).addSetVar("reg_ref", "body").getMacro()
+//					.addLink("sel_body", "co_sel_bod", "reg_in_bod", "co_in")
+//					.addLink("reg_in_bod", "co_reg", "register", "co_reg")
+//					.addRun(new nRun() { public void run() {
+//						nMap<pInstance> list = arg(0, nMap.class);
+//					}})
+//					;
 
-			Macro init_space = new Macro("init_space_b2d")
-					.addMacro("b2d_player", b2d_player, 	1200f, 	-150f)
-					.addMacro("construct1", "constructor", 	0f, 	-150f)
-					.addSetVar("construct1_const", "print_name", "b2d_print")
-					.addNode("space_init", "space_init", 		0f, 120f).getMacro()
-					.addNode("to1", "to", 		3000f, -150f)
-					.addSetVar("this_ref", "tp1").addSetVar("target_ref", "fp1").getMacro()
-					.addLink("b2d_player_register", "co_register", "to1", "in")
-					.addLink("construct1_const", "co_run", "space_init", "start_run")
-					.addLink("b2d_player_sel_body", "in", "construct1_const", "co_body")
-					.addRun(new nRun() { public void run() {
-						nMap<pInstance> list = arg(0, nMap.class);
-
-						list.get("construct1_ank").setVar("view_ank", false);
-						list.get("construct1_ank").setVar("ank_pos", new Vector2(0,110));
-
-						//			sValue v = list.get("construct1_ank").patch.app.view
-						//				.bloc.getValue("val_grid");
-						//			if (v != null) ((sBoo)v).set(false);
-					}})
-					;
+//			Macro init_space = new Macro("init_space_b2d")
+//					.addMacro("b2d_player", b2d_player, 	1200f, 	-150f)
+//					.addMacro("construct1", "constructor", 	0f, 	-150f)
+//					.addSetVar("construct1_const", "print_name", "b2d_print")
+//					.addNode("space_init", "space_init", 		0f, 120f).getMacro()
+//					.addNode("to1", "to", 		3000f, -150f)
+//					.addSetVar("this_ref", "tp1").addSetVar("target_ref", "fp1").getMacro()
+//					.addLink("b2d_player_register", "co_register", "to1", "in")
+//					.addLink("construct1_const", "co_run", "space_init", "start_run")
+//					.addLink("b2d_player_sel_body", "in", "construct1_const", "co_body")
+//					.addRun(new nRun() { public void run() {
+//						nMap<pInstance> list = arg(0, nMap.class);
+//
+//						list.get("construct1_ank").setVar("view_ank", false);
+//						list.get("construct1_ank").setVar("ank_pos", new Vector2(0,110));
+//
+//						//			sValue v = list.get("construct1_ank").patch.app.view
+//						//				.bloc.getValue("val_grid");
+//						//			if (v != null) ((sBoo)v).set(false);
+//					}})
+//					;
 
 			Macro b2d_blueprint = new Macro("b2d_blueprint")
 					.addNode("blueprint", "blueprint", 	0f, 		0f).getMacro()
@@ -441,7 +445,7 @@ public class pBox2d extends pSystem {
 
 			int rays = 480;
 			float dist = 2500f;
-			float spc = dist * 1f;
+			float spc = dist * 0.9f;
 			pGeom geo = app.getSystem(pGeom.class);
 			float lim = geo.val_limit_dist.get();
 			new PointLight(rayHandler, rays, new Color(1,1,0,1), dist, 0, 0);

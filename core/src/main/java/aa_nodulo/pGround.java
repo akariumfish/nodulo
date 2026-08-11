@@ -53,7 +53,7 @@ public class pGround extends pSystem {
 
 			app.storeSystemType(bloc.ref, this.getClass());
 
-			val_do_draw = bloc.obtainBoo("val_do_draw", false);
+			val_do_draw = bloc.obtainBoo("val_do_draw", app.config.DRAW_GROUND);
 			val_debug_ground = bloc.obtainBoo("val_debug_ground", false);
 			val_white_ground = bloc.obtainBoo("val_white_ground", false);
 			val_limit_dist = bloc.obtainFlt("val_limit_dist", 5000f);

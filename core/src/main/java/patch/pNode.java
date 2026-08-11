@@ -1187,10 +1187,14 @@ public class pNode {
 			
 			float d = Utl.distanceSegmentPoint(pos, pos2, mouse);
 			
-			if (d <= 18) { app.stroke(255,155,0,255, 12f); } 
+			float touch_d = 15;
+			float touch_w = 20;
+			float notouch_w = 15;
+			
+			if (d <= touch_d) { app.stroke(255,155,0,255, touch_w); } 
 			else if (instance.getDataInt("hightlight_count") > 0) 
-				app.stroke(255,150,90,255, 9f);
-			else app.stroke(80,100,240,255, 9f);
+				app.stroke(255,150,90,255, notouch_w);
+			else app.stroke(80,100,240,255, notouch_w);
 			
 			app.line(pos, pos2);
 			
