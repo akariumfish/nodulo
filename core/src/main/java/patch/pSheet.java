@@ -335,7 +335,7 @@ public class pSheet {
 	}
 	public void tool_setup(boolean open) {
 		app.addDelayEvent(1, new nRun(this) { public void run() {
-			nWidgetGroup sec = app.menu.toolbox
+			nWidgetGroup sec = app.gui.toolbox
 					.addSection("Sheet "+sheet_model, open);
 			nInterface interf = app.gui.addInterface();
 			interf.pop(sec);
@@ -526,65 +526,71 @@ public class pSheet {
 		ArrayList<pColl> cols = new ArrayList<pColl>();
 		
 		HashMap<String,String> old_new = new HashMap<String,String>();
-		
-		int inst_nb = tab.getInt(0,0);
+
+		int col_nb = tab.getInt(0,0);
 		int ent_nb = tab.getInt(0,1);
-		int link_nb = tab.getInt(0,2);
-		int col_nb = tab.getInt(0,3);
+		int inst_nb = tab.getInt(0,2);
+		int link_nb = tab.getInt(0,3);
 
 		int cnt = 4;
-		
-		for (int i = 0 ; i < inst_nb ; i++) {
-			pInstance b = inst_pool.obtain_uninit();
-			String old_name = tab.getStr(0,cnt); cnt++;
-			old_new.put(old_name,b.pool_ref);
-			insts.add(b); }
-		for (int i = 0 ; i < ent_nb ; i++) {
-			pInstance b = ent_pool.obtain_uninit();
-			String old_name = tab.getStr(0,cnt); cnt++;
-			old_new.put(old_name,b.pool_ref);
-			ents.add(b); }
-		for (int i = 0 ; i < link_nb ; i++) {
-			pInstance b = link_pool.obtain_uninit();
-			String old_name = tab.getStr(0,cnt); cnt++;
-			old_new.put(old_name,b.pool_ref);
-			links.add(b); }
+
 		for (int i = 0 ; i < col_nb ; i++) {
 			pColl b = collec_pool.obtain_uninit();
 			String old_name = tab.getStr(0,cnt); cnt++;
 			old_new.put(old_name,b.pool_ref);
 			cols.add(b); }
-		
-		cnt = 1;
-		for (int i = 0 ; i < inst_nb ; i++) {
-			insts.get(i).from_tab(tab, cnt, old_new); cnt++; }
 		for (int i = 0 ; i < ent_nb ; i++) {
-			ents.get(i).from_tab(tab, cnt, old_new); cnt++; }
+			pInstance b = ent_pool.obtain_uninit();
+			String old_name = tab.getStr(0,cnt); cnt++;
+			old_new.put(old_name,b.pool_ref);
+			ents.add(b); }
+		for (int i = 0 ; i < inst_nb ; i++) {
+			pInstance b = inst_pool.obtain_uninit();
+			String old_name = tab.getStr(0,cnt); cnt++;
+			old_new.put(old_name,b.pool_ref);
+			insts.add(b); }
 		for (int i = 0 ; i < link_nb ; i++) {
-			links.get(i).from_tab(tab, cnt, old_new); cnt++; }
+			pInstance b = link_pool.obtain_uninit();
+			String old_name = tab.getStr(0,cnt); cnt++;
+			old_new.put(old_name,b.pool_ref);
+			links.add(b); }
+
+//		for (Map.Entry<String,String> me : old_new.entrySet()) {
+//			Utl.logn(me.getKey()+" "+me.getValue());
+//		}
+
+		cnt = 1;
 		for (int i = 0 ; i < col_nb ; i++) {
 			cols.get(i).from_tab(tab, cnt, old_new); cnt++; }
+		for (int i = 0 ; i < ent_nb ; i++) {
+			ents.get(i).from_tab(tab, cnt, old_new); cnt++; }
+		for (int i = 0 ; i < inst_nb ; i++) {
+			insts.get(i).from_tab(tab, cnt, old_new); cnt++; }
+		for (int i = 0 ; i < link_nb ; i++) {
+			links.get(i).from_tab(tab, cnt, old_new); cnt++; }
 
 		for (pColl b : cols) if (b.stand == null) { cols.remove(b); b.clear(); }
-		for (pInstance b : links) if (b.stand == null) { links.remove(b); b.clear(); }
 		for (pInstance b : ents) if (b.stand == null) { ents.remove(b); b.clear(); }
 		for (pInstance b : insts) if (b.stand == null) { insts.remove(b); b.clear(); }
+		for (pInstance b : links) if (b.stand == null) { links.remove(b); b.clear(); }
+
+//		Utl.logn("2 paste "+insts.size()+" "+nodes.size());
 		
 		for (pColl b : cols) { b.do_init(); }
-		for (pInstance b : ents) { b.do_init(); }
-		for (pInstance b : insts) { b.do_init(); }
-		for (pInstance b : links) { b.do_init(); }
 		for (pColl b : cols) { b.do_load(); }
-		for (pInstance b : ents) { b.do_load(); }
+		for (pInstance b : insts) { b.do_init(); }
+		for (pInstance b : ents) { b.do_init(); }		
 		for (pInstance b : insts) { b.do_load(); }
+		for (pInstance b : ents) { b.do_load(); }
+		for (pInstance b : links) { b.do_init(); }
 		for (pInstance b : links) { b.do_load(); }
-
+		
 		for (pInstance b : ents) b.do_point_after_load();
 		for (pInstance b : insts) b.do_point_after_load();
 		for (pInstance b : links) b.do_point_after_load();
 
 		run_collapse.run();
-		
+
 		return insts;
 	}
 	
@@ -703,7 +709,8 @@ public class pSheet {
 
 				nWidget ref = g.addWidget("ref", "SB_ref");
 				
-				nWidget fx = g.addWidget("fx", gui.addWidget("SB_fx")
+//				nWidget fx = 
+						g.addWidget("fx", gui.addWidget("SB_fx")
 						.setParent(ref)
 						);
 				
@@ -719,15 +726,15 @@ public class pSheet {
 				collapse.setGlueCible(topbar);
 				collapse.setText("_").setSwitch();
 				
-				nWidget botbar = g.addWidget("botbar", "SB_botbar")
-						.setParent(ref);
-				botbar.setGlueCible(bound);
-
-				nWidget botback = g.addWidget("botback", "SB_botinterf_back")
-						.setParent(botbar);
-				
-				nInterface interf = PlaneApplet.app.gui.addInterface();
-				interf.pop(botback);
+//				nWidget botbar = g.addWidget("botbar", "SB_botbar")
+//						.setParent(ref);
+//				botbar.setGlueCible(bound);
+//
+//				nWidget botback = g.addWidget("botback", "SB_botinterf_back")
+//						.setParent(botbar);
+//				
+//				nInterface interf = PlaneApplet.app.gui.addInterface();
+//				interf.pop(botback);
 				
 				g.addMetode("set_sheet", new nRun() { public void run(Object o) {
 					pSheet sheet = (pSheet)o;
@@ -738,10 +745,14 @@ public class pSheet {
 					if (sheet.val_collapse.get()) collapse.setOn(); else collapse.setOff();
 					sheet.run_collapse = new nRun() { public void run() {
 						if (sheet.val_collapse.get()) { 
+							bound.set_color_background(Utl.color(200,80));
 							for (nWidget c : sheet.sheet_ref.getChilds()) 
 								if (c != bound && c != topbar && 
-									c != collapse && c != botbar) c.hide(); 
+									c != collapse 
+//									&& c != botbar
+									) c.hide(); 
 						} else { 
+							bound.set_color_background(Utl.color(0,0));
 							for (nWidget c : sheet.sheet_ref.getChilds()) 
 //								if (c != bound && c != topbar && 
 //								c != collapse && c != botbar) 
@@ -750,45 +761,45 @@ public class pSheet {
 					sheet.val_collapse.addEventChangeLastFrame(sheet.run_collapse);
 					sheet.run_collapse.run();
 					
-					interf.setContext(sheet.bloc);
-					interf.add_row();
-					interf.add_row_label(10, "Sheet");
-					
-					interf.set_param("entry_height","0.7");
-					interf.add_row();
-					nWidgetGroup build_list = interf.add_scrollist(10,5);
-					
-					interf.change_current_list(build_list);
-					interf.set_param("entry_height","0.7");
-
-					int i = 0;
-					nWidget ent = null;
-					for (String mr : sheet.model.macros.allKey()) {
-						if (i%2 == 0) {
-							nWidget w = interf.add_list_entry("");
-							w.setSY(nGUI.book.RS/5f);
-							ent = interf.add_list_entry("");
-							ent.setBoundChild(true).setBoundOutspace(0);
-						} else {
-							nWidget w = interf.get_row_entry_widget(1);
-							w.setParent(ent);
-							w.setSX(nGUI.book.RS/2f);
-						}
-						nWidget w = interf.get_row_button_widget(4);
-						w.setText(mr);
-						w.setParent(ent);
-						w.setTrigger();
-						w.addEventTrigger(new nRun(mr, sheet) { public void run() {
-							arg(1, pSheet.class).model.macros.get(arg(0, String.class))
-								.add(arg(1, pSheet.class), true);
-						}});
-						i++;
-					}
-					if (i%2 != 0) {
-						nWidget w = interf.get_row_entry_widget(5);
-						w.setParent(ent); 
-					}
-					interf.add_list_entry("");
+//					interf.setContext(sheet.bloc);
+//					interf.add_row();
+//					interf.add_row_label(10, "Sheet");
+//					
+//					interf.set_param("entry_height","0.7");
+//					interf.add_row();
+//					nWidgetGroup build_list = interf.add_scrollist(10,5);
+//					
+//					interf.change_current_list(build_list);
+//					interf.set_param("entry_height","0.7");
+//
+//					int i = 0;
+//					nWidget ent = null;
+//					for (String mr : sheet.model.macros.allKey()) {
+//						if (i%2 == 0) {
+//							nWidget w = interf.add_list_entry("");
+//							w.setSY(nGUI.book.RS/5f);
+//							ent = interf.add_list_entry("");
+//							ent.setBoundChild(true).setBoundOutspace(0);
+//						} else {
+//							nWidget w = interf.get_row_entry_widget(1);
+//							w.setParent(ent);
+//							w.setSX(nGUI.book.RS/2f);
+//						}
+//						nWidget w = interf.get_row_button_widget(4);
+//						w.setText(mr);
+//						w.setParent(ent);
+//						w.setTrigger();
+//						w.addEventTrigger(new nRun(mr, sheet) { public void run() {
+//							arg(1, pSheet.class).model.macros.get(arg(0, String.class))
+//								.add(arg(1, pSheet.class), true);
+//						}});
+//						i++;
+//					}
+//					if (i%2 != 0) {
+//						nWidget w = interf.get_row_entry_widget(5);
+//						w.setParent(ent); 
+//					}
+//					interf.add_list_entry("");
 				}});
 				
 				g.addMetode("bound_up", new nRun() { public void run() {

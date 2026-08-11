@@ -766,15 +766,16 @@ public class nWidget extends nModel implements Poolable, nClearable {
 				if (textAlignX == nAlign.LEFT)        tx += textFont * globalscale / 4.0f;
 				else if (textAlignX == nAlign.CENTER) tx += getSX() / 2f;
 				else if (textAlignX == nAlign.RIGHT) 
-					tx += getSX() - app.textWidth('n')*l.length();
+					tx += getSX() - app.textWidth('m',textFont * globalscale)*l.length();
 				//	
-				float line_max_char = (getSX() / app.textWidth('m'));
+				float line_max_char = ((getSX() - textFont * globalscale * 2f) / 
+						app.textWidth('m',textFont * globalscale));
 				if (set_line_length > 0) line_max_char = set_line_length;
 				if (!auto_line_return || l.length() < line_max_char) 
-					app.text(l, tx, ty, textFont * globalscale, color_text); 
+					app.text(l, tx, ty, textFont * globalscale, color_text); // * globalscale
 				else {
-					int max_line_char = (int) (((getLocalSX() - textFont * 2f) / 
-							app.textWidth("m")) * globalscale);
+					int max_line_char = (int) (((getSX() - textFont * globalscale * 2f) / 
+							(app.textWidth("m",textFont * globalscale))));// * globalscale
 					if (set_line_length > 0) max_line_char = set_line_length;
 					if (max_line_char <= 0) max_line_char = 1;
 					int next_return = l.length();
@@ -794,7 +795,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 						printed_char += line_string.length();
 						line_cnt++;
 						app.text(line_string, tx, ty - (line_cnt*textFont * globalscale), 
-								textFont * globalscale, color_text);
+								textFont * globalscale, color_text);// * globalscale
 					}
 				}
 			}
@@ -813,8 +814,8 @@ public class nWidget extends nModel implements Poolable, nClearable {
 	}
 	
 	public int line_number(String l) {
-		int max_line_char = (int) (((getLocalSX() - textFont * 2f) / 
-				app.textWidth("m")) * globalscale);
+		int max_line_char = (int) (((getSX() - textFont * globalscale * 2f) / 
+				(app.textWidth("m",textFont * globalscale))));
 		if (set_line_length > 0) max_line_char = set_line_length;
 		if (max_line_char <= 0) max_line_char = 1;
 		int next_return = l.length();
@@ -934,14 +935,22 @@ public class nWidget extends nModel implements Poolable, nClearable {
 			((globalscale >= scale_min && globalscale <= scale_max) || 
 					!scale_limit || (scale_limit && scale_limit_nodraw)); }
 	
-	public nWidget drawMasked() {  
+	public nWidget drawMasked() { 
+//		if (backgroundRender && !gui.back_is_rendering) {
+//			
+//			return this;
+//		}
 
-		if (vfx) app.fx();
+		if (
+//				!(backgroundRender && !gui.back_is_rendering) && 
+				vfx) app.fx();
 		
 		
 		if (getVisibility()) { 
 
-			if (getDrawVisibility() && do_draw) drawer.drawing();
+			if (
+//					!(backgroundRender && !gui.back_is_rendering) && 
+					getDrawVisibility() && do_draw) drawer.drawing();
 			
 			if (custom_drawer != null && getDrawVisibility()) {
 				
@@ -950,13 +959,16 @@ public class nWidget extends nModel implements Poolable, nClearable {
 				app.push();
 				app.transf(warptransform);
 				
-				runLaunchMetode("custom_drawer_drawing");
+//				if (!(backgroundRender && !gui.back_is_rendering)) 
+					runLaunchMetode("custom_drawer_drawing");
 
 				app.pop();
 			}
 
 			boolean pop = false;
-			if (maskChildren) {
+			if (
+//					!(backgroundRender && !gui.back_is_rendering) && 
+					maskChildren) {
 			    ScissorStack.calculateScissors(
 			    		gui.cam, app.getTransformMatrix(), 
 			    		maskedrect, maskingrect);
@@ -967,20 +979,33 @@ public class nWidget extends nModel implements Poolable, nClearable {
 			}
 
 			if (pop || !maskChildren) 
-				for (nWidget w : childs) w.drawMasked();
+				for (nWidget w : childs) {
+					w.drawMasked();
+//					if (w.backgroundRender) {
+//						if (gui.back_is_rendering) w.drawMasked();
+//						else app.alpha_rect(maskedrect);
+//					}
+//					else w.drawMasked();
+				}
 
-			if (maskChildren) {
+			if (
+//					!(backgroundRender && !gui.back_is_rendering) && 
+					maskChildren) {
 				app.flush();
 				if (pop) ScissorStack.popScissors();
 				if (pop) gui.scissors.remove(gui.scissors.get(gui.scissors.size() - 1));
 //				Utl.logn("b"+gui.scissors.size());
 			}
 
-			if (outlineAfterChild) draw_outline();
+			if (
+//					!(backgroundRender && !gui.back_is_rendering) && 
+					outlineAfterChild) draw_outline();
 
 		}
 
-		if (vfx) app.noFx();
+		if (
+//				!(backgroundRender && !gui.back_is_rendering) && 
+				vfx) app.noFx();
 //		if (vfx) app.noFx((int)maskingrect.x, (int)maskingrect.y, 
 //				(int)maskingrect.width, (int)maskingrect.height);
 		
@@ -1064,6 +1089,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 				warptransform.pop();
 			}
 			warptransform.pop();
+//			if (backgroundRender) gui.backgroundRender = this;
 		}
 	}
 	

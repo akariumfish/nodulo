@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -87,6 +88,7 @@ public class nDrawer {
 	public void restart_batch() { 
 		begin(); 
 	}
+	Texture tex;
 	private BitmapFont makeFont(String s) {
 
 		FreeTypeFontGenerator fontgenerator = new FreeTypeFontGenerator(
@@ -120,6 +122,15 @@ public class nDrawer {
 		pixmap.drawPixel(0, 0);
 		texture = new Texture(pixmap);
 		pixmap.dispose();
+		
+
+		Pixmap pixmap2 = new Pixmap(1, 1, Format.RGBA8888);
+		pixmap2.setColor(new Color(0f, 0f, 0f, 0.0001f));
+		pixmap2.drawPixel(0, 0);
+		tex = new Texture(pixmap2);
+		pixmap2.dispose();
+		
+		
 		TextureRegion region = new TextureRegion(texture, 0, 0, 1, 1);
 		drawer = new ShapeDrawer(spritebatch, region);
         vfxManager = new VfxManager(Pixmap.Format.RGBA8888);	
@@ -242,6 +253,43 @@ public class nDrawer {
 	
 	
 	
+	public nDrawer alpha_rect(Rectangle n) {
+		
+//		end();
+//		
+//		flush();
+//		spritebatch.disableBlending();
+//		
+////		spritebatch.setBlendFunction(GL20.GL_BLEND_SRC_RGB, GL20.GL_BLEND_DST_RGB);
+////		spritebatch.setBlendFunction(GL20.GL_SRC_COLOR, GL20.GL_ZERO);
+//		
+////		Utl.logn(""+n.x+" "+n.y+" "+n.width+" "+n.height);
+//		
+//		spritebatch.begin();
+//
+//		spritebatch.draw(tex, n.x, n.y, n.width, n.height, 
+//				0, 0, 1, 1);
+//		
+//		spritebatch.end();
+//
+//		flush();
+//		
+//		spritebatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+//		
+////		spritebatch.enableBlending();
+//
+//		begin();
+//		
+//
+//		noFill();
+//		stroke(255,0,0,255,20f);
+//		rect(n.x-5f,n.y-5f,n.width+10f,n.height+10f);
+		
+		return this; }
+	
+	
+	
+	
 	public nTransform transf = new nTransform();
 	public void push() { transf.push(); }
 	public void pop() { transf.pop(); }
@@ -271,10 +319,16 @@ public class nDrawer {
 	// 	game.font.getBounds(t.subSequence(0,t.length()-1));
 	public void setLargeFont() { font = bitmapfont; }
 	public void setDefaultFont() { font = bitmapfont_2y; }
-	public float textWidth(String t) { 
+	public float textWidth(String t, float s) { 
+		txtSizeTransf = s * transf.getScale();
+		txtSize = txtSizeTransf;
+		txtCharSize = txtSizeTransf/2f;
 		if (font == bitmapfont_2y) return txtCharSize * t.length(); 
 		else return txtCharSize * t.length() * 1.9f; }
-	public float textWidth(char t) { 
+	public float textWidth(char t, float s) { 
+		txtSizeTransf = s * transf.getScale();
+		txtSize = txtSizeTransf;
+		txtCharSize = txtSizeTransf/2f;
 		if (font == bitmapfont_2y) return txtCharSize; else return txtCharSize*1.9f; }
 	public float textHeight() { return font.getLineHeight(); }
 	public nDrawer textAlign(nAlign ax, nAlign ay) {
@@ -297,9 +351,9 @@ public class nDrawer {
 		float alignmentOffsetX = 0;
 		float alignmentOffsetY = 0;
 		if (textAlignmentX == nAlign.CENTER) 
-			alignmentOffsetX = -textWidth(t) / (2.0f * transf.getScale());
+			alignmentOffsetX = -textWidth(t,s) / (2.0f * transf.getScale());
 		else if (textAlignmentX == nAlign.RIGHT) 
-			alignmentOffsetX = -textWidth(t) / transf.getScale();
+			alignmentOffsetX = -textWidth(t,s) / transf.getScale();
 		if (textAlignmentY == nAlign.CENTER) 
 			alignmentOffsetY = font.getLineHeight() / (2.0f * transf.getScale());
 		else if (textAlignmentY == nAlign.BOTTOM) 
@@ -506,6 +560,8 @@ public class nDrawer {
 
 		public Matrix4 getTransformMatrix();
 		
+		public void alpha_rect(Rectangle n);
+		
 		public void push();  
 		public void pop();  
 		public void transf(nTransform t);  
@@ -514,8 +570,8 @@ public class nDrawer {
 		public void scale(float s);  
 		public void rotate(float s);  
 		
-		public float textWidth(String t);  
-		public float textWidth(char t);  
+		public float textWidth(String t,float s);  
+		public float textWidth(char t,float s);  
 		public float textHeight();  
 		public void textAlign(nAlign ax, nAlign ay); 
 		public void text(String t, Vector2 v, float s); 

@@ -110,7 +110,6 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 	
 	protected void gui_frame() { }
 	protected void gui_draw() { }
-	public void draw_start() {}
 	public void draw_end() {}
 	public void setInputProcessor() {}
 	
@@ -160,6 +159,16 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 		gdx.exec_nothrow("runEvents(runFrame, delta)", new nRun() { public void run() {	
 			//update
 			nRun.runEvents(runFrame, Gdx.graphics.getDeltaTime());
+		}});
+		
+	}
+	
+	public void draw_start() {
+
+		gdx.exec_nothrow("gui.draw_start()", new nRun() { public void run() {	
+			
+			gui.draw_start(); 
+			
 		}});
 		
 	}
@@ -265,6 +274,9 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 	public void fx() { gdx.drawer.fx(); }
 	public void noFx() { gdx.drawer.noFx(); }
 	public Matrix4 getTransformMatrix() { return gdx.drawer.getTransformMatrix(); }
+
+	public void alpha_rect(Rectangle n) {
+		gdx.drawer.alpha_rect(n); }
 	
 	public void push() { 
 		gdx.drawer.push(); }
@@ -282,10 +294,10 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 		gdx.drawer.rotate(s); }
 	
 	
-	public float textWidth(String t) { 
-		return gdx.drawer.textWidth(t); }
-	public float textWidth(char t) { 
-		return gdx.drawer.textWidth(t); }
+	public float textWidth(String t,float s) { 
+		return gdx.drawer.textWidth(t,s); }
+	public float textWidth(char t,float s) { 
+		return gdx.drawer.textWidth(t,s); }
 	public float textHeight() { 
 		return gdx.drawer.textHeight(); }
 	public void textAlign(nAlign ax, nAlign ay) {

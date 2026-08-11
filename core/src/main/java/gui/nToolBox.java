@@ -13,8 +13,8 @@ import util.nRun;
 
 public class nToolBox {
 
-	public PlaneApplet app;
-	public nMenu menu;
+//	public PlaneApplet app;
+//	public nMenu menu;
 	sData data;
 	nModelBook book;
 	nGUI gui;
@@ -25,14 +25,17 @@ public class nToolBox {
 	public sFlt val_toolbox_scroll;
 //	public sInt val_toolbox_stackindex;
 	
-	public nToolBox(nMenu a) {
-		menu = a; app = a.app; book = nGUI.book; RS = book.RS;
-		gui = app.gui; data = app.data;
+	public nToolBox(nGUI a) {
+//		menu = a; 
+//		app = a.app; 
+		book = nGUI.book; RS = book.RS;
+		gui = a; 
+		data = gui.data;
 		
 		toolbox_bloc = data.root_bloc.obtainBloc("toolbox_bloc");
 
 		val_toolbox_open = toolbox_bloc.obtainBoo("val_toolbox_open", "toolbox open", 
-				app.config.TOOLBOX_OPEN);
+				PlaneApplet.app != null && PlaneApplet.app.config.TOOLBOX_OPEN);
 		val_toolbox_scroll = toolbox_bloc.obtainFlt("val_toolbox_scroll", "toolbox scroll", 1);
 //		val_toolbox_stackindex = toolbox_bloc.obtainInt("val_toolbox_stackindex", "toolbox stackindex", 0);
 
@@ -47,7 +50,7 @@ public class nToolBox {
 	nWidgetGroup tool_group;
 	
 	public nWidgetGroup addSection(String t, boolean open) {
-		nWidgetGroup ent = app.gui.addWidgetGroup("toolbox_section");
+		nWidgetGroup ent = gui.addWidgetGroup("toolbox_section");
 		sBoo val_sec_open = toolbox_bloc.obtainBoo("val_sec_open_"+t, "sec open", open);
 		ent.metode("add_to_toolbox", tool_group);
 		ent.metode("set_title", t);
@@ -95,15 +98,15 @@ public class nToolBox {
 		tool_group.metode("set_toolbox", this);
 //		tool_group.metode("set_val_open", val_toolbox_open);
 
-		if (app.config.TOOLBOX_OPEN)
-			app.addDelayEvent(30, new nRun() { public void run() {
+		if (PlaneApplet.app != null && PlaneApplet.app.config.TOOLBOX_OPEN)
+			gui.runner.addDelayEvent(30, new nRun() { public void run() {
 				tool_group.get("back").toFront(); }});
 		
 		
-		menu.add_menu_trigg("-", new nRun() { public void run() {
+		gui.add_menu_trigg("-", new nRun() { public void run() {
 			val_toolbox_open.swtch();
-			app.addDelayEvent(1, new nRun() { public void run() {
-				menu.updateFreeview(); }}); 
+			gui.runner.addDelayEvent(1, new nRun() { public void run() {
+				gui.updateFreeview(); }}); 
 		}}).toBack().setSize(30,30);
 		
 		nRun run_toolbox_open = new nRun() { public void run() {
@@ -116,13 +119,13 @@ public class nToolBox {
 		val_toolbox_open.addEventChangeThisFrame(run_toolbox_open);
 		run_toolbox_open.run();
 		
-		app.addDelayEvent(1, new nRun() { public void run() {
+		gui.runner.addDelayEvent(1, new nRun() { public void run() {
 			run_toolbox_open.run(); }});
 		
 		
 
-		app.gdx.addEventScreen(new nRun() { public void run() {
-			tool_group.get("back").setRect(0,0,RS*12,app.gdx.getscreenheight()); 
+		App.ap.gdx.addEventScreen(new nRun() { public void run() {
+			tool_group.get("back").setRect(0,0,RS*12,App.ap.gdx.getscreenheight()); 
 			tool_group.getGroup("list").get("space").setSize(tool_group.get("back").getLocalSX() - RS, 
 					tool_group.get("back").getLocalSY());
 			tool_group.getGroup("list").get("slider").setSize(RS,tool_group.get("back").getLocalSY());

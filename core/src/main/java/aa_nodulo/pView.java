@@ -285,12 +285,19 @@ public class pView {
 
 		
 			
-		app.menu.add_info_text("space zoom: ", view.object("val_cam_scale", sFlt.class));
+		app.gui.add_info_text("space zoom: ", view.object("val_cam_scale", sFlt.class));
 		
 		nWidget view_backref = view.get("backref");
+		
 		view_ref = app.gui.addWidget("ref");
 		view_ref.setParent(view_backref);
 
+		
+		//TODO
+//		view.get("backrender").setBackgroundRender();
+		
+		
+		
 		nWidgetGroup bar = app.gui.addWidgetGroup("viewspace_tool");
 		bloc.addObject("bar_viewspace_tool", bar);
 		bar.metode("set_px", 350f);

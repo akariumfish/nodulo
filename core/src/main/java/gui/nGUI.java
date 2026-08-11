@@ -16,9 +16,13 @@ import app.nDrawer;
 import app.App;
 import app.Runner;
 import app.nInput;
+import data.sBoo;
 import data.sData;
+import data.sFlt;
 import data.sInt;
+import data.sStr;
 import data.sValueBloc;
+import data.sVec;
 import util.Utl;
 import util.nMap;
 import util.nPool;
@@ -183,9 +187,38 @@ public class nGUI {
 
 	public nWidgetGroup group_infopop = null;
 	public nWidgetGroup group_popWindow = null;
+	public nWidgetGroup group_dropmenu = null;
 
 	public nWidget menu_back;
 	public nWidget menu_ref;
+
+	public nToolBox toolbox;
+
+	nWidget info_back;
+
+	public sBoo val_hide_bar, val_hide_info, val_fx;
+	
+	public nWidget menu_right;
+	
+	private boolean menu_bar_visible = false;
+	public Rectangle freeview = new Rectangle();
+	
+	ArrayList<nRun> freeviewEvent = new ArrayList<nRun>();
+
+	public void addFreeviewEvent(nRun n) { freeviewEvent.add(n); updateFreeview(); }
+	public void removeFreeviewEvent(nRun n) { freeviewEvent.remove(n); }
+	
+	public void updateFreeview() {
+		Vector2 p = new Vector2(0,0);
+		Vector2 s = new Vector2(App.ap.gdx.getscreenwidth(), 
+				App.ap.gdx.getscreenheight());
+		if (toolbox.val_toolbox_open.get()) {
+			s.x -= toolbox.tool_group.get("back").getSX();
+			p.x += toolbox.tool_group.get("back").getSX();}
+		if (menu_bar_visible) { s.y -= gui.menu_back.getSY(); }
+		freeview.set(p.x,p.y,s.x,s.y);
+		nRun.runEvents(freeviewEvent);
+	}
 	
 	public nGUI(App app) {
 		in = app.input; data = app.data; context = app.gdx; drawer = app;
@@ -237,6 +270,7 @@ public class nGUI {
 	
 		group_infopop = addWidgetGroup("info_pop");
 		group_popWindow = addWidgetGroup("pop_window");
+		group_dropmenu = addWidgetGroup("dropmenu");
 		
 
 		app.addRunFrameStart(new nRun() { public void run() {
@@ -246,7 +280,6 @@ public class nGUI {
 		
 		build_help();
 		
-
 		menu_back = gui.addWidget("menu_back")
 				.setRect(0,GdxApp.HEIGHT - 4f*RS/3f,GdxApp.WIDTH,4f*RS/3f)
 				.asWidget()
@@ -260,11 +293,6 @@ public class nGUI {
 		
 		bar_entrys = new ArrayList<nWidget>();
 		
-//		bar_back = gui.addWidget("taskbar_back")
-//				.setRect(0,0,GdxApp.WIDTH,RS+10)
-//				.setDrawstackPriority(true)
-//				.asWidget()
-//				;
 		bar_ref = gui.addWidget("taskbar_ref")
 				.setRect(RS*12f,0,RS*6f,RS)
 				.asWidget()
@@ -272,9 +300,102 @@ public class nGUI {
 				;
 
 
+		info_back = gui.addWidget("info_back")
+				.setPos(GdxApp.WIDTH - 190,0)
+				.asWidget()
+				;
+
+		menu_right = gui.addWidget("ref")
+				.setParent(menu_back)
+				.setBoundChild(true)
+				.setStackAxis(nAlign.HORIZONTAL) // HORIZONTAL   VERTICAL
+				.setStackDirection(nAlign.LEFT) // RIGHT   LEFT   UP   DOWN
+				.setRectOrigin(nAlign.LEFT,nAlign.BOTTOM) // TOP   BOTTOM
+				.setBoundOutspace(0)
+				.setStackSpacing(RS/10f)
+				.setPassif()
+				.set_color_background(Utl.color(0,0))
+				.asWidget()
+				;
+
+		val_hide_bar = app.data.root_bloc.newBoo("val_hide_bar", true);
+
+		val_hide_info = app.data.root_bloc.newBoo("val_hide_info", false);
+
+		val_fx = app.data.root_bloc.newBoo("val_fx", 
+				PlaneApplet.app != null && !PlaneApplet.app.config.START_FX);
+		val_fx.addEventChangeLastFrame(new nRun() { public void run() {
+			app.use_fx(val_fx.get()); }});
+		
+		toolbox = new nToolBox(this);
+		
+
+		nRun run_hb_frame = new nRun() { public void run() {
+			if (app.input.mouse.y > menu_back.getLocalY() - menu_back.getLocalSY()) {
+				menu_back.show();
+				if (!menu_bar_visible) {
+					menu_bar_visible = true;
+					updateFreeview();
+				}
+			} else {
+				menu_back.hide();
+				if (menu_bar_visible) {
+					menu_bar_visible = false;
+					updateFreeview();
+				}
+			}
+		}};
+		nRun run_hi_frame = new nRun() { public void run() {
+			if (app.input.mouse.x > info_back.getLocalX() && 
+					app.input.mouse.y < info_back.getLocalY() + info_back.getSY()) {
+				info_back.show();
+			} else {
+				info_back.hide();
+			}
+		}};
+
+		nRun run_h = new nRun() { public void run() {
+			if (val_hide_bar.get()) {
+				if (!app.runFrameStart.contains(run_hb_frame))
+					app.addRunFrameStart(run_hb_frame);
+			} else {
+				app.removeRunFrameStart(run_hb_frame);
+				menu_back.show();
+				if (!menu_bar_visible) {
+					menu_bar_visible = true;
+					updateFreeview();
+				}
+//				bar_back.show();
+			}
+			if (val_hide_info.get()) {
+				if (!app.runFrameStart.contains(run_hi_frame))
+					app.addRunFrameStart(run_hi_frame);
+			} else {
+				app.removeRunFrameStart(run_hi_frame);
+				info_back.show();
+			}
+		}};
+		app.addEventNextFrame(new nRun() { public void run() {
+			run_h.run();
+			val_hide_bar.addEventChangeLastFrame(run_h);
+			val_hide_info.addEventChangeLastFrame(run_h); }});
+
 		app.gdx.addEventScreen(new nRun() { public void run() {
+			info_back.setPos(app.gdx.getscreenwidth() - 190,0); 
+			menu_right.force_calc_child();
+			menu_right.setPos(app.gdx.getscreenwidth() - menu_right.getSX(),RS/6f);
 			menu_back.setRect(0,app.gdx.getscreenheight() - 4f*RS/3f,app.gdx.getscreenwidth(),4f*RS/3f); 
+			updateFreeview();
 		}});
+		app.gdx.addEventScreen(new nRun() { public void run() {
+			}});
+
+		add_info_text("fps:", app.input.val_framerate);
+		if (PlaneApplet.app != null && !PlaneApplet.app.config.RELEASE) {
+			add_info_text("mouse:", app.input.val_mouse_pos);
+			add_info_text("javHeap:", app.input.val_javaHeap);
+//			add_info_text("natHeap:", app.input.val_nativeHeap);
+		}
 		
 	}
 
@@ -298,9 +419,27 @@ public class nGUI {
 	public void close_popwindow() {
 		group_popWindow.metode("close"); }
 	
+	public static nWidgetGroup clear_dropmenu() {
+		return App.ap.gui.group_dropmenu.metode("clear_entrys"); }
+	public static nWidget add_dropmenu_entry(String t) {
+		return add_dropmenu_entry(t, book.RS*6f, book.RS*2f/3f); }
+	public static nWidget add_dropmenu_entry(String t, nRun n) {
+		return add_dropmenu_entry(t, book.RS*6f, book.RS*2f/3f, n); }
+	public static nWidget add_dropmenu_entry(String t, float x, float y) {
+		return (nWidget)(App.ap.gui.group_dropmenu.metodeGet("add_entry_custom", t, x, y)); }
+	public static nWidget add_dropmenu_entry(String t, float x, float y, nRun n) {
+		return ((nWidget)(App.ap.gui.group_dropmenu
+				.metodeGet("add_entry_custom", t, x, y)))
+				.addEventTrigger(n); }
+	public static void open_dropmenu() {
+		App.ap.gui.group_dropmenu.metode("open"); }
+	public static void open_dropmenu(nWidget w) {
+		App.ap.gui.group_dropmenu.metode("open", w); }
+	
 	//used only for hovering
 	public final ArrayList<nWidget> drawing_stack = new ArrayList<nWidget>();
-	
+	public nWidget backgroundRender = null;
+	public boolean back_is_rendering = false;
 	public void frame() {
 		
 		if (val_widget_nb != null) val_widget_nb.set(widget_pool.all().size());
@@ -311,6 +450,8 @@ public class nGUI {
 //		//clearing marked widgets
 //		for (int i = all_widgets.size() - 1 ; i >= 0 ; i--) {
 //			all_widgets.get(i).test_clearing(); }
+
+		backgroundRender = null;
 		
 		// deactive position calc flags
 		for (nWidget r : widget_pool.all()) {
@@ -369,10 +510,19 @@ public class nGUI {
 		tmp_widg.clear();
 		
 	}
-	
+
+	public void draw_start() {
+		
+	}
 	private ArrayList<nWidget> tmp_widg = new ArrayList<nWidget>();
 
 	public void draw() {
+		
+//		back_is_rendering = true;
+//		
+//		if (backgroundRender != null) backgroundRender.drawMasked();
+//		
+//		back_is_rendering = false;
 		
 		for (nWidget r : orphan_widgets) if (r.visible && !r.drawstackPriority) {
 			r.drawMasked();
@@ -396,7 +546,19 @@ public class nGUI {
 		
 	}
 
-	
+
+	public nWidget add_menu_trigg(String t) {
+		return addWidget("menu_trigg",t)
+		.setParent(menu_ref)
+		;
+	}
+	public nWidget add_menu_trigg(String t, nRun r) {
+		return addWidget("menu_trigg",t)
+		.addEventTrigger(r)
+		.setParent(menu_ref)
+		;
+	}
+
 	
 
 	public nMap<Character> shortcut_key = new nMap<Character>();
@@ -456,64 +618,6 @@ public class nGUI {
 	
 	
 
-//
-//	public nMap<Character> shortcut_key = new nMap<Character>();
-//	public nMap<nRun> shortcut_run = new nMap<nRun>();
-//	public nMap<nRun> shortcut_state_run = new nMap<nRun>();
-//	public void add_shortcut_target(String ref, char def, nRun run) {
-//		shortcut_key.put(ref, def);
-//		if (run != null) shortcut_run.put(ref, run);
-//	}
-//	public void add_shortcut_target(String ref, char def, nRun run, nRun srun) {
-//		shortcut_key.put(ref, def);
-//		if (run != null) shortcut_run.put(ref, run);
-//		if (srun != null) shortcut_state_run.put(ref, srun);
-//	}
-//
-//	public void remove_shortcut_target(String ref, char def, nRun run) {
-//		shortcut_key.remove(ref);
-//		shortcut_run.remove(ref);
-//		shortcut_state_run.remove(ref);
-//	}
-//
-//	public void update_shortcut() {
-//		for (Map.Entry<String,Character> me : shortcut_key.entrySet()) {
-//			if (app.input.do_shortcut && !app.gui.field_used && 
-//					(app.input.getClick(me.getValue()) || 
-//							app.input.getUnClick(me.getValue())) && 
-//					shortcut_run.get(me.getKey()) != null) {
-//				shortcut_run.get(me.getKey()).run();
-//				shortcut_run.get(me.getKey()).run(app.input.getState(me.getValue()));
-//			}
-//				
-//			if (app.input.do_shortcut && !app.gui.field_used && 
-//					shortcut_state_run.get(me.getKey()) != null) 
-//				shortcut_state_run.get(me.getKey()).run(app.input.getState(me.getValue()));
-//		}
-//	}
-//	
-//	
-//
-//	nWidget bar_ref; //bar_back, 
-//	public ArrayList<nWidget> bar_entrys;
-//	
-//	public nWidget add_taskbar_entry() {
-//		
-//		nWidget w = gui.addWidget("taskbar_entry")
-//		.setParent(bar_ref);
-//		
-//		for(nWidget n : bar_entrys) n.setOff();
-//		
-//		w.addEventSwitchOn(new nRun() { public void run() {
-//			for(nWidget n : bar_entrys) if (n != w) n.setOff(); }});
-//		
-//		bar_entrys.add(w);
-//		return w;
-//	}
-//	public void remove_taskbar_entry(nWidget w) {
-//		bar_entrys.remove(w); }
-//	
-	
 
 	public void pop_shortcut() {
 
@@ -634,138 +738,7 @@ public class nGUI {
 		runner.addEventNextFrame(new nRun() { public void run() {
 			gui.pop_popwindow("Save"); }});
 	}
-//	public void pop_loadfrom() {
-//
-//		nInterface interf = gui.get_popWindow();
-//
-//		interf.add_row();
-//		interf.add_row_label(7," Select File : ");
-//		nWidget refresh_w = interf.add_row_trigg(3,"REFRESH");
-//		interf.add_row();
-//		nWidgetGroup file_list = interf.add_picklist(8,4);
-//		
-//		interf.add_row();
-//		interf.add_row_label(6,"");
-//		nWidget load_w = interf.add_row_trigg(4,"LOAD");
-//
-//		interf.add_col_separator();
-//
-//		nRun run_list_files = new nRun() { public void run() {
-//			interf.change_current_list(file_list);
-//			FileHandle[] files = Gdx.files.local("/").list();
-//			for(FileHandle fl : files) {
-//				if (fl.extension().equals(data.file_ext_txt)) {
-//					interf.add_list_entry(fl.name());
-//				}
-//			}
-//		}};
-//		run_list_files.run();
-//
-//		nRun run_load_file = new nRun() { public void run() {
-//			String file_name = (String)file_list.metodeGet("get_pick");
-//			if (file_name.length() == 0 || !Utl.file_exist(file_name)) return;
-//			data.val_root_savepath.set(file_name);
-//			data.setting_load();
-//			gui.close_popwindow();
-//			data.re_full_load();
-//		}};
-//		
-//		refresh_w.addEventTrigger(new nRun() { public void run() {
-//			run_list_files.run(); }});
-//		load_w.addEventTrigger(new nRun() { public void run() {
-//			run_load_file.run(); }});
-//		
-//		App.ap.addEventNextFrame(new nRun() { public void run() {
-//			gui.pop_popwindow("Load"); }});
-//	}
-//	
-//	
-//
-//	public void pop_setting() {
-//		
-//		float RS = nGUI.book.RS;
-//
-//		nInterface interf = gui.get_popWindow();
-//		interf.add_row();
-//		interf.add_row_label(10, "Settings");
-//
-//		interf.add_col_separator();
-//		interf.add_col_separator();
-//		
-//		interf.setContext(data.setting_bloc);
-//
-//		interf.add_row();
-//		interf.add_row_label(6, "Database Savepath:");
-//		interf.add_row_label(4, "");
-//		interf.add_row();
-//		interf.add_row_field_str(8, "", "val_datab_savepath");
-//		nRun run_pick_data = new nRun() { public void run(Object o) {
-//			String file_name = (String)o;
-//			data.val_datab_savepath.set(file_name); }};
-//		interf.add_row_trigg(2, "Pick", new nRun() { public void run() {
-//			pop_pickfile(sData.data_ext_txt, run_pick_data); }});
-//
-//		interf.add_col_separator();
-//		interf.add_col_separator();
-//
-//		interf.add_row();
-//		interf.add_row_label(6, "Root Savepath:");
-//		interf.add_row_label(4, "");
-//		interf.add_row();
-//		interf.add_row_field_str(8, "", "val_root_savepath");
-//		nRun run_pick_root = new nRun() { public void run(Object o) {
-//			String file_name = (String)o;
-//			data.val_root_savepath.set(file_name); }};
-//		interf.add_row_trigg(2, "Pick", new nRun() { public void run() {
-//			pop_pickfile(sData.file_ext_txt, run_pick_root);
-//		}});
-//
-//		interf.add_col_separator();
-//		interf.add_col_separator();
-//
-//		interf.add_row();
-//		interf.add_row_label(6, "");
-//		interf.add_row_trigg(4, "Save Settings", new nRun() { public void run() {
-//			data.space_save(data.setting_space, 
-//					data.setting_savepath, true); }});
-//		
-//		
-//		interf.add_col();
-//		interf.add_row();
-//		interf.add_row_label(10, "Setting Value :");
-//
-//		interf.add_row();
-//		nWidgetGroup vallist = interf.add_scrollist(8, 4);
-//		
-//		nRun run_update_vllist = new nRun() { public void run() {
-//			interf.change_current_list(vallist);
-//			for (Map.Entry<String,sValue> me : 
-//				data.setting_space.root.values.entrySet()) {
-//				sValue val = me.getValue();
-//				String key = me.getKey();
-//				nWidget w = interf.add_list_entry(
-//						key + " : " + val.getString());
-//				w.setTextAlignment(nAlign.LEFT, nAlign.CENTER);
-//				
-//				if (val.isBoo()) {
-//					nWidget bp_w = interf.get_row_button_widget(3);
-//					bp_w.setParent(w)
-//					.setLink((sBoo)val)
-//					.setStacked(false)
-//					.setText("I/O")
-//					.setRect(15f*RS/2f, 0, 3f*RS/2f, RS)
-//					.setSwitch();
-//				}
-//			}
-//		}};
-//		data.setting_space.root.addEventChangeThisFrame(run_update_vllist);
-//		run_update_vllist.run();
-//		
-//		App.ap.addEventNextFrame(new nRun() { public void run() {
-//			gui.pop_popwindow("Setting"); }});
-//	}
-//	
-
+	
 	public void pop_pickfile(String extention, nRun run_pick) {
 
 		nInterface interf = gui.get_popWindow();
@@ -849,51 +822,6 @@ public class nGUI {
 //	}
 	
 
-	//TODO a refaire avec scene2d.ui dans un autre Screen
-//	public void pop_about() {
-//		
-//		String about = "Eeeeeeeeeeeeeee\n" + 
-//				"eeeeeeeeeeeeeee\n" + 
-//				"eeeeeeeeeeeeeee\n" + 
-//				"eeeeeeeeeeeeeee\n" + 
-//				"eeeeeeeeeeeeeee\n" + 
-//				"eeeeeeeeeeeeeee\n" + 
-//				"eeeeeeeeeeeeeee\n" + 
-//				"eeeeeeeeeeeeeee\n" + 
-//				"eeeeeeeeeeeeeee\n" + 
-//				"eeeeeeeeeeeeeee\n" + 
-//				"eeeeeeeeeeeeeee\n" + 
-//				"eeeeeeeeeeeeeee\n" + 
-//				"Eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-//				+ "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-//				+ "eeeeeeeeeeeeeeeeeeeeE\n" + 
-//				"eeeeeeeeeeeeeee\n" + 
-//				"eeeeeeeeeeeeeee\n" + 
-//				"eeeeeeeeeeeeeee\n" + 
-//				"eeeeeeeeeeeeeee\n" + 
-//				"eeeeeeeeeeeeeee\n" + 
-//				"eeeeeeeeeeeeeee\n" + 
-//				"eeeeeeeeeeeeeee\n" + 
-//				"eeeeeeeeeeeeeeE\n" + 
-//				"E" ;
-//		nInterface interf = gui.get_popWindow();
-//
-//		interf.add_row();
-//		
-//		nWidgetGroup list = interf.add_scrollist(8, 4);
-//		
-//		nWidget txt_w = interf.add_list_entry("");
-//		txt_w.force_calc();
-//		txt_w.setSY(app.textHeight() * txt_w.line_number(about) / 1.1f);
-//		txt_w.setText(about);
-//		txt_w.setTextAutoReturn(true)
-//		.setTextAlignment(nAlign.LEFT, nAlign.BOTTOM);
-//		txt_w.force_calc();
-//		list.metode("slide_calc");
-//		
-//		gui.pop_popwindow("  About  ");
-//	}
-	
 	
 	
 	
@@ -1000,4 +928,41 @@ public class nGUI {
 	}
 
 
+	public nWidget add_info_text(String t) {
+		return gui.addWidget("info_text")
+		.setText(t)
+		.setParent(info_back)
+		;
+	}
+	public nWidget add_info_text(String t, sBoo v) {
+		return gui.addWidget("info_text")
+		.setWatcher(t, v, "")
+		.setParent(info_back)
+		;
+	}
+	public nWidget add_info_text(String t, sInt v) {
+		return gui.addWidget("info_text")
+		.setWatcher(t, v, "")
+		.setParent(info_back)
+		;
+	}
+	public nWidget add_info_text(String t, sFlt v) {
+		return gui.addWidget("info_text")
+		.setWatcher(t, v, "")
+		.setParent(info_back)
+		;
+	}
+	public nWidget add_info_text(String t, sVec v) {
+		return gui.addWidget("info_text")
+		.setWatcher(t, v, "")
+		.setParent(info_back)
+		;
+	}
+	public nWidget add_info_text(String t, sStr v) {
+		return gui.addWidget("info_text")
+		.setWatcher(t, v, "")
+		.setParent(info_back)
+		;
+	}
+	
 }

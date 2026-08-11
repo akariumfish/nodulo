@@ -127,6 +127,8 @@ public class nModel extends nLauncher {
 		color_shadow, color_switch_on, color_switch_off, color_text;
 
 	protected boolean maskChildren = false;
+
+	protected boolean backgroundRender = false;
 	
 
 	protected boolean warpChildren = false;
@@ -157,6 +159,7 @@ public class nModel extends nLauncher {
 		helper_ref = "";
 		
 		vfx = false;
+		backgroundRender = false;
 		
 		do_draw = true;
 		visible = true; showOrigin = false;
@@ -237,7 +240,7 @@ public class nModel extends nLauncher {
 		helper_ref = m.helper_ref;
 		
 		vfx = m.vfx;
-		
+		backgroundRender = m.backgroundRender;
 		do_draw = m.do_draw;
 		visible = m.visible; 
 		showOrigin = m.showOrigin;
@@ -366,6 +369,7 @@ public class nModel extends nLauncher {
 		helper_ref = m.helper_ref;
 
 		vfx = m.vfx;
+		backgroundRender = m.backgroundRender;
 		
 		do_draw = m.do_draw;
 		visible = m.visible; 
@@ -431,8 +435,10 @@ public class nModel extends nLauncher {
 
 	public nModel setHelper(String b) { this.helper = true; this.helper_ref = b; return this; }
 	public nModel setNoHelper() { this.helper = false; return this; }
-	
+
 	public nModel setVFX() { this.vfx = true; return this; }
+
+	public nModel setBackgroundRender() { this.backgroundRender = true; return this; }
 	
 	public nModel setDraw(boolean b) { this.do_draw = b; return this; }
 	

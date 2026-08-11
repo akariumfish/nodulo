@@ -230,12 +230,12 @@ public class pFunc {
 				.closeSec();
 			}
 
-			if (ins.activated) {
-				proc.openSec().param("ref", "activate_switch", "var_link_ref", "activate", 
-						"var_link_class", Boolean.class.getName(), 
-						"width", (int)3, "text", "ON", "def", true)
-				.commande(pTile.getCom(CT.ADD_SWITCH)).closeSec();
-			}
+//			if (ins.activated) {
+//				proc.openSec().param("ref", "activate_switch", "var_link_ref", "activate", 
+//						"var_link_class", Boolean.class.getName(), 
+//						"width", (int)3, "text", "ON", "def", true)
+//				.commande(pTile.getCom(CT.ADD_SWITCH)).closeSec();
+//			}
 			
 			nRun ins_run = new nRun() {public Object get() {
 				return ins.run.do_get(instance, C.class, new nRun() {public void run() {

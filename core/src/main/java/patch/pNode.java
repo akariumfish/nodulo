@@ -235,14 +235,20 @@ public class pNode {
 					String r = t.getVar("this_ref", String.class);
 					if (r != null) targs.add(r);
 				}
-				instance.patch.patch_dropmenu.metode("clear_entrys");
+//				instance.patch.patch_dropmenu.metode("clear_entrys");
 				for (String rf : targs) {
-					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-							.metodeGet("add_entry_custom", rf, RS*6f, RS*2f/3f);
-					w1.addEventTrigger(new nRun(instance) { public void run() {
-						((pInstance)builder).setVar("target_ref", rf); 
-					}}); }
-				instance.patch.patch_dropmenu.metode("open", trigg_w); 
+					
+					nGUI.add_dropmenu_entry(rf, new nRun(instance) { public void run() {
+						((pInstance)builder).setVar("target_ref", rf); }}); 
+					
+//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+//							.metodeGet("add_entry_custom", rf, RS*6f, RS*2f/3f);
+//					w1.addEventTrigger(new nRun(instance) { public void run() {
+//						((pInstance)builder).setVar("target_ref", rf); 
+//					}}); 
+				}
+//				instance.patch.patch_dropmenu.metode("open", trigg_w); 
+				nGUI.open_dropmenu(trigg_w);
 			}})
 			.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "trigg_dropm_targ", "Pk", (int)2)
 		.closeSec()
@@ -330,14 +336,19 @@ public class pNode {
 					String r = t.getVar("this_ref", String.class);
 					if (r != null) targs.add(r);
 				}
-				instance.patch.patch_dropmenu.metode("clear_entrys");
+//				instance.patch.patch_dropmenu.metode("clear_entrys");
 				for (String rf : targs) {
-					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-							.metodeGet("add_entry_custom", rf, RS*6f, RS*2f/3f);
-					w1.addEventTrigger(new nRun(instance) { public void run() {
-						((pInstance)builder).setVar("target_ref", rf); 
-					}}); }
-				instance.patch.patch_dropmenu.metode("open", trigg_w); 
+					nGUI.add_dropmenu_entry(rf, new nRun(instance) { public void run() {
+						((pInstance)builder).setVar("target_ref", rf); }}); 
+					
+//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+//							.metodeGet("add_entry_custom", rf, RS*6f, RS*2f/3f);
+//					w1.addEventTrigger(new nRun(instance) { public void run() {
+//						((pInstance)builder).setVar("target_ref", rf); 
+//					}}); 
+				}
+//				instance.patch.patch_dropmenu.metode("open", trigg_w); 
+				nGUI.open_dropmenu(trigg_w);
 			}})
 			.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "trigg_dropm_targ", "Pk", (int)2)
 		.closeSec()
@@ -416,7 +427,7 @@ public class pNode {
 	
 	public static void build_standard() {
 
-		float RS = PlaneApplet.app.gui.book.RS;
+		float RS = nGUI.book.RS;
 
 		
 		pStandard.newStandard("node", "inst")
@@ -427,8 +438,8 @@ public class pNode {
 		.setInitRun(new nRun() {public void run() {
 			pPatch patch = instance.patch;
 			pSheet sheet = instance.sheet;
-			patch.nodes.add(instance);
-			sheet.nodes.add(instance);
+			if (!patch.nodes.contains(instance)) patch.nodes.add(instance);
+			if (!sheet.nodes.contains(instance)) sheet.nodes.add(instance);
 			
 			nWidgetGroup group = patch.app.gui.addWidgetGroup("patch_node");
 			instance.addObject("group", group);
@@ -652,7 +663,7 @@ public class pNode {
 				if (in == null) { 
 					for (pInstance p : instance.collecInstAll("cos")) {
 						if (p.getData("ref", String.class).equals(ref)) {
-							Utl.logn("ERROR : pTile "+instance.pool_ref+" add_co : "+
+							Utl.logn("ERROR : pNode "+instance.pool_ref+" add_co : "+
 									ref+" allready exist");
 							return;
 						} }
@@ -661,7 +672,7 @@ public class pNode {
 				} 
 				in.run("init_run", param);
 				in.is_new = false;
-				instance.setObject("co_cnt", co_cnt+1);
+				instance.setObject("co_cnt", (int)(co_cnt+1));
 			}});
 		}});
 		
@@ -763,7 +774,7 @@ public class pNode {
 				pInstance inst = (pInstance)builder;
 				pInstance node = inst.getInst("node");
 				
-				inst.patch.patch_dropmenu.metode("clear_entrys");
+//				inst.patch.patch_dropmenu.metode("clear_entrys");
 				
 				CoDef this_pd = null;
 				String this_ref = inst.getData("ref", String.class);
@@ -778,9 +789,10 @@ public class pNode {
 						if (key_filter_compatibility(this_pd.keys, this_pd.filters, 
 								pd.keys, pd.filters)) {
 							String r = pd.ref;
-							nWidget w1 = (nWidget)inst.patch.patch_dropmenu
-									.metodeGet("add_entry_custom", node_model + " - " + r,
-											RS*8f, RS*3f/3f);
+							nWidget w1 = nGUI.add_dropmenu_entry(node_model + " - " + r); 
+//							nWidget w1 = (nWidget)inst.patch.patch_dropmenu
+//									.metodeGet("add_entry_custom", node_model + " - " + r,
+//											RS*8f, RS*3f/3f);
 							w1.addEventTrigger(new nRun(node, this_ref, node_model, r) { 
 									public void run() {
 								((pInstance)args[0]).get("pop_node", 
@@ -790,7 +802,8 @@ public class pNode {
 						}
 					}
 				}
-				inst.patch.patch_dropmenu.metode("open", w); 
+//				inst.patch.patch_dropmenu.metode("open", w); 
+				nGUI.open_dropmenu(w);
 			}};
 			
 			w.addEventTrigger(run_trigg);
@@ -820,7 +833,6 @@ public class pNode {
 			pInstance node = instance.getInst("node");
 			if (node != null) {
 				node.collecInstRemove("cos",instance); }
-			
 		}})
 		.newRun("highlight_self", new nRun() {public void run() {
 			instance.setData("hightlight_count", pNode.LINK_HIGHLIGHT_TEMP);
@@ -1291,7 +1303,7 @@ public class pNode {
 				pInstance inst = (pInstance)builder;
 				pInstance node = inst.getInst("node");
 				
-				inst.patch.patch_dropmenu.metode("clear_entrys");
+//				inst.patch.patch_dropmenu.metode("clear_entrys");
 				
 				PlugDef this_pd = null;
 				String this_ref = inst.getData("ref", String.class);
@@ -1306,9 +1318,10 @@ public class pNode {
 						if (key_filter_compatibility(this_pd.keys, this_pd.filters, 
 								pd.keys, pd.filters)) {
 							String r = pd.ref;
-							nWidget w1 = (nWidget)inst.patch.patch_dropmenu
-									.metodeGet("add_entry_custom", node_model + " - " + r,
-											RS*8f, RS*3f/3f);
+							nWidget w1 = nGUI.add_dropmenu_entry(node_model + " - " + r); 
+//							nWidget w1 = (nWidget)inst.patch.patch_dropmenu
+//									.metodeGet("add_entry_custom", node_model + " - " + r,
+//											RS*8f, RS*3f/3f);
 							w1.addEventTrigger(new nRun(node, this_ref, node_model, r) { 
 									public void run() {
 								((pInstance)args[0]).get("pop_plug_node", 
@@ -1318,7 +1331,8 @@ public class pNode {
 						}
 					}
 				}
-				inst.patch.patch_dropmenu.metode("open", w); 
+//				inst.patch.patch_dropmenu.metode("open", w); 
+				nGUI.open_dropmenu(w);
 			}};
 			
 //			w.addEventTrigger(run_trigg);
@@ -2190,7 +2204,7 @@ public class pNode {
 			
 			nWidget w = interf.add_row_label(1,text);
 
-			w.copyColorFrom(PlaneApplet.app.gui.book.getModel("ref"));
+			w.copyColorFrom(nGUI.book.getModel("ref"));
 			
 			w.setBoundParent(true);
 			w.setScaleLimitNoDraw(scale_min, scale_max);
@@ -2268,7 +2282,14 @@ public class pNode {
 	
 			nWidget w = getCom(CT.COM_ADD_WIDGET,instance,param,nWidget.class);
 			w.setField(true)
-			.copyLookFrom(PlaneApplet.app.gui.book.getModel("text_field"));
+			.copyLookFrom(nGUI.book.getModel("text_field"));
+			if (hasParam("run_right", nRun.class)) {
+				w.setRightTrigger();
+				w.copyLookFrom(PlaneApplet.app.gui.book.getModel("CL_right_trigg"));
+				nRun run = getParam("run_right", nRun.class);
+				w.addEventTriggerRight(new nRun(instance,param,run) {public void run() {
+					((nRun)args[2]).do_run((pInstance)args[0],(pPar)args[1]); }});
+			}
 			int float_rez = (int)(1.2f * w.getLocalSX() / w.getFont()) - 3;
 			if (hasParam("var_link_ref", String.class) && 
 					hasParam("var_link_class", String.class)) { 
@@ -2876,73 +2897,73 @@ public class pNode {
 					}
 				});
 
-				g.addMetode("find_place", new nRun() { public void run() {
-					
-					pInstance node = g.object("node", pInstance.class);
-//					pPatch patch = node.patch;
-					
-					Vector2 new_pos = new Vector2(node.getDataVec("pos"));
-					
-					boolean found = false;
-					int loop_cnt = 200;
-					ref.setPos(new_pos);
-					ref.force_calc_child();
-					
-					int mdir = 0;
-					int msidel = 1;
-					int msidec = 0;
-					
-					while (!found && loop_cnt > 0) {
-						found = true;
-						loop_cnt--;
-//						Rectangle r1 = new Rectangle();
-//						r1.x = ref.getLocalX(); r1.y = ref.getLocalY();
-//						r1.width = ref.boundedSize.x; r1.height = ref.boundedSize.y;
-						
-						Rectangle r1 = selline.getRectRelativeToParent(ref.parent);
-						
-						for (pInstance ob : node.sheet.nodes) 
-								if (found && ob != node) {
-							nWidget ref2 = ob.object("group", nWidgetGroup.class)
-									.get("ref");
-							ref2.force_calc_child();
-							
-							Rectangle r2 = ob.object("group", nWidgetGroup.class)
-									.get("selline").getRectRelativeToParent(ref2.parent);
-							
-//							Rectangle r2 = new Rectangle();
-//							r2.x = ref2.getLocalX(); r2.y = ref2.getLocalY();
-//							r2.width = ref2.boundedSize.x; r2.height = ref2.boundedSize.y;
-							
-							if (Utl.intersect(r1,r2)) {
-								found = false; 
-								break;
-							}
-						}
-						if (!found) {
-							float xm = ref.boundedSize.x + 20;
-							float ym = ref.boundedSize.y + 20;
-							xm = xm - xm%pNode.BRIC_GRID_SIZE + pNode.BRIC_GRID_SIZE;
-							ym = ym - ym%pNode.BRIC_GRID_SIZE + pNode.BRIC_GRID_SIZE;
-							if (mdir == 0) { ref.setPX(ref.getLocalX() + xm); }
-							if (mdir == 1) { ref.setPY(ref.getLocalY() + ym); }
-							if (mdir == 2) { ref.setPX(ref.getLocalX() - xm); }
-							if (mdir == 3) { ref.setPY(ref.getLocalY() - ym); }
-							msidec++;
-							if (msidec == msidel) {
-								msidec = 0;
-								if (mdir%2 == 1 ) msidel++;//&& msidel != 1
-								if (mdir == 1 && msidel == 1) msidel++;
-								mdir += 1; if (mdir == 4) mdir = 0;
-							}
-							
-							ref.force_calc_child();
-							new_pos.set(ref.getLocalX(), ref.getLocalY());
-							node.setData("pos", new_pos);
-						}
-					}
-					
-				}});
+//				g.addMetode("find_place", new nRun() { public void run() {
+//					
+//					pInstance node = g.object("node", pInstance.class);
+////					pPatch patch = node.patch;
+//					
+//					Vector2 new_pos = new Vector2(node.getDataVec("pos"));
+//					
+//					boolean found = false;
+//					int loop_cnt = 200;
+//					ref.setPos(new_pos);
+//					ref.force_calc_child();
+//					
+//					int mdir = 0;
+//					int msidel = 1;
+//					int msidec = 0;
+//					
+//					while (!found && loop_cnt > 0) {
+//						found = true;
+//						loop_cnt--;
+////						Rectangle r1 = new Rectangle();
+////						r1.x = ref.getLocalX(); r1.y = ref.getLocalY();
+////						r1.width = ref.boundedSize.x; r1.height = ref.boundedSize.y;
+//						
+//						Rectangle r1 = selline.getRectRelativeToParent(ref.parent);
+//						
+//						for (pInstance ob : node.sheet.nodes) 
+//								if (found && ob != node) {
+//							nWidget ref2 = ob.object("group", nWidgetGroup.class)
+//									.get("ref");
+//							ref2.force_calc_child();
+//							
+//							Rectangle r2 = ob.object("group", nWidgetGroup.class)
+//									.get("selline").getRectRelativeToParent(ref2.parent);
+//							
+////							Rectangle r2 = new Rectangle();
+////							r2.x = ref2.getLocalX(); r2.y = ref2.getLocalY();
+////							r2.width = ref2.boundedSize.x; r2.height = ref2.boundedSize.y;
+//							
+//							if (Utl.intersect(r1,r2)) {
+//								found = false; 
+//								break;
+//							}
+//						}
+//						if (!found) {
+//							float xm = ref.boundedSize.x + 20;
+//							float ym = ref.boundedSize.y + 20;
+//							xm = xm - xm%pNode.BRIC_GRID_SIZE + pNode.BRIC_GRID_SIZE;
+//							ym = ym - ym%pNode.BRIC_GRID_SIZE + pNode.BRIC_GRID_SIZE;
+//							if (mdir == 0) { ref.setPX(ref.getLocalX() + xm); }
+//							if (mdir == 1) { ref.setPY(ref.getLocalY() + ym); }
+//							if (mdir == 2) { ref.setPX(ref.getLocalX() - xm); }
+//							if (mdir == 3) { ref.setPY(ref.getLocalY() - ym); }
+//							msidec++;
+//							if (msidec == msidel) {
+//								msidec = 0;
+//								if (mdir%2 == 1 ) msidel++;//&& msidel != 1
+//								if (mdir == 1 && msidel == 1) msidel++;
+//								mdir += 1; if (mdir == 4) mdir = 0;
+//							}
+//							
+//							ref.force_calc_child();
+//							new_pos.set(ref.getLocalX(), ref.getLocalY());
+//							node.setData("pos", new_pos);
+//						}
+//					}
+//					
+//				}});
 				
 				return g;
 			} 

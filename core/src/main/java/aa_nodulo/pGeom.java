@@ -595,7 +595,12 @@ public class pGeom extends pSystem {
 			if (geo == null || bod == null) return;
 			
 		}});
-		
+
+		interactif.newLocalProperty("mouse")
+		.setLocalVal()
+		.addData("mousepos", new Vector2())
+		;
+
 		interactif.newLocalProperty("highlightable")
 		.setLocalVal()
 		.addData("lighted", false)
@@ -614,6 +619,11 @@ public class pGeom extends pSystem {
 		pFamily.newFamily("aabb_clickable")
 		.addProp("info_shape")
 		.addProp("clickable")
+		;
+
+		pFamily.newFamily("mouse")
+		.addProp("ref")
+		.addProp("mouse")
 		;
 
 		
@@ -941,7 +951,7 @@ public class pGeom extends pSystem {
 	nRun run_tool_paramlist_update;
 	public void build_paramlist_tools() {
 		
-		nWidgetGroup sec = app.menu.toolbox.addSection("Selected Body", true);
+		nWidgetGroup sec = app.gui.toolbox.addSection("Selected Body", true);
 		nInterface interf = app.gui.addInterface();
 		interf.pop(sec);
 		interf.setContext(bloc);
@@ -1161,6 +1171,13 @@ public class pGeom extends pSystem {
 	}
 
 	public void frame(float delta) { 
+		for (pBody b : space.familyMember("mouse")) {
+			if (app.view.mouse_is_hover_view()) 
+				b.setVec("mouse", "mousepos", 
+						new Vector2(app.view.mouse_in_view())
+						.sub(b.getVec("ref", "pos")));
+			else b.setVec("mouse", "mousepos", 0, 0);
+		}
 		for (pBody b : space.familyMember("aabb_clickable")) {
 			b.setBoo("clickable", "hover", false);
 			b.setBoo("clickable", "click", false);

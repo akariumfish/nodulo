@@ -401,7 +401,7 @@ public class pTile {
 			nWidget w = instance.object("plug_widget", nWidget.class);
 			if (w == null) return;
 			
-			instance.patch.patch_dropmenu.metode("clear_entrys");
+//			instance.patch.patch_dropmenu.metode("clear_entrys");
 			
 			PlugDef this_pd = null;
 			String this_ref = instance.getData("ref", String.class);
@@ -432,10 +432,14 @@ public class pTile {
 								if (pd2 != pd && key_filter_compatibility(plug_pd.keys, 
 										plug_pd.filters, pd2.keys, pd2.filters)) {
 									String r2 = pd2.ref;
-									nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-											.metodeGet("add_entry_custom", 
-													tile_model + " : " + r + "<->" + r2,
-													RS*8f, RS*3f/3f);
+									
+									nWidget w1 = nGUI.add_dropmenu_entry(
+											tile_model + " : " + r + "<->" + r2);
+									
+//									nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+//											.metodeGet("add_entry_custom", 
+//													tile_model + " : " + r + "<->" + r2,
+//													RS*8f, RS*3f/3f);
 									w1.addEventTrigger(new nRun(tile, plug_tile, 
 											this_ref, plug_ref, 
 											tile_model, r, r2) { 
@@ -471,9 +475,12 @@ public class pTile {
 						if (key_filter_compatibility(this_pd.keys, this_pd.filters, 
 								pd.keys, pd.filters)) {
 							String r = pd.ref;
-							nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-									.metodeGet("add_entry_custom", tile_model + " - " + r,
-											RS*8f, RS*3f/3f);
+							
+							nWidget w1 = nGUI.add_dropmenu_entry(tile_model + " - " + r);
+							
+//							nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+//									.metodeGet("add_entry_custom", tile_model + " - " + r,
+//											RS*8f, RS*3f/3f);
 							w1.addEventTrigger(new nRun(tile, this_ref, tile_model, r) { 
 									public void run() {
 								((pInstance)args[0]).get("pop_tile", 
@@ -483,7 +490,8 @@ public class pTile {
 					}
 				}
 			}
-			instance.patch.patch_dropmenu.metode("open", w); 
+//			instance.patch.patch_dropmenu.metode("open", w); 
+			nGUI.open_dropmenu(w);
 		}})
 		.newRun("highlight_self", new nRun() {public void run() {
 			instance.setData("hightlight_count", pNode.LINK_HIGHLIGHT_TEMP);
@@ -834,8 +842,8 @@ public class pTile {
 					instance.addObject("run_event", (nRun)builder); }});
 			}
 			
-			proc.openSec().run(getRun(CT.ADD_PLUG), "run_in", "bottom").closeSec();
-			proc.openSec().run(getRun(CT.ADD_PLUG), "run_out", "top").closeSec();
+			proc.openSec().run(getRun(CT.ADD_PLUG), "run_in", "top").closeSec();
+			proc.openSec().run(getRun(CT.ADD_PLUG), "run_out", "bottom").closeSec();
 
 			PlugDef pd = new PlugDef("run_in", new String[] {"run","in"}, new String[] {"run","out"});
 			tile_model_plugs.get(stand.ref).add(pd);

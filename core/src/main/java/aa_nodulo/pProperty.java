@@ -158,55 +158,36 @@ public class pProperty {
 		for (nRun n : s.body_init_run) body_init_run.add(n);
 //		for (nRun n : s.body_clear_run) body_clear_run.add(n);
 		
-		for (String r : s.used_key) used_key.add(r);
 		
-		for (Map.Entry<String,Integer> me : s.collec_vals.entrySet()) 
-			collec_vals.put(me.getKey(), me.getValue());
-		for (String r : s.collec_bodys) collec_bodys.add(r);
-		for (Map.Entry<String,String> me : s.collec_datas.entrySet()) 
-			collec_datas.put(me.getKey(), me.getValue());
-		for (Map.Entry<String,String> me : s.collec_props.entrySet()) 
-			collec_props.put(me.getKey(), me.getValue());
-		collec_used += s.collec_used;
+		for (Map.Entry<String,Integer> me : s.collec_vals.entrySet()) {
+			String k = me.getKey();
+			if (Utl.contains(s.collec_bodys, k)) {
+				addCollecBody(k);
+			} else if (s.collec_props.hasKey(k)) {
+				addCollecRef(k, s.collec_props.get(k));
+			} else if (s.collec_datas.hasKey(k)) {
+				addCollec(k,Utl.type_ref_class.get(s.collec_datas.get(k)));
+			}
+		}
 		
-		for (Map.Entry<String,Integer> me : s.ref_vals.entrySet()) 
-			ref_vals.put(me.getKey(), me.getValue());
-		for (Map.Entry<String,String> me : s.ref_props.entrySet()) 
-			ref_props.put(me.getKey(), me.getValue());
-		ref_used += s.ref_used;
+		for (Map.Entry<String,Integer> me : s.body_vals.entrySet()) {
+			String k = me.getKey();
+			addBody(k);
+		}
 
-		for (Map.Entry<String,Integer> me : s.body_vals.entrySet()) 
-			body_vals.put(me.getKey(), me.getValue());
-		body_used += s.body_used;
-
-		for (int i = 0 ; i < s.data_used.length ; i++) data_used[i] += s.data_used[i];
-
+		for (Map.Entry<String,Integer> me : s.ref_vals.entrySet()) {
+			String k = me.getKey();
+			addRef(k,s.ref_props.get(k));
+		}
+		
 		for (Map.Entry<Class<?>, nMap<Integer>> me : s.data_vals.entrySet()) {
 			Class<?> ct = me.getKey();
-			if (data_vals.get(ct) != null) {
-				for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) 
-					data_vals.get(ct).put(map_me.getKey(), map_me.getValue());
-			} else {
-				nMap<Integer> map = new nMap<Integer>();
-				for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) 
-					map.put(map_me.getKey(), map_me.getValue());
-				data_vals.put(ct,map);
+			for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) {
+				String k = map_me.getKey();
+				addData(k,s.data_defs.get(ct).get(k));
 			}
 		}
 		
-		for (Map.Entry<Class<?>, nMap<Object>> me : s.data_defs.entrySet()) {
-			Class<?> ct = me.getKey();
-			if (data_defs.get(ct) != null) {
-				for (Map.Entry<String,Object> map_me : me.getValue().entrySet()) 
-					data_defs.get(ct).put(map_me.getKey(), Utl.copy(map_me.getValue()));
-			} else {
-				nMap<Object> map = new nMap<Object>();
-				for (Map.Entry<String,Object> map_me : me.getValue().entrySet()) 
-					map.put(map_me.getKey(), Utl.copy(map_me.getValue()));
-				data_defs.put(ct,map);
-			}
-		}
-
 		for (Map.Entry<String,Class<?>> me : s.data_class.entrySet()) 
 			data_class.put(me.getKey(), me.getValue());
 
@@ -369,7 +350,7 @@ public class pProperty {
 	
 	int collec_used = 0;
 
-	public pProperty addCollec(String ref_in_param, Class<?> ct) {
+	public pProperty addCollec(String ref_in_param, Class<?> ct) { 
 		addCollec(ref_in_param);
 		collec_datas.put(ref_in_param, ct.getName());
 		return this;

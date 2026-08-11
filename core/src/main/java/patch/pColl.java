@@ -14,7 +14,10 @@ public class pColl extends sPoolable {
 	private static final int start_data_nb = 4;
 	
 	public String get_convert_str(String s, HashMap<String,String> map) {
-		if (map != null && map.get(s) != null) s = Utl.copy(map.get(s)); return s; }
+//		String t = Utl.copy(s);
+		if (map != null && map.get(s) != null) s = Utl.copy(map.get(s)); 
+//		Utl.logn(t+" > "+s); 
+		return s; }
 	public void from_tab(sTab t, int c) { from_tab(t, c, null); }
 	public void from_tab(sTab t, int c, HashMap<String,String> map) {
 		

@@ -132,7 +132,7 @@ public class pPatch {
 			
 			pSheet.setDefMacro("main", "main_test");
 			pSheet.setDefMacro("function", "func_test");
-			pSheet.setDefMacro("init_space", "init_space_def");
+			pSheet.setDefMacro("init_space", "empty");
 			pSheet.setDefMacro("common_param", "PARAM_SETUP");
 			pSheet.setDefCollapse("main", false);
 			pSheet.setDefCollapse("function", false);
@@ -156,7 +156,7 @@ public class pPatch {
 //		app.log("Copy");
 		
 		if (tab == null) return; 
-		tab.setWidth(0);
+//		tab.setWidth(0);
 		if (insts == null || insts.size() == 0) return;
 		for (pInstance b : insts) b.do_save();
 		ArrayList<pInstance> ent = new ArrayList<pInstance>();
@@ -164,63 +164,71 @@ public class pPatch {
 		ArrayList<pColl> col = new ArrayList<pColl>();
 		for (pInstance b : insts) {
 			for (pColl c : b.collec_list) col.add(c);
-			
 			for (pInstance e : b.collecInstAll("plugs")) {
 				ent.add(e); for (pColl c : e.collec_list) col.add(c); } 
 			for (pInstance c : b.collecInstAll("cos")) {
+				ent.add(c); for (pColl cl : c.collec_list) col.add(cl);
 				for (pInstance l : c.collecInstAll("links")) {
-					link.add(l);
-					for (pColl cl : l.collec_list) col.add(cl);
-				} 
+					link.add(l); for (pColl cl : l.collec_list) col.add(cl); } 
 			} 
 		}
 		
 		int tab_width = 1 + insts.size() + ent.size() + link.size() + col.size();
 		tab.setWidth(tab_width);
 		tab.setRowHeight(0,4+tab_width);
-		tab.set(0,0,insts.size());
+		tab.set(0,0,col.size());
 		tab.set(0,1,ent.size());
-		tab.set(0,2,link.size());
-		tab.set(0,3,col.size());
+		tab.set(0,2,insts.size());
+		tab.set(0,3,link.size());
 		
 		int cnt = 4;
-		for (pInstance b : insts) {
+		for (pColl b : col) {
 			tab.set(0,cnt,b.pool_ref); cnt++; }
 		for (pInstance b : ent) {
 			tab.set(0,cnt,b.pool_ref); cnt++; }
-		for (pInstance b : link) {
+		for (pInstance b : insts) {
 			tab.set(0,cnt,b.pool_ref); cnt++; }
-		for (pColl b : col) {
+		for (pInstance b : link) {
 			tab.set(0,cnt,b.pool_ref); cnt++; }
 		
 		cnt = 1;
-		for (pInstance b : insts) { 
+		for (pColl b : col) { 
 			tab.setRowHeight(cnt, b.data_size()); 
 			b.to_tab(tab,cnt); cnt++; }
 		for (pInstance b : ent) { 
 			tab.setRowHeight(cnt, b.data_size()); 
 			b.to_tab(tab,cnt); cnt++; }
-		for (pInstance b : link) { 
+		for (pInstance b : insts) { 
 			tab.setRowHeight(cnt, b.data_size()); 
 			b.to_tab(tab,cnt); cnt++; }
-		for (pColl b : col) { 
+		for (pInstance b : link) { 
 			tab.setRowHeight(cnt, b.data_size()); 
 			b.to_tab(tab,cnt); cnt++; }
 		
 	}
-
-	public void move_inst_group_to_cam(ArrayList<pInstance> list) {
+	public void move_inst_group(ArrayList<pInstance> list, Vector2 pos) {
 		if (list.size() == 0) return;
 		Vector2 center = new Vector2();
 		for (pInstance b : list) if (b.stand != null) { center.add(b.getDataVec("pos")); }
 		center.x /= list.size(); center.y /= list.size();
-		sVec cam_pos = view.object("val_cam_pos", sVec.class);
-		center.add(-cam_pos.x(), -cam_pos.y());
-		center.x = center.x - center.x%pNode.BRIC_GRID_SIZE + pNode.BRIC_GRID_SIZE;
-		center.y = center.y - center.y%pNode.BRIC_GRID_SIZE + pNode.BRIC_GRID_SIZE;
+		center.scl(-1f);
+		Vector2 p = new Vector2(pos);
 		pSheet sheet = list.get(0).sheet;
-		center.add(sheet.sheet_ref.getLocalPos());
+		p.sub(sheet.sheet_ref.getLocalPos());
+		center.add(p);
+		if (center.x > 0)
+			center.x = center.x - center.x%pNode.BRIC_GRID_SIZE;// + pNode.BRIC_GRID_SIZE;
+		else center.x = center.x + center.x%pNode.BRIC_GRID_SIZE;// - pNode.BRIC_GRID_SIZE;
+		if (center.y > 0)
+			center.y = center.y - center.y%pNode.BRIC_GRID_SIZE;// + pNode.BRIC_GRID_SIZE;
+		else center.y = center.y + center.y%pNode.BRIC_GRID_SIZE;// - pNode.BRIC_GRID_SIZE;
 		for (pInstance b : list) if (b.stand != null) { b.addDataVec("pos", center); }
+	}
+	
+	public void move_inst_group_to_cam(ArrayList<pInstance> list) {
+		if (list.size() == 0) return;
+		sVec cam_pos = view.object("val_cam_pos", sVec.class);
+		move_inst_group(list, new Vector2(cam_pos.get()));//.scl(-1f));
 	}
 	
 //	public void build_inst_database(sTab db) {
@@ -331,9 +339,20 @@ public class pPatch {
 
 	ArrayList<pInstance> select_nodes = new ArrayList<pInstance>();
 	pSheet select_sheet = null;
-	
+	public void select_all(pSheet s) {
+		if (s != null) {
+			unselect_all();
+			App.ap.addDelayEvent(6, new nRun(s) { public void run() {
+				pSheet s = (pSheet)builder;
+				s.select_sheet();
+				for (pInstance b : Utl.duplic(s.nodes)) b.run("select");
+			}});
+			
+		}
+	}
 	public void select_all() {
-		for (pInstance b : Utl.duplic(nodes)) b.run("select");
+		if (select_sheet != null)
+			for (pInstance b : Utl.duplic(select_sheet.nodes)) b.run("select");
 	}
 	public void unselect_all() {
 		for (pInstance b : Utl.duplic(select_nodes)) b.run("unselect");
@@ -346,7 +365,7 @@ public class pPatch {
 		return view.get("background").mouseOverZone; }
 	public Vector2 mouse_in_view() {
 		Vector2 m = new Vector2(app.input.mouse);
-		m.set(view_backref.revertWarp(m)); return m; }
+		m.set(patch_ref.revertWarp(m)); return m; }
 
 	public nMap<pInstance> common_functions = new nMap<pInstance>();
 	public nMap<pInstance> common_branchs = new nMap<pInstance>();
@@ -391,8 +410,10 @@ public class pPatch {
 	
 	public pPatch patch;
 	
-	public nWidgetGroup patch_dropmenu = null;
+//	public nWidgetGroup patch_dropmenu = null;
 	public nWidgetGroup patch_pop = null;
+	
+	nRun run_del,run_sel,run_cut,run_copy,run_paste;
 	
 	public void clear() {
 
@@ -468,11 +489,11 @@ public class pPatch {
 //		bloc.data.databases.put("patch_inst", val_inst_database);
 //		build_inst_database(val_inst_database);
 		
-		patch_dropmenu = app.gui.addWidgetGroup("dropmenu");
+//		patch_dropmenu = app.gui.addWidgetGroup("dropmenu");
 		
 		view = app.gui.addWidgetGroup("viewspace");
 		bloc.addObject("viewspaceGroup", view);
-		view.addWidgetGroup("patch_dropmenu", patch_dropmenu);
+//		view.addWidgetGroup("patch_dropmenu", patch_dropmenu);
 		view.metode("link_to_bloc", bloc);
 		
 		view.metode("set_title", app.gdx.window_title+" patch");
@@ -502,7 +523,7 @@ public class pPatch {
 
 		
 		
-		app.menu.add_info_text("patch zoom: ", view.object("val_cam_scale", sFlt.class));
+		app.gui.add_info_text("patch zoom: ", view.object("val_cam_scale", sFlt.class));
 		
 		view_backref = view.get("backref");
 		patch_pop = app.gui.addWidgetGroup("patch_pop");
@@ -510,42 +531,37 @@ public class pPatch {
 		view.addWidgetGroup("patch_pop", patch_pop);
 		val_wallp = view.object("val_wallp", sBoo.class);
 		
-		build_tools();
+//		build_tools();
 
-		nRun run_del = new nRun() { public void run() {
+		run_del = new nRun() { public void run() {
 			clear_select(); }};
-		add_toolbar_trigg("Del", run_del);
+//		add_toolbar_trigg("Del", run_del);
 		app.gui.add_shortcut_target("Patch - Del", 'O', run_del);
-		nRun run_sel = new nRun() { public void run() {
+		run_sel = new nRun() { public void run() {
 			if (select_nodes.size() == nodes.size()) unselect_all();
 			else select_all(); 
 		}};
-		add_toolbar_trigg("Sel", run_sel);
+//		add_toolbar_trigg("Sel", run_sel);
 		app.gui.add_shortcut_target("Patch - Select", 'I', run_sel);
-		nRun run_cut = new nRun() { public void run() {
+		run_cut = new nRun() { public void run() {
 			ArrayList<pInstance> sel = new ArrayList<pInstance>();
 			for (pInstance n : select_nodes) sel.add(n);
 			save_insts_to_tab(sel, val_tab_copy_stack); 
 			clear_select(); }};
-		add_toolbar_trigg("Ct", run_cut);
+//		add_toolbar_trigg("Ct", run_cut);
 		app.gui.add_shortcut_target("Patch - Cut", 'X', run_cut);
-		nRun run_copy = new nRun() { public void run() {
+		run_copy = new nRun() { public void run() {
 			ArrayList<pInstance> sel = new ArrayList<pInstance>();
 			for (pInstance n : select_nodes) sel.add(n);
 			save_insts_to_tab(sel, val_tab_copy_stack); 
 		}};
-		add_toolbar_trigg("Cp", run_copy);
+//		add_toolbar_trigg("Cp", run_copy);
 		app.gui.add_shortcut_target("Patch - Copy", 'C', run_copy);
-		nRun run_paste = new nRun() { public void run() {
-			if (select_sheet != null) {
-				ArrayList<pInstance> paste = 
-						select_sheet.build_insts_from_tab(val_tab_copy_stack); 
-				unselect_all();
-				for (pInstance b : paste) { b.run("select"); }
-				move_inst_group_to_cam(paste);
-			}
+		run_paste = new nRun() { public void run() {
+			if (select_sheet != null && mouse_is_hover_view()) {
+				do_paste(select_sheet, mouse_in_view()); }
 		}};
-		add_toolbar_trigg("Pst", run_paste);
+//		add_toolbar_trigg("Pst", run_paste);
 		app.gui.add_shortcut_target("Patch - Paste", 'V', run_paste);
 		
 		val_inst_nb = app.data.system_bloc.obtainInt("val_inst_nb");
@@ -561,7 +577,7 @@ public class pPatch {
 		val_virt_nb = app.data.system_bloc.obtainInt("val_virt_nb");
 		val_virt_free = app.data.system_bloc.obtainInt("val_virt_free");
 		
-		val_tab_copy_stack = bloc.obtainTab("val_tab_copy_stack");
+		val_tab_copy_stack = app.data.system_bloc.obtainTab("val_tab_patch_copy_stack");
 		
 		
 	}
@@ -579,7 +595,7 @@ public class pPatch {
 	public void tool_setup(boolean open) {
 		
 		app.addDelayEvent(1, new nRun(this) { public void run() {
-			nWidgetGroup sec = app.menu.toolbox
+			nWidgetGroup sec = app.gui.toolbox
 					.addSection("patch", open);
 			nInterface interf = app.gui.addInterface();
 			interf.pop(sec);
@@ -679,130 +695,178 @@ public class pPatch {
 	
 	
 
-	nWidgetGroup build_list = null;
-	nInterface bar_interf = null;
+//	nWidgetGroup build_list = null;
+//	nInterface bar_interf = null;
 	
-	public void build_tools() {
-
-		nWidgetGroup tools = app.gui.addWidgetGroup("viewspace_tool");
-		bloc.addObject("patch_tool", tools);
-		tools.metode("set_py", 10f);
-		tools.metode("set_title", "Common Bric Builder");
-		tools.metode("link_tool_to_bloc", bloc, "build");
-		tools.metode("add_to_viewspace_front", view);
-		if (app.config.PATCH_TOOL_AUTOCOLLAPSE) tools.metode("set_auto_hide");
-		tool_interf = (nInterface)tools.metodeGet("get_interf");
-
-		tool_interf.set_param("entry_height","0.7");
-
-		tool_interf.add_row();
-		tool_interf.add_row();
-		build_list = tool_interf.add_scrollist(10,10);
-		
-		update_patch_tool();
-		
-		nWidgetGroup bar = app.gui.addWidgetGroup("viewspace_tool");
-		bloc.addObject("bar_viewspace_tool", bar);
-		bar.metode("set_px", 350f);
-		bar.metode("set_pop_up");
-		bar.metode("set_title", "ToolBar");
-		bar.metode("link_tool_to_bloc", bloc, "bar");
-		bar.metode("add_to_viewspace_front", view);
-		bar_interf = (nInterface)bar.metodeGet("get_interf");
-		
-		bar_interf.set_param("entry_height","1.5");
-		
-		bar_interf.add_row();
-		
-	}
-	
-
-	public nWidget add_toolbar_trigg(String t, nRun r) {
-		nWidget w1 = bar_interf.add_row_trigg(2, t);
-		w1.setFont(20);
-		w1.addEventTrigger(r);
-		return w1;
-	}
-	public nWidget add_toolbar_switch(String t, nRun r) {
-		nWidget w1 = bar_interf.add_row_switch(2, t);
-		w1.setFont(20);
-		w1.addEventSwitch(r);
-		return w1;
-	}
-	
-	public void update_patch_tool() {
-		
-		tool_interf.change_current_list(build_list);
-		tool_interf.set_param("entry_height","0.7");
-
-		int i = 0;
-		nWidget ent = null;
-//		for (String mr : pMacro.macro_runs.allKey()) {
-//			if (i%2 == 0) {
-//				nWidget w = tool_interf.add_list_entry("");
-//				w.setSY(app.gui.book.RS/5f);
-//				ent = tool_interf.add_list_entry("");
-//				ent.setBoundChild(true).setBoundOutspace(0);
-//			} else {
-//				nWidget w = tool_interf.get_row_entry_widget(1);
+//	public void build_tools() {
+//
+//		nWidgetGroup tools = app.gui.addWidgetGroup("viewspace_tool");
+//		bloc.addObject("patch_tool", tools);
+//		tools.metode("set_py", 10f);
+//		tools.metode("set_title", "Common Bric Builder");
+//		tools.metode("link_tool_to_bloc", bloc, "build");
+//		tools.metode("add_to_viewspace_front", view);
+//		if (app.config.PATCH_TOOL_AUTOCOLLAPSE) tools.metode("set_auto_hide");
+//		tool_interf = (nInterface)tools.metodeGet("get_interf");
+//
+//		tool_interf.set_param("entry_height","0.7");
+//
+//		tool_interf.add_row();
+//		tool_interf.add_row();
+//		build_list = tool_interf.add_scrollist(10,10);
+//		
+//		update_patch_tool();
+//		
+//		nWidgetGroup bar = app.gui.addWidgetGroup("viewspace_tool");
+//		bloc.addObject("bar_viewspace_tool", bar);
+//		bar.metode("set_px", 350f);
+//		bar.metode("set_pop_up");
+//		bar.metode("set_title", "ToolBar");
+//		bar.metode("link_tool_to_bloc", bloc, "bar");
+//		bar.metode("add_to_viewspace_front", view);
+//		bar_interf = (nInterface)bar.metodeGet("get_interf");
+//		
+//		bar_interf.set_param("entry_height","1.5");
+//		
+//		bar_interf.add_row();
+//		
+//	}
+//	
+//
+//	public nWidget add_toolbar_trigg(String t, nRun r) {
+//		nWidget w1 = bar_interf.add_row_trigg(2, t);
+//		w1.setFont(20);
+//		w1.addEventTrigger(r);
+//		return w1;
+//	}
+//	public nWidget add_toolbar_switch(String t, nRun r) {
+//		nWidget w1 = bar_interf.add_row_switch(2, t);
+//		w1.setFont(20);
+//		w1.addEventSwitch(r);
+//		return w1;
+//	}
+//	
+//	public void update_patch_tool() {
+//		
+//		tool_interf.change_current_list(build_list);
+//		tool_interf.set_param("entry_height","0.7");
+//
+//		int i = 0;
+//		nWidget ent = null;
+////		for (String mr : pMacro.macro_runs.allKey()) {
+////			if (i%2 == 0) {
+////				nWidget w = tool_interf.add_list_entry("");
+////				w.setSY(app.gui.book.RS/5f);
+////				ent = tool_interf.add_list_entry("");
+////				ent.setBoundChild(true).setBoundOutspace(0);
+////			} else {
+////				nWidget w = tool_interf.get_row_entry_widget(1);
+////				w.setParent(ent);
+////				w.setSX(app.gui.book.RS/2f);
+////			}
+////			nWidget w = tool_interf.get_row_button_widget(4);
+////			w.setText(mr);
+////			w.setParent(ent);
+////			w.setTrigger();
+////			w.addEventTrigger(new nRun(mr, patch) { public void run() {
+////				pMacro.runMacro(arg(0, String.class), arg(1, pPatch.class)); 
+////			}});
+////			i++;
+////		}
+////		if (i%2 != 0) {
+////			nWidget w = tool_interf.get_row_entry_widget(5);
+////			w.setParent(ent); 
+////		}
+////		tool_interf.add_list_entry("");
+//		
+//
+//		ArrayList<String> grouplist = new ArrayList<String>();
+//		
+//		for (Map.Entry<String, pStandard> me : pNode.node_models.entrySet()) {
+//			if (!Utl.contains(grouplist, pNode.node_group.get(me.getKey())))
+//				grouplist.add(pNode.node_group.get(me.getKey()));
+//		}
+//		for (String sg : grouplist) {
+//			i = 0;
+//			ent = null;
+//			for (String mr : pNode.buildable_node_models.allKey()) 
+//					if (sg.equals(pNode.node_group.get(mr))) {
+//				if (i%2 == 0) {
+//					nWidget w = tool_interf.add_list_entry("");
+//					w.setSY(app.gui.book.RS/5f);
+//					ent = tool_interf.add_list_entry("");
+//					ent.setBoundChild(true).setBoundOutspace(0);
+//				} else {
+//					nWidget w = tool_interf.get_row_entry_widget(1);
+//					w.setParent(ent);
+//					w.setSX(app.gui.book.RS/2f);
+//				}
+//				nWidget w = tool_interf.get_row_button_widget(4);
+//				w.setText(mr);
 //				w.setParent(ent);
-//				w.setSX(app.gui.book.RS/2f);
+//				w.setTrigger();
+//				w.addEventTrigger(new nRun(mr) { public void run() {
+//					if (select_sheet != null) {
+//						pInstance n = select_sheet.newNode((String)builder);  
+//						n.run("move_to_cam"); n.run("find_place"); }
+//				}});
+//				i++;
 //			}
-//			nWidget w = tool_interf.get_row_button_widget(4);
-//			w.setText(mr);
-//			w.setParent(ent);
-//			w.setTrigger();
-//			w.addEventTrigger(new nRun(mr, patch) { public void run() {
-//				pMacro.runMacro(arg(0, String.class), arg(1, pPatch.class)); 
-//			}});
-//			i++;
+//			if (i%2 != 0) {
+//				nWidget w = tool_interf.get_row_entry_widget(5);
+//				w.setParent(ent); 
+//			}
+//			tool_interf.add_list_entry("");
 //		}
-//		if (i%2 != 0) {
-//			nWidget w = tool_interf.get_row_entry_widget(5);
-//			w.setParent(ent); 
-//		}
-//		tool_interf.add_list_entry("");
-		
-
+//		
+//	}
+	public void new_node_dropmenu(pSheet sheet, Vector2 p) {
 		ArrayList<String> grouplist = new ArrayList<String>();
-		
+		grouplist.add("base");
 		for (Map.Entry<String, pStandard> me : pNode.node_models.entrySet()) {
 			if (!Utl.contains(grouplist, pNode.node_group.get(me.getKey())))
 				grouplist.add(pNode.node_group.get(me.getKey()));
 		}
+		nGUI.clear_dropmenu();
 		for (String sg : grouplist) {
-			i = 0;
-			ent = null;
-			for (String mr : pNode.buildable_node_models.allKey()) 
-					if (sg.equals(pNode.node_group.get(mr))) {
-				if (i%2 == 0) {
-					nWidget w = tool_interf.add_list_entry("");
-					w.setSY(app.gui.book.RS/5f);
-					ent = tool_interf.add_list_entry("");
-					ent.setBoundChild(true).setBoundOutspace(0);
-				} else {
-					nWidget w = tool_interf.get_row_entry_widget(1);
-					w.setParent(ent);
-					w.setSX(app.gui.book.RS/2f);
-				}
-				nWidget w = tool_interf.get_row_button_widget(4);
-				w.setText(mr);
-				w.setParent(ent);
-				w.setTrigger();
-				w.addEventTrigger(new nRun(mr) { public void run() {
-					if (select_sheet != null) {
-						pInstance n = select_sheet.newNode((String)builder);  
-						n.run("move_to_cam"); n.run("find_place"); }
-				}});
-				i++;
-			}
-			if (i%2 != 0) {
-				nWidget w = tool_interf.get_row_entry_widget(5);
-				w.setParent(ent); 
-			}
-			tool_interf.add_list_entry("");
+			nGUI.add_dropmenu_entry(sg, new nRun() { public void run() {
+				Vector2 pos = new Vector2(p);
+				App.ap.addDelayEvent(8, new nRun() { public void run() {
+					new_node_dropmenu_group(sheet, sg, pos); }});
+			}}); 
 		}
-		
+		nGUI.open_dropmenu();
+	}
+	public void new_node_dropmenu_group(pSheet sheet, String sg, Vector2 p) {
+		nGUI.clear_dropmenu();
+		for (String mr : pNode.buildable_node_models.allKey()) 
+			if (sg.equals(pNode.node_group.get(mr))) {
+				nGUI.add_dropmenu_entry(mr, new nRun() { public void run() {
+					Vector2 pos = new Vector2(p);
+					App.ap.addDelayEvent(8, new nRun() { public void run() {
+						new_node(sheet,mr,pos); }});
+				}}); 
+			}
+		nGUI.open_dropmenu();
+	}
+	public void new_node(pSheet sheet, String model, Vector2 pos) {
+		if (sheet != null) {
+			sheet.select_sheet();
+			pInstance n = sheet.newNode(model);
+			ArrayList<pInstance> list = new ArrayList<pInstance>();
+			list.add(n);
+			move_inst_group(list, pos);
+		}
+	}
+	public void do_paste(pSheet sheet, Vector2 pos) {
+		if (sheet == null) return;
+		sheet.select_sheet();
+		ArrayList<pInstance> paste = 
+				sheet.build_insts_from_tab(val_tab_copy_stack); 
+		unselect_all();
+		for (pInstance b : paste) { b.run("select"); }
+		if (pos == null) move_inst_group_to_cam(paste);
+		else { move_inst_group(paste, pos); }
 	}
 	
 	
@@ -905,12 +969,7 @@ public class pPatch {
 					nRun run_selzone = new nRun() { public void run() {
 						
 						nWidget viewsp_bg = patch.view.get("background");
-
-//						if (g.object("selzone_clic", Boolean.class)) {
-//							if (patch.select_nodes.size() == 0 && 
-//									patch.select_sheet != null) 
-//								patch.select_sheet.unselect_sheet();
-//						}
+						
 						if (viewsp_bg.mouseOverZone) {
 							if (!g.object("selzone_clic", Boolean.class) && 
 									App.ap.input.mouseLeft.trigClick) {
@@ -977,11 +1036,57 @@ public class pPatch {
 									br.run("unselect");
 								}
 							}
-//							if (patch.select_nodes.size() == 0 && 
-//									patch.select_sheet != null) 
-//								patch.select_sheet.unselect_sheet();
 						}
-						
+
+						if (viewsp_bg.mouseOver && !g.object("selzone_clic", Boolean.class) && 
+								App.ap.input.mouseRight.trigClick) {
+							Vector2 m = new Vector2(App.ap.input.mouse);
+							m.set(ref.warptransform.revert(m));
+							pSheet clic_sheet = null;
+							for (pSheet s : patch.sheets.all()) {
+								nWidget sbb = s.sheet_bound_bound;
+								Rectangle wr = new Rectangle(
+										sbb.getRectRelativeToParent(ref));
+								if (wr.contains(m)) { clic_sheet = s; break; } }
+							if (clic_sheet != null) {
+								if (patch.select_sheet != null && 
+										patch.select_sheet != clic_sheet) {
+									patch.select_sheet.unselect_sheet();
+									clic_sheet.select_sheet();
+								}
+								Vector2 mp = new Vector2(patch.mouse_in_view());
+								nGUI.clear_dropmenu();
+								nGUI.add_dropmenu_entry("new", new nRun(clic_sheet) { public void run() {
+									pSheet s = (pSheet)builder;
+									App.ap.addDelayEvent(8, new nRun(s) { public void run() {
+										pSheet s = (pSheet)builder;
+										patch.new_node_dropmenu(s,mp); }}); }}); 
+								if (patch.select_nodes.size() != clic_sheet.nodes.size()) 
+									nGUI.add_dropmenu_entry("select all", new nRun(clic_sheet) { public void run() {
+										pSheet s = (pSheet)builder;
+										patch.select_all(s); }});
+								if (patch.select_nodes.size() > 0) {
+									nGUI.add_dropmenu_entry("unselect all", new nRun() { public void run() {
+										patch.unselect_all(); 
+										if (patch.select_sheet != null) 
+											patch.select_sheet.unselect_sheet(); }}); 
+									nGUI.add_dropmenu_entry("copy", new nRun() { public void run() {
+										patch.run_copy.run(); }}); 
+									nGUI.add_dropmenu_entry("cut", new nRun() { public void run() {
+										patch.run_cut.run(); }}); 
+									nGUI.add_dropmenu_entry("delete", new nRun() { public void run() {
+										patch.run_del.run(); }}); 
+								} 
+								if (patch.val_tab_copy_stack.width() > 0)
+									nGUI.add_dropmenu_entry("paste", new nRun(clic_sheet) { public void run() {
+										pSheet s = (pSheet)builder;
+										App.ap.addDelayEvent(8, new nRun(s) { public void run() {
+											pSheet s = (pSheet)builder;
+											patch.do_paste(s,mp); }}); 
+										}}); 
+								nGUI.open_dropmenu();
+							}
+						}
 					}};
 					
 					patch.addEventFrame(run_selzone);

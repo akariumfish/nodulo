@@ -98,8 +98,8 @@ public class pAtom extends pSystem {
 		.com("add_get_input_at", "in", "keycross_press")
 		.com("get_last")
 
-		.com("add_set_output", "cam_scale")
-		.com("add_flt_at", "data", 0.4f)
+//		.com("add_set_output", "cam_scale")
+//		.com("add_flt_at", "data", 0.4f)
 		.com("add_set_output", "cam_rot")
 		.com("add_flt_at", "data", (float)(Math.PI / 2f))
 		.com("add_set_output", "cam_pos")
@@ -288,9 +288,9 @@ public class pAtom extends pSystem {
 		.addNode("register", "register", 	900f, 	-300f).getMacro()
 		.addNode("reg_in_bod", "reg_in", 	450f,	-60f).addSetVar("reg_ref", "body").getMacro()
 		.addNode("reg_in_ank", "reg_in", 	450f,	-450f).addSetVar("reg_ref", "pointmouse").getMacro()
-//		.addNode("reg_in_bp", "reg_in", 		1050f, 	-510f).addSetVar("reg_ref", "blueprint").getMacro()
-//		.addNode("from", "from", 			1350f, 	-750f)
-//		.addSetVar("this_ref", "").addSetVar("target_ref", "bullet_ref").getMacro()
+		.addNode("ui", "UI", 				120f, 	-210f)
+		.addRunPop("ui_label", "pop_plug_node", "UI_widg_out", "UI_label", "UI_widg_in").getMacro()
+		.addSetVar("ui_ui_label", "widg_size", new Vector2(6,1)).addSetVar("ui_ui_label", "widg_text", "HP:")
 		.addLink("sel_body", "co_sel_bod", "reg_in_bod", "co_in")
 //		.addLink("from", "out", "reg_in_bp", "co_in")
 		.addLink("reg_in_bod", "co_reg", "register", "co_reg")
@@ -300,6 +300,13 @@ public class pAtom extends pSystem {
 		.addLink("ank", "co_mouse", "reg_in_ank", "co_in")
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
+
+			pInstance bod_get_data = list.get("sel_body").get("pop_plug_node", pInstance.class, 
+					"sel_bod_out", "bod_get_data", "sel_bod_in");
+			bod_get_data.setVar("param_ref", "hitzone");
+			bod_get_data.setVar("data_ref", "hitpoint");
+			pMacro.link_brics_cos(bod_get_data, "co_out", list.get("ui_ui_label"), "in");
+			
 		}})
 		;
 		

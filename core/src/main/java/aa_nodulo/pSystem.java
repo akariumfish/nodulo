@@ -220,7 +220,7 @@ public abstract class pSystem {
 	public void tool_setup(boolean open) {
 		
 		app.addDelayEvent(1, new nRun(this) { public void run() {
-			nWidgetGroup sec = app.menu.toolbox
+			nWidgetGroup sec = app.gui.toolbox
 					.addSection(system_refs.get(builder.getClass()), open);
 			nInterface interf = app.gui.addInterface();
 			interf.pop(sec);

@@ -43,7 +43,8 @@ public class pTileHead {
 					if (reg.stand.ref.equals("node_model_"+model_ref) && 
 							reg.hasVar("reg_ref")) {
 						allkey.add(reg.getVar("reg_ref", String.class));
-					} else if (reg.stand.ref.equals("node_model_register")) {
+					} else if (reg.stand.ref.equals("node_model_register") || 
+							reg.stand.ref.equals("node_model_actor")) {
 						ArrayList<String> ak = reg.get("obtain_all_reg_of_model", 
 								ArrayList.class, model_ref);
 						if (ak != null) {
@@ -69,13 +70,66 @@ public class pTileHead {
 					if (reg.hasVar("reg_ref") && 
 							reg.getVar("reg_ref", String.class).equals(reg_ref)) {
 						return reg;
-					} else if (reg.stand.ref.equals("node_model_register")) {
+					} else if (reg.stand.ref.equals("node_model_register") || 
+							reg.stand.ref.equals("node_model_actor")) {
 						pInstance reg_reg = reg.get("obtain_reg", pInstance.class, reg_ref);
 						if (reg_reg != null) return reg_reg;
 					}
 				}
 			}
 			return null;
+		}})
+		.newRun("obtain_from_reg", new nRun() {public Object get() { 
+			String reg_ref = arg(0, String.class);
+			if (reg_ref == null) return null;
+			pInstance co_reg = instance.get("get_co", pInstance.class, "co_reg");
+			if (co_reg == null) return null;
+			Object op_reg = co_reg.get("obtain_all_nodes", Object.class);
+			if (op_reg == null) return null;
+			ArrayList<Object> reg_prov = (ArrayList)op_reg;
+			for (Object or : reg_prov) if (or instanceof pInstance) {
+				pInstance reg = (pInstance)or;
+				if (reg != null) {
+					if (reg.hasVar("reg_ref") && 
+							reg.getVar("reg_ref", String.class).equals(reg_ref)) {
+						pInstance reg_in_co = reg.get("get_co", pInstance.class, "co_in");
+						if (reg_in_co != null) return reg_in_co.get("obtain");
+					} else if (reg.stand.ref.equals("node_model_register") || 
+							reg.stand.ref.equals("node_model_actor")) {
+						ArrayList<String> allkey = reg.get("obtain_all_reg_of_model", 
+									ArrayList.class, "reg_in");
+						if (Utl.contains(allkey, reg_ref)) 
+							return reg.get("obtain_from_reg", Object.class, reg_ref);
+					}
+				}
+			}
+			return null;
+		}})
+		.newRun("send_to_reg", new nRun() {public void run() { 
+			String reg_ref = arg(0, String.class);
+			Object data = arg(1, Object.class);
+			if (reg_ref == null || data == null) return;
+			pInstance co_reg = instance.get("get_co", pInstance.class, "co_reg");
+			if (co_reg == null) return;
+			Object op_reg = co_reg.get("obtain_all_nodes", Object.class);
+			if (op_reg == null) return;
+			ArrayList<Object> reg_prov = (ArrayList)op_reg;
+			for (Object or : reg_prov) if (or instanceof pInstance) {
+				pInstance reg = (pInstance)or;
+				if (reg != null) {
+					if (reg.hasVar("reg_ref") && 
+							reg.getVar("reg_ref", String.class).equals(reg_ref)) {
+						pInstance reg_out_co = reg.get("get_co", pInstance.class, "co_out");
+						if (reg_out_co != null) reg_out_co.run("send", data);
+					} else if (reg.stand.ref.equals("node_model_register") || 
+							reg.stand.ref.equals("node_model_actor")) {
+						ArrayList<String> allkey = reg.get("obtain_all_reg_of_model", 
+								ArrayList.class, "reg_out");
+					if (Utl.contains(allkey, reg_ref)) {
+						reg.run("send_to_reg", reg_ref, data); break; }
+					}
+				}
+			}
 		}})
 //		.newRun("add_temp", new nRun() {public void run() { 
 //			String r = arg(0, String.class); Object d = arg(1, Object.class);
@@ -141,11 +195,11 @@ public class pTileHead {
 			if (!instance.getVar("activate", Boolean.class)) return;
 			String target_ref = instance.getVar("target_ref", String.class);
 			pInstance func = instance.patch.common_functions.get(target_ref);
-			if (func == null || target_ref.length() == 0) {
-				pInstance co_func = instance.get("get_co", pInstance.class, "co_func");
-				if (co_func == null) return;
-				func = co_func.get("obtain_node", pInstance.class);
-			}
+//			if (func == null || target_ref.length() == 0) {
+//				pInstance co_func = instance.get("get_co", pInstance.class, "co_func");
+//				if (co_func == null) return;
+//				func = co_func.get("obtain_node", pInstance.class);
+//			}
 			if (func == null) return;
 			Object[] script = func.get("get_instruction_script", Object[].class);
 			if (script == null) return;
@@ -170,14 +224,18 @@ public class pTileHead {
 				nWidget trigg_w = instance.get("get_mapped_widget", nWidget.class, 
 						"trigg_dropm");
 				if (trigg_w == null) return;
-				instance.patch.patch_dropmenu.metode("clear_entrys");
+//				instance.patch.patch_dropmenu.metode("clear_entrys");
 				for (String par : instance.patch.common_functions.allKey()) {
-					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-					w1.addEventTrigger(new nRun(instance) { public void run() {
-						((pInstance)builder).setVar("target_ref", par); 
-					}}); }
-				instance.patch.patch_dropmenu.metode("open", trigg_w); 
+					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
+						((pInstance)builder).setVar("target_ref", par); }}); 
+//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+//							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
+//					w1.addEventTrigger(new nRun(instance) { public void run() {
+//						((pInstance)builder).setVar("target_ref", par); 
+//					}}); 
+				}
+//				instance.patch.patch_dropmenu.metode("open", trigg_w); 
+				nGUI.open_dropmenu(trigg_w);
 			}})
 			.run(pNode.getRun(pNode.CT.RUNP_ADD_TRIGG), "trigg_dropm", "Pk", (int)2)
 		.closeSec()
@@ -194,11 +252,11 @@ public class pTileHead {
 					"filters", new String[]{"out"}) 
 			.run(pNode.getRun(pNode.CT.RUNS_ADD_CO_IN), "co_reg")
 		.closeSec()
-		.openSec()
-			.param("keys", new String[]{"func"}, 
-					"filters", new String[]{"func"}) 
-			.run(pNode.getRun(pNode.CT.RUNS_ADD_CO_IN), "co_func")
-		.closeSec()
+//		.openSec()
+//			.param("keys", new String[]{"func"}, 
+//					"filters", new String[]{"func"}) 
+//			.run(pNode.getRun(pNode.CT.RUNS_ADD_CO_IN), "co_func")
+//		.closeSec()
 		;
 		
 		
@@ -362,9 +420,10 @@ public class pTileHead {
 					nWidgetGroup group = inst.object("group", nWidgetGroup.class);
 					Vector2 p = group.get("ref").getLocalPos();
 					Vector2 p2 = head_tile.object("group", nWidgetGroup.class).get("ref").getLocalPos();
-					p.add(0,RS*0.1f);
+					p.add(0,-RS*5f);
 					Vector2 f = new Vector2(p).sub(p2);
-					if (f.len() > 0f) head_tile.object("group", nWidgetGroup.class).metode("move",f);
+					if (f.len() > 0f) head_tile.object("group", nWidgetGroup.class)
+						.metode("move",f);
 					head_tile.run("attract_plugged");
 					
 					head_tile.run("all_flag_recursion");
@@ -409,7 +468,9 @@ public class pTileHead {
 		.addCollecInst("tiles", "tile")
 		.process()
 		.useLoad().commande(new nRun() {public void run() { 
-			if (instance.getInst("head_tile") == null) {
+			if (instance.getInst("head_tile") == null || 
+					(instance.getInst("head_tile") != null && 
+					instance.getInst("head_tile").getInst("tile_node") != instance)) {
 				pSheet sheet = instance.sheet;
 				pInstance t = sheet.newTile("branch_start");
 				instance.setInst("head_tile", t);
@@ -420,6 +481,15 @@ public class pTileHead {
 			if (!instance.hasVar("branch_ref")) {
 				instance.obtainVar("branch_ref", "branch_"+func_counter);
 				func_counter++; }
+			if (instance.patch.common_branchs.get(
+					instance.getVar("branch_ref", String.class)) != null) {
+				String base = instance.getVar("branch_ref", String.class);
+				int cnt = 0;
+				String tst = base + "_" + cnt;
+				while (instance.patch.common_branchs.get(tst) != null) {
+					cnt++; tst = base + "_" + cnt; }
+				instance.setVar("branch_ref", tst);
+			}
 			instance.patch.common_branchs.put(
 					instance.getVar("branch_ref", String.class), instance);
 
@@ -429,8 +499,6 @@ public class pTileHead {
 		.useClear().commande(new nRun() {public void run() { 
 			instance.patch.common_branchs.remove(instance);
 		}}).useInit()
-		.run(pNode.getRun(pNode.CT.RUNP_ADD_LABEL), "", (int)16)
-		.commande(pNode.getCom(pNode.CT.COM_ADD_ROW))
 		.openSec()
 		.param("run", new nRun() {public void run() { 
 			instance.patch.common_branchs.remove(instance);
@@ -446,6 +514,8 @@ public class pTileHead {
 		.param("def", false, "height", 3f, "scale_min_big", true) 
 		.run(pNode.getRun(pNode.CT.RUNP_VAR_BOO_SWITCH), 
 				"script", "script", (int)16).closeSec()
+		.commande(pNode.getCom(pNode.CT.COM_ADD_ROW))
+		.run(pNode.getRun(pNode.CT.RUNP_ADD_LABEL), "", (int)16)
 		.getStand()
 		;
 		
@@ -464,7 +534,9 @@ public class pTileHead {
 		.addCollecInst("tiles", "tile")
 		.process()
 		.useLoad().commande(new nRun() {public void run() { 
-			if (instance.getInst("head_tile") == null) {
+			if (instance.getInst("head_tile") == null || 
+					(instance.getInst("head_tile") != null && 
+					instance.getInst("head_tile").getInst("tile_node") != instance)) {
 				pSheet sheet = instance.sheet;
 				pInstance t = sheet.newTile("stack_start");
 				instance.setInst("head_tile", t);
@@ -475,17 +547,24 @@ public class pTileHead {
 			if (!instance.hasVar("func_ref")) {
 				instance.obtainVar("func_ref", "function_"+func_counter);
 				func_counter++; }
+			if (instance.patch.common_functions.get(
+					instance.getVar("func_ref", String.class)) != null) {
+				String base = instance.getVar("func_ref", String.class);
+				int cnt = 0;
+				String tst = base + "_" + cnt;
+				while (instance.patch.common_functions.get(tst) != null) {
+					cnt++; tst = base + "_" + cnt; }
+				instance.setVar("func_ref", tst);
+			}
 			instance.patch.common_functions.put(
 					instance.getVar("func_ref", String.class), instance);
-
+			
 			instance.run("build_saved_script");
 			
 		}})
 		.useClear().commande(new nRun() {public void run() { 
 			instance.patch.common_functions.remove(instance);
 		}}).useInit()
-		.run(pNode.getRun(pNode.CT.RUNP_ADD_LABEL), "", (int)16)
-		.commande(pNode.getCom(pNode.CT.COM_ADD_ROW))
 		.openSec()
 		.param("run", new nRun() {public void run() { 
 			instance.patch.common_functions.remove(instance);
@@ -504,6 +583,8 @@ public class pTileHead {
 		.param("def", false, "height", 3f, "scale_min_big", true) 
 		.run(pNode.getRun(pNode.CT.RUNP_VAR_BOO_SWITCH), 
 				"script", "script", (int)16).closeSec()
+		.commande(pNode.getCom(pNode.CT.COM_ADD_ROW))
+		.run(pNode.getRun(pNode.CT.RUNP_ADD_LABEL), "", (int)16)
 		.getStand()
 //		.openSec()
 //		.param("keys", new String[] {"tile_pop"}, "filters", new String[] {"tile_pop"}) 
@@ -537,7 +618,8 @@ public class pTileHead {
 					if (reg.stand.ref.equals("node_model_"+model_ref) && 
 							reg.hasVar("reg_ref")) {
 						allkey.add(reg.getVar("reg_ref", String.class));
-					} else if (reg.stand.ref.equals("node_model_register")) {
+					} else if (reg.stand.ref.equals("node_model_register") || 
+							reg.stand.ref.equals("node_model_actor")) {
 						ArrayList<String> ak = reg.get("obtain_all_reg_of_model", 
 								ArrayList.class, model_ref);
 						if (ak != null) {
@@ -564,13 +646,61 @@ public class pTileHead {
 					if (reg.hasVar("reg_ref") && 
 							reg.getVar("reg_ref", String.class).equals(reg_ref)) {
 						return reg;
-					} else if (reg.stand.ref.equals("node_model_register")) {
-						pInstance reg_reg = reg.get("obtain_reg", pInstance.class, reg_ref);
+					} else if (reg.stand.ref.equals("node_model_register") || 
+							reg.stand.ref.equals("node_model_actor")) {
+						pInstance reg_reg = reg.get("obtain_reg", 
+								pInstance.class, reg_ref);
 						if (reg_reg != null) return reg_reg;
 					}
 				}
 			}
 			return null;
+		}})
+		.newRun("obtain_from_reg", new nRun() {public Object get() { 
+			String reg_ref = arg(0, String.class);
+			if (reg_ref == null) return null;
+			pInstance co_reg = instance.get("get_co", pInstance.class, "co_reg");
+			if (co_reg == null) return null;
+			Object op_reg = co_reg.get("obtain_all_nodes", Object.class);
+			if (op_reg == null) return null;
+			ArrayList<Object> reg_prov = (ArrayList)op_reg;
+			for (Object or : reg_prov) if (or instanceof pInstance) {
+				pInstance reg = (pInstance)or;
+				if (reg != null) {
+					if (reg.hasVar("reg_ref") && 
+							reg.getVar("reg_ref", String.class).equals(reg_ref)) {
+						pInstance reg_in_co = reg.get("get_co", pInstance.class, "co_in");
+						if (reg_in_co != null) return reg_in_co.get("obtain");
+					} else if (reg.stand.ref.equals("node_model_register") || 
+							reg.stand.ref.equals("node_model_actor")) {
+						return reg.get("obtain_from_reg", Object.class, reg_ref);
+					}
+				}
+			}
+			return null;
+		}})
+		.newRun("send_to_reg", new nRun() {public void run() { 
+			String reg_ref = arg(0, String.class);
+			Object data = arg(1, Object.class);
+			if (reg_ref == null || data == null) return;
+			pInstance co_reg = instance.get("get_co", pInstance.class, "co_reg");
+			if (co_reg == null) return;
+			Object op_reg = co_reg.get("obtain_all_nodes", Object.class);
+			if (op_reg == null) return;
+			ArrayList<Object> reg_prov = (ArrayList)op_reg;
+			for (Object or : reg_prov) if (or instanceof pInstance) {
+				pInstance reg = (pInstance)or;
+				if (reg != null) {
+					if (reg.hasVar("reg_ref") && 
+							reg.getVar("reg_ref", String.class).equals(reg_ref)) {
+						pInstance reg_out_co = reg.get("get_co", pInstance.class, "co_out");
+						if (reg_out_co != null) reg_out_co.run("send", data);
+					} else if (reg.stand.ref.equals("node_model_register") || 
+							reg.stand.ref.equals("node_model_actor")) {
+						reg.run("send_to_reg", reg_ref, data);
+					}
+				}
+			}
 		}})
 		.openSec()
 		.param("keys", new String[]{"reg", "in"}, "filters", new String[]{"reg", "out"}) 
@@ -822,7 +952,7 @@ public class pTileHead {
 			instance.addObject("added_tile", added_tile);
 		}})
 		.openSec()
-		.run(pTile.getRun(CT.ADD_PLUG), "run_out", "top")
+		.run(pTile.getRun(CT.ADD_PLUG), "run_out", "bottom")
 		.closeSec()
 		.getStand()
 		;
@@ -894,14 +1024,16 @@ public class pTileHead {
 					nWidget trigg_w = arg(0, nWidget.class);
 					nWidget lab_w = arg(1, nWidget.class);
 					ArrayList<String> arr = arg(2, ArrayList.class);
-					instance.patch.patch_dropmenu.metode("clear_entrys"); 
+//					instance.patch.patch_dropmenu.metode("clear_entrys"); 
 					for (String par : arr) {
-						nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-								.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
+						nWidget w1 = nGUI.add_dropmenu_entry(par); 
+//						nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+//								.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
 						w1.addEventTrigger(new nRun(par) { public void run() {
 							String targ = arg(0, String.class);
 							lab_w.setText(targ); }}); }
-					instance.patch.patch_dropmenu.metode("open", trigg_w); 
+//					instance.patch.patch_dropmenu.metode("open", trigg_w);
+					nGUI.open_dropmenu(trigg_w); 
 				}};
 				nRun run_add_at_out_pk = new nRun(instance) { public void run() {
 					pInstance inst = (pInstance)builder;
@@ -955,10 +1087,11 @@ public class pTileHead {
 						}
 					}
 
-					instance.patch.patch_dropmenu.metode("clear_entrys"); 
+//					instance.patch.patch_dropmenu.metode("clear_entrys"); 
 					for (String par : arr) {
-						nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-								.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
+						nWidget w1 = nGUI.add_dropmenu_entry(par); 
+//						nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+//								.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
 						w1.addEventTrigger(new nRun(par) { public void run() {
 							String targ = arg(0, String.class);
 							String[] tg = Utl.split(targ, ' ');
@@ -966,7 +1099,8 @@ public class pTileHead {
 							add_at_mod_targ_w.setText(tg[0]);
 							add_at_in_targ_w.setText(tg[1]);
 						}}); }
-					instance.patch.patch_dropmenu.metode("open", add_at_mod_pk_w); 
+//					instance.patch.patch_dropmenu.metode("open", add_at_mod_pk_w); 
+					nGUI.open_dropmenu(add_at_mod_pk_w);
 					
 				}};
 				add_at_mod_pk_w.addEventTrigger(run_add_at_mod_pk);

@@ -72,7 +72,10 @@ public class pMacro {
 		public Macro addMacro(String ref, Macro mac, float x, float y) { 
 			macros_pos.put(ref,new Vector2(x,y)); macros.put(ref,mac); return this; }
 		public Macro addSetVar(String targ_ref, String var_ref, Object data) {
-			set.put(targ_ref, new MacroSet(var_ref, data)); return this; }
+			String tr = targ_ref;
+			int cnt = 0;
+			while (set.hasKey(tr)) { tr = targ_ref + "_" + cnt; cnt++; }
+			set.put(tr, new MacroSet(targ_ref, var_ref, data)); return this; }
 		public Macro addRunPop(String targ_ref, String pop_ref, String run_ref, Object... args) {
 			pops.put(targ_ref, new MacroPop(pop_ref, run_ref, args)); return this; }
 		public Macro addTileScript(String targ_ref, String script_ref) {
@@ -116,14 +119,16 @@ public class pMacro {
 					list.put(lr,li);
 				}
 			}
-			for (Map.Entry<String,MacroSet> ms : set.entrySet()) {
-				pInstance tr = list.get(ms.getKey());
+//			for (Map.Entry<String,MacroSet> ms : set.entrySet()) {
+			for (String msr : set.allKey()) {
+				MacroSet ms = set.get(msr);
+				pInstance tr = list.get(ms.targ_ref);
 				if (tr == null) {
 					Utl.logn("ERROR : Macro.pop() : "
-							+ "set target <"+ms.getKey()+"> dont exist");
+							+ "set target <"+ms.targ_ref+"> dont exist");
 					continue; }
-				tr.setVar(ms.getValue().var_ref, 
-						Utl.copy(ms.getValue().data));
+				tr.setVar(ms.var_ref, 
+						Utl.copy(ms.data));
 			}
 			for (Map.Entry<String,MacroPop> me : pops.entrySet()) {
 				MacroPop ms = me.getValue();
@@ -187,7 +192,7 @@ public class pMacro {
 		public MacroNode(Macro mac, String r, String m, float x, float y) {
 			macro = mac; ref = r; model_ref = m; pos.set(x,y); }
 		public MacroNode addSetVar(String var_ref, Object data) {
-			set.add(new MacroSet(var_ref, data)); return this; }
+			set.add(new MacroSet("", var_ref, data)); return this; }
 		public MacroNode addRunPop(String pop_ref, String run_ref, Object... args) {
 			pops.add(new MacroPop(pop_ref, run_ref, args)); return this; }
 		public MacroNode addTileScript(String script_ref) {
@@ -243,8 +248,8 @@ public class pMacro {
 		public String pop_ref, run_ref; public Object[] args;
 		public MacroPop(String p, String r, Object[] d) { pop_ref = p; run_ref = r; args = d; } }
 	public static class MacroSet {
-		public String var_ref; public Object data;
-		public MacroSet(String r, Object d) { var_ref = r; data = d; } }
+		public String targ_ref, var_ref; public Object data;
+		public MacroSet(String t, String r, Object d) { targ_ref = t; var_ref = r; data = d; } }
 	public static class MacroLink {
 		public String bric1, co1, bric2, co2;
 		public MacroLink(String b1, String c1, String b2, String c2) {

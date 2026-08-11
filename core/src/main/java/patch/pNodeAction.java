@@ -161,18 +161,18 @@ public class pNodeAction {
 		.closeSec()
 		.openSec()
 			.param("run", new nRun() {public void run() {
-				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
-						"trigg_dropm_ctrl");
-				if (triggP_w == null) return;
-				instance.patch.patch_dropmenu.metode("clear_entrys");
-				for (String rf : pGeom.control_props.allKey()) {
-					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-							.metodeGet("add_entry_custom", rf, RS*6f, RS*2f/3f);
-					w1.addEventTrigger(new nRun(instance) { public void run() {
-						((pInstance)builder).run("def_ctrl", rf); 
-					}}); 
-				}
-				instance.patch.patch_dropmenu.metode("open", triggP_w);
+//				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
+//						"trigg_dropm_ctrl");
+//				if (triggP_w == null) return;
+//				instance.patch.patch_dropmenu.metode("clear_entrys");
+//				for (String rf : pGeom.control_props.allKey()) {
+//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+//							.metodeGet("add_entry_custom", rf, RS*6f, RS*2f/3f);
+//					w1.addEventTrigger(new nRun(instance) { public void run() {
+//						((pInstance)builder).run("def_ctrl", rf); 
+//					}}); 
+//				}
+//				instance.patch.patch_dropmenu.metode("open", triggP_w);
 			}})
 			.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "trigg_dropm_ctrl", "Pk", (int)2)
 		.closeSec()
@@ -190,24 +190,24 @@ public class pNodeAction {
 				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
 						"trigg_dropm_data");
 				if (triggP_w == null) return;
-				instance.patch.patch_dropmenu.metode("clear_entrys");
-
-				pProperty ctrl = instance.object("ctrl", pProperty.class);
-				if (ctrl == null) return;
-				for (int i = 0 ; i < Utl.data_type_nb ; i++) {
-					nMap<Integer> map = ctrl.data_vals.get(Utl.data_type[i]);
-					if (map != null) for (Map.Entry<String, Integer> mr : map.entrySet()) {
-						String dt_ref = mr.getKey();
-						if (instance.getVar(dt_ref+"_key", Boolean.class)) continue;
-						nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-								.metodeGet("add_entry_custom", dt_ref, RS*6f, RS*2f/3f);
-						w1.addEventTrigger(new nRun(instance) { public void run() {
-							pInstance inst = (pInstance)builder;
-							inst.run("pop_ctrl_chan", dt_ref);
-						}}); 
-					}
-				}
-				instance.patch.patch_dropmenu.metode("open", triggP_w);
+//				instance.patch.patch_dropmenu.metode("clear_entrys");
+//
+//				pProperty ctrl = instance.object("ctrl", pProperty.class);
+//				if (ctrl == null) return;
+//				for (int i = 0 ; i < Utl.data_type_nb ; i++) {
+//					nMap<Integer> map = ctrl.data_vals.get(Utl.data_type[i]);
+//					if (map != null) for (Map.Entry<String, Integer> mr : map.entrySet()) {
+//						String dt_ref = mr.getKey();
+//						if (instance.getVar(dt_ref+"_key", Boolean.class)) continue;
+//						nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+//								.metodeGet("add_entry_custom", dt_ref, RS*6f, RS*2f/3f);
+//						w1.addEventTrigger(new nRun(instance) { public void run() {
+//							pInstance inst = (pInstance)builder;
+//							inst.run("pop_ctrl_chan", dt_ref);
+//						}}); 
+//					}
+//				}
+//				instance.patch.patch_dropmenu.metode("open", triggP_w);
 			}})
 			.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "trigg_dropm_data", "pop_ctrl_key", (int)10)
 		.closeSec()

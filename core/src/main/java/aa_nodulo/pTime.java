@@ -143,8 +143,8 @@ public class pTime {
 		app.outputs.put("pause", new nRun() { public void run() {
 			val_pause.set(!val_pause.get()); }});
 		
-		info_tps = app.menu.add_info_text("tps:", val_tick_by_sec); 
-		info_cnt = app.menu.add_info_text("tick cnt: ", val_tick_cnt);
+		info_tps = app.gui.add_info_text("tps:", val_tick_by_sec); 
+		info_cnt = app.gui.add_info_text("tick cnt: ", val_tick_cnt);
 		
 		tps_stack = new int[tps_stack_size];
 	    for (int i = 0 ; i < tps_stack_size ; i++) tps_stack[i] = 60;

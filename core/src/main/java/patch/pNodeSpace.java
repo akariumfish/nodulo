@@ -317,6 +317,10 @@ public class pNodeSpace {
 		build_param_chain_nodes();
 		
 		build_sel_body_node();
+
+		build_constructor_nodes();
+		
+		build_actor_node();
 		
 
 		pNode.newNodeModel("space_init", false)
@@ -331,7 +335,8 @@ public class pNodeSpace {
 			PlaneApplet.app.space.addEventSpaceStart(run_space_start);
 		}})
 		.useClear().commande(new nRun() { public void run() {
-			PlaneApplet.app.space.removeEventSpaceStart(instance.object("run_space_start", nRun.class));
+			PlaneApplet.app.space.removeEventSpaceStart(
+					instance.object("run_space_start", nRun.class));
 		}}).useInit()
 		.openSec()
 		.run(pNode.getRun(CT.RUNP_ADD_LABEL), "space_start > ", (int)8)
@@ -343,17 +348,19 @@ public class pNodeSpace {
 		.closeSec()
 		;
 		
-		
-		
-		
-		
-		
-		
-		
-		
+	}
 
-		pStandard stand_constructor = pNode.newNodeModel("constructor", "body");
-		stand_constructor.newRun("new_body", new nRun() {public Object get() {
+	
+	public static void build_constructor_nodes() {
+
+		float RS = nGUI.book.RS;
+	
+		
+		
+		
+		
+		pStandard constructor_abstract = pStandard.newStandard("constructor_abstract", "inst");
+		constructor_abstract.newRun("new_body", new nRun() {public Object get() {
 			
 			pSpace space = PlaneApplet.app.space;
 			pParam bluep = null;
@@ -372,7 +379,8 @@ public class pNodeSpace {
 				}
 			}
 			
-			if (bluep == null) {
+			if (bluep == null && 
+					instance.get("get_co", pInstance.class, "bluePrnt") != null) {
 				pInstance co = instance.get("get_co", pInstance.class, "bluePrnt");
 				Object op = co.get("obtain_all", Object.class);
 				if (op == null) return null;
@@ -390,35 +398,50 @@ public class pNodeSpace {
 				pBody pop = new_body(bluep);
 				
 				pInstance co_ank = instance.get("get_co", pInstance.class, "co_ank");
-				Object op_ank = co_ank.get("obtain_all", Object.class);
-				if (op_ank != null) { 
-					ArrayList<Object> prov_ank = (ArrayList)op_ank;
-					for (Object o : prov_ank) if (o instanceof pInstance) {
-						pInstance ank = (pInstance)o;
-						if (ank != null) {
-							instance.setObject("ank", ank);
+				if (co_ank != null) {
+					Object op_ank = co_ank.get("obtain_all", Object.class);
+					if (op_ank != null) { 
+						ArrayList<Object> prov_ank = (ArrayList)op_ank;
+						for (Object o : prov_ank) if (o instanceof pInstance) {
+							pInstance ank = (pInstance)o;
+							if (ank != null) {
+								instance.setObject("ank", ank);
+							}
 						}
 					}
+					pInstance ank = instance.object("ank", pInstance.class);
+					if (ank != null && pop.hasParam("ref")) pop.setVec("ref", "pos", 
+							ank.getVar("ank_pos", Vector2.class));
+					if (ank != null && pop.hasParam("coord")) pop.setVec("coord", "pos", 
+							ank.getVar("ank_pos", Vector2.class));
+				} 
+				if (instance.hasVar("pop_pos")) {
+					if (pop.hasParam("ref")) pop.addVec("ref", "pos", 
+							instance.getVar("pop_pos", Vector2.class));
+					if (pop.hasParam("coord")) pop.addVec("coord", "pos", 
+							instance.getVar("pop_pos", Vector2.class));
 				}
-				pInstance ank = instance.object("ank", pInstance.class);
-				if (ank != null && pop.hasParam("ref")) pop.setVec("ref", "pos", 
-						ank.getVar("ank_pos", Vector2.class));
-				if (ank != null && pop.hasParam("coord")) pop.setVec("coord", "pos", 
-						ank.getVar("ank_pos", Vector2.class));
-
+				if (instance.hasVar("pop_size")) {
+					if (pop.hasParam("scale")) pop.setFlt("scale", "scale", 
+							instance.getVar("pop_size", Float.class));
+				}
+				
+				
 				init_body(pop, bluep);
 				
 				instance.setObject("new_bod", pop);
 				pInstance co_out = instance.get("get_co", pInstance.class, "co_body");
-				co_out.run("send", pop);
+				if (co_out != null) co_out.run("send", pop);
 				
 				return pop;
-				
-				
 			}
 			return null;
 		}});
 
+		
+
+		pStandard stand_constructor = pNode.newNodeModel("constructor", "body");
+		stand_constructor.append(constructor_abstract);
 		stand_constructor.openSec()
 			.param("event_receive", new nRun() {public void run() {
 				pInstance node = instance.object("node", pInstance.class);
@@ -444,16 +467,12 @@ public class pNodeSpace {
 						"trigg_dropm_print");
 				if (trigg_w == null) return;
 				pSpace space = PlaneApplet.app.space;
-				instance.patch.patch_dropmenu.metode("clear_entrys");
 				for (String br : space.param_pools.get("blueprint").allKey()) {
 					String nm = space.param_pools.get("blueprint")
 							.get(br).get("name", String.class);
-					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-							.metodeGet("add_entry_custom", nm, RS*6f, RS*2f/3f);
-					w1.addEventTrigger(new nRun(instance) { public void run() {
-						((pInstance)builder).setVar("print_name", nm); 
-					}}); }
-				instance.patch.patch_dropmenu.metode("open", trigg_w); 
+					nGUI.add_dropmenu_entry(nm, new nRun(instance) { public void run() {
+							((pInstance)builder).setVar("print_name", nm); }}); }
+				nGUI.open_dropmenu(trigg_w);
 			}})
 			.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "trigg_dropm_print", "Pk", (int)2)
 		.closeSec()
@@ -620,16 +639,19 @@ public class pNodeSpace {
 				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
 						"trigg_dropm_param");
 				if (triggP_w == null) return;
-				instance.patch.patch_dropmenu.metode("clear_entrys");
+				//instance.patch.patch_dropmenu.metode("clear_entrys");
 				for (pParam param : PlaneApplet.app.space.param_pools.get(prop.ref).all()) {
 					String par = param.pool_ref;
-					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-					w1.addEventTrigger(new nRun(instance) { public void run() {
-						((pInstance)builder).run("defParam", par); 
-					}}); 
+					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
+						((pInstance)builder).setVar("defParam", par); }}); 
+//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+//							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
+//					w1.addEventTrigger(new nRun(instance) { public void run() {
+//						((pInstance)builder).run("defParam", par); 
+//					}}); 
 				}
-				instance.patch.patch_dropmenu.metode("open", triggP_w);
+//				instance.patch.patch_dropmenu.metode("open", triggP_w);
+				nGUI.open_dropmenu(triggP_w);
 			}})
 			.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "trigg_dropm_param", "Pk", (int)2)
 		.closeSec()
@@ -651,7 +673,7 @@ public class pNodeSpace {
 				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
 						"trigg_dropm_data");
 				if (triggP_w == null) return;
-				instance.patch.patch_dropmenu.metode("clear_entrys");
+				//instance.patch.patch_dropmenu.metode("clear_entrys");
 	
 				pParam par = instance.object("param", pParam.class);
 				if (par == null) return;
@@ -660,8 +682,9 @@ public class pNodeSpace {
 					nMap<Integer> map = par.prop.data_vals.get(Utl.data_type[i]);
 					if (map != null) for (Map.Entry<String, Integer> mr : map.entrySet()) {
 						String dt_ref = mr.getKey();
-						nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-								.metodeGet("add_entry_custom", dt_ref, RS*6f, RS*2f/3f);
+						nWidget w1 = nGUI.add_dropmenu_entry(dt_ref); 
+//						nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+//								.metodeGet("add_entry_custom", dt_ref, RS*6f, RS*2f/3f);
 						w1.addEventTrigger(new nRun(instance) { public void run() {
 							pInstance inst = (pInstance)builder;
 							inst.run("pop_param_data", dt_ref);
@@ -673,7 +696,8 @@ public class pNodeSpace {
 						}}); 
 					}
 				}
-				instance.patch.patch_dropmenu.metode("open", triggP_w);
+//				instance.patch.patch_dropmenu.metode("open", triggP_w);
+				nGUI.open_dropmenu(triggP_w);
 			}})
 			.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "trigg_dropm_data", "pop_data_node", (int)16)
 		.closeSec()
@@ -770,14 +794,18 @@ public class pNodeSpace {
 					nWidget w2 = interf.add_row_trigg(2, "Pk");
 					w2.addEventTrigger(new nRun(head) {public void run() {
 						pInstance target = (pInstance)builder;
-						target.patch.patch_dropmenu.metode("clear_entrys");
+//						target.patch.patch_dropmenu.metode("clear_entrys");
 						for (String par : ((String[])prop.get_setting(data_ref, "list"))) {
-							nWidget w1 = (nWidget)target.patch.patch_dropmenu
-									.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-							w1.addEventTrigger(new nRun(target) { public void run() {
-								((pInstance)builder).setVar(data_ref, par); 
-							}}); }
-						target.patch.patch_dropmenu.metode("open", w2); 
+							nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
+								((pInstance)builder).setVar(data_ref, par); }}); 
+//							nWidget w1 = (nWidget)target.patch.patch_dropmenu
+//									.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
+//							w1.addEventTrigger(new nRun(target) { public void run() {
+//								((pInstance)builder).setVar(data_ref, par); 
+//							}}); 
+						}
+//						target.patch.patch_dropmenu.metode("open", w2); 
+						nGUI.open_dropmenu(w2);
 					}});
 					
 				} else {
@@ -1152,14 +1180,18 @@ public class pNodeSpace {
 				nWidget trigg_w = instance.get("get_mapped_widget", nWidget.class, 
 						"trigg_dropm_body");
 				if (trigg_w == null) return;
-				instance.patch.patch_dropmenu.metode("clear_entrys");
+				//instance.patch.patch_dropmenu.metode("clear_entrys");
 				for (String par : PlaneApplet.app.space.body_pool.allKey()) {
-					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-					w1.addEventTrigger(new nRun(instance) { public void run() {
-						((pInstance)builder).run("select_body", par); 
-					}}); }
-				instance.patch.patch_dropmenu.metode("open", trigg_w); 
+					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
+						((pInstance)builder).run("select_body", par); }}); 
+//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+//							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
+//					w1.addEventTrigger(new nRun(instance) { public void run() {
+//						((pInstance)builder).run("select_body", par); 
+//					}}); 
+				}
+//				instance.patch.patch_dropmenu.metode("open", trigg_w); 
+				nGUI.open_dropmenu(trigg_w);
 			}})
 			.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "trigg_dropm_body", "Pk", (int)2)
 		.closeSec()
@@ -1295,6 +1327,16 @@ public class pNodeSpace {
 		.closeSec()
 		;
 		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		pNode.newChainnedNodeModel("bod_get_body")
 		.openSec().param("hide", true, "keys", new String[] {"sel_bod"}, 
 				"filters", new String[] {"sel_bod"}) 
@@ -1313,14 +1355,18 @@ public class pNodeSpace {
 				if (head == null) return;
 				pBody bod = PlaneApplet.app.space.body_pool.get(head.getVar("body_ref", String.class));
 				if (bod == null) return;
-				instance.patch.patch_dropmenu.metode("clear_entrys");
+				//instance.patch.patch_dropmenu.metode("clear_entrys");
 				for (String par : bod.params.allKey()) {
-					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-					w1.addEventTrigger(new nRun(instance) { public void run() {
-						((pInstance)builder).setVar("param_ref", par); 
-					}}); }
-				instance.patch.patch_dropmenu.metode("open", trigg_w); 
+					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
+						((pInstance)builder).setVar("param_ref", par); }}); 
+//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+//							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
+//					w1.addEventTrigger(new nRun(instance) { public void run() {
+//						((pInstance)builder).setVar("param_ref", par); 
+//					}}); 
+				}
+//				instance.patch.patch_dropmenu.metode("open", trigg_w); 
+				nGUI.open_dropmenu(trigg_w);
 			}})
 			.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "trigg_dropm_par", "Pk", (int)2)
 		.closeSec()
@@ -1341,14 +1387,18 @@ public class pNodeSpace {
 				String param_ref = instance.getVar("param_ref", String.class);
 				if (!bod.hasParam(param_ref)) return;
 				pParam par = bod.param(param_ref);
-				instance.patch.patch_dropmenu.metode("clear_entrys");
+				//instance.patch.patch_dropmenu.metode("clear_entrys");
 				for (String br : par.prop.body_vals.allKey()) {
-					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-							.metodeGet("add_entry_custom", br, RS*6f, RS*2f/3f);
-					w1.addEventTrigger(new nRun(instance) { public void run() {
-						((pInstance)builder).setVar("body_ref", br); 
-					}}); }
-				instance.patch.patch_dropmenu.metode("open", trigg_w); 
+					nGUI.add_dropmenu_entry(br, new nRun(instance) { public void run() {
+						((pInstance)builder).setVar("body_ref", br); }}); 
+//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+//							.metodeGet("add_entry_custom", br, RS*6f, RS*2f/3f);
+//					w1.addEventTrigger(new nRun(instance) { public void run() {
+//						((pInstance)builder).setVar("body_ref", br); 
+//					}}); 
+				}
+//				instance.patch.patch_dropmenu.metode("open", trigg_w); 
+				nGUI.open_dropmenu(trigg_w);
 			}})
 			.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "trigg_dropm_body", "Pk", (int)2)
 		.closeSec()
@@ -1372,10 +1422,253 @@ public class pNodeSpace {
 		.closeSec()
 		;
 
+
+		pNode.newChainnedNodeModel("bod_get_data")
+		.openSec().param("hide", true, "keys", new String[] {"sel_bod"}, 
+				"filters", new String[] {"sel_bod"}) 
+		.run(pNode.getRun(CT.RUNS_ADD_CHAIN_PLUGS), "sel_bod", "bottom").closeSec()
+		.process()
+		.openSec()
+			.param("text", "param: ", "width", (int)8)
+			.run(pNode.getRun(CT.RUNP_VAR_STR_LAB_FIELD), "param_ref")
+		.closeSec()
+		.openSec()
+			.param("run", new nRun() {public void run() {
+				nWidget trigg_w = instance.get("get_mapped_widget", nWidget.class, 
+						"trigg_dropm_par");
+				if (trigg_w == null) return;
+				pInstance head = instance.get("get_chain_head", pInstance.class);
+				if (head == null) return;
+				pBody bod = PlaneApplet.app.space.body_pool.get(head.getVar("body_ref", String.class));
+				if (bod == null) return;
+				//instance.patch.patch_dropmenu.metode("clear_entrys");
+				for (String par : bod.params.allKey()) {
+					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
+						((pInstance)builder).setVar("param_ref", par); }}); 
+//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+//							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
+//					w1.addEventTrigger(new nRun(instance) { public void run() {
+//						((pInstance)builder).setVar("param_ref", par); 
+//					}}); 
+				}
+//				instance.patch.patch_dropmenu.metode("open", trigg_w); 
+				nGUI.open_dropmenu(trigg_w);
+			}})
+			.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "trigg_dropm_par", "Pk", (int)2)
+		.closeSec()
+		.commande(pNode.getCom(CT.COM_ADD_ROW))
+		.openSec()
+			.param("text", "data_ref: ", "width", (int)8)
+			.run(pNode.getRun(CT.RUNP_VAR_STR_LAB_FIELD), "data_ref")
+		.closeSec()
+		.openSec()
+			.param("run", new nRun() {public void run() {
+				nWidget trigg_w = instance.get("get_mapped_widget", nWidget.class, 
+						"trigg_dropm_data");
+				if (trigg_w == null) return;
+				pInstance head = instance.get("get_chain_head", pInstance.class);
+				if (head == null) return;
+				pBody bod = PlaneApplet.app.space.body_pool.get(head.getVar("body_ref", String.class));
+				if (bod == null) return;
+				String param_ref = instance.getVar("param_ref", String.class);
+				if (!bod.hasParam(param_ref)) return;
+				pParam par = bod.param(param_ref);
+//				//instance.patch.patch_dropmenu.metode("clear_entrys");
+				for (Map.Entry<Class<?>,nMap<Integer>> ma_map : par.prop.data_vals.entrySet()) 
+					if (ma_map.getValue() != null) 
+						for (String br : ma_map.getValue().allKey()) {
+					nGUI.add_dropmenu_entry(br, new nRun(instance) { public void run() {
+						((pInstance)builder).setVar("data_ref", br); }}); 
+//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+//							.metodeGet("add_entry_custom", br, RS*6f, RS*2f/3f);
+//					w1.addEventTrigger(new nRun(instance) { public void run() {
+//						((pInstance)builder).setVar("data_ref", br); 
+//					}}); 
+				}
+//				instance.patch.patch_dropmenu.metode("open", trigg_w); 
+				nGUI.open_dropmenu(trigg_w);
+			}})
+			.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "trigg_dropm_data", "Pk", (int)2)
+		.closeSec()
+		.getStand()
+		.openSec()
+			.param("offer", new nRun() {public Object get() {
+				pInstance node = instance.object("node", pInstance.class);
+				pInstance head = node.get("get_chain_head", pInstance.class);
+				if (head == null) return null;
+				pBody bod = PlaneApplet.app.space.body_pool.get(head.getVar("body_ref", String.class));
+				if (bod == null) return null;
+				String param_ref = node.getVar("param_ref", String.class);
+				String data_ref = node.getVar("data_ref", String.class);
+				if (!bod.hasParam(param_ref)) return null;
+				pParam par = bod.param(param_ref);
+				return par.get(data_ref);
+			}})
+			.param("keys", new String[] {"all"}, "filters", new String[] {""}) 
+			.run(pNode.getRun(CT.RUNS_ADD_CO_OUT), "co_out")
+		.closeSec()
+		;
+
 		
 		
 		
 	}
+	
+	public static void build_actor_node() {
+		
+		float RS = nGUI.book.RS;
+		
+
+		pStandard stand_actor = pNode.newNodeModel("actor", "body");
+		stand_actor.append(pStandard.get("constructor_abstract"));
+		stand_actor
+		.newRun("obtain_all_reg_of_model", new nRun() {public Object get() { 
+			String model_ref = arg(0, String.class);
+			ArrayList<String> allkey = new ArrayList<String>();
+			if (model_ref == null) return allkey;
+			if (instance.getVar("body_ref", String.class) == null) return allkey;
+			pBody body = PlaneApplet.app.space.body_pool.get(
+					instance.getVar("body_ref", String.class));
+			if (body == null) return allkey;
+			if (model_ref.equals("reg_in")) {
+				allkey.add("body");
+			} else if (model_ref.equals("reg_out")) {
+				
+			}
+			return allkey;
+		}})
+		.newRun("obtain_from_reg", new nRun() {public Object get() { 
+			String reg_ref = arg(0, String.class);
+			if (reg_ref == null) return null;
+			if (instance.getVar("body_ref", String.class) == null) return null;
+			pBody body = PlaneApplet.app.space.body_pool.get(
+					instance.getVar("body_ref", String.class));
+			if (body == null) return null;
+			if (reg_ref.equals("body")) return body;
+			return null;
+		}})
+		.newRun("send_to_reg", new nRun() {public void run() { 
+			String reg_ref = arg(0, String.class);
+			Object data = arg(1, Object.class);
+			if (reg_ref == null || data == null) return;
+			
+			
+			
+		}})
+		.newRun("select_body", new nRun() {public void run() {
+			if (args.length < 1) return;
+			String bod_ref = arg(0, String.class);
+			pBody bod = PlaneApplet.app.space.body_pool.get(bod_ref);
+			if (bod == null) return;
+			
+			if (bod.hasParam("owner") && bod.getBoo("owner", "owned") && 
+					!bod.getStr("owner", "owner").equals(PlaneApplet.app.config.player_ref)) return;
+			
+			instance.run("unselect_body");
+			
+			if (bod.hasParam("highlightable")) 
+				bod.setBoo("highlightable", "lighted", true);
+			
+			instance.setVar("body_ref", bod.pool_ref);
+		}})
+		.newRun("unselect_body", new nRun() {public void run() {
+			pBody bod = PlaneApplet.app.space.body_pool.get(instance.getVar("body_ref", String.class));
+			if (bod == null) return;
+			if (bod.hasParam("highlightable")) 
+				bod.setBoo("highlightable", "lighted", false);
+			instance.setVar("body_ref", "");
+		}})
+//		.newRun("do_prev_tick", new nRun() {public void run() { 
+//			
+//		}})
+//		.newRun("do_tick", new nRun() {public void run() { 
+//			
+//		}})
+		.process()
+		.useInit().commande(new nRun() {public void run() {
+//			PlaneApplet.app.time.addPrevTickBric(instance);
+//			PlaneApplet.app.time.addTickBric(instance);
+			pGeom geom = PlaneApplet.app.getSystem(pGeom.class);
+			nRun clear_run = new nRun(instance) { public void run(Object o) {
+				if (o == null || !(o instanceof pBody)) return;
+				pInstance inst = ((pInstance)builder);
+				pBody bod = (pBody)o;
+				if (inst.getVar("body_ref", String.class).equals(bod.pool_ref)) {
+					inst.run("unselect_body");
+				}
+			}};
+			instance.addObject("clear_run", clear_run); 
+			geom.addEventBodyClear(instance.object("clear_run", nRun.class));
+		}})
+		.useLoad().commande(new nRun() {public void run() {
+			App.ap.addDelayEvent(1,new nRun(instance) { public void run() {
+				pInstance inst = ((pInstance)builder);
+				if (inst.getVar("body_ref", String.class) == null) return;
+				pBody bod = PlaneApplet.app.space.body_pool.get(inst.getVar("body_ref", String.class));
+				if (bod != null) inst.run("select_body", bod.pool_ref); }});
+			nRun run_space_start = new nRun(instance) {public void run() { 
+				pInstance inst = (pInstance)builder;
+				pBody bod = inst.get("new_body", pBody.class); 
+				if (bod != null) inst.run("select_body", bod.pool_ref); 
+			}};
+			instance.addObject("run_space_start", run_space_start);
+			PlaneApplet.app.space.addEventSpaceStart(run_space_start);
+		}}).useInit()
+		.useClear().commande(new nRun() {public void run() {
+//			PlaneApplet.app.time.removePrevTickBric(instance);
+//			PlaneApplet.app.time.removeTickBric(instance);
+			pGeom geom = PlaneApplet.app.getSystem(pGeom.class);
+			geom.removeEventBodyClear(instance.object("clear_run", nRun.class));
+			PlaneApplet.app.space.removeEventSpaceStart(
+					instance.object("run_space_start", nRun.class));
+		}}).useInit()
+		.openSec()
+			.param("text", "name: ", "width", (int)8)
+			.run(pNode.getRun(CT.RUNP_VAR_STR_LAB_FIELD), "print_name")
+		.closeSec()
+		.openSec()
+			.param("run", new nRun() {public void run() {
+				nWidget trigg_w = instance.get("get_mapped_widget", nWidget.class, 
+						"trigg_dropm_print");
+				if (trigg_w == null) return;
+				pSpace space = PlaneApplet.app.space;
+				for (String br : space.param_pools.get("blueprint").allKey()) {
+					String nm = space.param_pools.get("blueprint")
+							.get(br).get("name", String.class);
+					nGUI.add_dropmenu_entry(nm, new nRun(instance) { public void run() {
+							((pInstance)builder).setVar("print_name", nm); }}); }
+				nGUI.open_dropmenu(trigg_w);
+			}})
+			.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "trigg_dropm_print", "Pk", (int)2)
+		.closeSec()
+		.commande(pNode.getCom(CT.COM_ADD_ROW))
+		.openSec()
+			.param("text", "ref: ", "width", (int)8)
+			.run(pNode.getRun(CT.RUNP_VAR_STR_LAB_FIELD), "body_ref")
+		.closeSec()
+		.commande(pNode.getCom(pNode.CT.COM_ADD_ROW))
+		.openSec()
+		.param("text", "pos", "width", (int)8)
+		.run(pNode.getRun(pNode.CT.RUNP_VAR_VEC_LAB_FIELD), "pop_pos")
+		.closeSec()
+		.commande(pNode.getCom(pNode.CT.COM_ADD_ROW))
+		.openSec()
+		.param("text", "scale", "width", (int)8, "def", 1f)
+		.run(pNode.getRun(pNode.CT.RUNP_VAR_FLT_LAB_FIELD), "pop_size")
+		.closeSec()
+		.getStand()
+		.openSec()
+		.param("keys", new String[]{"register", "out"}, 
+				"filters", new String[]{"register", "in"}) 
+		.run(pNode.getRun(pNode.CT.RUNS_ADD_CO_OUT), "co_register").closeSec()
+		;
+		
+	}
+	
+	
+	
+	
+	
 	
 //	
 //	public static void build_old_nodes(Applet app) {
@@ -1627,7 +1920,7 @@ public class pNodeSpace {
 //				if (trigg_w == null) return;
 //				pSpace space = app.space;
 //				if (space == null) return;
-//				instance.patch.patch_dropmenu.metode("clear_entrys");
+//				//instance.patch.patch_dropmenu.metode("clear_entrys");
 //				for (String br : space.param_pools.get("blueprint").allKey()) {
 //					String nm = space.param_pools.get("blueprint")
 //							.get(br).get("name", String.class);

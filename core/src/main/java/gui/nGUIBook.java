@@ -406,7 +406,7 @@ public class nGUIBook {
 					ref.setText(v.info_txt);
 					ref.force_calc();
 //					ref.setPos(v.getX()+v.getSX()/2f, v.getY()+v.getSY()/2f); 
-					ref.setSX(App.ap.textWidth(v.info_txt) + RS);
+					ref.setSX(App.ap.textWidth(v.info_txt,v.textFont) + RS);
 					run_tofront.run(); 
 				} });
 
@@ -1032,8 +1032,12 @@ public class nGUIBook {
 				
 				g.metode("set_size", new Vector2(800,600));
 
-				nWidget fx = g.addWidget("fx", gui.addWidget("VP_fx")
+				nWidget backrender = g.addWidget("backrender", gui.addWidget("VP_fx")
 						.setParent(space)
+						);
+				
+				nWidget fx = g.addWidget("fx", gui.addWidget("VP_fx")
+						.setParent(backrender)
 						);
 				
 				nWidget bg = g.addWidget("background", gui.addWidget("VP_background")
@@ -1154,12 +1158,12 @@ public class nGUIBook {
 
 				nRun run_freeview = new nRun() { public void run() {
 					if (wallpaper.isOn()) {
-						Vector2 p = new Vector2(PlaneApplet.app.menu.freeview.x, 
-								PlaneApplet.app.menu.freeview.y + 
-								PlaneApplet.app.menu.freeview.height);
+						Vector2 p = new Vector2(App.ap.gui.freeview.x, 
+								App.ap.gui.freeview.y + 
+								App.ap.gui.freeview.height);
 						Vector2 s = new Vector2(
-								PlaneApplet.app.menu.freeview.width, 
-								PlaneApplet.app.menu.freeview.height - RS);
+								App.ap.gui.freeview.width, 
+								App.ap.gui.freeview.height - RS);
 						sVec val_pos = g.object("val_pos", sVec.class);
 						if (val_pos.x() != p.x || val_pos.y() != p.y) val_pos.set(p.x,p.y);
 						g.metode("set_size", s);
@@ -1181,7 +1185,7 @@ public class nGUIBook {
 //						g.metode("set_size", new Vector2(App.ap.gdx.getscreenwidth(), 
 //								App.ap.gdx.getscreenheight() - 7f*RS/3f));
 //						g.metode("event_corner_drag");
-						PlaneApplet.app.menu.addFreeviewEvent(run_freeview);
+						App.ap.gui.addFreeviewEvent(run_freeview);
 						sBoo val_border = g.object("val_border", sBoo.class);
 						val_border.set(false);
 						border.hide();
@@ -1199,7 +1203,7 @@ public class nGUIBook {
 						space.setOutline(true);
 						g.get("ref").setOutline(true);
 
-						PlaneApplet.app.menu.removeFreeviewEvent(run_freeview);
+						App.ap.gui.removeFreeviewEvent(run_freeview);
 						
 						if (g.hasObject("old_pos")) {
 							Vector2 old_pos = g.object("old_pos", Vector2.class);
@@ -2028,42 +2032,66 @@ public class nGUIBook {
 					if (!over) g.metode("close");
 				}}; 
 				g.addMetode("open", new nRun() {
+					public void run() { run(null); }
 					public void run(Object o) {
-						nWidget op = (nWidget)o;
-						
-						if (g.get("openner") != null) g.removeWidget("openner");
-						g.addWidget("openner", op);
+						if (o == null) {
+							if (g.get("openner") != null) g.removeWidget("openner");
 
-						ref.setVisibility(true);
-						
-						App.ap.addEventNextFrame(new nRun() { public void run() {
-						
-							Vector2 np = op.maskedrect
-									.getPosition(new Vector2());
-//								ref.toFront().setPos(np.x, np.y+5);
-							if (np.x > GdxApp.WIDTH / 2f) {
-								zone.setRectOrigin(nAlign.RIGHT,nAlign.TOP);
-								zone.setPos(2f*RS,2f*RS);
-								ref.toFront().setPos(np.x + op.maskedrect.width, 
-										np.y+5);
-								g.setObject("right_side", true);
-							} else {
-								zone.setRectOrigin(nAlign.LEFT,nAlign.TOP);
-								zone.setPos(-2f*RS,2f*RS);
-								ref.toFront().setPos(np.x, np.y+5);
-								g.setObject("right_side", false); }
-								
-							App.ap.addRunFrameStart(r);
-						}});
+							ref.setVisibility(true);
+							
+							App.ap.addEventNextFrame(new nRun() { public void run() {
+								Vector2 np = new Vector2(App.ap.input.mouse);
+								if (np.x > GdxApp.WIDTH / 2f) {
+									zone.setRectOrigin(nAlign.RIGHT,nAlign.TOP);
+									zone.setPos(2f*RS,2f*RS);
+									ref.toFront().setPos(np.x+5, np.y+5);
+									g.setObject("right_side", true);
+								} else {
+									zone.setRectOrigin(nAlign.LEFT,nAlign.TOP);
+									zone.setPos(-2f*RS,2f*RS);
+									ref.toFront().setPos(np.x-5, np.y+5);
+									g.setObject("right_side", false); }
+								ref.force_calc_child();
+								App.ap.addRunFrameStart(r);
+							}});
+						} else if (o instanceof nWidget) {
+							nWidget op = (nWidget)o;
+							
+							if (g.get("openner") != null) g.removeWidget("openner");
+							g.addWidget("openner", op);
+	
+							ref.setVisibility(true);
+							
+							App.ap.addEventNextFrame(new nRun() { public void run() {
+							
+								Vector2 np = op.maskedrect
+										.getPosition(new Vector2());
+	//								ref.toFront().setPos(np.x, np.y+5);
+								if (np.x > GdxApp.WIDTH / 2f) {
+									zone.setRectOrigin(nAlign.RIGHT,nAlign.TOP);
+									zone.setPos(2f*RS,2f*RS);
+									ref.toFront().setPos(np.x + op.maskedrect.width, 
+											np.y+5);
+									g.setObject("right_side", true);
+								} else {
+									zone.setRectOrigin(nAlign.LEFT,nAlign.TOP);
+									zone.setPos(-2f*RS,2f*RS);
+									ref.toFront().setPos(np.x, np.y+5);
+									g.setObject("right_side", false); }
+									
+								App.ap.addRunFrameStart(r);
+							}});
+						}
 					}
 				});
 				g.addMetode("close", new nRun() {
 					public void run() {
-
 						App.ap.removeRunFrameStart(r);
 						App.ap.addEventNextFrame(new nRun() { public void run() {
 							ref.setVisibility(false);
 							g.removeWidget("openner");
+							App.ap.addEventNextFrame(new nRun() { public void run() {
+								g.metode("clear_entrys"); }});
 						}});
 					}
 				});
@@ -2124,7 +2152,7 @@ public class nGUIBook {
 						nWidget ent = gui.addWidget("DM_entry", (String)o)
 								.setParent(back)
 								.addEventTrigger(new nRun() { public void run() {
-									App.ap.addDelayEvent(5, new nRun() { public void run() {
+									App.ap.addDelayEvent(4, new nRun() { public void run() {
 										g.metode("close"); 
 									}}); }})
 								.setSize((Float)o2, (Float)o3).asWidget();

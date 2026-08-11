@@ -19,7 +19,6 @@ import data.sValueBloc;
 import gui.nGUI;
 import gui.nGUIBook;
 import gui.nInterface;
-import gui.nMenu;
 import gui.nWidgetGroup;
 import patch.pPatch;
 import patch.pStandard;
@@ -32,8 +31,8 @@ import util.nScripted;
 public class PlaneApplet extends App {
 
 	
-	public static boolean TITLE_SCREEN = true; 
-//	public static boolean TITLE_SCREEN = false;
+//	public static boolean TITLE_SCREEN = true; 
+	public static boolean TITLE_SCREEN = false;
 
 //	public static boolean START_FULLSCREEN = true;
 	public static boolean START_FULLSCREEN = false;
@@ -72,11 +71,11 @@ public class PlaneApplet extends App {
 		public boolean START_FX = false;
 		
 		public boolean START_HELP = true;
-//		public boolean START_HELP = false;
+//		public boolean START_HELP = false; 
 
-//		public String STARTUP_MODEL_REF = "TEST";
+		public String STARTUP_MODEL_REF = "TEST";
 //		public String STARTUP_MODEL_REF = "box2d_exemple";
-		public String STARTUP_MODEL_REF = "patch_exemple";
+//		public String STARTUP_MODEL_REF = "patch_exemple";
 //		public String STARTUP_MODEL_REF = "atom_game";
 //		public String STARTUP_MODEL_REF = "";
 
@@ -86,17 +85,17 @@ public class PlaneApplet extends App {
 		public boolean VIEW_START_WALLPAPER = false;
 		public boolean VIEW_START_COLLAPSED = false;
 //		public float DEF_VIEW_ZOOM = 0.07f;
-		public float DEF_VIEW_ZOOM = 0.5f;
+		public float DEF_VIEW_ZOOM = 0.3f;
 		public Vector2 DEF_VIEW_POS = new Vector2(0f,0f);
 		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
 		public Vector2 DEF_VIEW_WIN_SZ = new Vector2(910f,370f);
 		public boolean PATCH_START_WALLPAPER = false;
 		public boolean PATCH_START_COLLAPSED = false;
-		public float DEF_PATCH_ZOOM = 0.2f;
+		public float DEF_PATCH_ZOOM = 0.1f;
 		public Vector2 DEF_PATCH_POS = new Vector2(0f,0f);
 		public Vector2 DEF_PATCH_WIN_POS = new Vector2(370f,915f);
 		public Vector2 DEF_PATCH_WIN_SZ = new Vector2(910f,450f);
-		public boolean PATCH_TOOL_AUTOCOLLAPSE = true;
+//		public boolean PATCH_TOOL_AUTOCOLLAPSE = true;
 		public boolean PATCH_SHEET_COLLAPSE = false;
 		public boolean TOOLBOX_OPEN = true;
 		public float DEF_TICK_BY_SEC = 60f;
@@ -189,7 +188,7 @@ public class PlaneApplet extends App {
 		super.setup(a);
 
 		if (config.start_as_client) NET_CTRL = true;
-		use_fx(config.START_FX);
+		use_fx(config.START_FX); gui.val_fx.set(config.START_FX);
 		
 		if (config.STARTUP_LOAD) 
 			data.val_root_savepath.set(config.STARTUP_LOAD_FILE);
@@ -276,10 +275,9 @@ public class PlaneApplet extends App {
 		
 		frame_inputs();
 
-		time.do_frame(delta);
-		view.frame(delta);
 		net.frame(delta);
-		space.do_frame(delta);
+		time.do_frame(delta);
+//		view.frame(delta);
 		patch.frame(delta);
 		
 		for (int prio = pSystem.max_frame_prio ; prio >= 0 ; prio--)
@@ -288,7 +286,8 @@ public class PlaneApplet extends App {
 		
 		nRun.runEvents(eventFrameRun);
 		nRun.runEvents(eventFrameRun, delta);
-		
+
+		space.do_frame(delta);
 		view.frame(delta);
 		
 	}
@@ -302,7 +301,7 @@ public class PlaneApplet extends App {
 
 	@Override 
 	public void draw_start() {
-		
+		super.draw_start();
 	}
 	@Override 
 	public void draw_end() {
@@ -535,7 +534,7 @@ public class PlaneApplet extends App {
 	public void tool_setup(boolean openning) {
 		
 		addDelayEvent(1, new nRun() { public void run() {
-			nWidgetGroup sec = menu.toolbox
+			nWidgetGroup sec = gui.toolbox
 					.addSection("  pPlane  ", openning);
 			nInterface interf = gui.addInterface();
 			interf.pop(sec);
