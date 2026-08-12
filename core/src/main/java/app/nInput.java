@@ -255,8 +255,8 @@ public class nInput implements InputProcessor {
 //		Utl.logn("<"+keycode_temp+">");
 		
 		char keychar = 0;
-		if (keycode_temp.length() == 1) keychar = keycode_temp.charAt(0);
-		if (keycode_temp.equals("Space")) keychar = ' ';
+		if (keycode_temp != null && keycode_temp.length() == 1) keychar = keycode_temp.charAt(0);
+		if (keycode_temp != null && keycode_temp.equals("Space")) keychar = ' ';
 		
 //		Utl.logn(keycode_temp);
 //		Utl.logn(""+keychar);
@@ -266,7 +266,7 @@ public class nInput implements InputProcessor {
 			if (b.ref.equals("k") && b.key_char == keychar) { 
 				found = true; b.eventPress(); pressed_keys.add(b); }
 
-		if (keycode_temp.equals("L-Shift")) { found = false; keyShift.eventPress(); }
+		if (keycode_temp != null && keycode_temp.equals("L-Shift")) { found = false; keyShift.eventPress(); }
 		if (keycode == Input.Keys.LEFT) 		{ found = false; keyLeft.eventPress(); }
 		if (keycode == Input.Keys.RIGHT) 	{ found = false; keyRight.eventPress(); }
 		if (keycode == Input.Keys.UP) 		{ found = false; keyUp.eventPress(); }
@@ -288,15 +288,15 @@ public class nInput implements InputProcessor {
 	public boolean keyUp (int keycode) {
 		keycode_temp = Input.Keys.toString(keycode);
 		char keychar = 0;
-		if (keycode_temp.length() == 1) keychar = keycode_temp.charAt(0);
-		if (keycode_temp.equals("Space")) keychar = ' ';
+		if (keycode_temp != null && keycode_temp.length() == 1) keychar = keycode_temp.charAt(0);
+		if (keycode_temp != null && keycode_temp.equals("Space")) keychar = ' ';
 		
 		boolean found = true;
 		for (nInput_Button b : buttons) 
 			if (b.ref.equals("k") && b.key_char == keychar) { 
 				found = true; pressed_keys.remove(b); b.eventRelease(); }
 
-		if (keycode_temp.equals("L-Shift")) { found = false; keyShift.eventRelease(); }
+		if (keycode_temp != null && keycode_temp.equals("L-Shift")) { found = false; keyShift.eventRelease(); }
 		if (keycode == Input.Keys.LEFT) { found = false; keyLeft.eventRelease(); }
 		if (keycode == Input.Keys.RIGHT) { found = false; keyRight.eventRelease(); }
 		if (keycode == Input.Keys.UP) { found = false; keyUp.eventRelease(); }

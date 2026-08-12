@@ -1054,6 +1054,7 @@ public class nGUIBook {
 				nWidget draw = g.addWidget("draw", gui.addWidget("VP_draw")
 						.setParent(backref)
 						);
+				
 				nWidget frontref = g.addWidget("frontref", gui.addWidget("VP_frontref")
 						.setParent(space)
 						);

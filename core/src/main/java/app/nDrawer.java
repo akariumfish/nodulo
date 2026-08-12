@@ -24,20 +24,20 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.badlogic.gdx.utils.Pool.Poolable;
-import com.crashinvaders.vfx.VfxManager;
-import com.crashinvaders.vfx.effects.AbstractVfxEffect;
-import com.crashinvaders.vfx.effects.BloomEffect;
-import com.crashinvaders.vfx.effects.GaussianBlurEffect;
-import com.crashinvaders.vfx.effects.LevelsEffect;
-import com.crashinvaders.vfx.effects.MotionBlurEffect;
-import com.crashinvaders.vfx.effects.ShaderVfxEffect;
-import com.crashinvaders.vfx.effects.VignettingEffect;
-import com.crashinvaders.vfx.effects.util.MixEffect;
-import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
-import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer.Renderer;
-import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer.RendererAdapter;
-import com.noodle.nodulo.GdxApp;
+//import com.badlogic.gdx.utils.Pool.Poolable;
+//import com.crashinvaders.vfx.VfxManager;
+//import com.crashinvaders.vfx.effects.AbstractVfxEffect;
+//import com.crashinvaders.vfx.effects.BloomEffect;
+//import com.crashinvaders.vfx.effects.GaussianBlurEffect;
+//import com.crashinvaders.vfx.effects.LevelsEffect;
+//import com.crashinvaders.vfx.effects.MotionBlurEffect;
+//import com.crashinvaders.vfx.effects.ShaderVfxEffect;
+//import com.crashinvaders.vfx.effects.VignettingEffect;
+//import com.crashinvaders.vfx.effects.util.MixEffect;
+//import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
+//import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer.Renderer;
+//import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer.RendererAdapter;
+//import com.noodle.nodulo.GdxApp;
 
 import aa_nodulo.PlaneApplet;
 import gui.nAlign;
@@ -57,10 +57,7 @@ public class nDrawer {
 	public PolygonSpriteBatch spritebatch;
 	public Texture texture;
 	public ShapeDrawer drawer;
-
-	private VfxManager vfxManager;
-	ArrayList<AbstractVfxEffect> effect = new ArrayList<AbstractVfxEffect>();
-	private VfxFrameBuffer buffer;
+	
 	public DrawContext context;
 
 	public interface DrawContext {
@@ -132,8 +129,9 @@ public class nDrawer {
 
 		TextureRegion region = new TextureRegion(texture, 0, 0, 1, 1);
 		drawer = new ShapeDrawer(spritebatch, region);
-		vfxManager = new VfxManager(Pixmap.Format.RGBA8888);	
-		vfxManager.setBlendingEnabled(true);
+		
+//		vfxManager = new VfxManager(Pixmap.Format.RGBA8888);	
+//		vfxManager.setBlendingEnabled(true);
 
 //		GaussianBlurEffect e1 = new GaussianBlurEffect();
 //		vfxManager.addEffect(e1); effect.add(e1);
@@ -176,43 +174,46 @@ public class nDrawer {
 //		e5.setSaturation(0.5f);
 //		e5.setCoords(0.5f,0.5f);
 
-		buffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);		        
-		Renderer batchRenderer = new PolygonSpriteBatchRendererAdapter(spritebatch);
-		buffer.addRenderer(batchRenderer);
-		buffer.initialize(GdxApp.WIDTH,GdxApp.HEIGHT);
-		vfxManager.getResultBuffer().addRenderer(batchRenderer); 
+//		buffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);		        
+//		Renderer batchRenderer = new PolygonSpriteBatchRendererAdapter(spritebatch);
+//		buffer.addRenderer(batchRenderer);
+//		buffer.initialize(GdxApp.WIDTH,GdxApp.HEIGHT);
+//		vfxManager.getResultBuffer().addRenderer(batchRenderer); 
 	}
 	public Matrix4 getTransformMatrix() { return spritebatch.getTransformMatrix(); }
 	public void dispose() {
 		bitmapfont.dispose(); bitmapfont_2y.dispose();
-		buffer.dispose();
-		vfxManager.dispose();
-		for (AbstractVfxEffect e : effect) e.dispose();
+//		buffer.dispose();
+//		vfxManager.dispose();
+//		for (AbstractVfxEffect e : effect) e.dispose();
 		spritebatch.dispose();
 		texture.dispose();
 		transf.reset();
 	}
 	public void resize(int w, int h) {
-		vfxManager.resize(w, h); buffer.reset(); buffer.initialize(w, h); }
+//		vfxManager.resize(w, h); buffer.reset(); buffer.initialize(w, h); 
+	}
 	public void flush() { spritebatch.flush(); }
-	public void ready() { vfxManager.cleanUpBuffers(Utl.color(0, 0)); }
+	public void ready() { 
+//		vfxManager.cleanUpBuffers(Utl.color(0, 0)); 
+	}
 	public void begin() {
 //		spritebatch.setProjectionMatrix(app.viewport.getCamera().combined);
 		spritebatch.setProjectionMatrix(context.getViewport().getCamera().combined);
 		drawer.updatePixelSize(); 
 		if (vfx) {
-//			vfxManager.rebind();
-//			vfxManager.update(1); 
-			vfxManager.setBlendingEnabled(false);
-			vfxManager.beginInputCapture();
-//			ScreenUtils.clear(buffer_clear_color);
-			ScreenUtils.clear(Utl.color(0,0));
-			vfxManager.endInputCapture();        
-			vfxManager.renderToFbo(buffer);
-//			vfxManager.cleanUpBuffers(buffer_clear_color);
-			vfxManager.cleanUpBuffers(Utl.color(0,0));
-			vfxManager.setBlendingEnabled(true);
-			vfxManager.beginInputCapture();
+////			vfxManager.rebind();
+////			vfxManager.update(1); 
+//			vfxManager.setBlendingEnabled(false);
+//			vfxManager.beginInputCapture();
+////			ScreenUtils.clear(buffer_clear_color);
+//			ScreenUtils.clear(Utl.color(0,0));
+//			vfxManager.endInputCapture();        
+//			vfxManager.renderToFbo(buffer);
+////			vfxManager.cleanUpBuffers(buffer_clear_color);
+//			vfxManager.cleanUpBuffers(Utl.color(0,0));
+//			vfxManager.setBlendingEnabled(true);
+//			vfxManager.beginInputCapture();
 		}
 
 		//batch begin
@@ -222,15 +223,15 @@ public class nDrawer {
 		//batch end
 		spritebatch.end();
 		if (vfx) {
-			vfxManager.endInputCapture();
-			vfxManager.applyEffects();		        
-			vfxManager.renderToFbo(buffer);
-			spritebatch.begin();
-			spritebatch.draw(buffer.getTexture(), 0, 0, 
-					(int)context.getScreenRect().width, 
-					(int)context.getScreenRect().height, 
-					0, 0, 1, 1);
-			spritebatch.end();
+//			vfxManager.endInputCapture();
+//			vfxManager.applyEffects();		        
+//			vfxManager.renderToFbo(buffer);
+//			spritebatch.begin();
+//			spritebatch.draw(buffer.getTexture(), 0, 0, 
+//					(int)context.getScreenRect().width, 
+//					(int)context.getScreenRect().height, 
+//					0, 0, 1, 1);
+//			spritebatch.end();
 		}
 	}
 	public void draw_end() {
@@ -241,29 +242,29 @@ public class nDrawer {
 
 	}
 
-	public static class PolygonSpriteBatchRendererAdapter 
-	extends RendererAdapter implements Poolable {
-		private PolygonSpriteBatch batch;
-
-		public PolygonSpriteBatchRendererAdapter() { }
-		public PolygonSpriteBatchRendererAdapter(PolygonSpriteBatch batch) {
-			initialize(batch); }
-
-		public PolygonSpriteBatchRendererAdapter initialize(PolygonSpriteBatch batch) {
-			this.batch = batch; return this; }
-
-		@Override public void reset() { batch = null; }
-		public PolygonSpriteBatch getBatch() { return batch; }
-		@Override public void flush() { batch.isDrawing(); { batch.flush(); } }
-		@Override protected Matrix4 getProjection() {
-			return batch.getProjectionMatrix(); }
-		@Override protected Matrix4 getTransform() {
-			return batch.getTransformMatrix(); }
-		@Override protected void setProjection(Matrix4 projection) {
-			batch.setProjectionMatrix(projection); }
-		@Override protected void setTransform(Matrix4 transform) {
-			batch.setTransformMatrix(transform); }
-	}
+//	public static class PolygonSpriteBatchRendererAdapter 
+//	extends RendererAdapter implements Poolable {
+//		private PolygonSpriteBatch batch;
+//
+//		public PolygonSpriteBatchRendererAdapter() { }
+//		public PolygonSpriteBatchRendererAdapter(PolygonSpriteBatch batch) {
+//			initialize(batch); }
+//
+//		public PolygonSpriteBatchRendererAdapter initialize(PolygonSpriteBatch batch) {
+//			this.batch = batch; return this; }
+//
+//		@Override public void reset() { batch = null; }
+//		public PolygonSpriteBatch getBatch() { return batch; }
+//		@Override public void flush() { batch.isDrawing(); { batch.flush(); } }
+//		@Override protected Matrix4 getProjection() {
+//			return batch.getProjectionMatrix(); }
+//		@Override protected Matrix4 getTransform() {
+//			return batch.getTransformMatrix(); }
+//		@Override protected void setProjection(Matrix4 projection) {
+//			batch.setProjectionMatrix(projection); }
+//		@Override protected void setTransform(Matrix4 transform) {
+//			batch.setTransformMatrix(transform); }
+//	}
 
 
 

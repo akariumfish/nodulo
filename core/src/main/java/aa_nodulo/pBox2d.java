@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
@@ -28,7 +30,6 @@ import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer.Renderer;
 import com.noodle.nodulo.GdxApp;
 
 import app.App;
-import app.nDrawer.PolygonSpriteBatchRendererAdapter;
 import box2dLight.*;
 import data.*;
 import gui.*;
@@ -67,11 +68,9 @@ public class pBox2d extends pSystem {
 			.setSetupRun(new nRun() { public void run() {
 
 				pSheet.setDefMacro("main", "main_sheet_b2d");
-//				pSheet.setDefMacro("init_space", "init_space_b2d");
 				pSheet.setDefMacro("blueprint", "common_param_b2d");
 				pSheet.setDefMacro("function", "common_func_b2d");
 
-//				pSheet.setDefCollapse("init_space", false);
 				pSheet.setDefCollapse("blueprint", false);
 				pSheet.setDefCollapse("main", false);
 				pSheet.setDefCollapse("function", false);
@@ -89,21 +88,12 @@ public class pBox2d extends pSystem {
 
 			float RS = nGUI.book.RS;
 
-
-//			Macro b2d_tile = new Macro("b2d_tile")
-//					.addMacro("tile", pMacro.getMacro("executor"), 		0f, 	0f)
-//					.addSetVar("tile_exec", "target_ref", "b2d_move")
-//					;
-
+			
 			Macro main_sheet = new Macro("main_sheet_b2d")
 			.addMacro("exac", pMacro.getMacro("exec_actor"), 		0f,	0f)
 			.addSetVar("exac_exec", "target_ref", "b2d_move")
 			.addSetVar("exac_actor", "pop_pos", new Vector2(0,0)) 
 			.addSetVar("exac_actor", "print_name", "b2d_print")
-//			.addMacro("b2d_tile", b2d_tile, 	600f, 	0f)
-//			.addNode("from1", "from", 		0f, -60f)
-//			.addSetVar("this_ref", "fp1").addSetVar("target_ref", "tp1").getMacro()
-//			.addLink("b2d_tile_tile_exec", "co_reg", "from1", "out")
 			.addRun(new nRun() { public void run() {
 				nMap<pInstance> list = arg(0, nMap.class);
 
@@ -155,39 +145,6 @@ public class pBox2d extends pSystem {
 						}});
 					}})
 					;
-
-//			Macro b2d_player = new Macro("b2d_player")
-//					.addNode("sel_body", "sel_body", 	180f, 	60f).getMacro()
-//					.addNode("register", "register", 	780f, 	-300f).getMacro()
-//					.addNode("reg_in_bod", "reg_in", 	600f,	-60f).addSetVar("reg_ref", "body").getMacro()
-//					.addLink("sel_body", "co_sel_bod", "reg_in_bod", "co_in")
-//					.addLink("reg_in_bod", "co_reg", "register", "co_reg")
-//					.addRun(new nRun() { public void run() {
-//						nMap<pInstance> list = arg(0, nMap.class);
-//					}})
-//					;
-
-//			Macro init_space = new Macro("init_space_b2d")
-//					.addMacro("b2d_player", b2d_player, 	1200f, 	-150f)
-//					.addMacro("construct1", "constructor", 	0f, 	-150f)
-//					.addSetVar("construct1_const", "print_name", "b2d_print")
-//					.addNode("space_init", "space_init", 		0f, 120f).getMacro()
-//					.addNode("to1", "to", 		3000f, -150f)
-//					.addSetVar("this_ref", "tp1").addSetVar("target_ref", "fp1").getMacro()
-//					.addLink("b2d_player_register", "co_register", "to1", "in")
-//					.addLink("construct1_const", "co_run", "space_init", "start_run")
-//					.addLink("b2d_player_sel_body", "in", "construct1_const", "co_body")
-//					.addRun(new nRun() { public void run() {
-//						nMap<pInstance> list = arg(0, nMap.class);
-//
-//						list.get("construct1_ank").setVar("view_ank", false);
-//						list.get("construct1_ank").setVar("ank_pos", new Vector2(0,110));
-//
-//						//			sValue v = list.get("construct1_ank").patch.app.view
-//						//				.bloc.getValue("val_grid");
-//						//			if (v != null) ((sBoo)v).set(false);
-//					}})
-//					;
 
 			Macro b2d_blueprint = new Macro("b2d_blueprint")
 					.addNode("blueprint", "blueprint", 	0f, 		0f).getMacro()
@@ -264,11 +221,14 @@ public class pBox2d extends pSystem {
 			physic.newOptionalLocalProperty("light")
 			.addData("follow_ref", true)
 			.addData("pos", new Vector2())
-			.addData("dist", 90f)
+			.addData("dist", 120f)
 			.addData("r", (int)255)
 			.addData("g", (int)10)
 			.addData("b", (int)10)
 			.addData("a", (int)255)
+			;
+
+			physic.newOptionalLocalProperty("cone_light")
 			;
 			
 			
@@ -315,12 +275,14 @@ public class pBox2d extends pSystem {
 			tick_run = new nRun() { public void run(Object o) { tick((float)o); }};
 			net_tick_run = new nRun() { public void run(Object o) { net_tick((float)o); }};
 			draw_run = new nDrawable() { public void drawing() { draw(); }}; 
+			pre_draw_run = new nDrawable() { public void drawing() { pre_draw(); }}; 
+			post_draw_run = new nDrawable() { public void drawing() { post_draw(); }}; 
 			draw_ray_run = new nDrawable() { public void drawing() { draw_ray(); }}; 
 			draw_debug_run = new nDrawable() { public void drawing() { draw_debug(); }}; 
 		}
 
 		nRun tick_run, net_tick_run;
-		nDrawable draw_run, draw_ray_run, draw_debug_run;
+		nDrawable draw_run, pre_draw_run, post_draw_run, draw_ray_run, draw_debug_run;
 
 		OrthographicCamera cam;
 
@@ -349,7 +311,6 @@ public class pBox2d extends pSystem {
 			val_draw_debug = bloc.obtainBoo("val_draw_debug", false);
 			val_do_ray = bloc.obtainBoo("val_do_ray", true);
 			val_do_calc = bloc.obtainBoo("val_do_calc", true);
-
 
 			cam = new OrthographicCamera(GdxApp.WIDTH, GdxApp.HEIGHT);
 
@@ -396,91 +357,58 @@ public class pBox2d extends pSystem {
 				buffer.initialize((int)app.gdx.getscreenwidth(),
 						(int)app.gdx.getscreenheight());
 			}});
-
+			
 //			RayHandler.useDiffuseLight(true);
 			
 			rayHandler = new RayHandler(world);
 
-			rayHandler.setAmbientLight(0.235f, 0.254f, 0.313f, 0.5f);
-//			rayHandler.setAmbientLight(0.f, 0f, 0f, 0.4f);
+			rayHandler.setAmbientLight(1f, 1f, 1f, 0f);
 			rayHandler.setBlurNum(5);
 			rayHandler.setCulling(false);
 			rayHandler.setBlur(true);
-//			rayHandler.setShadows(false);
-			rayHandler.shadowBlendFunc.set(GL20.GL_ONE, 
-					GL20.GL_SRC_COLOR);
 			
-//			rayHandler.shadowBlendFunc.set(GL20.GL_DST_COLOR, 
-//					GL20.GL_SRC_COLOR);
-			
-			/* GL_BLEND_DST_RGB
-			 * GL_BLEND_SRC_RGB
-			 * GL_SRC_COLOR
-			 * GL_ONE
-			 * GL_ONE_MINUS_SRC_ALPHA
-			 * GL_SRC_ALPHA
-			 * GL_DST_COLOR
-			 * GL_ZERO
-			 */
-			
-			
-			/**
-			 * Blend function for lights rendering with shadows but without diffusion
-			 * <p>Default: (GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA)
-			 */
-//			rayHandler.shadowBlendFunc.set(GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA);
+			rayHandler.shadowBlendFunc.set(GL20.GL_SRC_ALPHA, 
+					GL20.GL_ONE);
 
-			/**
-			 * Blend function for lights rendering without shadows and diffusion 
-			 * <p>Default: (GL20.GL_SRC_ALPHA, GL20.GL_ONE)
-			 */
-//			rayHandler.simpleBlendFunc.set(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
-			/**
-			 * Blend function for lights rendering with both shadows and diffusion
-			 * <p>Default: (GL20.GL_DST_COLOR, GL20.GL_ZERO)
-			 */
-//			rayHandler.diffuseBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_ZERO);
+//			rayHandler.diffuseBlendFunc.set(GL20.GL_SRC_COLOR, 
+//					GL20.GL_ONE);
 
-//			rayHandler.diffuseBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_SRC_COLOR);
-
-			int rays = 480;
-			float dist = 2500f;
+			int rays = 180;
+			float dist = 3000f;
 			float spc = dist * 0.9f;
 			pGeom geo = app.getSystem(pGeom.class);
 			float lim = geo.val_limit_dist.get();
-			new PointLight(rayHandler, rays, new Color(1,1,0,1), dist, 0, 0);
+			Color lc = new Color(1,1,1,0.6f);
+			new PointLight(rayHandler, rays, lc, dist, 0, 0);
 			for (float x = spc ; x <= lim ; x += spc) 
 					if (x < lim - dist) {
 						float f = 1.2f * ((lim - dist)-x) / (lim - dist);
-						new PointLight(rayHandler, rays, new Color(1,0.5f,1,1), f*dist, x, 0);
-						new PointLight(rayHandler, rays, new Color(1,1,0.5f,1), f*dist, 0, x);
-						new PointLight(rayHandler, rays, new Color(0.5f,1,1,1), f*dist, -x, 0);
-						new PointLight(rayHandler, rays, new Color(1,0.5f,1,1), f*dist, 0, -x);
+						new PointLight(rayHandler, rays, lc, f*dist, x, 0);
+						new PointLight(rayHandler, rays, lc, f*dist, 0, x);
+						new PointLight(rayHandler, rays, lc, f*dist, -x, 0);
+						new PointLight(rayHandler, rays, lc, f*dist, 0, -x);
 			}
 			for (float x = spc ; x <= lim ; x += spc) 
 				for (float y = spc ; y <= lim ; y += spc) {
 					float l = new Vector2(x,y).len();
 					if (l < lim - dist) {
 						float f = 1.2f * ((lim - dist)-l) / (lim - dist);
-						new PointLight(rayHandler, rays, new Color(0.5f,1,1,1), f*dist, x, y);
-						new PointLight(rayHandler, rays, new Color(1,0.5f,1,1), f*dist, -x, y);
-						new PointLight(rayHandler, rays, new Color(1,1,0.5f,1), f*dist, x, -y);
-						new PointLight(rayHandler, rays, new Color(0.5f,1,1,1), f*dist, -x, -y);
+						new PointLight(rayHandler, rays, lc, f*dist, x, y);
+						new PointLight(rayHandler, rays, lc, f*dist, -x, y);
+						new PointLight(rayHandler, rays, lc, f*dist, x, -y);
+						new PointLight(rayHandler, rays, lc, f*dist, -x, -y);
 					}
 				}
-			
-			
-//			ConeLight coneLight = new ConeLight(rayHandler, 
-//					rays*5, new Color(1,0,0,1), dist*3, 8, 2, 10, 60);
-//			coneLight.setColor(1f,0f,0f,1f);
 		}
 		public void system_load() {
 
 			app.time.addEventTick(tick_run);
 			app.time.addEventNetTick(net_tick_run);
-			app.view.addDrawable(5,draw_run);
-			app.view.addDrawable(10,draw_ray_run);
-			app.view.addDrawable(20,draw_debug_run);
+			app.view.addDrawable(6,draw_run);
+			app.view.addPreDrawable(0,pre_draw_run);
+			app.view.addPostDrawable(22,post_draw_run);
+			app.view.addDrawable(11,draw_ray_run);
+			app.view.addDrawable(19,draw_debug_run);
 			space = app.space;
 			view = app.view;
 			//		if (!app.RELEASE) 
@@ -491,6 +419,8 @@ public class pBox2d extends pSystem {
 			app.time.removeEventTick(tick_run);
 			app.time.removeEventNetTick(net_tick_run);
 			app.view.removeDrawable(draw_run);
+			app.view.removeDrawable(pre_draw_run);
+			app.view.removeDrawable(post_draw_run);
 			app.view.removeDrawable(draw_ray_run);
 			app.view.removeDrawable(draw_debug_run);
 
@@ -546,10 +476,32 @@ public class pBox2d extends pSystem {
 		}
 
 		public final ArrayList<Rectangle> scissors = new ArrayList<Rectangle>();
+		
 		public void draw() { 
 
 			if (val_do_draw.get()) {
 				boxRenderer.render(world);
+			}
+		}
+		public void pre_draw() { 
+
+			if (val_do_ray.get() && app.gdx.drawer.USE_FX) {
+
+				app.gdx.drawer.pause_batch();
+				
+				buffer.begin(); 
+				
+				ScreenUtils.clear(app.gdx.drawer.buffer_clear_color);
+				
+//				Color c = app.gdx.drawer.buffer_clear_color;
+//		        Gdx.gl.glClearColor(c.r,c.g,c.b,c.a);
+//		        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+//
+//		        Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+//		        Gdx.gl20.glEnable(GL20.GL_BLEND);
+		        
+				app.gdx.drawer.restart_batch();
+				
 			}
 		}
 		public void draw_ray() { 
@@ -557,24 +509,30 @@ public class pBox2d extends pSystem {
 			if (val_do_ray.get() && app.gdx.drawer.USE_FX) {
 
 				app.gdx.drawer.pause_batch();
-
+				
+//		        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+				
+		        buffer.end();
+		        
 				cam.setToOrtho(false, (int)(app.gdx.getscreenwidth()), 
 						(int)(app.gdx.getscreenheight()));
 				Vector2 view_center = new Vector2(view.val_pos.get());
 				view_center.x += view.val_view_size.x() / 2.0f;
-				view_center.y -= view.val_view_size.y() / 2.0f + app.gui.book.RS;
+				view_center.y -= view.val_view_size.y() / 2.0f + nGUI.book.RS;
+				float scale = view.val_cam_scale.get();
+				float sclinv = 1f / scale;
 				Vector2 m = new Vector2(view_center)
 						.sub(app.gdx.getscreenwidth() / 2.0f, app.gdx.getscreenheight() / 2.0f);
-				m.scl(1/view.val_cam_scale.get()).rotateRad(-view.val_cam_rot.get());
+				m.scl(sclinv).rotateRad(-view.val_cam_rot.get());
 				m.add(view.val_cam_pos.get()).scl(-1f);
-				cam.zoom = 1 / view.val_cam_scale.get();
-				cam.position.set(m.x, m.y, 0);
-				cam.direction.set(0, 0, -1f);
-				Vector2 u = new Vector2(0,1).rotateRad(-view.val_cam_rot.get());
-				cam.up.set(u.x, u.y, 0);
+				cam.zoom = sclinv;
+				cam.position.set(m.x, m.y, 0f);
+				cam.direction.set(0f, 0f, -1f);
+				Vector2 u = new Vector2(0f,1f).rotateRad(-view.val_cam_rot.get());
+				cam.up.set(u.x, u.y, 0f);
 				cam.update();
 
-				app.gdx.drawer.flush();
+//				app.gdx.drawer.flush();
 				for (Rectangle r : Utl.duplic(app.gui.scissors)) {
 					scissors.add(r); ScissorStack.popScissors(); }
 				app.gui.scissors.clear();
@@ -584,17 +542,19 @@ public class pBox2d extends pSystem {
 				rayHandler.update();
 				rayHandler.prepareRender();
 
-				app.gdx.drawer.flush();
+//				app.gdx.drawer.flush();
 				for (Rectangle r : Utl.duplic(scissors)) {
 					app.gui.scissors.add(r); ScissorStack.pushScissors(r); }
 				scissors.clear();
 
-				buffer.begin();
-				ScreenUtils.clear(app.gdx.drawer.buffer_clear_color);
+				buffer.begin(); 
+				
 				rayHandler.renderOnly();
-				buffer.end();
+				
+		        buffer.end();
 
 				app.gdx.drawer.spritebatch.begin();
+				
 				app.gdx.drawer.spritebatch.draw(buffer.getTexture(), 0, 0, 
 						app.gdx.getscreenwidth(), 
 						app.gdx.getscreenheight(), 
@@ -603,15 +563,18 @@ public class pBox2d extends pSystem {
 
 				if (val_draw_debug.get()) 
 					debugRenderer.render(world, cam.combined);
-
-				app.gdx.drawer.restart_batch();
-
+				
+				app.gdx.drawer.spritebatch.begin();
+				
 			}
+		}
+		public void post_draw() { 
+			
 		}
 		public void draw_debug() { 
 
 			if (val_draw_debug.get()) {
-				app.gdx.drawer.pause_batch();
+				app.gdx.drawer.end();
 
 				cam.setToOrtho(false, (int)(app.gdx.getscreenwidth()), 
 						(int)(app.gdx.getscreenheight()));
@@ -631,7 +594,7 @@ public class pBox2d extends pSystem {
 
 				debugRenderer.render(world, cam.combined);
 
-				app.gdx.drawer.restart_batch();
+				app.gdx.drawer.begin();
 			}
 		}
 
@@ -721,9 +684,11 @@ public class pBox2d extends pSystem {
 				// Create our body in the world using our body definition
 				Body body = world.createBody(bodyDef);
 				
-				ConeLight coneLight = new ConeLight(rayHandler, 
-				1024, new Color(1f,0.5f,0.2f,1f), 1000f, 0f, 0f, 0f, 45f);
-				coneLight.attachToBody(body, 0f, 0f);
+				if (b.hasParam("cone_light")) {
+					ConeLight coneLight = new ConeLight(rayHandler, 
+					120, new Color(1f,0.6f,0.4f,0.6f), 2400f, 0f, 0f, 0f, 45f);
+					coneLight.attachToBody(body, 0f, 0f);
+				}
 				
 				if (!b.getBoo("box_body", "copy_geom") || !b.hasParam("geom")) {
 					CircleShape circlenshape = new CircleShape();
@@ -804,12 +769,12 @@ public class pBox2d extends pSystem {
 					b.setStr("box_body", "body_ref", ""+bod_nb);
 				}
 				
-				int rays = 480;
+				int rays = 50;
 				Vector2 pos = b.getVec("light", "pos");
 				float dist = b.getFlt("light", "dist");
 				Color col = Utl.color(b.getInt("light", "r"), b.getInt("light", "g"), 
 						b.getInt("light", "b"), b.getInt("light", "a"));
-				PointLight l = new PointLight(rayHandler, rays, col, dist*5, 0, 0);
+				PointLight l = new PointLight(rayHandler, rays, col, dist, 0, 0);
 				l.setColor(col.r,col.g,col.b,col.a);
 				l.attachToBody(body, pos.x, pos.y);
 			}});

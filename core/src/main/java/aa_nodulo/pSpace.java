@@ -42,6 +42,7 @@ public class pSpace {
 			clear_all_body();
 			app.addDelayEvent(2, new nRun() { public void run() {
 				time.set_pause(true);
+				reset_rng();
 				nRun.runEvents(eventSpaceStart);
 				app.addDelayEvent(1, new nRun() { public void run() {
 					time.val_tick_cnt.set(0);
@@ -297,8 +298,18 @@ public class pSpace {
 //	nRun net_frame_run; 
 	nRun tick_run, net_tick_run;
 	nDrawable draw_run;
-	
-	public Random seed_rng;
+
+	public sInt val_seed;
+	public Random rng;
+
+	public void reset_rng() { rng.setSeed(val_seed.get()); }
+
+	public void rngSeed() {
+		val_seed.set(app.seed_rng.nextInt());
+		reset_rng(); }
+
+	public float rngFlt(float min, float max) {
+		return min + rng.nextFloat() * (max - min); }
 
 	sTab val_body_tab, val_collec_tab;
 	sInt val_body_nb, val_body_pool, 
@@ -338,7 +349,8 @@ public class pSpace {
 //			load_contents(); 
 //		}});
 
-		seed_rng = new Random(123456789);
+		val_seed = bloc.obtainInt("val_seed", 123456);
+		rng = new Random(val_seed.get());
 		
 //		val_param_database = bloc.obtainTab("val_param_database");
 //		bloc.data.databases.put("space_param", val_param_database);
@@ -404,6 +416,9 @@ public class pSpace {
 			}
 		}
 		
+		app.inputs.put("random", new nRun() { public Object get() {
+			return rng.nextFloat();
+		}});
 	}
 	
 	public void system_load() {
@@ -412,6 +427,7 @@ public class pSpace {
 		pTime time = app.time;
 		app.addDelayEvent(40, new nRun() { public void run() {
 			time.val_pause.set(true);
+			reset_rng();
 			nRun.runEvents(eventSpaceStart);
 			app.addDelayEvent(1, new nRun() { public void run() {
 				time.val_tick_cnt.set(0);

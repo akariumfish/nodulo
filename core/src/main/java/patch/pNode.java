@@ -50,216 +50,317 @@ public class pNode {
 
 		
 
-		newNodeModel("boolean", "var")
-		.process() 
-			.openSec()
-				.param("run", new nRun() {public void run() {
-					if (instance.getVar("auto", Boolean.class)) {
-						PlaneApplet.app.addDelayEvent(1, new nRun(instance) {public void run() {
-							pInstance inst = (pInstance)builder;
-							pInstance co = inst.get("get_co", pInstance.class, "out");
-							co.run("send", inst.getVar("var", Boolean.class)); }}); } }})
-				.param("height", 2f, "scale_min", 0.0f) 
-				.run(getRun(CT.RUNP_VAR_BOO_SWITCH), "var", "state", (int)8)
-			.closeSec()
-			.commande(getCom(CT.COM_ADD_ROW))
-			.openSec()
-				.param("def", true) 
-				.run(getRun(CT.RUNP_VAR_BOO_SWITCH), "auto", "auto", (int)6) 
-			.closeSec()
-			.openSec()
-				.param("run", new nRun() {public void run() {
-					pInstance co = instance.get("get_co", pInstance.class, "out");
-					co.run("send", instance.getVar("var", Boolean.class)); }})
-				.run(getRun(CT.RUNP_ADD_TRIGG), "send", "send", (int)6)
-			.closeSec()
-			.getStand()
-		.openSec()
-			.param("event_receive", new nRun() {public void run() {
-				Object r = arg(0,Object.class);
-				pInstance node = instance.object("node", pInstance.class);
-				boolean change = false;
-				if (r instanceof Boolean) {
-					if (!(node.getVar("var", Boolean.class) == (Boolean)r)) change = true;
-					node.setVar("var", (Boolean)r);
-				}
-				if (change && node.getVar("auto", Boolean.class)) {
-					pInstance co = node.get("get_co", pInstance.class, "out");
-					co.run("send", node.getVar("var", Boolean.class));
-				}
-			}})
-			.param("keys", new String[] {"var","boo"}, "filters", new String[] {"var","boo"})
-			.run(getRun(CT.RUNS_ADD_CO_IN), "in")
-		.closeSec()
-		.openSec()	
-			.param("offer", new nRun() {public Object get() {
-				pInstance node = instance.object("node", pInstance.class);
-				return node.getVar("var", Boolean.class);
-			}})
-			.param("keys", new String[] {"var","boo"}, "filters", new String[] {"var","boo"})
-			.run(getRun(CT.RUNS_ADD_CO_OUT), "out")
-		.closeSec()
-		;
-
-		newNodeModel("not")
-		.process()
-		.run(getRun(CT.RUNP_ADD_LABEL), "!", (int)10)
-		.getStand()
-		.openSec().param("event_receive", new nRun() {public void run() {
-			pInstance node = instance.object("node", pInstance.class);
-			Object r = arg(0,Object.class); 
-			pInstance co = node.get("get_co", pInstance.class, "out");
-			if (r instanceof Boolean) {
-				boolean b = (Boolean)r; b = !b; co.run("send", b); }
-		}}, "text", "!")
-		.param("keys", new String[] {"var","boo"}, "filters", new String[] {"var","boo"}) 
-		.run(getRun(CT.RUNS_ADD_CO_IN), "in").closeSec()
-		.param("offer", new nRun() {public Object get() {
-			pInstance node = instance.object("node", pInstance.class);
-			pInstance co = node.get("get_co", pInstance.class, "in");
-			Object r = co.get("obtain");
-			if (r instanceof Boolean) {
-				boolean b = (Boolean)r; b = !b; return b; }
-			return null;
-		}})
-		.param("keys", new String[] {"var","boo"}, "filters", new String[] {"var","boo"}) 
-		.run(getRun(CT.RUNS_ADD_CO_OUT), "out");
-		
-		
-		
-		
-		
-		
-		
-		newNodeModel("bang").process()
-		.openSec()
-			.param("run", new nRun() {public void run() {
-				pInstance co = instance.get("get_co", pInstance.class, "out");
-				co.run("send", true); }}, "height", 2f, "scale_min", 0.0f)
-			.run(getRun(CT.RUNP_ADD_TRIGG), "bang", "bang", (int)8)
-		.closeSec()
-		.getStand()
-		.param("keys", new String[] {"bang"}, "filters", new String[] {}) 
-		.run(getRun(CT.RUNS_ADD_CO_OUT), "out")
-		;
-		
-
-		newNodeModel("gate")
-		.openSec()
-			.param("event_link", new nRun() {public void run() {
-				pInstance node = instance.object("node", pInstance.class);
-				pInstance co_out = node.get("get_co", pInstance.class, "out");
-				if (node.hasVar("state") && node.getVar("state", Boolean.class)) 
-					co_out.run("run_event_link_from_node");
-			}})
-			.param("event_receive", new nRun() {public void run() {
-				pInstance node = instance.object("node", pInstance.class);
-				if (node.hasVar("state") && node.getVar("state", Boolean.class)) {
-//					Object r = arg(0,Object.class);
-					pInstance co = node.get("get_co", pInstance.class, "out");
-					co.run("send", args); } }})
-			.param("keys", new String[] {"all"}, "filters", new String[] {})  
-			.run(getRun(CT.RUNS_ADD_CO_IN), "in")
-		.closeSec()
-		.openSec()
-			.param("event_receive", new nRun() {public void run() {
-				pInstance node = instance.object("node", pInstance.class);
-				Object r = arg(0,Object.class); 
-				if (r instanceof Boolean) { boolean b = (Boolean)r; node.setVar("state",b); }
-//				else { node.setVar("state", !node.getVar("state",Boolean.class)); }
-			}})
-			.param("keys", new String[] {"var","boo"}, "filters", new String[] {"var","boo"}) 
-			.run(getRun(CT.RUNS_ADD_CO_IN), "set")
-		.closeSec()
-		.openSec()
-			.param("event_link", new nRun() {public void run() {
-				pInstance node = instance.object("node", pInstance.class);
-				pInstance co_in = node.get("get_co", pInstance.class, "in");
-				if (node.hasVar("state") && node.getVar("state", Boolean.class)) 
-					co_in.run("run_event_link_from_node");
-			}})
-			.param("offer", new nRun() {public Object get() {
-				pInstance node = instance.object("node", pInstance.class);
-				if (node.hasVar("state") && node.getVar("state", Boolean.class)) {
-					pInstance co = node.get("get_co", pInstance.class, "in");
-					return co.get("obtain");
-				} else return null;
-			}})
-			.param("key", "all")
-			.param("keys", new String[] {"all"}, "filters", new String[] {})
-			.run(getRun(CT.RUNS_ADD_CO_OUT), "out")
-		.closeSec()
-		.process()
-		.openSec()
-			.param("run", new nRun() {public void run() {
-//				pInstance bric = instance.object("bric", pInstance.class);
-				pInstance co_in = instance.get("get_co", pInstance.class, "in");
-				pInstance co_out = instance.get("get_co", pInstance.class, "out");
-				if (co_in != null) co_in.run("run_event_link_from_bric"); 
-				if (co_out != null) co_out.run("run_event_link_from_bric");
-			}})
-			.param("text", "gate", "width", (int)8, "height", 2f, "def", true) 
-			.run(getRun(CT.RUNP_VAR_BOO_SWITCH), "state")  
-		.closeSec()
-		;
-
-		
-		
-		
-		
-		
-
-		newNodeModel("to").process()
-		.useInit().commande(new nRun() {public void run() {
-			instance.patch.node_to.add(instance);
-		}})
-		.useClear().commande(new nRun() {public void run() {
-			instance.patch.node_to.remove(instance);
-		}}).useInit()
-		.openSec()
-			.param("text", "this: ", "width", (int)8, "def", "to")
-			.run(pNode.getRun(CT.RUNP_VAR_STR_LAB_FIELD), "this_ref")
-		.closeSec()
-		.commande(getCom(CT.COM_ADD_ROW))
-		.openSec()
-			.param("text", "target: ", "width", (int)8)
-			.run(pNode.getRun(CT.RUNP_VAR_STR_LAB_FIELD), "target_ref")
-		.closeSec()
-		.openSec()
-			.param("run", new nRun() {public void run() {
-				nWidget trigg_w = instance.get("get_mapped_widget", nWidget.class, 
-						"trigg_dropm_targ");
-				if (trigg_w == null) return;
-				ArrayList<String> targs = new ArrayList<String>();
-				for (pInstance t : instance.patch.node_from) {
-					String r = t.getVar("this_ref", String.class);
-					if (r != null) targs.add(r);
-				}
-//				instance.patch.patch_dropmenu.metode("clear_entrys");
-				for (String rf : targs) {
-					
-					nGUI.add_dropmenu_entry(rf, new nRun(instance) { public void run() {
-						((pInstance)builder).setVar("target_ref", rf); }}); 
-					
-//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-//							.metodeGet("add_entry_custom", rf, RS*6f, RS*2f/3f);
-//					w1.addEventTrigger(new nRun(instance) { public void run() {
-//						((pInstance)builder).setVar("target_ref", rf); 
-//					}}); 
-				}
-//				instance.patch.patch_dropmenu.metode("open", trigg_w); 
-				nGUI.open_dropmenu(trigg_w);
-			}})
-			.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "trigg_dropm_targ", "Pk", (int)2)
-		.closeSec()
-		.getStand()
+//		newNodeModel("boolean", "var")
+//		.process() 
+//			.openSec()
+//				.param("run", new nRun() {public void run() {
+//					if (instance.getVar("auto", Boolean.class)) {
+//						PlaneApplet.app.addDelayEvent(1, new nRun(instance) {public void run() {
+//							pInstance inst = (pInstance)builder;
+//							pInstance co = inst.get("get_co", pInstance.class, "out");
+//							co.run("send", inst.getVar("var", Boolean.class)); }}); } }})
+//				.param("height", 2f, "scale_min", 0.0f) 
+//				.run(getRun(CT.RUNP_VAR_BOO_SWITCH), "var", "state", (int)8)
+//			.closeSec()
+//			.commande(getCom(CT.COM_ADD_ROW))
+//			.openSec()
+//				.param("def", true) 
+//				.run(getRun(CT.RUNP_VAR_BOO_SWITCH), "auto", "auto", (int)6) 
+//			.closeSec()
+//			.openSec()
+//				.param("run", new nRun() {public void run() {
+//					pInstance co = instance.get("get_co", pInstance.class, "out");
+//					co.run("send", instance.getVar("var", Boolean.class)); }})
+//				.run(getRun(CT.RUNP_ADD_TRIGG), "send", "send", (int)6)
+//			.closeSec()
+//			.getStand()
+//		.openSec()
+//			.param("event_receive", new nRun() {public void run() {
+//				Object r = arg(0,Object.class);
+//				pInstance node = instance.object("node", pInstance.class);
+//				boolean change = false;
+//				if (r instanceof Boolean) {
+//					if (!(node.getVar("var", Boolean.class) == (Boolean)r)) change = true;
+//					node.setVar("var", (Boolean)r);
+//				}
+//				if (change && node.getVar("auto", Boolean.class)) {
+//					pInstance co = node.get("get_co", pInstance.class, "out");
+//					co.run("send", node.getVar("var", Boolean.class));
+//				}
+//			}})
+//			.param("keys", new String[] {"var","boo"}, "filters", new String[] {"var","boo"})
+//			.run(getRun(CT.RUNS_ADD_CO_IN), "in")
+//		.closeSec()
+//		.openSec()	
+//			.param("offer", new nRun() {public Object get() {
+//				pInstance node = instance.object("node", pInstance.class);
+//				return node.getVar("var", Boolean.class);
+//			}})
+//			.param("keys", new String[] {"var","boo"}, "filters", new String[] {"var","boo"})
+//			.run(getRun(CT.RUNS_ADD_CO_OUT), "out")
+//		.closeSec()
+//		;
+//
+//		newNodeModel("not")
+//		.process()
+//		.run(getRun(CT.RUNP_ADD_LABEL), "!", (int)10)
+//		.getStand()
+//		.openSec().param("event_receive", new nRun() {public void run() {
+//			pInstance node = instance.object("node", pInstance.class);
+//			Object r = arg(0,Object.class); 
+//			pInstance co = node.get("get_co", pInstance.class, "out");
+//			if (r instanceof Boolean) {
+//				boolean b = (Boolean)r; b = !b; co.run("send", b); }
+//		}}, "text", "!")
+//		.param("keys", new String[] {"var","boo"}, "filters", new String[] {"var","boo"}) 
+//		.run(getRun(CT.RUNS_ADD_CO_IN), "in").closeSec()
+//		.param("offer", new nRun() {public Object get() {
+//			pInstance node = instance.object("node", pInstance.class);
+//			pInstance co = node.get("get_co", pInstance.class, "in");
+//			Object r = co.get("obtain");
+//			if (r instanceof Boolean) {
+//				boolean b = (Boolean)r; b = !b; return b; }
+//			return null;
+//		}})
+//		.param("keys", new String[] {"var","boo"}, "filters", new String[] {"var","boo"}) 
+//		.run(getRun(CT.RUNS_ADD_CO_OUT), "out");
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		newNodeModel("bang").process()
+//		.openSec()
+//			.param("run", new nRun() {public void run() {
+//				pInstance co = instance.get("get_co", pInstance.class, "out");
+//				co.run("send", true); }}, "height", 2f, "scale_min", 0.0f)
+//			.run(getRun(CT.RUNP_ADD_TRIGG), "bang", "bang", (int)8)
+//		.closeSec()
+//		.getStand()
+//		.param("keys", new String[] {"bang"}, "filters", new String[] {}) 
+//		.run(getRun(CT.RUNS_ADD_CO_OUT), "out")
+//		;
+//		
+//
+//		newNodeModel("gate")
+//		.openSec()
+//			.param("event_link", new nRun() {public void run() {
+//				pInstance node = instance.object("node", pInstance.class);
+//				pInstance co_out = node.get("get_co", pInstance.class, "out");
+//				if (node.hasVar("state") && node.getVar("state", Boolean.class)) 
+//					co_out.run("run_event_link_from_node");
+//			}})
+//			.param("event_receive", new nRun() {public void run() {
+//				pInstance node = instance.object("node", pInstance.class);
+//				if (node.hasVar("state") && node.getVar("state", Boolean.class)) {
+////					Object r = arg(0,Object.class);
+//					pInstance co = node.get("get_co", pInstance.class, "out");
+//					co.run("send", args); } }})
+//			.param("keys", new String[] {"all"}, "filters", new String[] {})  
+//			.run(getRun(CT.RUNS_ADD_CO_IN), "in")
+//		.closeSec()
+//		.openSec()
+//			.param("event_receive", new nRun() {public void run() {
+//				pInstance node = instance.object("node", pInstance.class);
+//				Object r = arg(0,Object.class); 
+//				if (r instanceof Boolean) { boolean b = (Boolean)r; node.setVar("state",b); }
+////				else { node.setVar("state", !node.getVar("state",Boolean.class)); }
+//			}})
+//			.param("keys", new String[] {"var","boo"}, "filters", new String[] {"var","boo"}) 
+//			.run(getRun(CT.RUNS_ADD_CO_IN), "set")
+//		.closeSec()
+//		.openSec()
+//			.param("event_link", new nRun() {public void run() {
+//				pInstance node = instance.object("node", pInstance.class);
+//				pInstance co_in = node.get("get_co", pInstance.class, "in");
+//				if (node.hasVar("state") && node.getVar("state", Boolean.class)) 
+//					co_in.run("run_event_link_from_node");
+//			}})
+//			.param("offer", new nRun() {public Object get() {
+//				pInstance node = instance.object("node", pInstance.class);
+//				if (node.hasVar("state") && node.getVar("state", Boolean.class)) {
+//					pInstance co = node.get("get_co", pInstance.class, "in");
+//					return co.get("obtain");
+//				} else return null;
+//			}})
+//			.param("key", "all")
+//			.param("keys", new String[] {"all"}, "filters", new String[] {})
+//			.run(getRun(CT.RUNS_ADD_CO_OUT), "out")
+//		.closeSec()
+//		.process()
+//		.openSec()
+//			.param("run", new nRun() {public void run() {
+////				pInstance bric = instance.object("bric", pInstance.class);
+//				pInstance co_in = instance.get("get_co", pInstance.class, "in");
+//				pInstance co_out = instance.get("get_co", pInstance.class, "out");
+//				if (co_in != null) co_in.run("run_event_link_from_bric"); 
+//				if (co_out != null) co_out.run("run_event_link_from_bric");
+//			}})
+//			.param("text", "gate", "width", (int)8, "height", 2f, "def", true) 
+//			.run(getRun(CT.RUNP_VAR_BOO_SWITCH), "state")  
+//		.closeSec()
+//		;
+//
+//		
+//		
+//		
+//		
+//		
+//
+//		newNodeModel("to").process()
+//		.useInit().commande(new nRun() {public void run() {
+//			instance.patch.node_to.add(instance);
+//		}})
+//		.useClear().commande(new nRun() {public void run() {
+//			instance.patch.node_to.remove(instance);
+//		}}).useInit()
+//		.openSec()
+//			.param("text", "this: ", "width", (int)8, "def", "to")
+//			.run(pNode.getRun(CT.RUNP_VAR_STR_LAB_FIELD), "this_ref")
+//		.closeSec()
+//		.commande(getCom(CT.COM_ADD_ROW))
+//		.openSec()
+//			.param("text", "target: ", "width", (int)8)
+//			.run(pNode.getRun(CT.RUNP_VAR_STR_LAB_FIELD), "target_ref")
+//		.closeSec()
+//		.openSec()
+//			.param("run", new nRun() {public void run() {
+//				nWidget trigg_w = instance.get("get_mapped_widget", nWidget.class, 
+//						"trigg_dropm_targ");
+//				if (trigg_w == null) return;
+//				ArrayList<String> targs = new ArrayList<String>();
+//				for (pInstance t : instance.patch.node_from) {
+//					String r = t.getVar("this_ref", String.class);
+//					if (r != null) targs.add(r);
+//				}
+////				instance.patch.patch_dropmenu.metode("clear_entrys");
+//				for (String rf : targs) {
+//					
+//					nGUI.add_dropmenu_entry(rf, new nRun(instance) { public void run() {
+//						((pInstance)builder).setVar("target_ref", rf); }}); 
+//					
+////					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+////							.metodeGet("add_entry_custom", rf, RS*6f, RS*2f/3f);
+////					w1.addEventTrigger(new nRun(instance) { public void run() {
+////						((pInstance)builder).setVar("target_ref", rf); 
+////					}}); 
+//				}
+////				instance.patch.patch_dropmenu.metode("open", trigg_w); 
+//				nGUI.open_dropmenu(trigg_w);
+//			}})
+//			.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "trigg_dropm_targ", "Pk", (int)2)
+//		.closeSec()
+//		.getStand()
+////		.param("offer", new nRun() {public Object get() {
+////			pInstance node = instance.object("node", pInstance.class);
+////			String targ_ref = node.getVar("target_ref", String.class);
+////			for (pInstance t : instance.patch.node_from) {
+////				String r = t.getVar("this_ref", String.class);
+////				if (r != null && r.equals(targ_ref)) {
+////					pInstance co = t.get("get_co", pInstance.class, "out");
+////					if (co != null) return co.get("obtain");
+////				}
+////			}
+////			return null;
+////		}})
+////		.param("offer_all_nodes", new nRun() {public Object get() {
+////			pInstance node = instance.object("node", pInstance.class);
+////			String targ_ref = node.getVar("target_ref", String.class);
+////			for (pInstance t : instance.patch.node_from) {
+////				String r = t.getVar("this_ref", String.class);
+////				if (r != null && r.equals(targ_ref)) {
+////					pInstance co = t.get("get_co", pInstance.class, "out");
+////					if (co != null) {
+//////						app.log("this_ref "+r);
+////						return co.get("obtain_all_nodes", Object.class);
+////					}
+////				}
+////			}
+////			return null;
+////		}})
+////		.param("offer_node", new nRun() {public Object get() {
+////			pInstance node = instance.object("node", pInstance.class);
+////			String targ_ref = node.getVar("target_ref", String.class);
+////			for (pInstance t : instance.patch.node_from) {
+////				String r = t.getVar("this_ref", String.class);
+////				if (r != null && r.equals(targ_ref)) {
+////					pInstance co = t.get("get_co", pInstance.class, "out");
+////					if (co != null) {
+////						return co.get("obtain_node");
+////					}
+////				}
+////			}
+////			return null;
+////		}})
+//		.param("event_receive", new nRun() {public void run() {
+//			pInstance node = instance.object("node", pInstance.class);
+//			Object r = arg(0,Object.class); 
+//			String targ_ref = node.getVar("target_ref", String.class);
+//			for (pInstance t : instance.patch.node_from) {
+//				String rf = t.getVar("this_ref", String.class);
+//				if (rf != null && rf.equals(targ_ref)) {
+//					pInstance co = t.get("get_co", pInstance.class, "out");
+//					if (co != null) co.run("send", r);
+//				}
+//			}
+//		}})
+//		.param("keys", new String[] {"all"}, "filters", new String[] {}) 
+//		.run(getRun(CT.RUNS_ADD_CO_IN), "in")
+//		;
+//		
+//		newNodeModel("from").process()
+//		.useInit().commande(new nRun() {public void run() {
+//			instance.patch.node_from.add(instance);
+//		}})
+//		.useClear().commande(new nRun() {public void run() {
+//			instance.patch.node_from.remove(instance);
+//		}}).useInit()
+//		.openSec()
+//			.param("text", "this: ", "width", (int)8, "def", "from")
+//			.run(pNode.getRun(CT.RUNP_VAR_STR_LAB_FIELD), "this_ref")
+//		.closeSec()
+//		.commande(getCom(CT.COM_ADD_ROW))
+//		.openSec()
+//			.param("text", "target: ", "width", (int)8)
+//			.run(pNode.getRun(CT.RUNP_VAR_STR_LAB_FIELD), "target_ref")
+//		.closeSec()
+//		.openSec()
+//			.param("run", new nRun() {public void run() {
+//				nWidget trigg_w = instance.get("get_mapped_widget", nWidget.class, 
+//						"trigg_dropm_targ");
+//				if (trigg_w == null) return;
+//				ArrayList<String> targs = new ArrayList<String>();
+//				for (pInstance t : instance.patch.node_to) {
+//					String r = t.getVar("this_ref", String.class);
+//					if (r != null) targs.add(r);
+//				}
+////				instance.patch.patch_dropmenu.metode("clear_entrys");
+//				for (String rf : targs) {
+//					nGUI.add_dropmenu_entry(rf, new nRun(instance) { public void run() {
+//						((pInstance)builder).setVar("target_ref", rf); }}); 
+//					
+////					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+////							.metodeGet("add_entry_custom", rf, RS*6f, RS*2f/3f);
+////					w1.addEventTrigger(new nRun(instance) { public void run() {
+////						((pInstance)builder).setVar("target_ref", rf); 
+////					}}); 
+//				}
+////				instance.patch.patch_dropmenu.metode("open", trigg_w); 
+//				nGUI.open_dropmenu(trigg_w);
+//			}})
+//			.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "trigg_dropm_targ", "Pk", (int)2)
+//		.closeSec()
+//		.getStand()
+//		.openSec()
 //		.param("offer", new nRun() {public Object get() {
 //			pInstance node = instance.object("node", pInstance.class);
 //			String targ_ref = node.getVar("target_ref", String.class);
-//			for (pInstance t : instance.patch.node_from) {
+//			for (pInstance t : instance.patch.node_to) {
 //				String r = t.getVar("this_ref", String.class);
 //				if (r != null && r.equals(targ_ref)) {
-//					pInstance co = t.get("get_co", pInstance.class, "out");
+//					pInstance co = t.get("get_co", pInstance.class, "in");
 //					if (co != null) return co.get("obtain");
 //				}
 //			}
@@ -268,10 +369,10 @@ public class pNode {
 //		.param("offer_all_nodes", new nRun() {public Object get() {
 //			pInstance node = instance.object("node", pInstance.class);
 //			String targ_ref = node.getVar("target_ref", String.class);
-//			for (pInstance t : instance.patch.node_from) {
+//			for (pInstance t : instance.patch.node_to) {
 //				String r = t.getVar("this_ref", String.class);
 //				if (r != null && r.equals(targ_ref)) {
-//					pInstance co = t.get("get_co", pInstance.class, "out");
+//					pInstance co = t.get("get_co", pInstance.class, "in");
 //					if (co != null) {
 ////						app.log("this_ref "+r);
 //						return co.get("obtain_all_nodes", Object.class);
@@ -283,10 +384,10 @@ public class pNode {
 //		.param("offer_node", new nRun() {public Object get() {
 //			pInstance node = instance.object("node", pInstance.class);
 //			String targ_ref = node.getVar("target_ref", String.class);
-//			for (pInstance t : instance.patch.node_from) {
+//			for (pInstance t : instance.patch.node_to) {
 //				String r = t.getVar("this_ref", String.class);
 //				if (r != null && r.equals(targ_ref)) {
-//					pInstance co = t.get("get_co", pInstance.class, "out");
+//					pInstance co = t.get("get_co", pInstance.class, "in");
 //					if (co != null) {
 //						return co.get("obtain_node");
 //					}
@@ -294,127 +395,26 @@ public class pNode {
 //			}
 //			return null;
 //		}})
-		.param("event_receive", new nRun() {public void run() {
-			pInstance node = instance.object("node", pInstance.class);
-			Object r = arg(0,Object.class); 
-			String targ_ref = node.getVar("target_ref", String.class);
-			for (pInstance t : instance.patch.node_from) {
-				String rf = t.getVar("this_ref", String.class);
-				if (rf != null && rf.equals(targ_ref)) {
-					pInstance co = t.get("get_co", pInstance.class, "out");
-					if (co != null) co.run("send", r);
-				}
-			}
-		}})
-		.param("keys", new String[] {"all"}, "filters", new String[] {}) 
-		.run(getRun(CT.RUNS_ADD_CO_IN), "in")
-		;
-		
-		newNodeModel("from").process()
-		.useInit().commande(new nRun() {public void run() {
-			instance.patch.node_from.add(instance);
-		}})
-		.useClear().commande(new nRun() {public void run() {
-			instance.patch.node_from.remove(instance);
-		}}).useInit()
-		.openSec()
-			.param("text", "this: ", "width", (int)8, "def", "from")
-			.run(pNode.getRun(CT.RUNP_VAR_STR_LAB_FIELD), "this_ref")
-		.closeSec()
-		.commande(getCom(CT.COM_ADD_ROW))
-		.openSec()
-			.param("text", "target: ", "width", (int)8)
-			.run(pNode.getRun(CT.RUNP_VAR_STR_LAB_FIELD), "target_ref")
-		.closeSec()
-		.openSec()
-			.param("run", new nRun() {public void run() {
-				nWidget trigg_w = instance.get("get_mapped_widget", nWidget.class, 
-						"trigg_dropm_targ");
-				if (trigg_w == null) return;
-				ArrayList<String> targs = new ArrayList<String>();
-				for (pInstance t : instance.patch.node_to) {
-					String r = t.getVar("this_ref", String.class);
-					if (r != null) targs.add(r);
-				}
-//				instance.patch.patch_dropmenu.metode("clear_entrys");
-				for (String rf : targs) {
-					nGUI.add_dropmenu_entry(rf, new nRun(instance) { public void run() {
-						((pInstance)builder).setVar("target_ref", rf); }}); 
-					
-//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-//							.metodeGet("add_entry_custom", rf, RS*6f, RS*2f/3f);
-//					w1.addEventTrigger(new nRun(instance) { public void run() {
-//						((pInstance)builder).setVar("target_ref", rf); 
-//					}}); 
-				}
-//				instance.patch.patch_dropmenu.metode("open", trigg_w); 
-				nGUI.open_dropmenu(trigg_w);
-			}})
-			.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "trigg_dropm_targ", "Pk", (int)2)
-		.closeSec()
-		.getStand()
-		.openSec()
-		.param("offer", new nRun() {public Object get() {
-			pInstance node = instance.object("node", pInstance.class);
-			String targ_ref = node.getVar("target_ref", String.class);
-			for (pInstance t : instance.patch.node_to) {
-				String r = t.getVar("this_ref", String.class);
-				if (r != null && r.equals(targ_ref)) {
-					pInstance co = t.get("get_co", pInstance.class, "in");
-					if (co != null) return co.get("obtain");
-				}
-			}
-			return null;
-		}})
-		.param("offer_all_nodes", new nRun() {public Object get() {
-			pInstance node = instance.object("node", pInstance.class);
-			String targ_ref = node.getVar("target_ref", String.class);
-			for (pInstance t : instance.patch.node_to) {
-				String r = t.getVar("this_ref", String.class);
-				if (r != null && r.equals(targ_ref)) {
-					pInstance co = t.get("get_co", pInstance.class, "in");
-					if (co != null) {
-//						app.log("this_ref "+r);
-						return co.get("obtain_all_nodes", Object.class);
-					}
-				}
-			}
-			return null;
-		}})
-		.param("offer_node", new nRun() {public Object get() {
-			pInstance node = instance.object("node", pInstance.class);
-			String targ_ref = node.getVar("target_ref", String.class);
-			for (pInstance t : instance.patch.node_to) {
-				String r = t.getVar("this_ref", String.class);
-				if (r != null && r.equals(targ_ref)) {
-					pInstance co = t.get("get_co", pInstance.class, "in");
-					if (co != null) {
-						return co.get("obtain_node");
-					}
-				}
-			}
-			return null;
-		}})
-//		.param("event_receive", new nRun() {public void run() {
-//			pInstance node = instance.object("node", pInstance.class);
-//			Object r = arg(0,Object.class); 
-//			String targ_ref = node.getVar("target_ref", String.class);
-//			for (pInstance t : instance.patch.node_to) {
-//				String rf = t.getVar("this_ref", String.class);
-//				if (rf != null && rf.equals(targ_ref)) {
-//					pInstance co = t.get("get_co", pInstance.class, "in");
-//					if (co != null) co.run("send", r);
-//				}
-//			}
-//		}})
-		.param("keys", new String[] {"all"}, "filters", new String[] {}) 
-		.run(getRun(CT.RUNS_ADD_CO_OUT), "out")
-		.closeSec()
-		;
-		
-		
-		
-		
+////		.param("event_receive", new nRun() {public void run() {
+////			pInstance node = instance.object("node", pInstance.class);
+////			Object r = arg(0,Object.class); 
+////			String targ_ref = node.getVar("target_ref", String.class);
+////			for (pInstance t : instance.patch.node_to) {
+////				String rf = t.getVar("this_ref", String.class);
+////				if (rf != null && rf.equals(targ_ref)) {
+////					pInstance co = t.get("get_co", pInstance.class, "in");
+////					if (co != null) co.run("send", r);
+////				}
+////			}
+////		}})
+//		.param("keys", new String[] {"all"}, "filters", new String[] {}) 
+//		.run(getRun(CT.RUNS_ADD_CO_OUT), "out")
+//		.closeSec()
+//		;
+//		
+//		
+//		
+//		
 		
 		
 		
@@ -1198,7 +1198,8 @@ public class pNode {
 			
 			app.line(pos, pos2);
 			
-			if (d <= 18 && app.input.getClick("MouseRight")) {
+			if (d <= 18 && instance.patch.mouse_is_hover_back() && 
+					app.input.getClick("MouseRight")) {
 				co1.run("unlink_from", co2); } 
 			
 		}}).runArgs("mouse", Vector2.class)

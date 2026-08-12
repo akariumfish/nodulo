@@ -205,7 +205,8 @@ public class pParam extends sPoolable {
 	
 
 	public pParam addUser(pBody b) { 
-		if (!users.contains(b)) users.add(b); 
+		if (!users.contains(b)) 
+			users.add(b); 
 		return this; }
 	public pParam removeUser(pBody b) { users.remove(b); 
 		if (space != null && !space.client_space && 

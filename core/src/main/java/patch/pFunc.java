@@ -821,7 +821,7 @@ public class pFunc {
 		//Operator
 		AND, OR, NOT, 
 		ADD, SUB, MUL, DIV, NEG, ABS, 
-		ROT, MAG, VtX, VtY, DIR, LEN, 
+		ADDV, ROT, MAG, VtX, VtY, DIR, LEN, 
 		FtI, ItF, DMtV, XYtV, 
 		
 		EQ, ESUP, EINF, SUP, INF, 

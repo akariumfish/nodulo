@@ -1,9 +1,7 @@
 package patch;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -21,11 +19,9 @@ import aa_nodulo.pTime;
 import aa_nodulo.pView;
 import app.App;
 import data.*;
-import data.sPool.State;
 import gui.*;
 import util.Utl;
 import util.nMap;
-import util.nPool;
 import util.nRun;
 
 public class pPatch {
@@ -89,55 +85,22 @@ public class pPatch {
 	public static void build_sheet(sData data) {
 		pSheet.SheetModel func_sheet_model = pSheet.newSheet(data, "function", false);
 		
-//		pSheet.setDefMacro("function", "FUNCTION_SETUP");
-//
-//		func_sheet_model.addMacro("function", "function");
-//		func_sheet_model.addMacro("FUNCTION_SETUP", "FUNCTION_SETUP");
-		
 		pSheet.SheetModel main_sheet_model = pSheet.newSheet(data, "main");
-
-//		new pMacro.Macro("main_sheet_def")
-//		.addMacro("sel_body", pMacro.getMacro("sel_body"), 	0f, 	0f)
-//		.addMacro("exec", pMacro.getMacro("executor"), 	1500f, 	0f)
-//		.addNode("from", "from", 		-600f, 	0f)
-//		.addSetVar("this_ref", "from1").addSetVar("target_ref", "to1").getMacro()
-//		.addLink("sel_body_sel_body", "in", "from", "out")
-//		.addLink("sel_body_register", "co_register", "exec_exec", "co_reg")
-//		;
-
-//		pSheet.setDefMacro("main", "main_sheet_def");
-		
-//		main_sheet_model.addMacro("main_sheet_def", "main_sheet_def");
-//		main_sheet_model.addMacro("SETUP", "SETUP");
-//		main_sheet_model.addMacro("sel_body", "sel_body");
-
-		
 		
 	}
 	
 
 	public static void build_setup() {
-
-//		PlaneApplet.newStartupModel("patch_exemple")
-//		.setSetupRun(new nRun() { public void run() {
-//			pSheet.setDefMacro("main", "SETUP");
-//			pSheet.setDefMacro("function", "FUNCTION_SETUP");
-////			pSheet.setDefMacro("init_space", "init_space_def");
-//			pSheet.setDefMacro("common_param", "PARAM_SETUP");
-//		}})
-//		;
-
+		
 		PlaneApplet.newStartupModel("exemple")
 		.setSetupRun(new nRun() { public void run() {
 			
 			pSheet.setDefMacro("main", "main_exemple");
 			pSheet.setDefMacro("function", "func_exemple");
-//			pSheet.setDefMacro("init_space", "empty");
 			pSheet.setDefMacro("blueprint", "PARAM_SETUP");
 			pSheet.setDefCollapse("main", false);
 			pSheet.setDefCollapse("function", false);
 			pSheet.setDefCollapse("blueprint", false);
-//			pSheet.setDefCollapse("init_space", false);
 			
 		}})
 		;
@@ -239,14 +202,7 @@ public class pPatch {
 //	}
 
 	public void save_contents() {
-//		for (pSheet s : sheets.all()) s.get_svalues();
 		
-//		for (pSheet s : sheets.all()) s.collec_pool.save();
-//		for (pSheet s : sheets.all()) s.ent_pool.save();
-//		for (pSheet s : sheets.all()) s.tile_pool.save();
-//		for (pSheet s : sheets.all()) s.inst_pool.save();
-//		for (pSheet s : sheets.all()) s.link_pool.save();
-
 		for (pSheet s : sheets.all()) s.save_sheet_contents();
 		
 //		Utl.logn("save"); log_debug();
@@ -299,9 +255,7 @@ public class pPatch {
 			for (pInstance b : Utl.duplic(s.link_pool.all())) b.do_point_after_load();
 
 		app.addDelayEvent(1, new nRun() { public void run() {
-			for (pInstance b : Utl.duplic(cos)) b.run("run_event_link_from_node"); 
-//			for (pInstance b : Utl.duplic(plugs)) b.run("run_event_link");
-//			for (pInstance b : Utl.duplic(node_plugs)) b.run("run_event_link");  
+			for (pInstance b : Utl.duplic(cos)) b.run("run_event_link_from_node");  
 		}});
 
 //		Utl.logn("end"); log_debug();
@@ -360,7 +314,9 @@ public class pPatch {
 	public void clear_select() {
 		for (pInstance b : Utl.duplic(select_nodes)) b.clear();
 	}
-	
+
+	public boolean mouse_is_hover_back() {
+		return view.get("background").mouseOver; }
 	public boolean mouse_is_hover_view() {
 		return view.get("background").mouseOverZone; }
 	public Vector2 mouse_in_view() {
@@ -1053,7 +1009,7 @@ public class pPatch {
 								}
 							}
 						}
-
+						
 						if (viewsp_bg.mouseOver && !g.object("selzone_clic", Boolean.class) && 
 								App.ap.input.mouseRight.trigClick) {
 							Vector2 m = new Vector2(App.ap.input.mouse);

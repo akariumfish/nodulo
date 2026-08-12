@@ -2,6 +2,7 @@ package aa_nodulo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -50,6 +51,7 @@ public class PlaneApplet extends App {
 		public AppletConfig(String s, String filename, boolean dark_theme) { 
 			RELEASE = !dark_theme;
 			STARTUP_MODEL_REF = s; 
+			PATCH_BUILD = true;
 			STARTUP_NEW_FILE = filename;
 		}
 		public AppletConfig(boolean startup_load, String s, boolean dark_theme) { 
@@ -65,7 +67,7 @@ public class PlaneApplet extends App {
 		public boolean STARTUP_LOAD = false;
 
 		public boolean PATCH_BUILD = true;
-//		public boolean PATCH_BUILD = false;
+//		public boolean PATCH_BUILD = false; 
 
 //		public boolean AUTO_CONNECT = true;
 		public boolean AUTO_CONNECT = false;
@@ -89,20 +91,21 @@ public class PlaneApplet extends App {
 		public boolean VIEW_START_WALLPAPER = false;
 		public boolean VIEW_START_COLLAPSED = false;
 //		public float DEF_VIEW_ZOOM = 0.07f;
-		public float DEF_VIEW_ZOOM = 0.3f;
+		public float DEF_VIEW_ZOOM = 1f;
 		public Vector2 DEF_VIEW_POS = new Vector2(0f,0f);
-		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
+//		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
+		public Vector2 DEF_VIEW_WIN_POS = new Vector2(220f,625f);
 		public Vector2 DEF_VIEW_WIN_SZ = new Vector2(910f,370f);
 		public boolean PATCH_START_WALLPAPER = false;
-		public boolean PATCH_START_COLLAPSED = false;
+		public boolean PATCH_START_COLLAPSED = true;
 		public float DEF_PATCH_ZOOM = 0.1f;
 		public Vector2 DEF_PATCH_POS = new Vector2(0f,0f);
 		public Vector2 DEF_PATCH_WIN_POS = new Vector2(370f,915f);
 		public Vector2 DEF_PATCH_WIN_SZ = new Vector2(910f,450f);
 //		public boolean PATCH_TOOL_AUTOCOLLAPSE = true;
-		public boolean PATCH_SHEET_COLLAPSE = false;
-		public boolean TOOLBOX_OPEN = true;
-		public boolean DRAW_GROUND = false;
+		public boolean PATCH_SHEET_COLLAPSE = true;
+		public boolean TOOLBOX_OPEN = false;
+		public boolean DRAW_GROUND = true;
 		public float DEF_TICK_BY_SEC = 60f;
 		
 		public boolean start_solo = true;
@@ -359,7 +362,8 @@ public class PlaneApplet extends App {
 	
 	
 	
-	
+
+	public Random seed_rng;
 
 	public nMap<nRun> inputs = new nMap<nRun>();
 
@@ -403,6 +407,8 @@ public class PlaneApplet extends App {
 	}
 	
 	public void init_inputs() {
+		
+		seed_rng = new Random();
 
 		nRun run_up = new nRun() { public void run(Object o) { 
 			boolean b = (boolean)o; key_up = b; }};
@@ -482,7 +488,15 @@ public class PlaneApplet extends App {
 		inputs.put("key_shift_state", new nRun() { public Object get() {
 			return key_shift_state; }});
 		
-		
+
+		inputs.put("cam_pos", new nRun() { public Object get() {
+			return view.val_cam_pos.get(); }});
+		inputs.put("cam_scale", new nRun() { public Object get() {
+			return view.val_cam_scale.get(); }});
+		inputs.put("cam_scale_inv", new nRun() { public Object get() {
+			return 1f / view.val_cam_scale.get(); }});
+		inputs.put("cam_rot", new nRun() { public Object get() {
+			return view.val_cam_rot.get(); }});
 
 		outputs.put("cam_pos", new nRun() { public void run() { 
 			if (args.length < 1) return;

@@ -197,7 +197,15 @@ public class pView {
 	public pView addDrawable(int prio, nDrawable r) { 
 		drawRun.add(r); drawPrio.put(r, prio); max_prio = Math.max(max_prio, prio); return this; }
 	public pView removeDrawable(nDrawable r) { drawRun.remove(r); return this; }
-	public pView clearDrawable() { drawRun.clear(); return this; }
+	public pView addPreDrawable(nDrawable r) { addDrawable(0,r); return this; }
+	public pView addPreDrawable(int prio, nDrawable r) { 
+		preDrawRun.add(r); drawPrio.put(r, prio); max_prio = Math.max(max_prio, prio); return this; }
+	public pView removePreDrawable(nDrawable r) { preDrawRun.remove(r); return this; }
+	public pView addPostDrawable(nDrawable r) { addDrawable(0,r); return this; }
+	public pView addPostDrawable(int prio, nDrawable r) { 
+		postDrawRun.add(r); drawPrio.put(r, prio); max_prio = Math.max(max_prio, prio); return this; }
+	public pView removePostDrawable(nDrawable r) { postDrawRun.remove(r); return this; }
+	public pView clearDrawable() { drawRun.clear(); preDrawRun.clear(); postDrawRun.clear(); return this; }
 
 	public PlaneApplet app = null;
 
@@ -207,6 +215,8 @@ public class pView {
 	public nWidget view_ref;
 	nInterface bar_interf = null;
 	ArrayList<nDrawable> drawRun = new ArrayList<nDrawable>();
+	ArrayList<nDrawable> preDrawRun = new ArrayList<nDrawable>();
+	ArrayList<nDrawable> postDrawRun = new ArrayList<nDrawable>();
 	HashMap<nDrawable, Integer> drawPrio = new HashMap<nDrawable, Integer>();
 	int max_prio = 0;
 	
@@ -327,6 +337,18 @@ public class pView {
 		val_zoom_min = bloc.obtainFlt("val_zoom_min", 0.05f);
 		val_zoom_max = bloc.obtainFlt("val_zoom_max", 2f);
 
+		view.get("fx").setCustomDrawer(new nDrawable() { public void drawing() {
+			
+			ArrayList<nDrawable> alldraw = Utl.duplic(preDrawRun);
+			
+			for (int prio = 0 ; prio <= max_prio ; prio++)
+				for (nDrawable d : preDrawRun) 
+					if (drawPrio.get(d) == prio) { d.drawing(); alldraw.remove(d); } 
+
+			for (nDrawable d : alldraw) d.drawing(); 
+		
+		}});
+		
 		view.get("draw").setCustomDrawer(new nDrawable() { public void drawing() {
 			
 			ArrayList<nDrawable> alldraw = Utl.duplic(drawRun);
@@ -336,10 +358,17 @@ public class pView {
 					if (drawPrio.get(d) == prio) { d.drawing(); alldraw.remove(d); } 
 			
 			for (nDrawable d : alldraw) d.drawing(); 
+
+			alldraw = Utl.duplic(postDrawRun);
+			
+			for (int prio = 0 ; prio <= max_prio ; prio++)
+				for (nDrawable d : postDrawRun) 
+					if (drawPrio.get(d) == prio) { d.drawing(); alldraw.remove(d); } 
+			
+			for (nDrawable d : alldraw) d.drawing(); 
 		
 //			if (mouse_is_hover_view() && app.input.mouseLeft.trigClick) 
 //				plane.bloc.select_bloc();
-			
 			
 		}});
 		

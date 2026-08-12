@@ -96,7 +96,13 @@ public class pFuncBook {
 			if (o1 != null && o2 != null) { return new Vector2(o1).rotateRad(o2); }
 			return null; }})
 		.addArg("in", Vector2.class).addArg("rot", Float.class);
-		
+
+		new Operator("add_vec", "+v", C.ADDV, Vector2.class, new nRun() {public Object get() {
+			Vector2 o1 = ask("in", Vector2.class); Vector2 o2 = ask("fact", Vector2.class);
+			if (o1 != null && o2 != null) { return new Vector2(o1).add(o2); }
+			return null; }})
+		.addArg("in", Vector2.class).addArg("fact", Vector2.class);
+
 		new Operator("add", "+", C.ADD, Float.class, new nRun() {public Object get() {
 			Float o1 = ask("in", Float.class); Float o2 = ask("fact", Float.class);
 			if (o1 != null && o2 != null) { return (float)(o1+o2); }

@@ -375,7 +375,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 	
 	
 	public void logic_update() {
-		if (mouseOver 
+		if (mouseOver && getDrawVisibility()
 //				&& !(fine_view && getSX()*gui.scale < 2 && getSY()*gui.scale < 2) && 
 //				!(!fine_view && getSX()*gui.scale < 10 && getSY()*gui.scale < 10)
 				) {
@@ -978,7 +978,12 @@ public class nWidget extends nModel implements Poolable, nClearable {
 //				Utl.logn("a"+gui.scissors.size());
 			}
 
-			if (pop || !maskChildren) 
+			if (
+					
+//					true || 
+					
+					
+					pop || !maskChildren) 
 				for (nWidget w : childs) {
 					w.drawMasked();
 //					if (w.backgroundRender) {

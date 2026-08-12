@@ -168,9 +168,6 @@ public abstract class pSystem {
 		bloc.addMetode("clearing", new nRun() { public void run() {
 			clear(); }}); 
 
-		val_seed = bloc.obtainInt("val_seed", 123456);
-		rng = new Random(val_seed.get());
-		
 		system_init();
 		
 		return this;
@@ -195,18 +192,6 @@ public abstract class pSystem {
 		
 	}
 	
-	public sInt val_seed;
-	public Random rng;
-
-	public void reset_rng() { rng.setSeed(val_seed.get()); }
-
-	public void rngSeed() {
-//		val_seed.set(app.seed_rng.nextInt());
-		reset_rng(); }
-
-	public float rngFlt(float min, float max) {
-		return min + rng.nextFloat() * (max - min); }
-
 	void add_flt_row(nInterface interf, String text, String val, float min, float max) {
 		interf.add_row();
 		interf.add_row_label(5, text);

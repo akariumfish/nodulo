@@ -22,37 +22,7 @@ public class pNodeSpace {
 		
 		float RS = nGUI.book.RS;
 
-//		pSheet.SheetModel init_space_model = pSheet.newSheet(data, "init_space", true)
-//			.setSetupRun(new nRun() { public void run() {
-//				pSheet sheet = arg(0, pSheet.class);
-//				if (sheet == null) return;
-//				
-//			}})
-//		;
-//
-//		new Macro("init_space_def")
-//		.addNode("space_init", "space_init", 		0f, 0f).getMacro()
-//		.addMacro("const", pMacro.getMacro("constructor"), 	0f, 	-150f)
-//		.addNode("to", "to", 		600f, -150f)
-//		.addSetVar("this_ref", "to1").addSetVar("target_ref", "from1").getMacro()
-//		.addLink("const_const", "co_body", "to", "in")
-//		.addLink("const_const", "co_run", "space_init", "start_run")
-//		.addRun(new nRun() { public void run() {
-//			nMap<pInstance> list = arg(0, nMap.class);
-//			list.get("const_const").setVar("print_name", "body_print");
-//		}})
-//		;
-//		
-//		if (!has_build_statics) {
-//			init_space_model.addMacro("constructor", "constructor");
-//			init_space_model.addMacro("init_space_def", "init_space_def");
-//		}
-//		pSheet.setDefMacro("init_space", "init_space_def");
-		
-		
-		
-		
-		pSheet.SheetModel blueprint_model = pSheet.newSheet(data, "blueprint", true);
+		pSheet.SheetModel blueprint_model = pSheet.newSheet(data, "blueprint", false);
 		if (!has_build_statics) {
 			blueprint_model.getBuilder()
 			.addEventLoad(new nRun() { public void run(Object o) {
@@ -134,16 +104,6 @@ public class pNodeSpace {
 				sheet.patch.removeEventFrame(b.object("run_frame", nRun.class));
 			}})
 			;
-			
-//			blueprint_model.addMacro("bullet_blueprint", "bullet_blueprint");
-//			blueprint_model.addMacro("body_blueprint", "body_blueprint");
-//			blueprint_model.addMacro("wall_blueprint", "wall_blueprint");
-//			blueprint_model.addMacro("PARAM_SETUP", "PARAM_SETUP");
-			
-	//		pSheet.setDefMacro("common_param", "PARAM_SETUP");
-			
-			
-			
 			
 			build_blueprint();
 			
@@ -794,17 +754,10 @@ public class pNodeSpace {
 					nWidget w2 = interf.add_row_trigg(2, "Pk");
 					w2.addEventTrigger(new nRun(head) {public void run() {
 						pInstance target = (pInstance)builder;
-//						target.patch.patch_dropmenu.metode("clear_entrys");
 						for (String par : ((String[])prop.get_setting(data_ref, "list"))) {
 							nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
 								((pInstance)builder).setVar(data_ref, par); }}); 
-//							nWidget w1 = (nWidget)target.patch.patch_dropmenu
-//									.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-//							w1.addEventTrigger(new nRun(target) { public void run() {
-//								((pInstance)builder).setVar(data_ref, par); 
-//							}}); 
 						}
-//						target.patch.patch_dropmenu.metode("open", w2); 
 						nGUI.open_dropmenu(w2);
 					}});
 					

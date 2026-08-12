@@ -502,7 +502,7 @@ public class pGeom extends pSystem {
 		pProperty graph = pProperty.newGeneralProperty("graph")
 		.setGroupFlag("draw")
 		.addData("line", true)
-		.addData("fill", true)
+		.addData("fill", false)
 		.addData("halo", false)
 		.addData("thick", thick, "min", 1f, "max", 12f, "granulo", 1f)
 		.addData("line_r", (int)(line.r*255), "def", (int)(line.r*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
@@ -1521,8 +1521,8 @@ public class pGeom extends pSystem {
 		} 
 		boolean halo = graph.getBoo("halo");
 		if (halo) {
-			draw_halo(app, b.getVec("ref", "pos"), 60, 
-					Utl.color(0,0), Utl.color(255,0,0,120));
+//			draw_halo(app, b.getVec("ref", "pos"), 60, 
+//					Utl.color(255,0,0,0), Utl.color(255,0,0,120));
 		}
 	}
 	
