@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -37,22 +38,25 @@ public class Map {
 
 	private int currentLightingCoordinate = 0;
 	
-	public Map(String path) {
-		this(path, 4, 10);
+	public Map(String path, Batch batch) {
+		this(path, 4, 10, batch);
 	}
 
-	public Map(String path, int maxCaveHeight, int lightingTickSpeed) {
-		this(new InternalFileHandleResolver(), path, maxCaveHeight, lightingTickSpeed);
+	public Map(String path, int maxCaveHeight, int lightingTickSpeed, Batch batch) {
+		this(new InternalFileHandleResolver(), path, maxCaveHeight, lightingTickSpeed, batch);
 	}
 
-	public Map(FileHandleResolver resolver, String path, int maxCaveHeight, int lightingTickSpeed) {
+	public Map(FileHandleResolver resolver, String path, 
+			int maxCaveHeight, int lightingTickSpeed, Batch batch) {
 		this.maxCaveHeight = maxCaveHeight;
 		this.lightingTickSpeed = lightingTickSpeed;
 
 		map = new TmxMapLoader(resolver).load(path);
 		mapLayer = (TiledMapTileLayer) map.getLayers().get("Map");
 
-		renderer = new OrthogonalTiledMapRenderer(map, 1f / mapLayer.getTileWidth());
+		renderer = new OrthogonalTiledMapRenderer(map, 1f / mapLayer.getTileWidth()
+//				, batch
+				);
 
 		pixel = generatePixel(1, 1, Color.WHITE);
 

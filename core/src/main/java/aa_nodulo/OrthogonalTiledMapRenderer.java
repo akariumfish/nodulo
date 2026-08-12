@@ -25,7 +25,11 @@ import static com.badlogic.gdx.graphics.g2d.Batch.Y4;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapGroupLayer;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapImageLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
@@ -51,9 +55,54 @@ public class OrthogonalTiledMapRenderer extends BatchTiledMapRenderer {
 	}
 	
 	public Matrix4 transform = new Matrix4().setToTranslation(0f,0f,0f);
-	
+//	public Matrix4 tmp_proj = new Matrix4().setToTranslation(0f,0f,0f);
+//	public Matrix4 tmp_transf = new Matrix4().setToTranslation(0f,0f,0f);
 	@Override
-	public void renderTileLayer (TiledMapTileLayer layer) {
+	public void setView (Matrix4 projection, float x, float y, float width, float height) {
+//		tmp_proj.set(batch.getProjectionMatrix());
+		batch.setProjectionMatrix(projection);
+		viewBounds.set(x, y, width, height);
+	}
+
+	@Override
+	public void render() {
+		beginRender();
+		
+//		tmp_transf.set(batch.getTransformMatrix());
+		batch.setTransformMatrix(transform);
+		
+		for (MapLayer layer : map.getLayers()) {
+			renderMapLayer(layer);
+		}
+		endRender();
+		transform.setToTranslation(0f,0f,0f);
+//		batch.setTransformMatrix(tmp_transf);
+//		batch.setProjectionMatrix(tmp_proj);
+	}
+
+	@Override
+	public void renderMapLayer(MapLayer layer) {
+		if (!layer.isVisible()) return;
+		if (layer instanceof MapGroupLayer) {
+			MapLayers childLayers = ((MapGroupLayer)layer).getLayers();
+			for (int i = 0; i < childLayers.size(); i++) {
+				MapLayer childLayer = childLayers.get(i);
+				if (!childLayer.isVisible()) continue;
+				renderMapLayer(childLayer);
+			}
+		} else {
+			if (layer instanceof TiledMapTileLayer) {
+				renderTileLayer((TiledMapTileLayer)layer);
+			} else if (layer instanceof TiledMapImageLayer) {
+				renderImageLayer((TiledMapImageLayer)layer);
+			} else {
+				renderObjects(layer);
+			}
+		}
+	}
+
+	@Override
+	public void renderTileLayer(TiledMapTileLayer layer) {
 		final Color batchColor = batch.getColor();
 		final float color = getTileLayerColor(layer, batchColor);
 
@@ -63,9 +112,9 @@ public class OrthogonalTiledMapRenderer extends BatchTiledMapRenderer {
 		final float layerTileWidth = layer.getTileWidth() * unitScale;
 		final float layerTileHeight = layer.getTileHeight() * unitScale;
 
-		final float layerOffsetX = layer.getRenderOffsetX() * unitScale - viewBounds.x * (layer.getParallaxX() - 1);
+		final float layerOffsetX = -layerWidth / 2f + layer.getRenderOffsetX() * unitScale - viewBounds.x * (layer.getParallaxX() - 1);
 		// offset in tiled is y down, so we flip it
-		final float layerOffsetY = -layer.getRenderOffsetY() * unitScale - viewBounds.y * (layer.getParallaxY() - 1);
+		final float layerOffsetY = -layerHeight / 2f + -layer.getRenderOffsetY() * unitScale - viewBounds.y * (layer.getParallaxY() - 1);
 
 		final int col1 = Math.max(0, (int)((viewBounds.x - layerOffsetX) / layerTileWidth));
 		final int col2 = Math.min(layerWidth,
@@ -193,8 +242,6 @@ public class OrthogonalTiledMapRenderer extends BatchTiledMapRenderer {
 						}
 						}
 					}
-					batch.setTransformMatrix(transform);
-					
 					batch.draw(region.getTexture(), vertices, 0, NUM_VERTICES);
 				}
 				x += layerTileWidth;

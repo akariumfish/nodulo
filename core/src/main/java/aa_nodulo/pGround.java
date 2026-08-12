@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.github.czyzby.noise4j.map.Grid;
 import com.github.czyzby.noise4j.map.generator.noise.NoiseGenerator;
 import com.noodle.nodulo.GdxApp;
@@ -47,6 +48,7 @@ public class pGround extends pSystem {
 		public pGround init(sValueBloc b) { return (pGround) super.init(b); }
 
 		public pSpace space;
+		public pBox2d box;
 
 		public sBoo val_do_draw, val_grid_ground, val_debug_ground, val_white_ground;
 		sFlt val_limit_dist;
@@ -71,7 +73,7 @@ public class pGround extends pSystem {
 
 			cam = new OrthographicCamera(GdxApp.WIDTH, GdxApp.HEIGHT);
 
-	        tilemap = new Map("Map.tmx");
+	        tilemap = new Map("Map.tmx", GdxApp.app.drawer.spritebatch);
 	        
 	        tilemap.toggleLightingLayerVisibility();
 	        tilemap.restartLightingGeneration();
@@ -139,6 +141,8 @@ public class pGround extends pSystem {
 
 		}
 		public void system_load() {
+			
+			box = app.getSystem(pBox2d.class);
 
 			app.view.addDrawable(0,draw_ground_run);
 			app.view.addDrawable(15,draw_fog_run);
@@ -182,6 +186,25 @@ public class pGround extends pSystem {
 				app.fill(100,100); app.noStroke();
 				app.rect(0,0,size*cell_size,size*cell_size);
 				app.pop();
+				
+//				if (box.val_do_ray.get() && app.gdx.drawer.USE_FX) {
+//
+//					app.gdx.drawer.pause_batch();
+//					
+//					box.buffer.begin(); 
+//					
+//					ScreenUtils.clear(app.gdx.drawer.buffer_clear_color);
+//					
+////					Color c = app.gdx.drawer.buffer_clear_color;
+////			        Gdx.gl.glClearColor(c.r,c.g,c.b,c.a);
+////			        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+//	//
+////			        Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+////			        Gdx.gl20.glEnable(GL20.GL_BLEND);
+//			        
+//					app.gdx.drawer.restart_batch();
+//					
+//				}
 
 				app.gdx.drawer.end();
 
@@ -216,7 +239,6 @@ public class pGround extends pSystem {
 		        Vector2 sv = new Vector2(view_center).sub(screen_center);
 		        tilemap.renderer.transform.translate(sv.x,sv.y,0f);
 		        
-
 				Vector2 m = new Vector2();
 				m.add(view.val_cam_pos.get());
 				m.scl(view.val_cam_scale.get());

@@ -296,7 +296,7 @@ public class pBox2d extends pSystem {
 		public RayHandler rayHandler;
 		public Box2DRenderer boxRenderer;
 		public Box2DDebugRenderer debugRenderer;
-		private VfxFrameBuffer buffer;
+		VfxFrameBuffer buffer;
 
 		pView view;
 
