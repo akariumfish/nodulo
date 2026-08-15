@@ -72,8 +72,8 @@ public class PlaneApplet extends App {
 //		public boolean AUTO_CONNECT = true;
 		public boolean AUTO_CONNECT = false;
 		
-//		public boolean START_FX = true;
-		public boolean START_FX = false;
+		public boolean START_FX = true;
+//		public boolean START_FX = false;
 		
 //		public boolean START_HELP = true;
 		public boolean START_HELP = false; 
@@ -88,23 +88,22 @@ public class PlaneApplet extends App {
 		public String STARTUP_LOAD_FILE = "";
 		public String STARTUP_NEW_FILE = "";
 
-		public boolean VIEW_START_WALLPAPER = false;
+		public boolean VIEW_START_WALLPAPER = true;
 		public boolean VIEW_START_COLLAPSED = false;
 //		public float DEF_VIEW_ZOOM = 0.07f;
-		public float DEF_VIEW_ZOOM = 1f;
+		public float DEF_VIEW_ZOOM = 0.2f;
 		public Vector2 DEF_VIEW_POS = new Vector2(0f,0f);
-//		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
-		public Vector2 DEF_VIEW_WIN_POS = new Vector2(220f,625f);
+		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
 		public Vector2 DEF_VIEW_WIN_SZ = new Vector2(910f,370f);
 		public boolean PATCH_START_WALLPAPER = false;
-		public boolean PATCH_START_COLLAPSED = true;
+		public boolean PATCH_START_COLLAPSED = false;
 		public float DEF_PATCH_ZOOM = 0.1f;
 		public Vector2 DEF_PATCH_POS = new Vector2(0f,0f);
-		public Vector2 DEF_PATCH_WIN_POS = new Vector2(370f,915f);
-		public Vector2 DEF_PATCH_WIN_SZ = new Vector2(910f,450f);
+		public Vector2 DEF_PATCH_WIN_POS = new Vector2(170f,915f);
+		public Vector2 DEF_PATCH_WIN_SZ = new Vector2(610f,450f);
 //		public boolean PATCH_TOOL_AUTOCOLLAPSE = true;
 		public boolean PATCH_SHEET_COLLAPSE = true;
-		public boolean TOOLBOX_OPEN = false;
+		public boolean TOOLBOX_OPEN = true;
 		public boolean DRAW_GROUND = true;
 		public float DEF_TICK_BY_SEC = 60f;
 		

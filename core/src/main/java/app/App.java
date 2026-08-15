@@ -275,8 +275,8 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 	public void noFx() { gdx.drawer.noFx(); }
 	public Matrix4 getTransformMatrix() { return gdx.drawer.getTransformMatrix(); }
 
-	public void alpha_rect(Rectangle n) {
-		gdx.drawer.alpha_rect(n); }
+	public void halo(Vector2 p, float r, Color c1, Color c2) {
+		gdx.drawer.halo(p,r,c1,c2); }
 	
 	public void push() { 
 		gdx.drawer.push(); }

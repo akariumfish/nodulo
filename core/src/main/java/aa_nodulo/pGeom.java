@@ -1240,10 +1240,14 @@ public class pGeom extends pSystem {
 			app.stroke(150,0,0,200,90f);
 			app.circle(0,0,val_limit_dist.get());
 		}
-		
+
 		if (val_do_draw.get())
 			for (pBody b : space.familyMember("drawable")) draw_body(app, b);
 	
+	}
+	public void draw_shadow() { 
+		if (val_do_draw.get())
+			for (pBody b : space.familyMember("drawable")) draw_shadow(app, b);
 	}
 	public void draw_aabb() { 
 		if (val_do_click_draw.get())
@@ -1436,6 +1440,44 @@ public class pGeom extends pSystem {
 		draw_geom_graph(app, b, b.param("geom"), b.param("graph"));
 	}
 
+	public void draw_shadow(PlaneApplet app, pBody b) {
+		if (!b.hasParam("ref") || !b.hasParam("geom")) return;
+		pParam geom = b.param("geom");
+		ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
+		if (point == null) return;
+		
+		ArrayList<Integer> faceA = geom.getCollecData("faceA", Integer.class);
+		ArrayList<Integer> faceB = geom.getCollecData("faceB", Integer.class);
+		ArrayList<Integer> faceC = geom.getCollecData("faceC", Integer.class);
+		if (faceA == null || faceB == null || faceC == null || 
+				faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
+				faceC.size() != faceB.size()) return;
+
+		ArrayList<Integer> lineA = geom.getCollecData("lineA", Integer.class);
+		ArrayList<Integer> lineB = geom.getCollecData("lineB", Integer.class);
+		if (lineA == null || lineB == null || 
+				lineA.size() != lineB.size()) return;
+		
+		app.noStroke();
+		app.fill(0,50);
+
+		for (int i = 0 ; i < faceA.size() ; i++) {
+			int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
+			if (p1 < 0 || p1 >= point.size() || 
+					p2 < 0 || p2 >= point.size() || 
+					p3 < 0 || p3 >= point.size()) continue;
+			Vector2 t1 = new Vector2(toRef(b, new Vector2(point.get(p1)).scl(1.35f)));
+			Vector2 t2 = new Vector2(toRef(b, new Vector2(point.get(p2)).scl(1.35f)));
+			Vector2 t3 = new Vector2(toRef(b, new Vector2(point.get(p3)).scl(1.35f)));
+			app.polygon(t1,t2,t3);
+		}
+//		for (int i = 0 ; i < lineA.size() ; i++) {
+//			int p1 = lineA.get(i), p2 = lineB.get(i);
+//			if (p1 < 0 || p1 >= point.size() || p2 < 0 || p2 >= point.size()) continue;
+//			app.line(toRef(b, point.get(p1)), toRef(b, point.get(p2)));
+//		}
+	}
+
 	public static void draw_geom_graph(PlaneApplet app, pBody b, pParam geom, pParam graph) {
 		if (geom == null) return;
 		ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
@@ -1521,24 +1563,11 @@ public class pGeom extends pSystem {
 		} 
 		boolean halo = graph.getBoo("halo");
 		if (halo) {
-//			draw_halo(app, b.getVec("ref", "pos"), 60, 
-//					Utl.color(255,0,0,0), Utl.color(255,0,0,120));
+			app.halo(b.getVec("ref", "pos"), 60, 
+					Utl.color(255,0,0,0), Utl.color(255,0,0,120));
 		}
 	}
 	
-	private static void draw_halo(App app, Vector2 p, float r, Color c1, Color c2) {
-		int arc = 8;
-		float arcrad = ((float)Math.PI) * 2f / (float)arc;
-		Vector2 rz1 = new Vector2(r,0);
-		Vector2 rz2 = new Vector2(r,0);
-		for (int i = 0 ; i < arc ; i++) {
-			rz1.set(r,0); rz2.set(r,0);
-			rz1.rotateRad(arcrad * i).add(p);
-			rz2.rotateRad(arcrad * (i+1)).add(p);
-			app.gdx.drawer.face(rz1.x,rz1.y,rz2.x,rz2.y,p.x,p.y,c1,c1,c2);
-		}
-	}
-
 	
 
 	public static ArrayList<Polygon> get_geom_polys(pBody b) {

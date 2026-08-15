@@ -2,7 +2,6 @@ package aa_nodulo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -13,8 +12,12 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -275,6 +278,7 @@ public class pBox2d extends pSystem {
 			tick_run = new nRun() { public void run(Object o) { tick((float)o); }};
 			net_tick_run = new nRun() { public void run(Object o) { net_tick((float)o); }};
 			draw_run = new nDrawable() { public void drawing() { draw(); }}; 
+			tile_draw_run = new nDrawable() { public void drawing() { draw_tile(); }}; 
 			pre_draw_run = new nDrawable() { public void drawing() { pre_draw(); }}; 
 			post_draw_run = new nDrawable() { public void drawing() { post_draw(); }}; 
 			draw_ray_run = new nDrawable() { public void drawing() { draw_ray(); }}; 
@@ -282,7 +286,8 @@ public class pBox2d extends pSystem {
 		}
 
 		nRun tick_run, net_tick_run;
-		nDrawable draw_run, pre_draw_run, post_draw_run, draw_ray_run, draw_debug_run;
+		nDrawable draw_run, pre_draw_run, post_draw_run, tile_draw_run, 
+			draw_ray_run, draw_debug_run;
 
 		OrthographicCamera cam;
 
@@ -290,13 +295,17 @@ public class pBox2d extends pSystem {
 
 		public pSpace space;
 
-		public sBoo val_do_draw, val_draw_debug, val_do_ray, val_do_calc;
+		public sBoo val_do_draw, val_draw_debug, val_do_ray, val_do_calc, 
+			val_do_tile;
 
 		public World world;
 		public RayHandler rayHandler;
 		public Box2DRenderer boxRenderer;
 		public Box2DDebugRenderer debugRenderer;
 		VfxFrameBuffer buffer;
+//		VfxFrameBuffer shadowbuffer;
+
+		nTileMap tilemap;
 
 		pView view;
 
@@ -311,8 +320,16 @@ public class pBox2d extends pSystem {
 			val_draw_debug = bloc.obtainBoo("val_draw_debug", false);
 			val_do_ray = bloc.obtainBoo("val_do_ray", true);
 			val_do_calc = bloc.obtainBoo("val_do_calc", true);
-
+			val_do_tile = bloc.obtainBoo("val_do_tile", true);
+			
+			
 			cam = new OrthographicCamera(GdxApp.WIDTH, GdxApp.HEIGHT);
+
+			
+	        tilemap = new nTileMap("Map3.tmx", GdxApp.app.drawer.spritebatch, 
+	        		app.view, cam);
+	        
+	        
 
 			world = new World(new Vector2(0, 0), true);
 
@@ -321,7 +338,6 @@ public class pBox2d extends pSystem {
 			//		boolean drawVelocities, boolean drawContacts
 			boxRenderer = new Box2DRenderer(app, true, true, false, true, true, true);
 			debugRenderer = new Box2DDebugRenderer(true, true, true, true, true, true);
-
 
 			//		// Create our body definition
 			//		BodyDef groundBodyDef = new BodyDef();  
@@ -343,27 +359,31 @@ public class pBox2d extends pSystem {
 
 
 
-
-
 			buffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);		        
 			//		Renderer batchRenderer = new PolygonSpriteBatchRendererAdapter(spritebatch);
 			//		buffer.addRenderer(batchRenderer);
 			buffer.initialize((int)app.gdx.getscreenwidth(),
 					(int)app.gdx.getscreenheight());
-
+			
+//			shadowbuffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);
+//			shadowbuffer.initialize((int)app.gdx.getscreenwidth(),
+//					(int)app.gdx.getscreenheight());
 
 			app.gdx.addEventScreen(new nRun() { public void run() {
 				buffer.reset();
 				buffer.initialize((int)app.gdx.getscreenwidth(),
 						(int)app.gdx.getscreenheight());
+//				shadowbuffer.reset();
+//				shadowbuffer.initialize((int)app.gdx.getscreenwidth(),
+//						(int)app.gdx.getscreenheight());
 			}});
 			
 //			RayHandler.useDiffuseLight(true);
 			
 			rayHandler = new RayHandler(world);
 
-			rayHandler.setAmbientLight(1f, 1f, 1f, 0f);
-			rayHandler.setBlurNum(5);
+			rayHandler.setAmbientLight(0f, 0f, 0f, 0.1f);
+			rayHandler.setBlurNum(2);
 			rayHandler.setCulling(false);
 			rayHandler.setBlur(true);
 			
@@ -375,9 +395,9 @@ public class pBox2d extends pSystem {
 
 			int rays = 180;
 			float dist = 3000f;
-			float spc = dist * 0.9f;
+			float spc = dist * 0.5f;
 			pGeom geo = app.getSystem(pGeom.class);
-			float lim = geo.val_limit_dist.get();
+			float lim = geo.val_limit_dist.get() / 3f;
 			Color lc = new Color(1,1,1,0.6f);
 			new PointLight(rayHandler, rays, lc, dist, 0, 0);
 			for (float x = spc ; x <= lim ; x += spc) 
@@ -399,16 +419,36 @@ public class pBox2d extends pSystem {
 						new PointLight(rayHandler, rays, lc, f*dist, -x, -y);
 					}
 				}
+
+			for (int i = 0 ; i < tilemap.mapLayer.getWidth() ; i++)
+				for (int j = 0 ; j < tilemap.mapLayer.getHeight() ; j++) {
+					TiledMapTileLayer.Cell c = tilemap.mapLayer.getCell(i,j);
+					if (c == null) continue;
+					if (!c.getTile().getProperties().get("light", Boolean.class)) {
+						Vector2 p = tilemap.getCellPos(i,j);
+						p.add(tilemap.tile_scale/2f,tilemap.tile_scale/2f);
+						BodyDef groundBodyDef = new BodyDef();  
+						groundBodyDef.position.set(p);  
+						Body groundBody = world.createBody(groundBodyDef);  
+						PolygonShape groundBox = new PolygonShape();  
+						groundBox.setAsBox(tilemap.tile_scale/2f, tilemap.tile_scale/2f);
+						groundBody.createFixture(groundBox, 0.0f);
+						groundBox.dispose();
+					}
+				}
+
 		}
 		public void system_load() {
 
 			app.time.addEventTick(tick_run);
 			app.time.addEventNetTick(net_tick_run);
-			app.view.addDrawable(6,draw_run);
+			
 			app.view.addPreDrawable(0,pre_draw_run);
-			app.view.addPostDrawable(22,post_draw_run);
+			app.view.addDrawable(1,tile_draw_run);
+			app.view.addDrawable(6,draw_run);
 			app.view.addDrawable(11,draw_ray_run);
 			app.view.addDrawable(19,draw_debug_run);
+			app.view.addPostDrawable(22,post_draw_run);
 			space = app.space;
 			view = app.view;
 			//		if (!app.RELEASE) 
@@ -419,6 +459,7 @@ public class pBox2d extends pSystem {
 			app.time.removeEventTick(tick_run);
 			app.time.removeEventNetTick(net_tick_run);
 			app.view.removeDrawable(draw_run);
+			app.view.removeDrawable(tile_draw_run);
 			app.view.removeDrawable(pre_draw_run);
 			app.view.removeDrawable(post_draw_run);
 			app.view.removeDrawable(draw_ray_run);
@@ -438,6 +479,9 @@ public class pBox2d extends pSystem {
 			interf.add_row_switch_boo(4, "debug", "val_draw_debug");
 			interf.add_row_label(2, "");
 			interf.add_row_switch_boo(4, "ray", "val_do_ray");
+			interf.add_row();
+			interf.add_row_switch_boo(4, "tile", "val_do_tile");
+			interf.add_row_label(6, "");
 
 		}
 
@@ -477,14 +521,8 @@ public class pBox2d extends pSystem {
 
 		public final ArrayList<Rectangle> scissors = new ArrayList<Rectangle>();
 		
-		public void draw() { 
-
-			if (val_do_draw.get()) {
-				boxRenderer.render(world);
-			}
-		}
 		public void pre_draw() { 
-
+			
 			if (val_do_ray.get() && app.gdx.drawer.USE_FX) {
 
 				app.gdx.drawer.pause_batch();
@@ -503,7 +541,104 @@ public class pBox2d extends pSystem {
 				app.gdx.drawer.restart_batch();
 				
 			}
+			
 		}
+		public void draw_tile() { 
+
+			if (val_do_tile.get()) {
+				
+				if (app.input.mouseLeft.trigClick && app.view.mouse_is_hover_view()) {
+					Vector2 s = new Vector2(app.view.mouse_in_view());
+					tilemap.addCell(s.x,s.y);
+			        tilemap.updateAll();
+				}
+
+				if (app.input.mouseRight.trigClick && app.view.mouse_is_hover_view()) {
+					Vector2 s = new Vector2(app.view.mouse_in_view());
+					tilemap.delCell(s.x,s.y);
+			        tilemap.updateAll();
+				}
+
+				app.gdx.drawer.end();
+
+		        tilemap.update();
+		        
+		        tilemap.render();
+		        
+		        app.gdx.drawer.begin();
+		        
+			}
+			
+			
+
+//			app.gdx.drawer.pause_batch();
+			
+//			shadowbuffer.begin(); 
+			
+//			ScreenUtils.clear(Utl.color(0));
+
+//			Color c = Utl.color(0,0);
+//	        Gdx.gl.glClearColor(c.r,c.g,c.b,c.a);
+//	        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+//			app.gdx.drawer.restart_batch();
+			
+			
+			
+			// WORKING
+//			app.getSystem(pGeom.class).draw_shadow();
+
+			
+			
+			
+//			app.gdx.drawer.pause_batch();
+
+//			shadowbuffer.end(); 
+						
+//			gaussianBlur(shadowbuffer, 5);
+
+//			shadowbuffer.end(); 
+
+//	        app.gdx.drawer.spritebatch.setBlendFunction(GL20.GL_ZERO, GL20.GL_SRC_COLOR);
+	        
+//			app.gdx.drawer.spritebatch.begin();
+			
+//	        Gdx.gl20.glBlendFunc(GL20.GL_ZERO, GL20.GL_SRC_COLOR);
+//	        Gdx.gl20.glEnable(GL20.GL_BLEND);
+	        
+//			app.gdx.drawer.spritebatch.draw(shadowbuffer.getTexture(), 0, 0, 
+//					app.gdx.getscreenwidth(), 
+//					app.gdx.getscreenheight(), 
+//					0, 0, 1, 1);
+//
+//			app.gdx.drawer.spritebatch.end();
+
+//	        app.gdx.drawer.spritebatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+	        
+//			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+
+//			app.gdx.drawer.restart_batch();
+			
+			
+		}
+		
+		
+		
+		
+		
+
+		
+		
+		
+		public void draw() { 
+			
+			
+			
+			if (val_do_draw.get()) {
+				boxRenderer.render(world);
+			}
+		}
+
 		public void draw_ray() { 
 
 			if (val_do_ray.get() && app.gdx.drawer.USE_FX) {
@@ -554,7 +689,6 @@ public class pBox2d extends pSystem {
 		        buffer.end();
 
 				app.gdx.drawer.spritebatch.begin();
-				
 				app.gdx.drawer.spritebatch.draw(buffer.getTexture(), 0, 0, 
 						app.gdx.getscreenwidth(), 
 						app.gdx.getscreenheight(), 
