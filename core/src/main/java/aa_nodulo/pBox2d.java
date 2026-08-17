@@ -177,7 +177,6 @@ public class pBox2d extends pSystem {
 			pre_draw_run = new nDrawable() { public void drawing() { pre_draw(); }}; 
 			//			post_draw_run = new nDrawable() { public void drawing() { post_draw(); }}; 
 			draw_ray_run = new nDrawable() { public void drawing() { draw_ray(); }}; 
-			//			draw_debug_run = new nDrawable() { public void drawing() { draw_debug(); }}; 
 		}
 
 		nRun tick_run, net_tick_run;
@@ -185,7 +184,6 @@ public class pBox2d extends pSystem {
 		//			post_draw_run, 
 		tile_draw_run, 
 		draw_ray_run
-		//			, draw_debug_run
 		;
 
 		OrthographicCamera cam;
@@ -200,12 +198,11 @@ public class pBox2d extends pSystem {
 		public World world;
 		public RayHandler rayHandler;
 		public Box2DRenderer boxRenderer;
-		//		public Box2DDebugRenderer debugRenderer;
 
 		nTileMap tilemap;
 
 		pView view;
-
+		
 		public void system_init() {
 			bloc.addObject("box2d", this);
 
@@ -229,12 +226,28 @@ public class pBox2d extends pSystem {
 			
 			world = new World(new Vector2(0, 0), true);
 
+			world.setContactListener(new ContactListener() {
+				@Override public void endContact(Contact contact) {
+					Fixture fa = contact.getFixtureA();
+					Fixture fb = contact.getFixtureB();
+					Body ba = fa.getBody();
+					Body bb = fb.getBody();
+				}
+				@Override public void beginContact(Contact contact) {
+					Fixture fa = contact.getFixtureA();
+					Fixture fb = contact.getFixtureB();
+					Body ba = fa.getBody();
+					Body bb = fb.getBody();
+				}
+				@Override public void preSolve(Contact contact, Manifold oldManifold) { }
+				@Override public void postSolve(Contact contact, ContactImpulse impulse) { }
+			});
+
 			//		boolean drawBodies, boolean drawJoints, 
 			//		boolean drawAABBs, boolean drawInactiveBodies, 
 			//		boolean drawVelocities, boolean drawContacts
 			boxRenderer = new Box2DRenderer(app, true, true, true, true, true, true);
-			//			debugRenderer = new Box2DDebugRenderer(true, true, true, true, true, true);
-
+			
 
 			rayHandler = new RayHandler(app, cam, world);
 
@@ -293,7 +306,6 @@ public class pBox2d extends pSystem {
 			app.view.addDrawable(1,tile_draw_run);
 			app.view.addDrawable(6,draw_run);
 			app.view.addDrawable(11,draw_ray_run);
-			//			app.view.addDrawable(19,draw_debug_run);
 			//			app.view.addPostDrawable(22,post_draw_run);
 			space = app.space;
 			view = app.view;
@@ -309,7 +321,6 @@ public class pBox2d extends pSystem {
 			app.view.removeDrawable(pre_draw_run);
 			//			app.view.removeDrawable(post_draw_run);
 			app.view.removeDrawable(draw_ray_run);
-			//			app.view.removeDrawable(draw_debug_run);
 
 			rayHandler.dispose();
 		}
@@ -322,7 +333,6 @@ public class pBox2d extends pSystem {
 			interf.add_row_label(2, "");
 			interf.add_row_switch_boo(4, "physic", "val_do_calc");
 			interf.add_row();
-			//			interf.add_row_switch_boo(4, "debug", "val_draw_debug");
 			interf.add_row_label(6, "");
 			interf.add_row_switch_boo(4, "light", "val_do_ray");
 			interf.add_row();
@@ -406,14 +416,7 @@ public class pBox2d extends pSystem {
 			if (val_do_ray.get() && app.gdx.drawer.USE_FX) {
 
 				rayHandler.endRender();
-
-				//				app.gdx.drawer.spritebatch.end();
-				//
-				//				if (val_draw_debug.get()) 
-				//					debugRenderer.render(world, cam.combined);
-				//				
-				//				app.gdx.drawer.spritebatch.begin();
-
+				
 			}	
 			if (val_do_draw.get()) {
 				boxRenderer.render(world);
@@ -425,35 +428,6 @@ public class pBox2d extends pSystem {
 				
 			}
 		}
-		//		public void post_draw() { 
-		//			
-		//		}
-		//		public void draw_debug() { 
-		//
-		//			if (val_draw_debug.get()) {
-		//				app.gdx.drawer.end();
-		//
-		//				cam.setToOrtho(false, (int)(app.gdx.getscreenwidth()), 
-		//						(int)(app.gdx.getscreenheight()));
-		//				Vector2 view_center = new Vector2(view.val_pos.get());
-		//				view_center.x += view.val_view_size.x() / 2.0f;
-		//				view_center.y -= view.val_view_size.y() / 2.0f + app.gui.book.RS;
-		//				Vector2 m = new Vector2(view_center)
-		//						.sub(app.gdx.getscreenwidth() / 2.0f, app.gdx.getscreenheight() / 2.0f);
-		//				m.scl(1/view.val_cam_scale.get()).rotateRad(-view.val_cam_rot.get());
-		//				m.add(view.val_cam_pos.get()).scl(-1f);
-		//				cam.zoom = 1 / view.val_cam_scale.get();
-		//				cam.position.set(m.x, m.y, 0);
-		//				cam.direction.set(0, 0, -1f);
-		//				Vector2 u = new Vector2(0,1).rotateRad(-view.val_cam_rot.get());
-		//				cam.up.set(u.x, u.y, 0);
-		//				cam.update();
-		//
-		//				debugRenderer.render(world, cam.combined);
-		//
-		//				app.gdx.drawer.begin();
-		//			}
-		//		}
 
 		public void new_ground_box(float x, float y, float w, float h) {
 
@@ -504,11 +478,9 @@ public class pBox2d extends pSystem {
 				if (b.hasParam("cone_light")) {
 					
 					PointLight pl = new PointLight(rayHandler, 120, 
-							new Color(1f,0.6f,0.4f,0.6f), 900, 0, 0);
+							new Color(1f,0.6f,0.4f,0.6f), 600, 0, 0);
 					pl.attachToBody(body, 0f, 0f);
-//					ConeLight coneLight = new ConeLight(rayHandler, 
-//							120, new Color(1f,0.6f,0.4f,1f), 2400f, 0f, 0f, 0f, 45f);
-//					coneLight.attachToBody(body, 0f, 0f);
+					
 				}
 
 				if (!b.getBoo("box_body", "copy_geom") || !b.hasParam("geom")) {
@@ -580,11 +552,9 @@ public class pBox2d extends pSystem {
 				if (b.hasParam("cone_light")) {
 					
 					PointLight pl = new PointLight(rayHandler, 120, 
-							new Color(1f,0.6f,0.4f,0.6f), 900, 0, 0);
+							new Color(1f,0.6f,0.4f,0.6f), 600, 0, 0);
 					pl.attachToBody(body, 0f, 0f);
-//					ConeLight coneLight = new ConeLight(rayHandler, 
-//							120, new Color(1f,0.6f,0.4f,1f), 2400f, 0f, 0f, 0f, 45f);
-//					coneLight.attachToBody(body, 0f, 0f);
+					
 				}
 
 				if (!b.getBoo("box_body", "copy_geom") || !b.hasParam("geom")) {

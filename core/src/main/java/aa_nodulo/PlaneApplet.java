@@ -41,8 +41,8 @@ public class PlaneApplet extends App {
 //	public static boolean RELEASE = true;
 	public static boolean RELEASE = false;
 	
-	public static boolean BLOCK_NDRAWER_FX = true;
-//	public static boolean BLOCK_NDRAWER_FX = false;
+//	public static boolean BLOCK_NDRAWER_FX = true;
+	public static boolean BLOCK_NDRAWER_FX = false;
 
 	
 	public static class AppletConfig {

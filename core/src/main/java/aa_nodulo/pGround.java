@@ -73,7 +73,7 @@ public class pGround extends pSystem {
 			nNoise.noiseStage(grid, noiseGenerator, 1, 0.1f);
 
 			ground_col = Utl.color(225, 224, 220, 255);
-			fog_col = Utl.color(160, 165, 180, 255);
+			fog_col = Utl.color(50, 50, 60, 255);
 			border_col = Utl.color(180, 150, 100, 160);
 
 			ground_colors = new Color[size*size];
