@@ -1,5 +1,5 @@
 {
-    "activeFile": "Map3.tmx",
+    "activeFile": "Map.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -9,11 +9,11 @@
             "scaleInEditor": 5.5
         },
         "Map.tmx": {
-            "scale": 1.5,
+            "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 254,
-                "y": 191.66666666666669
+                "x": 268.25,
+                "y": 274.75
             }
         },
         "Map.tmx#Lighting": {
@@ -53,16 +53,31 @@
         },
         "Map3.tmx#Tilemap": {
             "scaleInDock": 1.5
+        },
+        "Map4.tmx": {
+            "scale": 2,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 400.75,
+                "y": 292.75
+            }
+        },
+        "Map4.tmx#Lighting": {
+            "scaleInDock": 1
+        },
+        "Map4.tmx#Tilemap": {
+            "scaleInDock": 1
         }
     },
     "openFiles": [
-        "Map3.tmx"
+        "Map.tmx"
     ],
     "project": "tiled_project.tiled-project",
     "property.type": "bool",
     "recentFiles": [
+        "Map.tmx",
+        "Map4.tmx",
         "Map3.tmx",
-        "Map2.tmx",
-        "Map.tmx"
+        "Map2.tmx"
     ]
 }

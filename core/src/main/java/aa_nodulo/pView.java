@@ -233,9 +233,15 @@ public class pView {
 
 	public boolean in_patch = false;
 	
-	sVec val_pos, val_view_size, val_cam_pos, val_limit_pos;
-	sFlt val_cam_scale, val_cam_rot, val_zoom_min, val_zoom_max;
-	sBoo val_do_limit, val_wallp;
+	public sVec val_pos;
+
+	public sVec val_view_size;
+
+	public sVec val_cam_pos;
+
+	public sVec val_limit_pos;
+	public sFlt val_cam_scale, val_cam_rot, val_zoom_min, val_zoom_max;
+	public sBoo val_do_limit, val_wallp;
 	
 	public void set_limit_pos(float lx, float ly) {
 		val_limit_pos.set(lx,ly); val_do_limit.set(true); }
@@ -337,7 +343,7 @@ public class pView {
 		val_zoom_min = bloc.obtainFlt("val_zoom_min", 0.05f);
 		val_zoom_max = bloc.obtainFlt("val_zoom_max", 2f);
 
-		view.get("fx").setCustomDrawer(new nDrawable() { public void drawing() {
+		view.get("backref").setCustomDrawer(new nDrawable() { public void drawing() {
 			
 			ArrayList<nDrawable> alldraw = Utl.duplic(preDrawRun);
 			
@@ -366,9 +372,6 @@ public class pView {
 					if (drawPrio.get(d) == prio) { d.drawing(); alldraw.remove(d); } 
 			
 			for (nDrawable d : alldraw) d.drawing(); 
-		
-//			if (mouse_is_hover_view() && app.input.mouseLeft.trigClick) 
-//				plane.bloc.select_bloc();
 			
 		}});
 		

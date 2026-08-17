@@ -668,6 +668,27 @@ public class pGeom extends pSystem {
 
 		
 		
+
+		pProperty hittable = pProperty.newGeneralProperty("hittable")
+		;
+		hittable.newLocalProperty("hitzone")
+		.addData("hitpoint", (int)5)
+		;
+		hittable.newOptionalLocalProperty("avatar")
+		;
+
+		pProperty.newGeneralProperty("damagezone")
+		.addData("damage", (int)1)
+		;
+
+		pFamily.newFamily("hitzone")
+		.addProp("ref")
+		.addProp("hitzone")
+		;
+		pFamily.newFamily("damagezone")
+		.addProp("damagezone")
+		;
+		
 		
 		
 		
@@ -1086,6 +1107,30 @@ public class pGeom extends pSystem {
 
 		pFamily.getFamily("aabb_clickable").setClearRun(new nRun() { public void run(Object o) {
 			pBody bod = (pBody)o; nRun.runEvents(eventBodyClear, bod); }});
+		
+		app.addEventToolInit(new nRun() { public void run(Object o) {
+			nInterface interf = (nInterface)o;
+			if (!app.NET_CTRL) {
+//				interf.setContext(bloc);
+				interf.cmd_context(bloc.adress);
+
+				interf.set_param("entry_height","0.5");
+				interf.add_row();
+				interf.add_row_label(10, "");
+				
+				interf.set_param("entry_height","2");
+				interf.add_row();
+				interf.add_row_label(1, "");
+				interf.add_row_trigg(8, "restart", new nRun() { public void run() { 
+					restart_game(); }});
+				interf.add_row_label(1, "");
+
+				interf.set_param("entry_height","0.5");
+				interf.add_row();
+				interf.add_row_label(10, "");
+				
+			}
+		}});
 	}
 	public void system_load() {
 
@@ -1129,7 +1174,10 @@ public class pGeom extends pSystem {
 
 //		if (!app.RELEASE) 
 			build_paramlist_tools();
-		
+
+		app.outputs.put("start_game", new nRun() { public void run() {
+			start_game(); }});
+			
 	}
 	public void select_body(pBody b) {
 		if (b == null || b == sel_body) return;
@@ -1199,6 +1247,8 @@ public class pGeom extends pSystem {
 			if (app.input.getClick("MouseLeft") && !found) nRun.runEvents(eventEmptyClic);
 		}
 	}
+
+	ArrayList<pBody> to_clr = new ArrayList<pBody>();
 	
 	public void tick(float delta) {
 		calc_ref();
@@ -1220,6 +1270,30 @@ public class pGeom extends pSystem {
 				for (int j = i+1 ; j < aabbs.size() ; j++) if (i != j) {
 					test_collide(aabbs.get(i), aabbs.get(j)); }
 		}
+
+		if (val_do_collision.get()) {
+			to_clr.clear();
+			for (pGeom.Collision c : collisions) {
+				if (space.familyContains("hitzone", c.bod1) && 
+					space.familyContains("damagezone", c.bod2)) {
+				do_hit_collide(c.bod1, c.bod2, c.overlap, to_clr); 
+				dmg_zones.add(c.overlap); }
+				else if (space.familyContains("damagezone", c.bod1) && 
+						space.familyContains("hitzone", c.bod2)) {
+					do_hit_collide(c.bod2, c.bod1, c.overlap, to_clr); 
+					dmg_zones.add(c.overlap); }
+			}
+			for (pBody b : to_clr) b.clear();
+			to_clr.clear();
+			space.update_families();
+
+			for (pBody b : space.familyMember("hitzone")) {
+				if (!b.hasParam("ref")) continue;
+				Vector2 p = b.getVec("ref", "pos");
+				if (p.y > 600f) b.addVec("ref", "pos", 0, -p.y+600f);
+				if (p.y < -600f) b.addVec("ref", "pos", 0, -p.y-600f);
+			}
+		}	
 		if (val_do_limit.get()) {
 			float l = val_limit_dist.get(); 
 			for (pBody b : space.body_pool.temp_all()) {
@@ -1244,6 +1318,21 @@ public class pGeom extends pSystem {
 		if (val_do_draw.get())
 			for (pBody b : space.familyMember("drawable")) draw_body(app, b);
 	
+		if (val_do_draw.get()) {
+			for (pBody b : space.familyMember("hitzone")) {
+				if (!b.hasParam("hitzone") || !b.hasParam("ref")) continue;
+				Vector2 p = b.getVec("ref", "pos");
+				int hp = b.getInt("hitzone", "hitpoint");
+				app.text(""+hp, p.x, p.y, 24);
+			}
+			
+			app.stroke(255,255,255,120,4f); app.fill(255,255,255,90);
+			for (Polygon p : dmg_zones) app.polygon(p);
+			dmg_zones.clear();
+		
+//			app.stroke(255,255,255,120,10f); app.noFill();
+//			app.rect(-800f,-1000f,1600f,2000f);
+		}
 	}
 	public void draw_shadow() { 
 		if (val_do_draw.get())
@@ -1729,6 +1818,65 @@ public class pGeom extends pSystem {
 	
 	
 	
+	
+
+
+	public void do_hit_collide(pBody b1, pBody b2, Polygon coll, 
+			ArrayList<pBody> to_clr) {
+//		app.log("intersect");
+		float coll_area = coll.area();
+		if (coll_area <= 0) return;
+//		
+//		if (val_do_solidity.get() && (b1.getFlt("material", "solidity") > 0 || 
+//				b2.getFlt("material", "solidity") > 0)) {
+////			app.log("solid");
+//			Vector2 center = coll.getCentroid(new Vector2());
+//			Vector2 p1 = b1.getVec("ref", "pos");
+//			Vector2 p2 = b2.getVec("ref", "pos");
+//			Vector2 l1 = new Vector2(p1).sub(center);
+//			Vector2 l2 = new Vector2(p2).sub(center);
+////			float m1 = b1.getFlt("matter", "mass");
+////			float m2 = b2.getFlt("matter", "mass");
+////			if (m1 > 0 && m2 > 0) {
+//				float f1 = b1.getFlt("material", "solidity") / 100f;
+//				float f2 = b2.getFlt("material", "solidity") / 100f;
+////				f1 *= m1 / m2; f2 *= m2 / m1;
+//				l1.scl(f2); l2.scl(f1); 
+//				b1.addVec("move", "acc_pos", l1);
+//				b2.addVec("move", "acc_pos", l2);
+////			}
+//		}
+		
+		if (!b1.hasParam("hitzone") || !b2.hasParam("damagezone")) return;
+		
+		int damage = b2.getInt("damagezone", "damage");
+		b1.setInt("hitzone", "hitpoint", b1.getInt("hitzone", "hitpoint") - damage);
+		
+		if (b1.getInt("hitzone", "hitpoint") <= 0) {
+			to_clr.add(b1);
+			if (b1.hasParam("avatar")) game_over();
+		}
+		to_clr.add(b2);
+	}
+	
+	
+	
+	
+
+	public void start_game() {
+		app.space.start_space();
+	}
+	
+	
+	public void game_over() {
+		app.time.set_pause(true);
+	}
+	
+
+	public void restart_game() {
+		space.start_space();
+//		val_play.set(true);
+	}
 	
 
 

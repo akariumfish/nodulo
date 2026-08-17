@@ -10,7 +10,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.noodle.nodulo.GdxApp;
 
 import aa_nodulo.PlaneApplet;
-import aa_nodulo.pAtom;
 import aa_nodulo.pBox2d;
 import aa_nodulo.pGeom;
 import aa_nodulo.pGround;
@@ -43,7 +42,6 @@ public class pPatch {
 
 		pGround.build(data); 
 		pGeom.build(data); 
-		pAtom.build(data); 
 		pBox2d.build(data); 
 		
 		if (!has_build_statics) {
@@ -70,8 +68,6 @@ public class pPatch {
 			pAnk.build();
 			pTime.build_node(); 
 			pView.build_nodes(); 
-			pBox2d.build_game(); 
-			pAtom.build_game(); 
 		}
 		
 		has_build_statics = true;

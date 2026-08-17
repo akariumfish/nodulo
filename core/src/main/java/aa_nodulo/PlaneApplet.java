@@ -79,11 +79,7 @@ public class PlaneApplet extends App {
 		public boolean START_HELP = false; 
 
 		public String STARTUP_MODEL_REF = "exemple";
-//		public String STARTUP_MODEL_REF = "box2d_exemple";
-//		public String STARTUP_MODEL_REF = "atom_game";
 //		public String STARTUP_MODEL_REF = "";
-
-////		public String STARTUP_MODEL_REF = "patch_exemple";
 
 		public String STARTUP_LOAD_FILE = "";
 		public String STARTUP_NEW_FILE = "";
@@ -96,7 +92,7 @@ public class PlaneApplet extends App {
 		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
 		public Vector2 DEF_VIEW_WIN_SZ = new Vector2(910f,370f);
 		public boolean PATCH_START_WALLPAPER = false;
-		public boolean PATCH_START_COLLAPSED = false;
+		public boolean PATCH_START_COLLAPSED = true;
 		public float DEF_PATCH_ZOOM = 0.1f;
 		public Vector2 DEF_PATCH_POS = new Vector2(0f,0f);
 		public Vector2 DEF_PATCH_WIN_POS = new Vector2(170f,915f);
@@ -163,8 +159,6 @@ public class PlaneApplet extends App {
 	
 	public static void build_setup() {
 		pPatch.build_setup();
-		pAtom.build_setup();
-		pBox2d.build_setup();
 	}
 	
 
@@ -231,6 +225,8 @@ public class PlaneApplet extends App {
 
 		if (config.PATCH_BUILD) {
 			run_startupmodel_setup(config.STARTUP_MODEL_REF); }
+
+		if (!RELEASE) tool_setup(true);
 		
 		view = new pView(this);
 		time = new pTime(this);
@@ -244,8 +240,6 @@ public class PlaneApplet extends App {
 		space.system_load();
 		patch.system_load();
 
-		if (!RELEASE) tool_setup(false);
-		
 //		paint = new nPainting();
 //		
 //		paint.rect(300,380,480,250);
@@ -266,7 +260,7 @@ public class PlaneApplet extends App {
 			sValueBloc b = (sValueBloc)o; data.full_load(); }});
 		
 		startup();
-		
+
 	}
 
 	@Override
@@ -551,7 +545,7 @@ public class PlaneApplet extends App {
 
 	public void tool_setup(boolean openning) {
 		
-		addDelayEvent(1, new nRun() { public void run() {
+		addDelayEvent(6, new nRun() { public void run() {
 			nWidgetGroup sec = gui.toolbox
 					.addSection("  pPlane  ", openning);
 			nInterface interf = gui.addInterface();

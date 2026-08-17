@@ -49,31 +49,31 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class nTileMap {
-	
+
 	private final TiledMap map;
 	public final RendererOrtho renderer;
 
 	public final TiledMapTileLayer mapLayer; 
-	TiledMapTileLayer lightingLayer;
-	private final ArrayList<TiledMapTile> lightingTiles;
+//	TiledMapTileLayer lightingLayer;
+//	private final ArrayList<TiledMapTile> lightingTiles;
 
 	private final Texture pixel;
 	private final StaticTiledMapTile brush;
 
-	private final SpriteBatch lightingBatch;
-	private final VfxFrameBuffer lightingFrameBuffer;
-	private final TextureRegion lightingTexture;
+//	private final SpriteBatch lightingBatch;
+//	private final VfxFrameBuffer lightingFrameBuffer;
+//	private final TextureRegion lightingTexture;
 
 	private final int maxCaveHeight;
 	private int lightingTickSpeed;
-	
+
 	public final float tile_scale = 250f;
 
 	private int currentLightingCoordinate = 0;
-	
+
 	private pView view; 
 	private OrthographicCamera cam;
-	
+
 	public nTileMap(String path, Batch batch, 
 			pView v, OrthographicCamera c) {
 		this(path, -1, 10, batch, v, c);
@@ -102,33 +102,33 @@ public class nTileMap {
 
 		brush = new StaticTiledMapTile(new TextureRegion(generatePixel(mapLayer.getTileWidth(), mapLayer.getTileHeight(), Color.TEAL)));
 
-		lightingBatch = new SpriteBatch();
-		lightingBatch.disableBlending();
-		lightingBatch.getProjectionMatrix().setToOrtho2D(0, 0, mapLayer.getWidth(), mapLayer.getHeight());
+//		lightingBatch = new SpriteBatch();
+//		lightingBatch.disableBlending();
+//		lightingBatch.getProjectionMatrix().setToOrtho2D(0, 0, mapLayer.getWidth(), mapLayer.getHeight());
+//
+//		lightingFrameBuffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);
+//		lightingFrameBuffer.initialize(mapLayer.getWidth(), mapLayer.getHeight());
+//
+//		lightingTexture = new TextureRegion(lightingFrameBuffer.getTexture());
+//		lightingTexture.flip(false, true);
+//
+//		lightingTiles = generateLightingTiles(map.getTileSets().getTileSet("Lighting"));
+//
+//		setupLightingLayer();
+//		lightingLayer.setVisible(false);
 
-		lightingFrameBuffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);
-		lightingFrameBuffer.initialize(mapLayer.getWidth(), mapLayer.getHeight());
-		
-		lightingTexture = new TextureRegion(lightingFrameBuffer.getTexture());
-		lightingTexture.flip(false, true);
 
-		lightingTiles = generateLightingTiles(map.getTileSets().getTileSet("Lighting"));
+//		toggleLightingLayerVisibility();
+//		restartLightingGeneration();
 
-		setupLightingLayer();
-		lightingLayer.setVisible(false);
-		
+//		updateAll();
 
-        toggleLightingLayerVisibility();
-        restartLightingGeneration();
-
-        updateAll();
-        
 	}
 
-	private void setupLightingLayer() {
-		lightingLayer = new TiledMapTileLayer(mapLayer.getWidth(), mapLayer.getHeight(), mapLayer.getTileWidth(), mapLayer.getTileHeight());
-		map.getLayers().add(lightingLayer);
-	}
+//	private void setupLightingLayer() {
+//		lightingLayer = new TiledMapTileLayer(mapLayer.getWidth(), mapLayer.getHeight(), mapLayer.getTileWidth(), mapLayer.getTileHeight());
+//		map.getLayers().add(lightingLayer);
+//	}
 
 	// might be better to load a texture instead of creating one
 	private Texture generatePixel(int width, int height, Color color) {
@@ -138,40 +138,44 @@ public class nTileMap {
 		return new Texture(pixmap);
 	}
 
-	public void updateAll() {
-		int t = lightingTickSpeed;
-		int c = currentLightingCoordinate;
-		currentLightingCoordinate = 0;
-		lightingTickSpeed = lightingLayer.getWidth() * lightingLayer.getHeight() + 1;
-		update();
-		currentLightingCoordinate = c;
-		lightingTickSpeed = t;
-	}
-	
-	// generate lighting during every frame for a certain amount of tiles to not overload the gpu. (=> basically "async")
-	public void update() {
-		lightingFrameBuffer.begin();
-		lightingBatch.begin();
-
-		for (int i = 0; 
-				i < lightingTickSpeed && 
-				currentLightingCoordinate < 
-					lightingLayer.getWidth() * lightingLayer.getHeight(); 
-				i++, currentLightingCoordinate++) {
-			
-			int x = currentLightingCoordinate / lightingLayer.getHeight();
-			int invY = currentLightingCoordinate % lightingLayer.getHeight();
-			int y = lightingLayer.getHeight() - 1 - invY;
-
-			setTileLighting(x, y);
-		}
-
-		lightingBatch.end();
-		lightingFrameBuffer.end();
-	}
+//	public void updateAll() {
+//		int t = lightingTickSpeed;
+//		int c = currentLightingCoordinate;
+//		currentLightingCoordinate = 0;
+//		lightingTickSpeed = lightingLayer.getWidth() * lightingLayer.getHeight() + 1;
+//		update();
+//		currentLightingCoordinate = c;
+//		lightingTickSpeed = t;
+//	}
+//
+//	// generate lighting during every frame for a certain amount of tiles to not overload the gpu. (=> basically "async")
+//	public void update() {
+//		lightingFrameBuffer.begin();
+//		lightingBatch.begin();
+//
+//		for (int i = 0; 
+//				i < lightingTickSpeed && 
+//				currentLightingCoordinate < 
+//				lightingLayer.getWidth() * lightingLayer.getHeight(); 
+//				i++, currentLightingCoordinate++) {
+//
+//			int x = currentLightingCoordinate / lightingLayer.getHeight();
+//			int invY = currentLightingCoordinate % lightingLayer.getHeight();
+//			int y = lightingLayer.getHeight() - 1 - invY;
+//
+//			setTileLighting(x, y);
+//		}
+//
+//		lightingBatch.end();
+//		lightingFrameBuffer.end();
+//	}
 
 	public void render() {
-		
+
+		view.app.gdx.drawer.end();
+
+//		update();
+
 		float scale = view.val_cam_scale.get();
 		float sclinv = 1f / scale;
 
@@ -180,21 +184,21 @@ public class nTileMap {
 		Vector2 view_center = new Vector2(view.val_pos.get());
 		view_center.x += view.val_view_size.x() / 2.0f;
 		view_center.y -= view.val_view_size.y() / 2.0f + nGUI.book.RS;
-		
-        renderer.transform = new Matrix4()
-        		.setToTranslation(0f,0f,0f);
-        
-        Vector2 sv = new Vector2(view_center).sub(screen_center);
-        sv.scl(1f/view.val_cam_scale.get());
-        sv.scl(1f/tile_scale);
-        renderer.transform.translate(sv.x,sv.y,0f);
 
-        renderer.transform.rotateRad(0f,0f,-1f, -view.val_cam_rot.get());
-        		        
+		renderer.transform = new Matrix4()
+				.setToTranslation(0f,0f,0f);
+
+		Vector2 sv = new Vector2(view_center).sub(screen_center);
+		sv.scl(1f/view.val_cam_scale.get());
+		sv.scl(1f/tile_scale);
+		renderer.transform.translate(sv.x,sv.y,0f);
+
+		renderer.transform.rotateRad(0f,0f,-1f, -view.val_cam_rot.get());
+
 		Vector2 m = new Vector2();
 		m.add(view.val_cam_pos.get());
 		m.scl(1/tile_scale);
-        renderer.transform.translate(m.x,m.y,0f);
+		renderer.transform.translate(m.x,m.y,0f);
 
 		cam.setToOrtho(false, (int)(view.app.gdx.getscreenwidth()), 
 				(int)(view.app.gdx.getscreenheight()));
@@ -204,13 +208,15 @@ public class nTileMap {
 		Vector2 u = new Vector2(0f,1f);
 		cam.up.set(u.x, u.y, 0f);
 		cam.update();
-		
-        render(cam.projection, 
-        		-view.app.gdx.getscreenwidth() / 2f, 
-        		-view.app.gdx.getscreenheight() / 2f,
-        		view.app.gdx.getscreenwidth(), 
-        		view.app.gdx.getscreenheight());
-        
+
+		render(cam.projection, 
+				-view.app.gdx.getscreenwidth() / 2f, 
+				-view.app.gdx.getscreenheight() / 2f,
+				view.app.gdx.getscreenwidth(), 
+				view.app.gdx.getscreenheight());
+
+		view.app.gdx.drawer.begin();
+
 	}
 
 	public void render(Matrix4 projectionMat, float viewboundsX, float viewboundsy, 
@@ -240,151 +246,157 @@ public class nTileMap {
 	public TiledMapTileLayer.Cell getCell(float x, float y) {
 		Vector2 s = new Vector2(x,y);
 		s.scl(1f/tile_scale);
-		s.add(lightingLayer.getWidth()/2f, 
-				lightingLayer.getHeight()/2f);
+		s.add(mapLayer.getWidth()/2f, 
+				mapLayer.getHeight()/2f);
 		return mapLayer.getCell((int)(s.x), (int)(s.y));
 	}
+	public void delCell(Vector2 v) { delCell(v.x,v.y); }
 	public void delCell(float x, float y) {
 		Vector2 s = new Vector2(x,y);
 		s.scl(1f/tile_scale);
-		s.add(lightingLayer.getWidth()/2f, 
-				lightingLayer.getHeight()/2f);
+		s.add(mapLayer.getWidth()/2f, 
+				mapLayer.getHeight()/2f);
 		mapLayer.setCell((int)(s.x), (int)(s.y), null);
-		checkAndRecalculateTileLighting((int)(s.x), (int)(s.y));
+//		checkAndRecalculateTileLighting((int)(s.x), (int)(s.y));
+//		updateAll();
 	}
+	public void addCell(Vector2 v) { addCell(v.x,v.y); }
 	public void addCell(float x, float y) {
 		Vector2 s = new Vector2(x,y);
 		s.scl(1f/tile_scale);
-		s.add(lightingLayer.getWidth()/2f, 
-				lightingLayer.getHeight()/2f);
+		s.add(mapLayer.getWidth()/2f, 
+				mapLayer.getHeight()/2f);
 		TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
 		cell.setTile(brush);
 		mapLayer.setCell((int)(s.x), (int)(s.y), cell);
-		checkAndRecalculateTileLighting((int)(s.x), (int)(s.y));
+//		checkAndRecalculateTileLighting((int)(s.x), (int)(s.y));
+//		updateAll();
 	}
 
-	public void checkAndRecalculateTileLighting(int x, int y) {
-		lightingFrameBuffer.begin();
-		lightingBatch.begin();
-		for (int dY = y - 1; dY <= y + 1; dY++) {
-			for (int dX = x - 1; dX <= x + 1; dX++) {
-				setTileLighting(dX, dY);
-			}
-		}
-		lightingBatch.end();
-		lightingFrameBuffer.end();
-	}
+//	public void checkAndRecalculateTileLighting(int x, int y) {
+//		lightingFrameBuffer.begin();
+//		lightingBatch.begin();
+//		for (int dY = y - 1; dY <= y + 1; dY++) {
+//			for (int dX = x - 1; dX <= x + 1; dX++) {
+//				setTileLighting(dX, dY);
+//			}
+//		}
+//		lightingBatch.end();
+//		lightingFrameBuffer.end();
+//	}
 
-	private void setTileLighting(int x, int y) {
-		TiledMapTileLayer.Cell mapCell = mapLayer.getCell(x, y);
-		
-		float average = 0f;
-		if (mapCell != null) {
-			average = calculateAverageLightingOfTile(mapLayer, x, y);
-		} else {
-			average = 9f * calculateAverageLightingOfTile(mapLayer, x, y);
-			if (average > 1f) average = 1f + (average - 1f) / 2f;
-			average /= 9f;
-		}
-
-		lightingBatch.setColor(new Color(0, 0, 0, average));
-		lightingBatch.draw(pixel, x, y);
-
-		// since the average generates floats from 0.0 to 0.1 in steps of 0.1 (e.g. 0.1XXXX, 0.2XXXX, 0.3XXXX) we can clamp it and figure out the index via that
-		int index = (int) (average * 10);
-
-		// create the cell with the appropriately tinted tile
-		TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-		cell.setTile(lightingTiles.get(index));
-		lightingLayer.setCell(x, y, cell);
-	}
-
-	// calculates lighting average for this one specific tile according to https://gamedev.stackexchange.com/a/126165
-	// calculate by how many tiles the current tile is surrounded. coords outside of the map also count as tiles
-	private float calculateAverageLightingOfTile(TiledMapTileLayer layer, int x, int y) {
-		int averageSum = 0;
-		for (int dY = y - 1; dY <= y + 1; dY++) {
-			for (int dX = x - 1; dX <= x + 1; dX++) {
-				if (dX == x && dY == y) // ignore when it's the current tile
-					continue;
-
-				boolean foundTile = false;
-//				if (dX < 0 || dY < 0 || dX >= layer.getWidth() || dY >= layer.getHeight())
-//					foundTile = true; // out of bounds
-//				else 
-				if (!(dX < 0 || dY < 0 || 
-						dX >= layer.getWidth() || dY >= layer.getHeight()) && 
-						layer.getCell(dX, dY) != null && 
-						!layer.getCell(dX, dY).getTile()
-							.getProperties().get("light", Boolean.class))
-					foundTile = true;
-//				else if (y <= maxCaveHeight)
+//	private void setTileLighting(int x, int y) {
+//		TiledMapTileLayer.Cell mapCell = mapLayer.getCell(x, y);
+//
+//		float average = 0f;
+//		if (mapCell != null) {
+//			average = calculateAverageLightingOfTile(mapLayer, x, y);
+//		} else {
+//			average = 9f * calculateAverageLightingOfTile(mapLayer, x, y);
+//			if (average > 1f) average = 1f + (average - 1f) / 2f;
+//			average /= 9f;
+//		}
+//
+//		lightingBatch.setColor(new Color(0, 0, 0, average));
+//		lightingBatch.draw(pixel, x, y);
+//
+//		// since the average generates floats from 0.0 to 0.1 in steps of 0.1 (e.g. 0.1XXXX, 0.2XXXX, 0.3XXXX) we can clamp it and figure out the index via that
+//		int index = (int) (average * 10);
+//
+//		// create the cell with the appropriately tinted tile
+//		TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+//		cell.setTile(lightingTiles.get(index));
+//		lightingLayer.setCell(x, y, cell);
+//	}
+//
+//	// calculates lighting average for this one specific tile according to https://gamedev.stackexchange.com/a/126165
+//	// calculate by how many tiles the current tile is surrounded. coords outside of the map also count as tiles
+//	private float calculateAverageLightingOfTile(TiledMapTileLayer layer, int x, int y) {
+//		int averageSum = 0;
+//		for (int dY = y - 1; dY <= y + 1; dY++) {
+//			for (int dX = x - 1; dX <= x + 1; dX++) {
+//				if (dX == x && dY == y) // ignore when it's the current tile
+//					continue;
+//
+//				boolean foundTile = false;
+//				//				if (dX < 0 || dY < 0 || dX >= layer.getWidth() || dY >= layer.getHeight())
+//				//					foundTile = true; // out of bounds
+//				//				else 
+//				if (!(dX < 0 || dY < 0 || 
+//						dX >= layer.getWidth() || dY >= layer.getHeight()) && 
+//						layer.getCell(dX, dY) != null && 
+//						(layer.getCell(dX, dY).getTile()
+//								.getProperties().get("light", Boolean.class) != null && 
+//								!layer.getCell(dX, dY).getTile()
+//								.getProperties().get("light", Boolean.class)))
 //					foundTile = true;
-				
-				if (dX == x || dY == y)
-					averageSum += foundTile ? 1f : 0f;
-				else averageSum += foundTile ? 1f : 0f;
-			}
-		}
+//				//				else if (y <= maxCaveHeight)
+//				//					foundTile = true;
+//
+//				if (dX == x || dY == y)
+//					averageSum += foundTile ? 1f : 0f;
+//				else averageSum += foundTile ? 0.9f : 0f;
+//			}
+//		}
+//
+//		return averageSum / 9f;
+//	}
+//
+//	// just creates a ordered list of tiles
+//	// each tile in the tileset has a "index" property, 0 means it's transparent, 1 means it's black.
+//	// and since there's 9 different possible combinations, the texture has 9 different tiles
+//	private ArrayList<TiledMapTile> generateLightingTiles(TiledMapTileSet tileset) {
+//		ArrayList<TiledMapTile> tiles = new ArrayList<>();
+//		tileset.iterator().forEachRemaining(tiles::add);
+//		tiles.sort(Comparator.comparing(o -> o.getProperties().get("index", Integer.class)));
+//		return tiles;
+//	}
+//
+//	public TextureRegion getLightingTexture() {
+//		return lightingTexture;
+//	}
+//
+//	public void toggleLightingLayerVisibility() {
+//		lightingLayer.setVisible(!lightingLayer.isVisible());
+//	}
+//
+//	public boolean isLightingLayerVisible() {
+//		return lightingLayer.isVisible();
+//	}
+//
+//	public int getWidth() {
+//		return lightingLayer.getWidth();
+//	}
+//
+//	public int getHeight() {
+//		return lightingLayer.getHeight();
+//	}
+//
+//	// note: instead of regenerating the whole lighting layer
+//	// only update the tiles surrounding the tile you updated
+//	// this would increase performance by quite a bit
+//	public void restartLightingGeneration() {
+//		// destroy the lighting layer and create a new one
+//		// also remember if the layer was visible or not
+//		boolean wasLightingLayerVisible = lightingLayer.isVisible();
+//		map.getLayers().remove(lightingLayer);
+//		setupLightingLayer();
+//		lightingLayer.setVisible(wasLightingLayerVisible);
+//
+//		// clear the framebuffer with transparent
+//		lightingFrameBuffer.begin();
+//		Gdx.gl.glClearColor(0, 0, 0, 0);
+//		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+//		lightingFrameBuffer.end();
+//
+//		// reset "async" coordinate
+//		currentLightingCoordinate = 0;
+//	}
 
-		return averageSum / 9f;
-	}
 
-	// just creates a ordered list of tiles
-	// each tile in the tileset has a "index" property, 0 means it's transparent, 1 means it's black.
-	// and since there's 9 different possible combinations, the texture has 9 different tiles
-	private ArrayList<TiledMapTile> generateLightingTiles(TiledMapTileSet tileset) {
-		ArrayList<TiledMapTile> tiles = new ArrayList<>();
-		tileset.iterator().forEachRemaining(tiles::add);
-		tiles.sort(Comparator.comparing(o -> o.getProperties().get("index", Integer.class)));
-		return tiles;
-	}
 
-	public TextureRegion getLightingTexture() {
-		return lightingTexture;
-	}
 
-	public void toggleLightingLayerVisibility() {
-		lightingLayer.setVisible(!lightingLayer.isVisible());
-	}
 
-	public boolean isLightingLayerVisible() {
-		return lightingLayer.isVisible();
-	}
-
-	public int getWidth() {
-		return lightingLayer.getWidth();
-	}
-
-	public int getHeight() {
-		return lightingLayer.getHeight();
-	}
-
-	// note: instead of regenerating the whole lighting layer
-	// only update the tiles surrounding the tile you updated
-	// this would increase performance by quite a bit
-	public void restartLightingGeneration() {
-		// destroy the lighting layer and create a new one
-		// also remember if the layer was visible or not
-		boolean wasLightingLayerVisible = lightingLayer.isVisible();
-		map.getLayers().remove(lightingLayer);
-		setupLightingLayer();
-		lightingLayer.setVisible(wasLightingLayerVisible);
-
-		// clear the framebuffer with transparent
-		lightingFrameBuffer.begin();
-		Gdx.gl.glClearColor(0, 0, 0, 0);
-		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-		lightingFrameBuffer.end();
-
-		// reset "async" coordinate
-		currentLightingCoordinate = 0;
-	}
-	
-	
-	
-	
-	
 
 	public class RendererOrtho extends BatchTiledMapRenderer {
 
@@ -403,7 +415,7 @@ public class nTileMap {
 		public RendererOrtho (TiledMap map, float unitScale, Batch batch) {
 			super(map, unitScale, batch);
 		}
-		
+
 		public Matrix4 transform = new Matrix4().setToTranslation(0f,0f,0f);
 		public Matrix4 tmp_proj = new Matrix4().setToTranslation(0f,0f,0f);
 		public Matrix4 tmp_transf = new Matrix4().setToTranslation(0f,0f,0f);
@@ -417,10 +429,10 @@ public class nTileMap {
 		@Override
 		public void render() {
 			beginRender();
-			
+
 			tmp_transf.set(batch.getTransformMatrix());
 			batch.setTransformMatrix(transform);
-			
+
 			for (MapLayer layer : map.getLayers()) {
 				renderMapLayer(layer);
 			}
@@ -478,7 +490,7 @@ public class nTileMap {
 			final float layerOffsetX = 
 					-layerWidth / 2f + 
 					layer.getRenderOffsetX() * unitScale - viewBounds.x * (layer.getParallaxX() - 1);
-			
+
 			// offset in tiled is y down, so we flip it
 			final float layerOffsetY = 
 					-layerHeight / 2f + 
@@ -486,11 +498,11 @@ public class nTileMap {
 
 			final int col1 = Math.max(0, (int)((viewBounds.x - layerOffsetX) / layerTileWidth));
 			final int col2 = Math.min(layerWidth,
-				(int)((viewBounds.x + viewBounds.width + layerTileWidth - layerOffsetX) / layerTileWidth));
+					(int)((viewBounds.x + viewBounds.width + layerTileWidth - layerOffsetX) / layerTileWidth));
 
 			final int row1 = Math.max(0, (int)((viewBounds.y - layerOffsetY) / layerTileHeight));
 			final int row2 = Math.min(layerHeight,
-				(int)((viewBounds.y + viewBounds.height + layerTileHeight - layerOffsetY) / layerTileHeight));
+					(int)((viewBounds.y + viewBounds.height + layerTileHeight - layerOffsetY) / layerTileHeight));
 
 			float y = row2 * layerTileHeight + layerOffsetY;
 			float xStart = col1 * layerTileWidth + layerOffsetX;
@@ -618,10 +630,10 @@ public class nTileMap {
 			}
 		}
 	}
-	
-	
-	
-	
+
+
+
+
 }
 
 /*

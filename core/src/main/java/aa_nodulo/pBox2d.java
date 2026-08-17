@@ -1,35 +1,19 @@
 package aa_nodulo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
-import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
-import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer.Renderer;
 import com.noodle.nodulo.GdxApp;
 
 import app.App;
@@ -62,120 +46,7 @@ public class pBox2d extends pSystem {
 		protected pBox2d newObject() { return new pBox2d(); } };
 		public static pBox2d newObject(sValueBloc b) {
 			return pool.obtain().init(b); }
-
-
-
-		public static void build_setup() {
-
-			PlaneApplet.newStartupModel("box2d_exemple")
-			.setSetupRun(new nRun() { public void run() {
-
-				pSheet.setDefMacro("main", "main_sheet_b2d");
-				pSheet.setDefMacro("blueprint", "common_param_b2d");
-				pSheet.setDefMacro("function", "common_func_b2d");
-
-				pSheet.setDefCollapse("blueprint", false);
-				pSheet.setDefCollapse("main", false);
-				pSheet.setDefCollapse("function", false);
-			}})
-			;
-
-		}
-
-
-		private static boolean has_build = false;
-
-		public static void build_game() {
-			if (has_build) return;
-			has_build = true;
-
-			float RS = nGUI.book.RS;
-
-			
-			Macro main_sheet = new Macro("main_sheet_b2d")
-			.addMacro("exac", pMacro.getMacro("exec_actor"), 		0f,	0f)
-			.addSetVar("exac_exec", "target_ref", "b2d_move")
-			.addSetVar("exac_actor", "pop_pos", new Vector2(0,0)) 
-			.addSetVar("exac_actor", "print_name", "b2d_print")
-			.addRun(new nRun() { public void run() {
-				nMap<pInstance> list = arg(0, nMap.class);
-
-			}})
-			;
-
-			new MacroScript("b2d_move") 
-
-			.com("add_set_param", "ctrl_box", "accel_left")
-			.com("add_get_reg_in_at", "body", "body")
-			.com("add_get_input_at", "data", "keycross_left_state")
-			.com("add_set_param", "ctrl_box", "accel_right")
-			.com("add_get_reg_in_at", "body", "body")
-			.com("add_get_input_at", "data", "keycross_right_state")
-			.com("add_set_param", "ctrl_box", "accel_up")
-			.com("add_get_reg_in_at", "body", "body")
-			.com("add_get_input_at", "data", "keycross_up_state")
-			.com("add_set_param", "ctrl_box", "accel_down")
-			.com("add_get_reg_in_at", "body", "body")
-			.com("add_get_input_at", "data", "keycross_down_state")
-			.com("add_set_param", "ctrl_box", "accel_cw")
-			.com("add_get_reg_in_at", "body", "body")
-			.com("add_get_input_at", "data", "keycross_cw_state")
-			.com("add_set_param", "ctrl_box", "accel_ccw")
-			.com("add_get_reg_in_at", "body", "body")
-			.com("add_get_input_at", "data", "keycross_ccw_state")
-
-			.com("add_set_output", "cam_pos")
-			.com("add_branch_at", "data", "get_body_param")
-			.com("add_arr", "arg", "coord", "pos").com("get_last")
-
-			.com("add_set_output", "cam_rot")
-			.com("add_branch_at", "data", "get_body_param")
-			.com("add_arr", "arg", "coord", "rot").com("get_last")
-
-			;
-
-			Macro common_func = new Macro("common_func_b2d")
-					.addNode("set_body_param", "function", 	-1500f,	-600f)
-					.addSetVar("func_ref", "set_body_param").addTileScript("set_body_param").getMacro()
-					.addNode("get_body_param", "branch", 	0f,		-600f)
-					.addSetVar("branch_ref", "get_body_param").addTileScript("get_body_param").getMacro()
-					.addNode("func_p", "function", 		1200f, 	0f).addSetVar("func_ref", "b2d_move").getMacro()
-					.addTileScript("func_p", "b2d_move")
-					.addRun(new nRun() { public void run() {
-						nMap<pInstance> list = arg(0, nMap.class);
-						App.ap.addDelayEvent(3, new nRun() { public void run() {
-							//				list.get("func_p").setVar("script", true);
-						}});
-					}})
-					;
-
-			Macro b2d_blueprint = new Macro("b2d_blueprint")
-					.addNode("blueprint", "blueprint", 	0f, 		0f).getMacro()
-					.addNode("physic", "physic", 		-600f, 	0f)
-					.addSetVar("use_ctrl_box", true).addSetVar("use_dynamic", true).getMacro()
-					.addNode("ownable", "ownable", 		-600f, 	-600f)
-					.addSetVar("acquire", true).getMacro()
-					.addLink("physic", "param", "blueprint", "param_in")
-					.addLink("ownable", "param", "blueprint", "param_in")
-					.addRun(new nRun() { public void run() {
-						nMap<pInstance> list = arg(0, nMap.class);
-
-						list.get("blueprint").setVar("name", "b2d_print");
-
-					}})
-					;
-
-			Macro common_param = new Macro("common_param_b2d")
-					.addMacro("b2d_blueprint", b2d_blueprint, 0f, 0f)
-					.addRun(new nRun() { public void run() {
-						nMap<pInstance> list = arg(0, nMap.class);
-					}})
-					;
-
-
-
-		}
-
+		
 
 
 		public static void build_prop() {
@@ -183,8 +54,8 @@ public class pBox2d extends pSystem {
 			float RS = nGUI.book.RS;
 
 			pProperty physic = pProperty.newGeneralProperty("physic");
-			
-			
+
+
 			physic.addBodyInitRun(new nRun() {public void run() {
 				pBody bod = arg(0,pBody.class);
 				pBox2d b2d = PlaneApplet.app.getSystem(pBox2d.class);
@@ -208,7 +79,7 @@ public class pBox2d extends pSystem {
 			physic.newOptionalLocalProperty("kinematic")
 			.addData("follow_ref", true)
 			.addData("rad", 60f)
-//			.addData("joint_ref", "")
+			//			.addData("joint_ref", "")
 			;
 			physic.newLocalProperty("box_body")
 			.addData("pos", new Vector2())
@@ -224,7 +95,7 @@ public class pBox2d extends pSystem {
 			physic.newOptionalLocalProperty("light")
 			.addData("follow_ref", true)
 			.addData("pos", new Vector2())
-			.addData("dist", 120f)
+			.addData("dist", 180f)
 			.addData("r", (int)255)
 			.addData("g", (int)10)
 			.addData("b", (int)10)
@@ -233,40 +104,64 @@ public class pBox2d extends pSystem {
 
 			physic.newOptionalLocalProperty("cone_light")
 			;
-			
-			
-			
-			
+
+
+
+
 			nRun run_ctrl_box = new nRun() { public void run(Object o) { 
 				pBody bod = (pBody)o; if (bod == null) return;
 				pBox2d box = PlaneApplet.app.getSystem(pBox2d.class);
 				if (box != null && bod.hasParam("box_body") && 
 						bod.hasParam("ctrl_box")) {
-					float accel = bod.getFlt("ctrl_box","accel_strength");
+					float maccel = bod.getFlt("ctrl_box","move_strength");
+					float raccel = bod.getFlt("ctrl_box","rot_strength");
+					float max_speed = bod.getFlt("ctrl_box","max_speed");
+					float max_rot = bod.getFlt("ctrl_box","max_rot");
+					boolean glob = bod.getBoo("ctrl_box","global_ref");
+					if (bod.getBoo("ctrl_box","accel_move")) {
+						Vector2 dr = bod.getVec("ctrl_box","accel_dir");
+						box.accel_body(bod,glob,dr.x*maccel,dr.y*maccel,max_speed); }
 					if (bod.getBoo("ctrl_box","accel_up")) {
-						box.accel_body(bod,0,accel); }
+						box.accel_body(bod,glob,0,maccel,max_speed); }
 					if (bod.getBoo("ctrl_box","accel_down")) {
-						box.accel_body(bod,0,-accel); }
+						box.accel_body(bod,glob,0,-maccel,max_speed); }
 					if (bod.getBoo("ctrl_box","accel_left")) {
-						box.accel_body(bod,-accel,0); }
+						box.accel_body(bod,glob,-maccel,0,max_speed); }
 					if (bod.getBoo("ctrl_box","accel_right")) {
-						box.accel_body(bod,accel,0); }
+						box.accel_body(bod,glob,maccel,0,max_speed); }
 					if (bod.getBoo("ctrl_box","accel_cw")) {
-						box.rot_body(bod,-accel); }
+						box.rot_body(bod,-raccel,max_rot); }
 					if (bod.getBoo("ctrl_box","accel_ccw")) {
-						box.rot_body(bod,accel); }
+						box.rot_body(bod,raccel,max_rot); }
+					if (bod.getBoo("ctrl_box","decel_move")) {
+						box.decel_body_move(bod, maccel); }
+					if (bod.getBoo("ctrl_box","decel_rot")) {
+						box.decel_body_rot(bod, raccel); }
+					if (bod.getBoo("ctrl_box","rot_to_target")) {
+						float rot_target = bod.getFlt("ctrl_box","rot_target");
+						box.rot_body_toward(bod,rot_target,raccel*3f,max_rot*3f); }
 				}
 			}};
 
 			pGeom.newControlProp("box",physic,run_ctrl_box) 
 			.setFullSync()
+			.addData("global_ref", true)
+			.addData("accel_move", false)
+			.addData("accel_dir", new Vector2())
 			.addData("accel_up", false)
 			.addData("accel_down", false)
 			.addData("accel_left", false)
 			.addData("accel_right", false)
 			.addData("accel_cw", false)
 			.addData("accel_ccw", false)
-			.addData("accel_strength", 1f)
+			.addData("decel_move", false)
+			.addData("decel_rot", false)
+			.addData("rot_to_target", false)
+			.addData("rot_target", 0f)
+			.addData("move_strength", 4f)
+			.addData("rot_strength", 1f/50f)
+			.addData("max_speed", 90f)
+			.addData("max_rot", 0.3f)
 			;
 
 
@@ -280,14 +175,18 @@ public class pBox2d extends pSystem {
 			draw_run = new nDrawable() { public void drawing() { draw(); }}; 
 			tile_draw_run = new nDrawable() { public void drawing() { draw_tile(); }}; 
 			pre_draw_run = new nDrawable() { public void drawing() { pre_draw(); }}; 
-			post_draw_run = new nDrawable() { public void drawing() { post_draw(); }}; 
+			//			post_draw_run = new nDrawable() { public void drawing() { post_draw(); }}; 
 			draw_ray_run = new nDrawable() { public void drawing() { draw_ray(); }}; 
-			draw_debug_run = new nDrawable() { public void drawing() { draw_debug(); }}; 
+			//			draw_debug_run = new nDrawable() { public void drawing() { draw_debug(); }}; 
 		}
 
 		nRun tick_run, net_tick_run;
-		nDrawable draw_run, pre_draw_run, post_draw_run, tile_draw_run, 
-			draw_ray_run, draw_debug_run;
+		nDrawable draw_run, pre_draw_run, 
+		//			post_draw_run, 
+		tile_draw_run, 
+		draw_ray_run
+		//			, draw_debug_run
+		;
 
 		OrthographicCamera cam;
 
@@ -296,14 +195,12 @@ public class pBox2d extends pSystem {
 		public pSpace space;
 
 		public sBoo val_do_draw, val_draw_debug, val_do_ray, val_do_calc, 
-			val_do_tile;
+		val_do_tile, val_edit_tile;
 
 		public World world;
 		public RayHandler rayHandler;
 		public Box2DRenderer boxRenderer;
-		public Box2DDebugRenderer debugRenderer;
-		VfxFrameBuffer buffer;
-//		VfxFrameBuffer shadowbuffer;
+		//		public Box2DDebugRenderer debugRenderer;
 
 		nTileMap tilemap;
 
@@ -321,98 +218,47 @@ public class pBox2d extends pSystem {
 			val_do_ray = bloc.obtainBoo("val_do_ray", true);
 			val_do_calc = bloc.obtainBoo("val_do_calc", true);
 			val_do_tile = bloc.obtainBoo("val_do_tile", true);
-			
-			
+			val_edit_tile = bloc.obtainBoo("val_edit_tile", false);
+
+
 			cam = new OrthographicCamera(GdxApp.WIDTH, GdxApp.HEIGHT);
 
-			
-	        tilemap = new nTileMap("Map3.tmx", GdxApp.app.drawer.spritebatch, 
-	        		app.view, cam);
-	        
-	        
 
+			tilemap = new nTileMap("Map.tmx", GdxApp.app.drawer.spritebatch, 
+					app.view, cam);
+			
 			world = new World(new Vector2(0, 0), true);
 
-			//boolean drawBodies, boolean drawJoints, 
+			//		boolean drawBodies, boolean drawJoints, 
 			//		boolean drawAABBs, boolean drawInactiveBodies, 
 			//		boolean drawVelocities, boolean drawContacts
-			boxRenderer = new Box2DRenderer(app, true, true, false, true, true, true);
-			debugRenderer = new Box2DDebugRenderer(true, true, true, true, true, true);
-
-			//		// Create our body definition
-			//		BodyDef groundBodyDef = new BodyDef();  
-			//		// Set its world position
-			//		groundBodyDef.position.set(new Vector2(0, -10));  
-			//
-			//		// Create a body from the definition and add it to the world
-			//		Body groundBody = world.createBody(groundBodyDef);  
-			//
-			//		// Create a polygon shape
-			//		PolygonShape groundBox = new PolygonShape();  
-			//		// Set the polygon shape as a box which is twice the size of our view port and 20 high
-			//		// (setAsBox takes half-width and half-height as arguments)
-			//		groundBox.setAsBox(app.camera.viewportWidth * 2f, 10.0f);
-			//		// Create a fixture from our polygon shape and add it to our ground body  
-			//		groundBody.createFixture(groundBox, 0.0f);
-			//		// Clean up after ourselves
-			//		groundBox.dispose();
+			boxRenderer = new Box2DRenderer(app, true, true, true, true, true, true);
+			//			debugRenderer = new Box2DDebugRenderer(true, true, true, true, true, true);
 
 
-
-			buffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);		        
-			//		Renderer batchRenderer = new PolygonSpriteBatchRendererAdapter(spritebatch);
-			//		buffer.addRenderer(batchRenderer);
-			buffer.initialize((int)app.gdx.getscreenwidth(),
-					(int)app.gdx.getscreenheight());
-			
-//			shadowbuffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);
-//			shadowbuffer.initialize((int)app.gdx.getscreenwidth(),
-//					(int)app.gdx.getscreenheight());
-
-			app.gdx.addEventScreen(new nRun() { public void run() {
-				buffer.reset();
-				buffer.initialize((int)app.gdx.getscreenwidth(),
-						(int)app.gdx.getscreenheight());
-//				shadowbuffer.reset();
-//				shadowbuffer.initialize((int)app.gdx.getscreenwidth(),
-//						(int)app.gdx.getscreenheight());
-			}});
-			
-//			RayHandler.useDiffuseLight(true);
-			
-			rayHandler = new RayHandler(world);
-
-			rayHandler.setAmbientLight(0f, 0f, 0f, 0.1f);
-			rayHandler.setBlurNum(2);
-			rayHandler.setCulling(false);
-			rayHandler.setBlur(true);
-			
-			rayHandler.shadowBlendFunc.set(GL20.GL_SRC_ALPHA, 
-					GL20.GL_ONE);
-
-//			rayHandler.diffuseBlendFunc.set(GL20.GL_SRC_COLOR, 
-//					GL20.GL_ONE);
+			rayHandler = new RayHandler(app, cam, world);
 
 			int rays = 180;
 			float dist = 3000f;
-			float spc = dist * 0.5f;
+			float spc = dist * 0.25f;
 			pGeom geo = app.getSystem(pGeom.class);
-			float lim = geo.val_limit_dist.get() / 3f;
-			Color lc = new Color(1,1,1,0.6f);
+			float lim = geo.val_limit_dist.get() / 1.35f;
+			Color lc = new Color(0.4f,0.4f,0.4f,0.2f);
 			new PointLight(rayHandler, rays, lc, dist, 0, 0);
 			for (float x = spc ; x <= lim ; x += spc) 
-					if (x < lim - dist) {
-						float f = 1.2f * ((lim - dist)-x) / (lim - dist);
-						new PointLight(rayHandler, rays, lc, f*dist, x, 0);
-						new PointLight(rayHandler, rays, lc, f*dist, 0, x);
-						new PointLight(rayHandler, rays, lc, f*dist, -x, 0);
-						new PointLight(rayHandler, rays, lc, f*dist, 0, -x);
-			}
+				if (x <= lim - dist/1.5f) {
+					float f = 0.5f + 0.75f * ((lim - dist/1.5f)-x) / (lim - dist/1.5f);
+					new PointLight(rayHandler, rays, lc, f*dist, x, 0);
+					new PointLight(rayHandler, rays, lc, f*dist, 0, x);
+					new PointLight(rayHandler, rays, lc, f*dist, -x, 0);
+					new PointLight(rayHandler, rays, lc, f*dist, 0, -x);
+				}
 			for (float x = spc ; x <= lim ; x += spc) 
 				for (float y = spc ; y <= lim ; y += spc) {
 					float l = new Vector2(x,y).len();
-					if (l < lim - dist) {
-						float f = 1.2f * ((lim - dist)-l) / (lim - dist);
+					if (l <= lim - dist/1.5f) {
+						float f = 0.5f + 0.75f * ((lim - dist/1.5f)-l) / 
+								(lim - dist/1.5f);
 						new PointLight(rayHandler, rays, lc, f*dist, x, y);
 						new PointLight(rayHandler, rays, lc, f*dist, -x, y);
 						new PointLight(rayHandler, rays, lc, f*dist, x, -y);
@@ -442,13 +288,13 @@ public class pBox2d extends pSystem {
 
 			app.time.addEventTick(tick_run);
 			app.time.addEventNetTick(net_tick_run);
-			
+
 			app.view.addPreDrawable(0,pre_draw_run);
 			app.view.addDrawable(1,tile_draw_run);
 			app.view.addDrawable(6,draw_run);
 			app.view.addDrawable(11,draw_ray_run);
-			app.view.addDrawable(19,draw_debug_run);
-			app.view.addPostDrawable(22,post_draw_run);
+			//			app.view.addDrawable(19,draw_debug_run);
+			//			app.view.addPostDrawable(22,post_draw_run);
 			space = app.space;
 			view = app.view;
 			//		if (!app.RELEASE) 
@@ -461,9 +307,9 @@ public class pBox2d extends pSystem {
 			app.view.removeDrawable(draw_run);
 			app.view.removeDrawable(tile_draw_run);
 			app.view.removeDrawable(pre_draw_run);
-			app.view.removeDrawable(post_draw_run);
+			//			app.view.removeDrawable(post_draw_run);
 			app.view.removeDrawable(draw_ray_run);
-			app.view.removeDrawable(draw_debug_run);
+			//			app.view.removeDrawable(draw_debug_run);
 
 			rayHandler.dispose();
 		}
@@ -474,14 +320,15 @@ public class pBox2d extends pSystem {
 			interf.add_row();
 			interf.add_row_switch_boo(4, "draw", "val_do_draw");
 			interf.add_row_label(2, "");
-			interf.add_row_switch_boo(4, "calc", "val_do_calc");
+			interf.add_row_switch_boo(4, "physic", "val_do_calc");
 			interf.add_row();
-			interf.add_row_switch_boo(4, "debug", "val_draw_debug");
-			interf.add_row_label(2, "");
-			interf.add_row_switch_boo(4, "ray", "val_do_ray");
+			//			interf.add_row_switch_boo(4, "debug", "val_draw_debug");
+			interf.add_row_label(6, "");
+			interf.add_row_switch_boo(4, "light", "val_do_ray");
 			interf.add_row();
 			interf.add_row_switch_boo(4, "tile", "val_do_tile");
-			interf.add_row_label(6, "");
+			interf.add_row_label(2, "");
+			interf.add_row_switch_boo(4, "edit", "val_edit_tile");
 
 		}
 
@@ -520,240 +367,150 @@ public class pBox2d extends pSystem {
 		}
 
 		public final ArrayList<Rectangle> scissors = new ArrayList<Rectangle>();
-		
+
 		public void pre_draw() { 
-			
+
 			if (val_do_ray.get() && app.gdx.drawer.USE_FX) {
 
-				app.gdx.drawer.pause_batch();
-				
-				buffer.begin(); 
-				
-				ScreenUtils.clear(app.gdx.drawer.buffer_clear_color);
-				
-//				Color c = app.gdx.drawer.buffer_clear_color;
-//		        Gdx.gl.glClearColor(c.r,c.g,c.b,c.a);
-//		        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-//
-//		        Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
-//		        Gdx.gl20.glEnable(GL20.GL_BLEND);
-		        
-				app.gdx.drawer.restart_batch();
-				
+				rayHandler.beginRender();
+
 			}
-			
+
 		}
 		public void draw_tile() { 
 
 			if (val_do_tile.get()) {
-				
-				if (app.input.mouseLeft.trigClick && app.view.mouse_is_hover_view()) {
-					Vector2 s = new Vector2(app.view.mouse_in_view());
-					tilemap.addCell(s.x,s.y);
-			        tilemap.updateAll();
-				}
 
-				if (app.input.mouseRight.trigClick && app.view.mouse_is_hover_view()) {
-					Vector2 s = new Vector2(app.view.mouse_in_view());
-					tilemap.delCell(s.x,s.y);
-			        tilemap.updateAll();
-				}
+				if (val_edit_tile.get() && app.input.mouseLeft.trigClick && 
+						app.view.mouse_is_hover_view()) {
+					tilemap.addCell(app.view.mouse_in_view()); }
+				if (val_edit_tile.get() && app.input.mouseRight.trigClick && 
+						app.view.mouse_is_hover_view()) {
+					tilemap.delCell(app.view.mouse_in_view()); }
 
-				app.gdx.drawer.end();
+				tilemap.render();
 
-		        tilemap.update();
-		        
-		        tilemap.render();
-		        
-		        app.gdx.drawer.begin();
-		        
 			}
-			
-			
 
-//			app.gdx.drawer.pause_batch();
-			
-//			shadowbuffer.begin(); 
-			
-//			ScreenUtils.clear(Utl.color(0));
-
-//			Color c = Utl.color(0,0);
-//	        Gdx.gl.glClearColor(c.r,c.g,c.b,c.a);
-//	        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-//			app.gdx.drawer.restart_batch();
-			
-			
-			
 			// WORKING
-//			app.getSystem(pGeom.class).draw_shadow();
+			//			app.getSystem(pGeom.class).draw_shadow();
 
-			
-			
-			
-//			app.gdx.drawer.pause_batch();
-
-//			shadowbuffer.end(); 
-						
-//			gaussianBlur(shadowbuffer, 5);
-
-//			shadowbuffer.end(); 
-
-//	        app.gdx.drawer.spritebatch.setBlendFunction(GL20.GL_ZERO, GL20.GL_SRC_COLOR);
-	        
-//			app.gdx.drawer.spritebatch.begin();
-			
-//	        Gdx.gl20.glBlendFunc(GL20.GL_ZERO, GL20.GL_SRC_COLOR);
-//	        Gdx.gl20.glEnable(GL20.GL_BLEND);
-	        
-//			app.gdx.drawer.spritebatch.draw(shadowbuffer.getTexture(), 0, 0, 
-//					app.gdx.getscreenwidth(), 
-//					app.gdx.getscreenheight(), 
-//					0, 0, 1, 1);
-//
-//			app.gdx.drawer.spritebatch.end();
-
-//	        app.gdx.drawer.spritebatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
-	        
-//			Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
-
-//			app.gdx.drawer.restart_batch();
-			
-			
 		}
-		
-		
-		
-		
-		
 
-		
-		
-		
 		public void draw() { 
 			
-			
-			
-			if (val_do_draw.get()) {
-				boxRenderer.render(world);
-			}
 		}
 
 		public void draw_ray() { 
 
 			if (val_do_ray.get() && app.gdx.drawer.USE_FX) {
 
-				app.gdx.drawer.pause_batch();
+				rayHandler.endRender();
+
+				//				app.gdx.drawer.spritebatch.end();
+				//
+				//				if (val_draw_debug.get()) 
+				//					debugRenderer.render(world, cam.combined);
+				//				
+				//				app.gdx.drawer.spritebatch.begin();
+
+			}	
+			if (val_do_draw.get()) {
+				boxRenderer.render(world);
 				
-//		        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
-				
-		        buffer.end();
-		        
-				cam.setToOrtho(false, (int)(app.gdx.getscreenwidth()), 
-						(int)(app.gdx.getscreenheight()));
-				Vector2 view_center = new Vector2(view.val_pos.get());
-				view_center.x += view.val_view_size.x() / 2.0f;
-				view_center.y -= view.val_view_size.y() / 2.0f + nGUI.book.RS;
-				float scale = view.val_cam_scale.get();
-				float sclinv = 1f / scale;
-				Vector2 m = new Vector2(view_center)
-						.sub(app.gdx.getscreenwidth() / 2.0f, app.gdx.getscreenheight() / 2.0f);
-				m.scl(sclinv).rotateRad(-view.val_cam_rot.get());
-				m.add(view.val_cam_pos.get()).scl(-1f);
-				cam.zoom = sclinv;
-				cam.position.set(m.x, m.y, 0f);
-				cam.direction.set(0f, 0f, -1f);
-				Vector2 u = new Vector2(0f,1f).rotateRad(-view.val_cam_rot.get());
-				cam.up.set(u.x, u.y, 0f);
-				cam.update();
-
-//				app.gdx.drawer.flush();
-				for (Rectangle r : Utl.duplic(app.gui.scissors)) {
-					scissors.add(r); ScissorStack.popScissors(); }
-				app.gui.scissors.clear();
-
-				rayHandler.setCombinedMatrix(cam.combined,
-						m.x, m.y, app.gdx.getscreenwidth(), app.gdx.getscreenheight()); 
-				rayHandler.update();
-				rayHandler.prepareRender();
-
-//				app.gdx.drawer.flush();
-				for (Rectangle r : Utl.duplic(scissors)) {
-					app.gui.scissors.add(r); ScissorStack.pushScissors(r); }
-				scissors.clear();
-
-				buffer.begin(); 
-				
-				rayHandler.renderOnly();
-				
-		        buffer.end();
-
-				app.gdx.drawer.spritebatch.begin();
-				app.gdx.drawer.spritebatch.draw(buffer.getTexture(), 0, 0, 
-						app.gdx.getscreenwidth(), 
-						app.gdx.getscreenheight(), 
-						0, 0, 1, 1);
-				app.gdx.drawer.spritebatch.end();
-
-				if (val_draw_debug.get()) 
-					debugRenderer.render(world, cam.combined);
-				
-				app.gdx.drawer.spritebatch.begin();
+				app.stroke(255,0,255,255,5f); app.fill(55,0,55,255);
+				for (Light light : rayHandler.lightList) {
+					app.circle(light.getPosition().x, light.getPosition().y, 12f);
+				}
 				
 			}
 		}
-		public void post_draw() { 
-			
+		//		public void post_draw() { 
+		//			
+		//		}
+		//		public void draw_debug() { 
+		//
+		//			if (val_draw_debug.get()) {
+		//				app.gdx.drawer.end();
+		//
+		//				cam.setToOrtho(false, (int)(app.gdx.getscreenwidth()), 
+		//						(int)(app.gdx.getscreenheight()));
+		//				Vector2 view_center = new Vector2(view.val_pos.get());
+		//				view_center.x += view.val_view_size.x() / 2.0f;
+		//				view_center.y -= view.val_view_size.y() / 2.0f + app.gui.book.RS;
+		//				Vector2 m = new Vector2(view_center)
+		//						.sub(app.gdx.getscreenwidth() / 2.0f, app.gdx.getscreenheight() / 2.0f);
+		//				m.scl(1/view.val_cam_scale.get()).rotateRad(-view.val_cam_rot.get());
+		//				m.add(view.val_cam_pos.get()).scl(-1f);
+		//				cam.zoom = 1 / view.val_cam_scale.get();
+		//				cam.position.set(m.x, m.y, 0);
+		//				cam.direction.set(0, 0, -1f);
+		//				Vector2 u = new Vector2(0,1).rotateRad(-view.val_cam_rot.get());
+		//				cam.up.set(u.x, u.y, 0);
+		//				cam.update();
+		//
+		//				debugRenderer.render(world, cam.combined);
+		//
+		//				app.gdx.drawer.begin();
+		//			}
+		//		}
+
+		public void new_ground_box(float x, float y, float w, float h) {
+
+			// Create our body definition
+			BodyDef groundBodyDef = new BodyDef();  
+			// Set its world position
+			groundBodyDef.position.set(new Vector2(x, y));  
+
+			// Create a body from the definition and add it to the world
+			Body groundBody = world.createBody(groundBodyDef);  
+
+			// Create a polygon shape
+			PolygonShape groundBox = new PolygonShape();  
+			// Set the polygon shape as a box which is twice the size of our view port and 20 high
+			// (setAsBox takes half-width and half-height as arguments)
+			groundBox.setAsBox(w/2f,h/2f);
+			// Create a fixture from our polygon shape and add it to our ground body  
+			groundBody.createFixture(groundBox, 0.0f);
+			// Clean up after ourselves
+			groundBox.dispose();
+
 		}
-		public void draw_debug() { 
-
-			if (val_draw_debug.get()) {
-				app.gdx.drawer.end();
-
-				cam.setToOrtho(false, (int)(app.gdx.getscreenwidth()), 
-						(int)(app.gdx.getscreenheight()));
-				Vector2 view_center = new Vector2(view.val_pos.get());
-				view_center.x += view.val_view_size.x() / 2.0f;
-				view_center.y -= view.val_view_size.y() / 2.0f + app.gui.book.RS;
-				Vector2 m = new Vector2(view_center)
-						.sub(app.gdx.getscreenwidth() / 2.0f, app.gdx.getscreenheight() / 2.0f);
-				m.scl(1/view.val_cam_scale.get()).rotateRad(-view.val_cam_rot.get());
-				m.add(view.val_cam_pos.get()).scl(-1f);
-				cam.zoom = 1 / view.val_cam_scale.get();
-				cam.position.set(m.x, m.y, 0);
-				cam.direction.set(0, 0, -1f);
-				Vector2 u = new Vector2(0,1).rotateRad(-view.val_cam_rot.get());
-				cam.up.set(u.x, u.y, 0);
-				cam.update();
-
-				debugRenderer.render(world, cam.combined);
-
-				app.gdx.drawer.begin();
-			}
-		}
-
 
 		public nMap<Body> bodys = new nMap<Body>();
 		private int get_free_bod_nb() {
 			int n = 0; while (bodys.get(""+n) != null) n++; return n; }
-		
+
 		public nMap<Joint> joints = new nMap<Joint>();
-//		private int joint_nb = 0;
+		//		private int joint_nb = 0;
 		public void init_dyna_body(pBody b) {
 			app.addEventNextFrame(new nRun(b) {public void run() {
 				pBody b = (pBody)builder;
 				if (b.param("box_body") == null || b.param("dynamic") == null) return;
-	
+
 				// First we create a body definition
 				BodyDef bodyDef = new BodyDef();
 				// We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
 				bodyDef.type = BodyType.DynamicBody;
 				// Set our body's starting position in the world
-				bodyDef.position.set(b.getVec("box_body", "pos"));
-	
+				if (b.hasParam("ref") && b.getBoo("dynamic", "ctrl_ref"))
+					bodyDef.position.set(b.getVec("ref", "pos"));
+				else bodyDef.position.set(b.getVec("box_body", "pos"));
+				
+
 				// Create our body in the world using our body definition
 				Body body = world.createBody(bodyDef);
-				
+
+				if (b.hasParam("cone_light")) {
+					
+					PointLight pl = new PointLight(rayHandler, 120, 
+							new Color(1f,0.6f,0.4f,0.6f), 900, 0, 0);
+					pl.attachToBody(body, 0f, 0f);
+//					ConeLight coneLight = new ConeLight(rayHandler, 
+//							120, new Color(1f,0.6f,0.4f,1f), 2400f, 0f, 0f, 0f, 45f);
+//					coneLight.attachToBody(body, 0f, 0f);
+				}
+
 				if (!b.getBoo("box_body", "copy_geom") || !b.hasParam("geom")) {
 					PolygonShape polygonshape = new PolygonShape();
 					polygonshape.setAsBox(100,100);
@@ -772,7 +529,7 @@ public class pBox2d extends pSystem {
 						ArrayList<Integer> faceC = geom.getCollecData("faceC", Integer.class);
 						if (faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
 								faceC.size() != faceB.size()) return;
-	
+
 						for (int i = 0 ; i < faceA.size() ; i++) {
 							int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
 							if (p1 < 0 || p1 >= point.size() || 
@@ -795,35 +552,41 @@ public class pBox2d extends pSystem {
 						}
 					}
 				}
-				
+
 				int bod_nb = get_free_bod_nb();
 				bodys.put(""+bod_nb, body);
 				b.setStr("box_body", "body_ref", ""+bod_nb);
 			}});
 		}
-		
+
 
 		public void init_obscure_body(pBody b) {
 			app.addEventNextFrame(new nRun(b) {public void run() {
 				pBody b = (pBody)builder;
 				if (b.param("box_body") == null || b.param("kinematic") == null) return;
-	
+
 				// First we create a body definition
 				BodyDef bodyDef = new BodyDef();
 				// We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
 				bodyDef.type = BodyType.KinematicBody;
 				// Set our body's starting position in the world
-				bodyDef.position.set(b.getVec("box_body", "pos"));
-	
+				if (b.hasParam("ref") && b.getBoo("kinematic", "follow_ref"))
+					bodyDef.position.set(b.getVec("ref", "pos"));
+				else bodyDef.position.set(b.getVec("box_body", "pos"));
+				
 				// Create our body in the world using our body definition
 				Body body = world.createBody(bodyDef);
-				
+
 				if (b.hasParam("cone_light")) {
-					ConeLight coneLight = new ConeLight(rayHandler, 
-					120, new Color(1f,0.6f,0.4f,0.6f), 2400f, 0f, 0f, 0f, 45f);
-					coneLight.attachToBody(body, 0f, 0f);
+					
+					PointLight pl = new PointLight(rayHandler, 120, 
+							new Color(1f,0.6f,0.4f,0.6f), 900, 0, 0);
+					pl.attachToBody(body, 0f, 0f);
+//					ConeLight coneLight = new ConeLight(rayHandler, 
+//							120, new Color(1f,0.6f,0.4f,1f), 2400f, 0f, 0f, 0f, 45f);
+//					coneLight.attachToBody(body, 0f, 0f);
 				}
-				
+
 				if (!b.getBoo("box_body", "copy_geom") || !b.hasParam("geom")) {
 					CircleShape circlenshape = new CircleShape();
 					circlenshape.setRadius(b.getFlt("kinematic", "rad"));
@@ -842,7 +605,7 @@ public class pBox2d extends pSystem {
 						ArrayList<Integer> faceC = geom.getCollecData("faceC", Integer.class);
 						if (faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
 								faceC.size() != faceB.size()) return;
-	
+
 						for (int i = 0 ; i < faceA.size() ; i++) {
 							int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
 							if (p1 < 0 || p1 >= point.size() || 
@@ -865,20 +628,20 @@ public class pBox2d extends pSystem {
 						}
 					}
 				}
-				
+
 				int bod_nb = get_free_bod_nb();
 				bodys.put(""+bod_nb, body); 
 				b.setStr("box_body", "body_ref", ""+bod_nb);
-				
+
 			}});
-//			MouseJointDef defJoint = new MouseJointDef();
-//			defJoint.target.set(b.getVec("box_body", "pos"));
-//			
-//			MouseJoint joint = (MouseJoint)world.createJoint(defJoint); // Returns subclass Joint.
-//
-//			joints.put(""+joint_nb, joint); joint_nb++;
-//			b.setStr("kinematic", "joint_ref", ""+joint_nb);
-			
+			//			MouseJointDef defJoint = new MouseJointDef();
+			//			defJoint.target.set(b.getVec("box_body", "pos"));
+			//			
+			//			MouseJoint joint = (MouseJoint)world.createJoint(defJoint); // Returns subclass Joint.
+			//
+			//			joints.put(""+joint_nb, joint); joint_nb++;
+			//			b.setStr("kinematic", "joint_ref", ""+joint_nb);
+
 		}
 
 		public void init_light_body(pBody b) {
@@ -894,16 +657,16 @@ public class pBox2d extends pSystem {
 					bodyDef.type = BodyType.KinematicBody;
 					// Set our body's starting position in the world
 					bodyDef.position.set(b.getVec("box_body", "pos"));
-		
+
 					// Create our body in the world using our body definition
 					body = world.createBody(bodyDef);
-		
+
 					int bod_nb = get_free_bod_nb();
 					bodys.put(""+bod_nb, body); 
 					b.setStr("box_body", "body_ref", ""+bod_nb);
 				}
-				
-				int rays = 50;
+
+				int rays = 120;
 				Vector2 pos = b.getVec("light", "pos");
 				float dist = b.getFlt("light", "dist");
 				Color col = Utl.color(b.getInt("light", "r"), b.getInt("light", "g"), 
@@ -922,22 +685,73 @@ public class pBox2d extends pSystem {
 			world.destroyBody(body);
 		}
 
-		public void accel_body(pBody b, float x, float y) {
+		public void accel_body(pBody b, boolean glob, float x, float y, float max) {
 			if (b.param("box_body") == null) return;
 			Body body = bodys.get(b.getStr("box_body", "body_ref"));
 			if (body == null) return;
 			Vector2 pos = body.getPosition();
+			Vector2 vel = body.getLinearVelocity();
 			Vector2 a = new Vector2(x,y);
-			a.rotateRad(body.getAngle());
+			Vector2 futur = new Vector2(vel).add(a);
+			float vell = futur.len();
+			if (vell > max) {
+				decel_body_move(b,a.len());
+				return; }
+			if (!glob) a.rotateRad(body.getAngle()-(float)(Math.PI/2f));
 			body.applyLinearImpulse(a.x, a.y, pos.x, pos.y, true);
 		}
 
-		public void rot_body(pBody b, float r) {
+		public void decel_body_move(pBody b, float s) {
 			if (b.param("box_body") == null) return;
 			Body body = bodys.get(b.getStr("box_body", "body_ref"));
 			if (body == null) return;
 			Vector2 pos = body.getPosition();
-			body.applyLinearImpulse(0, r, pos.x+50f, pos.y, true);
+			Vector2 vel = body.getLinearVelocity();
+			float vell = vel.len();
+			if (vell > s) vel.nor().scl(s);
+			vel.scl(-1f);
+			body.applyLinearImpulse(vel.x, vel.y, pos.x, pos.y, true);
+		}
+
+		public void rot_body_toward(pBody b, float targ, float r, float max) {
+			if (b.param("box_body") == null) return;
+			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+			if (body == null) return;
+			float vel = body.getAngularVelocity();
+			float rot = body.getAngle();
+			float m = Utl.mapToCircularValuesDist(rot, targ, r, 
+					-((float)Math.PI), ((float)Math.PI));
+			float d = Utl.mapToCircularValuesDir(rot, targ, r, 
+					-((float)Math.PI), ((float)Math.PI)); 
+			float d2 = Utl.mapToCircularValuesDir(rot+vel, targ, r, 
+					-((float)Math.PI), ((float)Math.PI)); 
+			if ((d>0) == (d2>0) && m > 0.01f) {
+				m *= d;
+				rot_body(b, m, max);
+			} else {
+				decel_body_rot(b, r);
+			}
+		}
+
+		public void rot_body(pBody b, float r, float max) {
+			if (b.param("box_body") == null) return;
+			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+			if (body == null) return;
+			float vel = body.getAngularVelocity();
+			if (vel > 0f && vel > max) return;
+			if (vel < 0f && vel < -max) return;
+			body.applyAngularImpulse(body.getInertia()*r, true);
+		}
+
+		public void decel_body_rot(pBody b, float s) {
+			if (b.param("box_body") == null) return;
+			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+			if (body == null) return;
+			Vector2 pos = body.getPosition();
+			float vel = body.getAngularVelocity();
+			if (vel > 0f && vel > s) vel = s;
+			if (vel < 0f && vel < -s) vel = -s;
+			body.applyAngularImpulse(body.getInertia()*-vel, true);
 		}
 
 		public void update_body(pBody b) {

@@ -204,7 +204,7 @@ public abstract class pSystem {
 	}
 	public void tool_setup(boolean open) {
 		
-		app.addDelayEvent(1, new nRun(this) { public void run() {
+		app.addDelayEvent(6, new nRun(this) { public void run() {
 			nWidgetGroup sec = app.gui.toolbox
 					.addSection(system_refs.get(builder.getClass()), open);
 			nInterface interf = app.gui.addInterface();
