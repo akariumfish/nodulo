@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="left-up" width="32" height="32" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="1">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="left-up" width="32" height="32" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="33">
  <tileset firstgid="1" name="Tilemap" tilewidth="16" tileheight="16" spacing="1" tilecount="91" columns="13">
   <image source="Tilemap.png" width="221" height="118"/>
   <tile id="0">
@@ -748,6 +748,55 @@
     <wangtile tileid="89" wangid="1,3,3,3,1,1,1,3"/>
     <wangtile tileid="90" wangid="1,1,1,1,1,1,1,1"/>
    </wangset>
+   <wangset name="Wall" type="mixed" tile="-1">
+    <wangcolor name="wall" color="#ff0000" tile="-1" probability="1"/>
+    <wangcolor name="empty" color="#00ff00" tile="-1" probability="1"/>
+    <wangtile tileid="0" wangid="2,2,1,1,1,2,2,2"/>
+    <wangtile tileid="1" wangid="2,2,1,1,1,1,1,2"/>
+    <wangtile tileid="2" wangid="2,2,2,2,1,1,1,2"/>
+    <wangtile tileid="3" wangid="2,2,2,2,1,2,2,2"/>
+    <wangtile tileid="4" wangid="2,2,1,2,2,2,2,2"/>
+    <wangtile tileid="5" wangid="2,2,1,2,2,2,1,2"/>
+    <wangtile tileid="6" wangid="2,2,2,2,2,2,1,2"/>
+    <wangtile tileid="7" wangid="2,2,1,1,1,2,1,2"/>
+    <wangtile tileid="8" wangid="1,2,1,1,1,1,1,2"/>
+    <wangtile tileid="9" wangid="2,2,1,2,1,1,1,2"/>
+    <wangtile tileid="10" wangid="2,2,1,2,1,2,2,2"/>
+    <wangtile tileid="11" wangid="2,2,2,2,1,2,1,2"/>
+    <wangtile tileid="12" wangid="1,2,2,2,1,2,1,1"/>
+    <wangtile tileid="13" wangid="1,1,1,1,1,2,2,2"/>
+    <wangtile tileid="14" wangid="1,1,1,1,1,1,1,1"/>
+    <wangtile tileid="15" wangid="1,2,2,2,1,1,1,1"/>
+    <wangtile tileid="16" wangid="1,2,2,2,1,2,2,2"/>
+    <wangtile tileid="17" wangid="2,2,1,2,1,2,1,2"/>
+    <wangtile tileid="18" wangid="1,1,1,1,1,1,1,1"/>
+    <wangtile tileid="19" wangid="1,2,1,2,1,2,1,2"/>
+    <wangtile tileid="20" wangid="1,1,1,1,1,2,1,2"/>
+    <wangtile tileid="21" wangid="1,1,1,1,1,1,1,1"/>
+    <wangtile tileid="22" wangid="1,2,1,2,1,1,1,1"/>
+    <wangtile tileid="23" wangid="1,2,1,2,2,2,2,2"/>
+    <wangtile tileid="24" wangid="1,2,2,2,2,2,1,2"/>
+    <wangtile tileid="25" wangid="1,1,1,2,1,2,2,2"/>
+    <wangtile tileid="26" wangid="1,1,1,2,2,2,2,2"/>
+    <wangtile tileid="27" wangid="1,1,1,2,2,2,1,1"/>
+    <wangtile tileid="28" wangid="1,2,2,2,2,2,1,1"/>
+    <wangtile tileid="29" wangid="1,2,2,2,2,2,2,2"/>
+    <wangtile tileid="30" wangid="1,2,1,2,2,2,1,2"/>
+    <wangtile tileid="31" wangid="1,2,1,2,1,2,2,2"/>
+    <wangtile tileid="32" wangid="1,2,2,2,1,2,1,2"/>
+    <wangtile tileid="33" wangid="1,1,1,2,2,2,1,2"/>
+    <wangtile tileid="34" wangid="1,1,1,2,1,2,1,1"/>
+    <wangtile tileid="35" wangid="1,2,1,2,2,2,1,1"/>
+    <wangtile tileid="36" wangid="1,2,1,1,1,2,2,2"/>
+    <wangtile tileid="37" wangid="1,2,2,2,1,1,1,2"/>
+    <wangtile tileid="38" wangid="1,1,1,1,1,1,1,1"/>
+    <wangtile tileid="39" wangid="2,2,2,2,2,2,2,2"/>
+    <wangtile tileid="47" wangid="1,1,1,2,1,1,1,1"/>
+    <wangtile tileid="48" wangid="1,1,1,1,1,2,1,1"/>
+    <wangtile tileid="49" wangid="1,2,1,1,1,1,1,1"/>
+    <wangtile tileid="50" wangid="1,1,1,1,1,1,1,2"/>
+    <wangtile tileid="51" wangid="1,1,1,1,1,1,1,1"/>
+   </wangset>
   </wangsets>
  </tileset>
  <tileset firstgid="92" name="Lighting" tilewidth="16" tileheight="16" tilecount="9" columns="9">
@@ -798,7 +847,11 @@
    </properties>
   </tile>
  </tileset>
- <layer id="1" name="Map" width="32" height="32">
+ <layer id="1" name="Ground" width="32" height="32" locked="1">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="tile" type="bool" value="true"/>
+  </properties>
   <data encoding="csv">
 40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,
 40,40,40,40,53,54,54,54,54,54,54,54,54,54,54,54,54,54,54,54,54,54,54,54,54,54,54,55,40,40,40,40,
@@ -834,4 +887,50 @@
 40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40
 </data>
  </layer>
+ <objectgroup color="#ffff00" id="4" name="Light" locked="1">
+  <properties>
+   <property name="light" type="bool" value="true"/>
+   <property name="mode" type="int" value="1"/>
+  </properties>
+  <object id="3" template="ground_light.tx" x="256" y="160"/>
+  <object id="5" template="ground_light.tx" x="256" y="352"/>
+  <object id="6" template="ground_light.tx" x="320" y="352"/>
+  <object id="7" template="ground_light.tx" x="384" y="352"/>
+  <object id="8" template="ground_light.tx" x="384" y="160"/>
+  <object id="9" template="ground_light.tx" x="320" y="160"/>
+  <object id="10" template="ground_light.tx" x="320" y="224"/>
+  <object id="11" template="ground_light.tx" x="320" y="288"/>
+  <object id="12" template="ground_light.tx" x="384" y="288"/>
+  <object id="13" template="ground_light.tx" x="384" y="224"/>
+  <object id="14" template="ground_light.tx" x="256" y="224"/>
+  <object id="15" template="ground_light.tx" x="256" y="288"/>
+  <object id="16" template="ground_light.tx" x="192" y="288"/>
+  <object id="17" template="ground_light.tx" x="192" y="224"/>
+  <object id="18" template="ground_light.tx" x="192" y="160"/>
+  <object id="19" template="ground_light.tx" x="192" y="352"/>
+  <object id="20" template="ground_light.tx" x="128" y="352"/>
+  <object id="21" template="ground_light.tx" x="128" y="288"/>
+  <object id="22" template="ground_light.tx" x="128" y="224"/>
+  <object id="23" template="ground_light.tx" x="128" y="160"/>
+  <object id="24" template="ground_light.tx" x="64" y="160"/>
+  <object id="25" template="ground_light.tx" x="64" y="224"/>
+  <object id="26" template="ground_light.tx" x="64" y="288"/>
+  <object id="27" template="ground_light.tx" x="64" y="352"/>
+  <object id="28" template="ground_light.tx" x="448" y="352"/>
+  <object id="29" template="ground_light.tx" x="448" y="288"/>
+  <object id="30" template="ground_light.tx" x="448" y="224"/>
+  <object id="31" template="ground_light.tx" x="448" y="160"/>
+ </objectgroup>
+ <objectgroup id="6" name="Space" locked="1">
+  <properties>
+   <property name="mode" type="int" value="2"/>
+   <property name="space" type="bool" value="true"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="7" name="View" locked="1">
+  <properties>
+   <property name="mode" type="int" value="3"/>
+   <property name="view" type="bool" value="true"/>
+  </properties>
+ </objectgroup>
 </map>

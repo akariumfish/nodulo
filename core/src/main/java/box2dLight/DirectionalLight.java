@@ -61,10 +61,10 @@ public class DirectionalLight extends Light {
 	 * @param directionDegree
 	 *            direction in degrees
 	 */
-	public DirectionalLight(RayHandler rayHandler, int rays, Color color,
+	public DirectionalLight(LightLayer layer, int rays, Color color,
 			float directionDegree) {
 		
-		super(rayHandler, rays, color, Float.POSITIVE_INFINITY, directionDegree);
+		super(layer, rays, color, Float.POSITIVE_INFINITY, directionDegree);
 		
 		vertexNum = (vertexNum - 1) * 2;
 		start = new Vector2[rayNum];

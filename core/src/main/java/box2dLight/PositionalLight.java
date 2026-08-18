@@ -54,8 +54,10 @@ public abstract class PositionalLight extends Light {
 	 * @param directionDegree
 	 *            direction in degrees (if applicable) 
 	 */
-	public PositionalLight(RayHandler rayHandler, int rays, Color color, float distance, float x, float y, float directionDegree) {
-		super(rayHandler, rays, color, distance, directionDegree);
+//	public PositionalLight(RayHandler rayHandler, int rays, Color color, float distance, float x, float y, float directionDegree) {
+	public PositionalLight(LightLayer layer, int rays, Color color, float distance, float x, float y, float directionDegree) {
+//		super(rayHandler, rays, color, distance, directionDegree);
+		super(layer, rays, color, distance, directionDegree);
 		start.x = x;
 		start.y = y;
 

@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
@@ -83,6 +84,10 @@ public class RayHandler implements Disposable {
 	 * <p>NOTE: DO NOT MODIFY THIS LIST
 	 */
 	public final Array<Light> lightList = new Array<Light>(false, 16);
+	
+	
+	
+	public final Array<LightLayer> layerList = new Array<LightLayer>(false, 16);
 	
 	/**
 	 * This Array contain all the disabled lights.
@@ -211,9 +216,49 @@ public class RayHandler implements Disposable {
 //					GL20.GL_SRC_COLOR);
 
 	}
+
+	public void setBlendDef() {
+		diffuseBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_ZERO);
+		shadowBlendFunc.set(GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		setDiffuseLight(true);
+		setAmbientLight(0.0f, 0.0f, 0.0f, 0f);
+		buffer_clear_color.set(def_buffer_clear_color);
+		setBlur(true);
+	}
+
+	public void setBlendGround() {
+		setBlendDef();
+		setAmbientLight(0.2f, 0.2f, 0.2f, 1f);
+	}
+
+	public void setBlendSpace() {
+		setBlendDef();
+		shadowBlendFunc.set(GL20.GL_SRC_COLOR, GL20.GL_ONE);
+		setDiffuseLight(false);
+	}
+
+	public void setBlendView() {
+		setBlendDef();
+		
+//		diffuseBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_ZERO);
+//		setDiffuseLight(true);
+//		setAmbientLight(0.0f, 0.0f, 0.0f, 1f);
+
+		buffer_clear_color.set(Utl.color(0,0));
+//		diffuseBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_ZERO);
+//		setDiffuseLight(true);
+//		setBlur(false);
+		setBlurNum(1);
+//		setAmbientLight(1.0f, 1.0f, 1.0f, 0f);
+		setDiffuseLight(false);
+//		shadowBlendFunc.set(GL20.GL_ZERO, GL20.GL_SRC_ALPHA);
+		shadowBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_ONE_MINUS_SRC_ALPHA);
+	}
 	
 	
 	
+
+	public ArrayList<Body> transparent = new ArrayList<Body>();
 	
 
 	public final ArrayList<Rectangle> scissors = new ArrayList<Rectangle>();
@@ -227,7 +272,7 @@ public class RayHandler implements Disposable {
 //			ScreenUtils.clear(app.gdx.drawer.buffer_clear_color);
 
 //			Color c = app.gdx.drawer.buffer_clear_color;
-		Color c = Utl.color(0);
+		Color c = Utl.color(0,0);
         Gdx.gl.glClearColor(c.r,c.g,c.b,c.a);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 //
@@ -237,54 +282,80 @@ public class RayHandler implements Disposable {
 		app.gdx.drawer.restart_batch();
 		
 	}
+
+	private ArrayList<Light> temp = new ArrayList<Light>();
+	public void renderLayer(LightLayer layer) { 
+
+		temp.clear();
+		for (Light l : lightList) temp.add(l);
+		for (Light l : temp) l.setActive(false);
+		temp.clear();
+		
+		layer.prepareRender();
+		if (layer.active) {
+
+			temp.clear();
+			for (Light l : layer.lightList) temp.add(l);
+			for (Light l : temp) l.setActive(true);
+			temp.clear();
+			
 	
-	public void endRender() { 
-		
+	//		app.gdx.drawer.pause_batch();
+			
+	//	        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+			
+			render_buffer.end();
+	        
+			cam.setToOrtho(false, (int)(app.gdx.getscreenwidth()), 
+					(int)(app.gdx.getscreenheight()));
+			Vector2 view_center = new Vector2(view.val_pos.get());
+			view_center.x += view.val_view_size.x() / 2.0f;
+			view_center.y -= view.val_view_size.y() / 2.0f + nGUI.book.RS;
+			float scale = view.val_cam_scale.get();
+			float sclinv = 1f / scale;
+			Vector2 m = new Vector2(view_center)
+					.sub(app.gdx.getscreenwidth() / 2.0f, app.gdx.getscreenheight() / 2.0f);
+			m.scl(sclinv).rotateRad(-view.val_cam_rot.get());
+			m.add(view.val_cam_pos.get()).scl(-1f);
+			cam.zoom = sclinv;
+			cam.position.set(m.x, m.y, 0f);
+			cam.direction.set(0f, 0f, -1f);
+			Vector2 u = new Vector2(0f,1f).rotateRad(-view.val_cam_rot.get());
+			cam.up.set(u.x, u.y, 0f);
+			cam.update();
+	
+	//			app.gdx.drawer.flush();
+			for (Rectangle r : Utl.duplic(app.gui.scissors)) {
+				scissors.add(r); ScissorStack.popScissors(); }
+			app.gui.scissors.clear();
+	
+			setCombinedMatrix(cam.combined,
+					m.x, m.y, app.gdx.getscreenwidth(), app.gdx.getscreenheight()); 
+			
+			update();
+			prepareRender();
+			
+//			app.gdx.drawer.flush();
+			for (Rectangle r : Utl.duplic(scissors)) {
+				app.gui.scissors.add(r); ScissorStack.pushScissors(r); }
+			scissors.clear();
+	
+			render_buffer.begin(); 
+			
+			renderOnly();
+
+//			app.gdx.drawer.restart_batch();
+			
+		} else {
+
+			for (Light l : layer.lightList) l.update();
+			
+		}
+	}
+
+	public void endLayeredRender() { 
+
 		app.gdx.drawer.pause_batch();
-		
-//	        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
-		
-		render_buffer.end();
-        
-		cam.setToOrtho(false, (int)(app.gdx.getscreenwidth()), 
-				(int)(app.gdx.getscreenheight()));
-		Vector2 view_center = new Vector2(view.val_pos.get());
-		view_center.x += view.val_view_size.x() / 2.0f;
-		view_center.y -= view.val_view_size.y() / 2.0f + nGUI.book.RS;
-		float scale = view.val_cam_scale.get();
-		float sclinv = 1f / scale;
-		Vector2 m = new Vector2(view_center)
-				.sub(app.gdx.getscreenwidth() / 2.0f, app.gdx.getscreenheight() / 2.0f);
-		m.scl(sclinv).rotateRad(-view.val_cam_rot.get());
-		m.add(view.val_cam_pos.get()).scl(-1f);
-		cam.zoom = sclinv;
-		cam.position.set(m.x, m.y, 0f);
-		cam.direction.set(0f, 0f, -1f);
-		Vector2 u = new Vector2(0f,1f).rotateRad(-view.val_cam_rot.get());
-		cam.up.set(u.x, u.y, 0f);
-		cam.update();
-
-//			app.gdx.drawer.flush();
-		for (Rectangle r : Utl.duplic(app.gui.scissors)) {
-			scissors.add(r); ScissorStack.popScissors(); }
-		app.gui.scissors.clear();
-
-		setCombinedMatrix(cam.combined,
-				m.x, m.y, app.gdx.getscreenwidth(), app.gdx.getscreenheight()); 
-		
-		
-		update();
-		prepareRender();
-		
-		
-//			app.gdx.drawer.flush();
-		for (Rectangle r : Utl.duplic(scissors)) {
-			app.gui.scissors.add(r); ScissorStack.pushScissors(r); }
-		scissors.clear();
-
-		render_buffer.begin(); 
-		
-		renderOnly();
 		
 		render_buffer.end();
 
@@ -295,9 +366,75 @@ public class RayHandler implements Disposable {
 				0, 0, 1, 1);
 		app.gdx.drawer.spritebatch.end();
 		
-		app.gdx.drawer.spritebatch.begin();
+		app.gdx.drawer.restart_batch();
 		
 	}
+	
+	
+	
+	
+	
+	
+//	public void endRender() { 
+//		
+//		app.gdx.drawer.pause_batch();
+//		
+////	        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+//		
+//		render_buffer.end();
+//        
+//		cam.setToOrtho(false, (int)(app.gdx.getscreenwidth()), 
+//				(int)(app.gdx.getscreenheight()));
+//		Vector2 view_center = new Vector2(view.val_pos.get());
+//		view_center.x += view.val_view_size.x() / 2.0f;
+//		view_center.y -= view.val_view_size.y() / 2.0f + nGUI.book.RS;
+//		float scale = view.val_cam_scale.get();
+//		float sclinv = 1f / scale;
+//		Vector2 m = new Vector2(view_center)
+//				.sub(app.gdx.getscreenwidth() / 2.0f, app.gdx.getscreenheight() / 2.0f);
+//		m.scl(sclinv).rotateRad(-view.val_cam_rot.get());
+//		m.add(view.val_cam_pos.get()).scl(-1f);
+//		cam.zoom = sclinv;
+//		cam.position.set(m.x, m.y, 0f);
+//		cam.direction.set(0f, 0f, -1f);
+//		Vector2 u = new Vector2(0f,1f).rotateRad(-view.val_cam_rot.get());
+//		cam.up.set(u.x, u.y, 0f);
+//		cam.update();
+//
+////			app.gdx.drawer.flush();
+//		for (Rectangle r : Utl.duplic(app.gui.scissors)) {
+//			scissors.add(r); ScissorStack.popScissors(); }
+//		app.gui.scissors.clear();
+//
+//		setCombinedMatrix(cam.combined,
+//				m.x, m.y, app.gdx.getscreenwidth(), app.gdx.getscreenheight()); 
+//		
+//		
+//		update();
+//		prepareRender();
+//		
+//		
+////			app.gdx.drawer.flush();
+//		for (Rectangle r : Utl.duplic(scissors)) {
+//			app.gui.scissors.add(r); ScissorStack.pushScissors(r); }
+//		scissors.clear();
+//
+//		render_buffer.begin(); 
+//		
+//		renderOnly();
+//		
+//		render_buffer.end();
+//
+//		app.gdx.drawer.spritebatch.begin();
+//		app.gdx.drawer.spritebatch.draw(render_buffer.getTexture(), 0, 0, 
+//				app.gdx.getscreenwidth(), 
+//				app.gdx.getscreenheight(), 
+//				0, 0, 1, 1);
+//		app.gdx.drawer.spritebatch.end();
+//		
+//		app.gdx.drawer.spritebatch.begin();
+//		
+//	}
 	
 	
 	
@@ -415,7 +552,7 @@ public class RayHandler implements Disposable {
 	 */
 	public void update() {
 		for (Light light : lightList) {
-			light.update();
+			if (light.active) light.update();
 		}
 	}
 
@@ -430,6 +567,8 @@ public class RayHandler implements Disposable {
 	 * @see #renderOnly()
 	 * @see #render()
 	 */
+	private Color buffer_clear_color = new Color(0f, 0f, 0f, 0f);
+	private final Color def_buffer_clear_color = new Color(0f, 0f, 0f, 0f);
 	public void prepareRender() {
 		lightRenderedLastFrame = 0;
 
@@ -439,7 +578,8 @@ public class RayHandler implements Disposable {
 		boolean useLightMap = (shadows || blur);
 		if (useLightMap) {
 			lightMap.frameBuffer.begin();
-			Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
+			Gdx.gl.glClearColor(buffer_clear_color.r, buffer_clear_color.g, 
+					buffer_clear_color.b, buffer_clear_color.a);
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		}
 
@@ -452,7 +592,7 @@ public class RayHandler implements Disposable {
 			shader.setUniformMatrix("u_projTrans", combined);
 			if (customLightShader != null) updateLightShader();
 
-			for (Light light : lightList) {
+			for (Light light : lightList) if (light.active) {
 				if (customLightShader != null) updateLightShaderPerLight(light);
 				light.render();
 			}
@@ -473,7 +613,8 @@ public class RayHandler implements Disposable {
 
 		if (useLightMap && pseudo3d) {
 			lightMap.shadowBuffer.begin();
-			Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
+			Gdx.gl.glClearColor(buffer_clear_color.r, buffer_clear_color.g, 
+					buffer_clear_color.b, buffer_clear_color.a);
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 			for (Light light : lightList) {

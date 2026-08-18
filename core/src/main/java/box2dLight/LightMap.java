@@ -152,7 +152,11 @@ class LightMap {
 		pingPongBuffer.dispose();
 	}
 
+	private boolean shader_setup = false;
 	void createShaders() {
+		if (shader_setup) return;
+		shader_setup = true;
+		
 		disposeShaders();
 
 		shadowShader = rayHandler.pseudo3d ? DynamicShadowShader.createShadowShader() : ShadowShader.createShadowShader();

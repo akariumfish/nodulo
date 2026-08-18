@@ -1,12 +1,16 @@
 package aa_nodulo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -61,8 +65,8 @@ public class pBox2d extends pSystem {
 				pBox2d b2d = PlaneApplet.app.getSystem(pBox2d.class);
 				if (b2d == null || bod == null) return;
 				if (bod.hasParam("dynamic")) b2d.init_dyna_body(bod);
-				else if (bod.hasParam("kinematic")) b2d.init_obscure_body(bod);
-				else if (bod.hasParam("light")) b2d.init_light_body(bod);
+				else if (bod.hasParam("kinematic")) b2d.init_kinematic_body(bod);
+//				if (bod.hasParam("light")) b2d.init_light_body(bod);
 			}});
 
 			physic.addClearRun(new nRun() {public void run() {
@@ -95,14 +99,20 @@ public class pBox2d extends pSystem {
 			physic.newOptionalLocalProperty("light")
 			.addData("follow_ref", true)
 			.addData("pos", new Vector2())
-			.addData("dist", 180f)
+			.addData("dist", 300f)
 			.addData("r", (int)255)
-			.addData("g", (int)10)
-			.addData("b", (int)10)
+			.addData("g", (int)50)
+			.addData("b", (int)50)
 			.addData("a", (int)255)
 			;
 
 			physic.newOptionalLocalProperty("cone_light")
+			;
+
+			physic.newOptionalLocalProperty("view_light")
+			;
+
+			physic.newOptionalLocalProperty("contact_break")
 			;
 
 
@@ -192,11 +202,12 @@ public class pBox2d extends pSystem {
 
 		public pSpace space;
 
-		public sBoo val_do_draw, val_draw_debug, val_do_ray, val_do_calc, 
+		public sBoo val_do_draw, val_do_viewfilter, 
+//		val_draw_debug, 
+		val_do_ray, val_do_calc, 
 		val_do_tile, val_edit_tile;
 
 		public World world;
-		public RayHandler rayHandler;
 		public Box2DRenderer boxRenderer;
 
 		nTileMap tilemap;
@@ -211,18 +222,14 @@ public class pBox2d extends pSystem {
 			useNetFrame();
 
 			val_do_draw = bloc.obtainBoo("val_do_draw", false);
-			val_draw_debug = bloc.obtainBoo("val_draw_debug", false);
+			val_do_viewfilter = bloc.obtainBoo("val_do_viewfilter", false);
+//			val_draw_debug = bloc.obtainBoo("val_draw_debug", false);
 			val_do_ray = bloc.obtainBoo("val_do_ray", true);
 			val_do_calc = bloc.obtainBoo("val_do_calc", true);
 			val_do_tile = bloc.obtainBoo("val_do_tile", true);
 			val_edit_tile = bloc.obtainBoo("val_edit_tile", false);
-
-
-			cam = new OrthographicCamera(GdxApp.WIDTH, GdxApp.HEIGHT);
-
-
-			tilemap = new nTileMap("Map.tmx", GdxApp.app.drawer.spritebatch, 
-					app.view, cam);
+			
+			
 			
 			world = new World(new Vector2(0, 0), true);
 
@@ -238,6 +245,13 @@ public class pBox2d extends pSystem {
 					Fixture fb = contact.getFixtureB();
 					Body ba = fa.getBody();
 					Body bb = fb.getBody();
+					
+					if (break_bodys.contains(ba)) {
+						clearing_bodys.add(ba);
+					}
+					if (break_bodys.contains(bb)) {
+						clearing_bodys.add(bb);
+					}
 				}
 				@Override public void preSolve(Contact contact, Manifold oldManifold) { }
 				@Override public void postSolve(Contact contact, ContactImpulse impulse) { }
@@ -248,69 +262,27 @@ public class pBox2d extends pSystem {
 			//		boolean drawVelocities, boolean drawContacts
 			boxRenderer = new Box2DRenderer(app, true, true, true, true, true, true);
 			
+			cam = new OrthographicCamera(GdxApp.WIDTH, GdxApp.HEIGHT);
 
-			rayHandler = new RayHandler(app, cam, world);
 
-			int rays = 180;
-			float dist = 3000f;
-			float spc = dist * 0.25f;
-			pGeom geo = app.getSystem(pGeom.class);
-			float lim = geo.val_limit_dist.get() / 1.35f;
-			Color lc = new Color(0.4f,0.4f,0.4f,0.2f);
-			new PointLight(rayHandler, rays, lc, dist, 0, 0);
-			for (float x = spc ; x <= lim ; x += spc) 
-				if (x <= lim - dist/1.5f) {
-					float f = 0.5f + 0.75f * ((lim - dist/1.5f)-x) / (lim - dist/1.5f);
-					new PointLight(rayHandler, rays, lc, f*dist, x, 0);
-					new PointLight(rayHandler, rays, lc, f*dist, 0, x);
-					new PointLight(rayHandler, rays, lc, f*dist, -x, 0);
-					new PointLight(rayHandler, rays, lc, f*dist, 0, -x);
-				}
-			for (float x = spc ; x <= lim ; x += spc) 
-				for (float y = spc ; y <= lim ; y += spc) {
-					float l = new Vector2(x,y).len();
-					if (l <= lim - dist/1.5f) {
-						float f = 0.5f + 0.75f * ((lim - dist/1.5f)-l) / 
-								(lim - dist/1.5f);
-						new PointLight(rayHandler, rays, lc, f*dist, x, y);
-						new PointLight(rayHandler, rays, lc, f*dist, -x, y);
-						new PointLight(rayHandler, rays, lc, f*dist, x, -y);
-						new PointLight(rayHandler, rays, lc, f*dist, -x, -y);
-					}
-				}
-
-			for (int i = 0 ; i < tilemap.mapLayer.getWidth() ; i++)
-				for (int j = 0 ; j < tilemap.mapLayer.getHeight() ; j++) {
-					TiledMapTileLayer.Cell c = tilemap.mapLayer.getCell(i,j);
-					if (c == null) continue;
-					if (!c.getTile().getProperties().get("light", Boolean.class)) {
-						Vector2 p = tilemap.getCellPos(i,j);
-						p.add(tilemap.tile_scale/2f,tilemap.tile_scale/2f);
-						BodyDef groundBodyDef = new BodyDef();  
-						groundBodyDef.position.set(p);  
-						Body groundBody = world.createBody(groundBodyDef);  
-						PolygonShape groundBox = new PolygonShape();  
-						groundBox.setAsBox(tilemap.tile_scale/2f, tilemap.tile_scale/2f);
-						groundBody.createFixture(groundBox, 0.0f);
-						groundBox.dispose();
-					}
-				}
-
+			tilemap = new nTileMap("Map.tmx", this, world);
+			
 		}
 		public void system_load() {
 
+			space = app.space;
+			view = app.view;
+			
 			app.time.addEventTick(tick_run);
 			app.time.addEventNetTick(net_tick_run);
 
-			app.view.addPreDrawable(0,pre_draw_run);
-			app.view.addDrawable(1,tile_draw_run);
-			app.view.addDrawable(6,draw_run);
-			app.view.addDrawable(11,draw_ray_run);
+			view.addPreDrawable(0,pre_draw_run);
+			view.addDrawable(1,tile_draw_run);
+			view.addDrawable(6,draw_run);
+			view.addDrawable(11,draw_ray_run);
 			//			app.view.addPostDrawable(22,post_draw_run);
-			space = app.space;
-			view = app.view;
 			//		if (!app.RELEASE) 
-			tool_setup(false);
+			tool_setup(true);
 
 		}
 		public void system_clear() {
@@ -322,7 +294,7 @@ public class pBox2d extends pSystem {
 			//			app.view.removeDrawable(post_draw_run);
 			app.view.removeDrawable(draw_ray_run);
 
-			rayHandler.dispose();
+			tilemap.dispose();
 		}
 
 		public void tool_init(nInterface interf) {
@@ -333,7 +305,8 @@ public class pBox2d extends pSystem {
 			interf.add_row_label(2, "");
 			interf.add_row_switch_boo(4, "physic", "val_do_calc");
 			interf.add_row();
-			interf.add_row_label(6, "");
+			interf.add_row_switch_boo(4, "filter", "val_do_viewfilter");
+			interf.add_row_label(2, "");
 			interf.add_row_switch_boo(4, "light", "val_do_ray");
 			interf.add_row();
 			interf.add_row_switch_boo(4, "tile", "val_do_tile");
@@ -379,28 +352,20 @@ public class pBox2d extends pSystem {
 		public final ArrayList<Rectangle> scissors = new ArrayList<Rectangle>();
 
 		public void pre_draw() { 
-
-			if (val_do_ray.get() && app.gdx.drawer.USE_FX) {
-
-				rayHandler.beginRender();
-
-			}
-
+			tilemap.beginRender();
 		}
 		public void draw_tile() { 
 
-			if (val_do_tile.get()) {
-
-				if (val_edit_tile.get() && app.input.mouseLeft.trigClick && 
+			if (val_edit_tile.get() && val_do_tile.get()) {
+				if (app.input.mouseLeft.trigClick && 
 						app.view.mouse_is_hover_view()) {
 					tilemap.addCell(app.view.mouse_in_view()); }
-				if (val_edit_tile.get() && app.input.mouseRight.trigClick && 
+				if (app.input.mouseRight.trigClick && 
 						app.view.mouse_is_hover_view()) {
 					tilemap.delCell(app.view.mouse_in_view()); }
-
-				tilemap.render();
-
 			}
+
+			tilemap.renderBack();
 
 			// WORKING
 			//			app.getSystem(pGeom.class).draw_shadow();
@@ -411,24 +376,33 @@ public class pBox2d extends pSystem {
 			
 		}
 
+		public boolean drawtile() { return val_do_tile.get(); }
+		public boolean drawlight() { 
+			return val_do_ray.get() && app.gdx.drawer.USE_FX; }
+		public boolean drawviewfilter() { return val_do_viewfilter.get(); }
+		
 		public void draw_ray() { 
 
-			if (val_do_ray.get() && app.gdx.drawer.USE_FX) {
+			tilemap.renderFront();
 
-				rayHandler.endRender();
-				
-			}	
+			tilemap.endRender();
+			
 			if (val_do_draw.get()) {
 				boxRenderer.render(world);
 				
 				app.stroke(255,0,255,255,5f); app.fill(55,0,55,255);
-				for (Light light : rayHandler.lightList) {
+				for (Light light : tilemap.rayHandler.lightList) {
 					app.circle(light.getPosition().x, light.getPosition().y, 12f);
 				}
 				
 			}
 		}
 
+		
+		
+		
+		
+		
 		public void new_ground_box(float x, float y, float w, float h) {
 
 			// Create our body definition
@@ -451,12 +425,26 @@ public class pBox2d extends pSystem {
 
 		}
 
+		public ArrayList<Body> break_bodys = new ArrayList<Body>();
+
+		public ArrayList<Body> clearing_bodys = new ArrayList<Body>();
+		
 		public nMap<Body> bodys = new nMap<Body>();
 		private int get_free_bod_nb() {
 			int n = 0; while (bodys.get(""+n) != null) n++; return n; }
 
 		public nMap<Joint> joints = new nMap<Joint>();
 		//		private int joint_nb = 0;
+		
+		public HashMap<Body,ArrayList<Light>> lights = new HashMap<Body,ArrayList<Light>>();
+		public void attachToBody(PointLight l , Body b) { attachToBody(l,b,0f,0f); }
+		public void attachToBody(PointLight l , Body b, float x, float y) {
+			if (lights.get(b) == null) lights.put(b, new ArrayList<Light>());
+			lights.get(b).add(l);
+			l.setIgnoreAttachedBody(true);
+			l.attachToBody(b, x, y);
+		}
+		
 		public void init_dyna_body(pBody b) {
 			app.addEventNextFrame(new nRun(b) {public void run() {
 				pBody b = (pBody)builder;
@@ -474,13 +462,44 @@ public class pBox2d extends pSystem {
 
 				// Create our body in the world using our body definition
 				Body body = world.createBody(bodyDef);
+				
+				tilemap.rayHandler.transparent.add(body);
+				
+				if (b.hasParam("contact_break")) {
+					break_bodys.add(body);
+				}
 
 				if (b.hasParam("cone_light")) {
+
+					PointLight pl = tilemap.newPointLight(90, 
+							new Color(1f,0.6f,0.4f,1f), 400, 0, 0);
+					attachToBody(pl, body);
+
+					PointLight pl2 = new PointLight(tilemap.groundLayer, 60, 
+							new Color(1f,1f,1f,0.8f), 900, 0, 0);
+					attachToBody(pl2, body);
 					
-					PointLight pl = new PointLight(rayHandler, 120, 
-							new Color(1f,0.6f,0.4f,0.6f), 600, 0, 0);
-					pl.attachToBody(body, 0f, 0f);
-					
+				}
+
+				if (b.hasParam("view_light")) {
+					PointLight pl2 = new PointLight(tilemap.viewLayer, 720, 
+							new Color(1f,1f,1f,0.9f), 15000, 0, 0);
+					attachToBody(pl2, body);
+				}
+
+				if (b.hasParam("light")) {
+					int rays = 120;
+					Vector2 pos = b.getVec("light", "pos");
+					float dist = b.getFlt("light", "dist");
+					Color col = Utl.color(b.getInt("light", "r"), b.getInt("light", "g"), 
+							b.getInt("light", "b"), b.getInt("light", "a"));
+					PointLight l = tilemap.newPointLight(rays, col, dist, 0, 0);
+					l.setColor(col.r,col.g,col.b,col.a);
+					attachToBody(l, body, pos.x, pos.y);
+					PointLight l2 = new PointLight(tilemap.groundLayer, 
+							rays, col, dist, 0, 0);
+					l2.setColor(col.r,col.g,col.b,col.a);
+					attachToBody(l2, body, pos.x, pos.y);
 				}
 
 				if (!b.getBoo("box_body", "copy_geom") || !b.hasParam("geom")) {
@@ -532,7 +551,7 @@ public class pBox2d extends pSystem {
 		}
 
 
-		public void init_obscure_body(pBody b) {
+		public void init_kinematic_body(pBody b) {
 			app.addEventNextFrame(new nRun(b) {public void run() {
 				pBody b = (pBody)builder;
 				if (b.param("box_body") == null || b.param("kinematic") == null) return;
@@ -549,12 +568,29 @@ public class pBox2d extends pSystem {
 				// Create our body in the world using our body definition
 				Body body = world.createBody(bodyDef);
 
+				tilemap.rayHandler.transparent.add(body);
+
 				if (b.hasParam("cone_light")) {
 					
-					PointLight pl = new PointLight(rayHandler, 120, 
-							new Color(1f,0.6f,0.4f,0.6f), 600, 0, 0);
-					pl.attachToBody(body, 0f, 0f);
+					PointLight pl = tilemap.newPointLight(120, 
+							new Color(1f,0.6f,0.4f,1f), 600, 0, 0);
+					attachToBody(pl, body);
 					
+				}
+
+				if (b.hasParam("light")) {
+					int rays = 120;
+					Vector2 pos = b.getVec("light", "pos");
+					float dist = b.getFlt("light", "dist");
+					Color col = Utl.color(b.getInt("light", "r"), b.getInt("light", "g"), 
+							b.getInt("light", "b"), b.getInt("light", "a"));
+					PointLight l = tilemap.newPointLight(rays, col, dist, 0, 0);
+					l.setColor(col.r,col.g,col.b,col.a);
+					attachToBody(l, body, pos.x, pos.y);
+					PointLight l2 = new PointLight(tilemap.groundLayer, 
+							rays, col, dist, 0, 0);
+					l2.setColor(col.r,col.g,col.b,col.a);
+					attachToBody(l2, body, pos.x, pos.y);
 				}
 
 				if (!b.getBoo("box_body", "copy_geom") || !b.hasParam("geom")) {
@@ -614,38 +650,46 @@ public class pBox2d extends pSystem {
 
 		}
 
-		public void init_light_body(pBody b) {
-			app.addEventNextFrame(new nRun(b) {public void run() {
-				pBody b = (pBody)builder;
-				if (b.param("box_body") == null || b.param("light") == null) return;
-
-				Body body = bodys.get(b.getStr("box_body", "body_ref"));
-				if (body == null) {
-					// First we create a body definition
-					BodyDef bodyDef = new BodyDef();
-					// We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
-					bodyDef.type = BodyType.KinematicBody;
-					// Set our body's starting position in the world
-					bodyDef.position.set(b.getVec("box_body", "pos"));
-
-					// Create our body in the world using our body definition
-					body = world.createBody(bodyDef);
-
-					int bod_nb = get_free_bod_nb();
-					bodys.put(""+bod_nb, body); 
-					b.setStr("box_body", "body_ref", ""+bod_nb);
-				}
-
-				int rays = 120;
-				Vector2 pos = b.getVec("light", "pos");
-				float dist = b.getFlt("light", "dist");
-				Color col = Utl.color(b.getInt("light", "r"), b.getInt("light", "g"), 
-						b.getInt("light", "b"), b.getInt("light", "a"));
-				PointLight l = new PointLight(rayHandler, rays, col, dist, 0, 0);
-				l.setColor(col.r,col.g,col.b,col.a);
-				l.attachToBody(body, pos.x, pos.y);
-			}});
-		}
+//		public void init_light_body(pBody b) {
+//			app.addEventNextFrame(new nRun(b) {public void run() {
+//				pBody b = (pBody)builder;
+//				if (b.param("box_body") == null || b.param("light") == null) return;
+//
+//				Body body = bodys.get(b.getStr("box_body", "body_ref"));
+//				if (body == null) {
+//					// First we create a body definition
+//					BodyDef bodyDef = new BodyDef();
+//					// We set our body to dynamic, for something like ground which doesn't move we would set it to StaticBody
+//					bodyDef.type = BodyType.KinematicBody;
+//					// Set our body's starting position in the world
+//					bodyDef.position.set(b.getVec("box_body", "pos"));
+//
+//					// Create our body in the world using our body definition
+//					body = world.createBody(bodyDef);
+//
+//					if (b.hasParam("contact_break")) {
+//						break_bodys.add(body);
+//					}
+//
+//					int bod_nb = get_free_bod_nb();
+//					bodys.put(""+bod_nb, body); 
+//					b.setStr("box_body", "body_ref", ""+bod_nb);
+//				}
+//
+//				int rays = 120;
+//				Vector2 pos = b.getVec("light", "pos");
+//				float dist = b.getFlt("light", "dist");
+//				Color col = Utl.color(b.getInt("light", "r"), b.getInt("light", "g"), 
+//						b.getInt("light", "b"), b.getInt("light", "a"));
+//				PointLight l = tilemap.newPointLight(rays, col, dist, 0, 0);
+//				l.setColor(col.r,col.g,col.b,col.a);
+//				attachToBody(l, body, pos.x, pos.y);
+//				PointLight l2 = new PointLight(tilemap.groundLayer, 
+//						rays, col, dist, 0, 0);
+//				l2.setColor(col.r,col.g,col.b,col.a);
+//				attachToBody(l2, body, pos.x, pos.y);
+//			}});
+//		}
 
 		public void clear_body(pBody b) {
 			if (b.param("box_body") == null) return;
@@ -653,6 +697,13 @@ public class pBox2d extends pSystem {
 			if (body == null) return;
 			bodys.remove(b.getStr("box_body", "body_ref"), body);
 			world.destroyBody(body);
+			if (lights.get(body) != null) {
+				for (Light l : lights.get(body)) l.remove();
+				lights.get(body).clear();
+			}
+			tilemap.rayHandler.transparent.remove(body);
+			break_bodys.remove(body);
+			clearing_bodys.remove(body);
 		}
 
 		public void accel_body(pBody b, boolean glob, float x, float y, float max) {
@@ -728,6 +779,11 @@ public class pBox2d extends pSystem {
 			if (b.param("box_body") == null) return;
 			Body body = bodys.get(b.getStr("box_body", "body_ref"));
 			if (body == null) return;
+			if (clearing_bodys.contains(body)) {
+				clearing_bodys.remove(body);
+				clear_body(b);
+				return;
+			}
 			if (b.hasParam("dynamic")) {
 				Vector2 pos = body.getPosition();
 				float rot = body.getAngle();
@@ -747,15 +803,15 @@ public class pBox2d extends pSystem {
 					body.setTransform(pos, rot);
 				}
 			}
-			if (b.hasParam("light")) {
-				if (b.getBoo("light", "follow_ref") && b.hasParam("ref")) {
-					Vector2 pos = b.getVec("ref", "pos");
-					float rot = b.getFlt("ref", "rot");
-					b.setVec("box_body", "pos", pos);
-					b.setFlt("box_body", "rot", rot);
-					body.setTransform(pos, rot);
-				}
-			}
+//			if (b.hasParam("light")) {
+//				if (b.getBoo("light", "follow_ref") && b.hasParam("ref")) {
+//					Vector2 pos = b.getVec("ref", "pos");
+//					float rot = b.getFlt("ref", "rot");
+//					b.setVec("box_body", "pos", pos);
+//					b.setFlt("box_body", "rot", rot);
+//					body.setTransform(pos, rot);
+//				}
+//			}
 		}
 
 

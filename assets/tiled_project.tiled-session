@@ -1,5 +1,5 @@
 {
-    "activeFile": "Map.tmx",
+    "activeFile": "",
     "expandedProjectPaths": [
         "."
     ],
@@ -69,6 +69,7 @@
             "scaleInDock": 1
         }
     },
+    "last.objectTemplatePath": "C:/Users/user/Desktop/code/java/libgdx/nodulo/assets",
     "openFiles": [
         "Map.tmx"
     ],

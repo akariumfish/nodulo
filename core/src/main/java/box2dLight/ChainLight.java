@@ -76,9 +76,9 @@ public class ChainLight extends Light {
 	 *            <li>-1 = right</li>
  	 *            </ul>
  	 */
-	public ChainLight(RayHandler rayHandler, int rays, Color color,
+	public ChainLight(LightLayer layer, int rays, Color color,
 			float distance, int rayDirection) {
-		this(rayHandler, rays, color, distance, rayDirection, null);
+		this(layer, rays, color, distance, rayDirection, null);
 	}
 
 	/**
@@ -103,10 +103,10 @@ public class ChainLight extends Light {
 	 *            float array of (x, y) vertices from which rays will be
 	 *            evenly distributed
 	 */
-	public ChainLight(RayHandler rayHandler, int rays, Color color,
+	public ChainLight(LightLayer layer, int rays, Color color,
 			float distance, int rayDirection, float[] chain) {
 		
-		super(rayHandler, rays, color, distance, 0f);
+		super(layer, rays, color, distance, 0f);
 		rayStartOffset = ChainLight.defaultRayStartOffset;
 		this.rayDirection = rayDirection;
 		vertexNum = (vertexNum - 1) * 2;

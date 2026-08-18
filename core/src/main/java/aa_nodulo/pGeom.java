@@ -813,6 +813,7 @@ public class pGeom extends pSystem {
 		nRun run_ctrl_pop = new nRun() { public void run(Object o) { 
 			pBody bod = (pBody)o; if (bod == null) return;
 			pGeom geo = PlaneApplet.app.getSystem(pGeom.class);
+			pBox2d box = PlaneApplet.app.getSystem(pBox2d.class);
 			if (geo != null && bod.hasParam("ref") && bod.hasParam("ctrl_pop")) {
 
 				Vector2 pop_pos = bod.getVec("ctrl_pop","pop_pos");
@@ -844,6 +845,13 @@ public class pGeom extends pSystem {
 						pNodeSpace.init_body(pop, bluep);
 						
 						geo.speed_body(bod,pop,acc_pos.x,acc_pos.y,acc_rot);
+						if (box != null) {
+							if (pop.hasParam("ctrl_box")) {
+								pop.setBoo("ctrl_box","accel_move", true);
+								pop.setVec("ctrl_box","accel_dir", acc_pos.x,acc_pos.y);
+//								pop.setFlt("ctrl_box","move_strength", acc_pos.len());
+							}
+						}
 						bod.param("ctrl_pop").setBody("last", pop);
 					} 
 				}
@@ -851,6 +859,13 @@ public class pGeom extends pSystem {
 					if (bod.param("ctrl_pop").getBody("last") != null) {
 						pBody last = bod.param("ctrl_pop").getBody("last");
 						geo.speed_body(bod,last,acc_pos.x,acc_pos.y,acc_rot);
+//						if (box != null) {
+//							if (last.hasParam("ctrl_box")) {
+//								last.setBoo("ctrl_box","accel_move", true);
+//								last.setVec("ctrl_box","accel_dir", acc_pos.x,acc_pos.y);
+////								last.setFlt("ctrl_box","move_strength", acc_pos.len());
+//							}
+//						}
 					}
 				}
 				if (!bod.getBoo("ctrl_pop","pop") && !bod.getBoo("ctrl_pop","throw") && 
@@ -902,6 +917,7 @@ public class pGeom extends pSystem {
 
 	//Ctrl action
 	public void move_to_target(pBody bod, Vector2 trg_pos, float max_speed) {
+		if (!bod.hasParam("move")) return;
 		pGeom geo = app.getSystem(pGeom.class);
 		Vector2 pos = bod.getVec("ref","pos");
 		Vector2 mov = new Vector2(trg_pos).sub(pos);
@@ -920,6 +936,7 @@ public class pGeom extends pSystem {
 		
 	}
 	public void rot_to_target(pBody bod, float trg_rot, float max_rot) {
+		if (!bod.hasParam("move")) return;
 		pGeom geo = app.getSystem(pGeom.class);
 		float rot = bod.getFlt("ref","rot");
 		float rot_speed = bod.getFlt("var_move", "rot_speed");
@@ -935,18 +952,21 @@ public class pGeom extends pSystem {
 	public void speed_body(pBody b, float x, float y, float r) {
 		speed_body(b,b,x,y,r); }
 	public void speed_body(pBody from, pBody targ, float x, float y, float r) {
+		if (!targ.hasParam("move")) return;
 		targ.addVec("move", "acc_pos", x, y);
 		targ.addFlt("move", "acc_rot", r); 
 	}
 	public void tp_body(pBody b, float x, float y, float r) {
 		tp_body(b,b,x,y,r); }
 	public void tp_body(pBody from, pBody targ, float x, float y, float r) {
+		if (!targ.hasParam("move")) return;
 		targ.addVec("move", "tp_pos", x, y);
 		targ.addFlt("move", "tp_rot", r); 
 	}
 	public void slow_body(pBody b, float p, float r) {
 		slow_body(b,b,p,r); }
 	public void slow_body(pBody from, pBody targ, float p, float r) {
+		if (!targ.hasParam("move")) return;
 		targ.addFlt("move", "slow_pos", p);
 		targ.addFlt("move", "slow_rot", r); 
 	}
@@ -1652,8 +1672,8 @@ public class pGeom extends pSystem {
 		} 
 		boolean halo = graph.getBoo("halo");
 		if (halo) {
-			app.halo(b.getVec("ref", "pos"), 60, 
-					Utl.color(255,0,0,0), Utl.color(255,0,0,120));
+			app.halo(b.getVec("ref", "pos"), 12, 
+					Utl.color(255,0,0,0), Utl.color(255,100,100,255));
 		}
 	}
 	

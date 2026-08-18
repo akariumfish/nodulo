@@ -77,6 +77,20 @@ public abstract class Light implements Disposable {
 	protected final Vector2 tmpEnd = new Vector2();
 	protected final Vector2 tmpVec = new Vector2();
 	public final Vector2 center = new Vector2();
+	public LightLayer layer;
+
+	public Light(LightLayer layer, int rays, Color color,
+				 float distance, float directionDegree) {
+		this.layer = layer;
+		layer.lightList.add(this);
+		this.rayHandler = layer.rayHandler;
+		rayHandler.lightList.add(this);
+		setRayNum(rays);
+		setColor(color);
+		setDistance(distance);
+		setSoftnessLength(distance * 0.1f);
+		setDirection(directionDegree);
+	}
 
 	/**
 	 * Creates new active light and automatically adds it to the specified
@@ -94,16 +108,17 @@ public abstract class Light implements Disposable {
 	 * @param directionDegree
 	 *            direction in degrees (if applicable) 
 	 */
-	public Light(RayHandler rayHandler, int rays, Color color,
-				 float distance, float directionDegree) {
-		rayHandler.lightList.add(this);
-		this.rayHandler = rayHandler;
-		setRayNum(rays);
-		setColor(color);
-		setDistance(distance);
-		setSoftnessLength(distance * 0.1f);
-		setDirection(directionDegree);
-	}
+//	public Light(RayHandler rayHandler, int rays, Color color,
+//				 float distance, float directionDegree) {
+//		this.layer = null;
+//		rayHandler.lightList.add(this);
+//		this.rayHandler = rayHandler;
+//		setRayNum(rays);
+//		setColor(color);
+//		setDistance(distance);
+//		setSoftnessLength(distance * 0.1f);
+//		setDirection(directionDegree);
+//	}
 
 	/**
 	 * Updates this light
@@ -255,6 +270,8 @@ public abstract class Light implements Disposable {
 		} else {
 			rayHandler.disabledLights.removeValue(this, false);
 		}
+		layer.lightList.removeValue(this, false);
+		layer = null;
 		rayHandler = null;
 		if (doDispose) dispose();
 	}
@@ -471,6 +488,9 @@ public abstract class Light implements Disposable {
 				return -1;
 			
 			if (ignoreBody && fixture.getBody() == getBody())
+				return -1;
+			
+			for (Body b : rayHandler.transparent) if (fixture.getBody() == b)
 				return -1;
 			
 			// if (fixture.isSensor())

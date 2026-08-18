@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object>
+  <properties>
+   <property name="color" type="color" value="#c8ffffff"/>
+   <property name="dist" type="float" value="2000"/>
+   <property name="pointlight" type="bool" value="true"/>
+   <property name="ray" type="int" value="120"/>
+  </properties>
+  <point/>
+ </object>
+</template>

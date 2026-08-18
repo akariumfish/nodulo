@@ -35,11 +35,11 @@ public class ConeLight extends PositionalLight {
 	 * @param coneDegree
 	 *            half-size of cone light, centered over direction
 	 */
-	public ConeLight(RayHandler rayHandler, int rays, Color color,
+	public ConeLight(LightLayer layer, int rays, Color color,
 			float distance, float x, float y, float directionDegree,
 			float coneDegree) {
 
-		super(rayHandler, rays, color, distance, x, y, directionDegree);
+		super(layer, rays, color, distance, x, y, directionDegree);
 		setConeDegree(coneDegree);
 	}
 	

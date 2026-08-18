@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.maps.MapGroupLayer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer;
@@ -20,8 +22,16 @@ import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
+import com.noodle.nodulo.GdxApp;
 
+import box2dLight.LightLayer;
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
 import gui.nGUI;
 
 import static com.badlogic.gdx.graphics.g2d.Batch.C1;
@@ -49,58 +59,104 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class nTileMap {
-
+	
 	private final TiledMap map;
 	public final RendererOrtho renderer;
 
-	public final TiledMapTileLayer mapLayer; 
+	public TiledMapTileLayer mapLayer;
+	
 //	TiledMapTileLayer lightingLayer;
 //	private final ArrayList<TiledMapTile> lightingTiles;
 
-	private final Texture pixel;
+//	private final Texture pixel;
 	private final StaticTiledMapTile brush;
 
 //	private final SpriteBatch lightingBatch;
 //	private final VfxFrameBuffer lightingFrameBuffer;
 //	private final TextureRegion lightingTexture;
 
-	private final int maxCaveHeight;
-	private int lightingTickSpeed;
+//	private final int maxCaveHeight;
+//	private int lightingTickSpeed;
 
 	public final float tile_scale = 250f;
 
-	private int currentLightingCoordinate = 0;
+//	private int currentLightingCoordinate = 0;
 
 	private pView view; 
 	private OrthographicCamera cam;
 
-	public nTileMap(String path, Batch batch, 
-			pView v, OrthographicCamera c) {
-		this(path, -1, 10, batch, v, c);
-	}
+	public LightLayer viewLayer;
+	public LightLayer groundLayer;
+	public LightLayer spaceLayer;
 
-	public nTileMap(String path, int maxCaveHeight, int lightingTickSpeed, Batch batch, 
-			pView v, OrthographicCamera c) {
-		this(new InternalFileHandleResolver(), path, maxCaveHeight, lightingTickSpeed, 
-				batch, v, c);
-	}
+	public RayHandler rayHandler;
+	public pBox2d box;
+	public PlaneApplet app;
+	public World world;
 
-	public nTileMap(FileHandleResolver resolver, String path, 
-			int maxCaveHeight, int lightingTickSpeed, Batch batch, 
-			pView v, OrthographicCamera c) {
-		this.maxCaveHeight = maxCaveHeight;
-		this.lightingTickSpeed = lightingTickSpeed;
-		this.view = v; 
-		this.cam = c;
+	ArrayList<MapLayer> layers = 
+			new ArrayList<MapLayer>();
 
-		map = new TmxMapLoader(resolver).load(path);
-		mapLayer = (TiledMapTileLayer) map.getLayers().get("Map");
+	ArrayList<TiledMapTileLayer> tileLayers = 
+			new ArrayList<TiledMapTileLayer>();
 
+	public nTileMap(String path, pBox2d b, World w) {
+//		this.maxCaveHeight = -1;
+//		this.lightingTickSpeed = 10;
+		app = b.app;
+		box = b;
+		world = w;
+		this.view = app.view; 
+		this.cam = box.cam;
+
+		rayHandler = new RayHandler(app, cam, world);
+		
+		map = new TmxMapLoader(new InternalFileHandleResolver()).load(path);
+
+		mapLayer = (TiledMapTileLayer) map.getLayers().get("Ground");
+
+//		lightLayer = new LightLayer(this, 
+//				map.getLayers().get("Light"));
+		
 		renderer = new RendererOrtho(map, 1f / mapLayer.getTileWidth());
 
-		pixel = generatePixel(1, 1, Color.WHITE);
+		int layer_cnt = map.getLayers().getCount();
+		for (int i = 0 ; i < layer_cnt ; i++) {
+			MapLayer layer = map.getLayers().get(i);
+			MapProperties prop = layer.getProperties();
+			if (prop.get("tile", Boolean.class) != null && 
+					prop.get("tile", Boolean.class)) {
+//				if (mapLayer == null && 
+//						prop.get("ground", Boolean.class) != null && 
+//						prop.get("ground", Boolean.class)) {
+//					mapLayer = (TiledMapTileLayer) layer;
+//				} else {
+					tileLayers.add((TiledMapTileLayer) layer);
+//				}
+			}
+			if (prop.get("view", Boolean.class) != null && 
+					prop.get("view", Boolean.class)) {
+				LightLayer ll = new LightLayer(this, layer);
+				if (viewLayer == null) viewLayer = ll;
+			}
+			if (prop.get("light", Boolean.class) != null && 
+					prop.get("light", Boolean.class)) {
+				LightLayer ll = new LightLayer(this, layer);
+				if (groundLayer == null) groundLayer = ll;
+			}
+			if (prop.get("space", Boolean.class) != null && 
+					prop.get("space", Boolean.class)) {
+				LightLayer ll = new LightLayer(this, layer);
+				if (spaceLayer == null) spaceLayer = ll;
+			}
+			layers.add(layer);
+		}
+		
+		
+//		pixel = generatePixel(1, 1, Color.WHITE);
 
-		brush = new StaticTiledMapTile(new TextureRegion(generatePixel(mapLayer.getTileWidth(), mapLayer.getTileHeight(), Color.TEAL)));
+		brush = new StaticTiledMapTile(new TextureRegion(generatePixel(
+				mapLayer.getTileWidth(), mapLayer.getTileHeight(), Color.TEAL)));
 
 //		lightingBatch = new SpriteBatch();
 //		lightingBatch.disableBlending();
@@ -123,6 +179,81 @@ public class nTileMap {
 
 //		updateAll();
 
+
+		
+		
+//		for (MapObject m : lightLayer.getObjects()) {
+//			if (m.getProperties().get("pointlight", Boolean.class) != null && 
+//					m.getProperties().get("pointlight", Boolean.class)) {
+//				
+//				MapProperties prop = m.getProperties();
+//				
+//				int ray = prop.get("ray", Integer.class);
+//				float dist = prop.get("dist", Float.class);
+//				Color col = prop.get("color", Color.class);
+//				Vector2 pos =mapToSpace(prop.get("x", Float.class), 
+//						prop.get("y", Float.class));
+//				new PointLight(lightLayer, ray, col, dist, pos.x, pos.y);
+//				
+////				Iterator<String> iter = m.getProperties().getKeys();
+////				while (iter.hasNext()) {
+////					String k = iter.next();
+////					Utl.logn(k+" "+prop.get(k));
+////				}
+//				
+//			}
+//		}
+
+//		int rays = 180;
+//		float dist = 3000f;
+//		float spc = dist * 0.25f;
+//		pGeom geo = app.getSystem(pGeom.class);
+//		float lim = geo.val_limit_dist.get() / 1.35f;
+//		Color lc = new Color(0.4f,0.4f,0.4f,0.2f);
+//		new PointLight(rayHandler, rays, lc, dist, 0, 0);
+//		for (float x = spc ; x <= lim ; x += spc) 
+//			if (x <= lim - dist/1.5f) {
+//				float f = 0.5f + 0.75f * ((lim - dist/1.5f)-x) / (lim - dist/1.5f);
+//				new PointLight(rayHandler, rays, lc, f*dist, x, 0);
+//				new PointLight(rayHandler, rays, lc, f*dist, 0, x);
+//				new PointLight(rayHandler, rays, lc, f*dist, -x, 0);
+//				new PointLight(rayHandler, rays, lc, f*dist, 0, -x);
+//			}
+//		for (float x = spc ; x <= lim ; x += spc) 
+//			for (float y = spc ; y <= lim ; y += spc) {
+//				float l = new Vector2(x,y).len();
+//				if (l <= lim - dist/1.5f) {
+//					float f = 0.5f + 0.75f * ((lim - dist/1.5f)-l) / 
+//							(lim - dist/1.5f);
+//					new PointLight(rayHandler, rays, lc, f*dist, x, y);
+//					new PointLight(rayHandler, rays, lc, f*dist, -x, y);
+//					new PointLight(rayHandler, rays, lc, f*dist, x, -y);
+//					new PointLight(rayHandler, rays, lc, f*dist, -x, -y);
+//				}
+//			}
+
+		for (int i = 0 ; i <mapLayer.getWidth() ; i++)
+			for (int j = 0 ; j <mapLayer.getHeight() ; j++) {
+				TiledMapTileLayer.Cell c =mapLayer.getCell(i,j);
+				if (c == null) continue;
+				if (c.getTile().getProperties().get("light", Boolean.class) != null && 
+						!c.getTile().getProperties().get("light", Boolean.class)) {
+					Vector2 p =getCellPos(i,j);
+					p.add(tile_scale/2f,tile_scale/2f);
+					BodyDef groundBodyDef = new BodyDef();  
+					groundBodyDef.position.set(p);  
+					Body groundBody = world.createBody(groundBodyDef);  
+					PolygonShape groundBox = new PolygonShape();  
+					groundBox.setAsBox(tile_scale/2f,tile_scale/2f);
+					groundBody.createFixture(groundBox, 0.0f);
+					groundBox.dispose();
+				}
+			}
+
+	}
+	
+	public void dispose() {
+		rayHandler.dispose();
 	}
 
 //	private void setupLightingLayer() {
@@ -136,6 +267,10 @@ public class nTileMap {
 		pixmap.setColor(color);
 		pixmap.fill();
 		return new Texture(pixmap);
+	}
+	
+	public PointLight newPointLight(int ray, Color col, float dist, float x, float y) {
+		return new PointLight(spaceLayer, ray, col, dist, x, y);
 	}
 
 //	public void updateAll() {
@@ -170,6 +305,21 @@ public class nTileMap {
 //		lightingFrameBuffer.end();
 //	}
 
+	public void beginRender() {
+		rayHandler.beginRender();
+	}
+	public void renderFront() {
+		render();
+	}
+	public void renderBack() {
+		render();
+	}
+	public void endRender() { 
+
+//		rayHandler.endRender();
+		rayHandler.endLayeredRender();
+
+	}
 	public void render() {
 
 		view.app.gdx.drawer.end();
@@ -225,11 +375,17 @@ public class nTileMap {
 				viewboundsWidth, viewboundsHeight);
 		renderer.render();
 	}
+	public float getWidth() {
+		return mapLayer.getWidth() * tile_scale;
+	}
+	public float getHeight() {
+		return mapLayer.getHeight() * tile_scale;
+	}
 	public float getTileWidth() {
-		return tile_scale;//*mapLayer.getTileWidth();
+		return tile_scale;
 	}
 	public float getTileHeight() {
-		return tile_scale;//*mapLayer.getTileHeight();
+		return tile_scale;
 	}
 	public Vector2 getCellPos(int x, int y) {
 		final int layerWidth = mapLayer.getWidth();
@@ -237,6 +393,14 @@ public class nTileMap {
 		Vector2 p = new Vector2(x,y)
 				.sub(layerWidth/2f,layerHeight/2f)
 				.scl(getTileWidth(),getTileHeight());
+		return p;
+	}
+	public Vector2 mapToSpace(float x, float y) { return mapToSpace(new Vector2(x,y)); }
+	public Vector2 mapToSpace(Vector2 v) {
+		Vector2 p = new Vector2(v)
+				.scl(getTileWidth(),getTileHeight())
+				.scl(1f/mapLayer.getTileWidth(),1f/mapLayer.getTileHeight())
+				.sub(getWidth()/2f,getHeight()/2f);
 		return p;
 	}
 	public <T> T getCellProp(float x, float y, String r, Class<T> ct) {
@@ -404,17 +568,17 @@ public class nTileMap {
 			super(map);
 		}
 
-		public RendererOrtho (TiledMap map, Batch batch) {
-			super(map, batch);
-		}
+//		public RendererOrtho (TiledMap map, Batch batch) {
+//			super(map, batch);
+//		}
 
 		public RendererOrtho (TiledMap map, float unitScale) {
 			super(map, unitScale);
 		}
 
-		public RendererOrtho (TiledMap map, float unitScale, Batch batch) {
-			super(map, unitScale, batch);
-		}
+//		public RendererOrtho (TiledMap map, float unitScale, Batch batch) {
+//			super(map, unitScale, batch);
+//		}
 
 		public Matrix4 transform = new Matrix4().setToTranslation(0f,0f,0f);
 		public Matrix4 tmp_proj = new Matrix4().setToTranslation(0f,0f,0f);
@@ -425,6 +589,8 @@ public class nTileMap {
 			batch.setProjectionMatrix(projection);
 			viewBounds.set(x, y, width, height);
 		}
+		
+		private MapLayer space = null;
 
 		@Override
 		public void render() {
@@ -433,9 +599,22 @@ public class nTileMap {
 			tmp_transf.set(batch.getTransformMatrix());
 			batch.setTransformMatrix(transform);
 
-			for (MapLayer layer : map.getLayers()) {
-				renderMapLayer(layer);
+			if (space == null) {
+				for (MapLayer layer : map.getLayers()) {
+					if (layer.getProperties().get("space", Boolean.class) != null && 
+							layer.getProperties().get("space", Boolean.class)) {
+						space = layer; break; }
+					renderMapLayer(layer);
+				}
+			} else {
+				for (MapLayer layer : map.getLayers()) {
+					if (layer.getProperties().get("space", Boolean.class) != null && 
+							layer.getProperties().get("space", Boolean.class)) {
+						space = null; }
+					if (space == null) renderMapLayer(layer);
+				}
 			}
+			
 			endRender();
 			transform.setToTranslation(0f,0f,0f);
 			batch.setTransformMatrix(tmp_transf);
@@ -467,13 +646,36 @@ public class nTileMap {
 				}
 			} else {
 				if (layer instanceof TiledMapTileLayer) {
-					renderTileLayer((TiledMapTileLayer)layer);
+					if (box.drawtile()) renderTileLayer((TiledMapTileLayer)layer);
 				} else if (layer instanceof TiledMapImageLayer) {
-					renderImageLayer((TiledMapImageLayer)layer);
+//					renderImageLayer((TiledMapImageLayer)layer);
 				} else {
 					renderObjects(layer);
 				}
 			}
+		}
+
+		@Override
+		public void renderObjects (MapLayer layer) {
+			if (box.drawlight() && 
+//					layer.getProperties().get("light", Boolean.class) != null && 
+//					layer.getProperties().get("light", Boolean.class) &&
+					layer.getProperties().get("lightlayer", LightLayer.class) != null) {
+				LightLayer ll = layer.getProperties()
+						.get("lightlayer", LightLayer.class);
+				batch.end();
+				rayHandler.renderLayer(ll);
+				batch.begin();
+			} else {
+//				for (MapObject object : layer.getObjects()) {
+//					renderObject(object);
+//				}
+			}
+		}
+
+		@Override
+		public void renderObject (MapObject object) {
+
 		}
 
 		@Override

@@ -27,8 +27,8 @@ public class PointLight extends PositionalLight {
 	 *            number of rays - more rays make light to look more realistic
 	 *            but will decrease performance, can't be less than MIN_RAYS
 	 */
-	public PointLight(RayHandler rayHandler, int rays) {
-		this(rayHandler, rays, Light.DefaultColor, 15f, 0f, 0f);
+	public PointLight(LightLayer layer, int rays) {
+		this(layer, rays, Light.DefaultColor, 15f, 0f, 0f);
 	}
 	
 	/**
@@ -48,9 +48,9 @@ public class PointLight extends PositionalLight {
 	 * @param y
 	 *            vertical position in world coordinates
 	 */
-	public PointLight(RayHandler rayHandler, int rays, Color color,
+	public PointLight(LightLayer layer, int rays, Color color,
 			float distance, float x, float y) {
-		super(rayHandler, rays, color, distance, x, y, 0f);
+		super(layer, rays, color, distance, x, y, 0f);
 	}
 	
 	@Override
