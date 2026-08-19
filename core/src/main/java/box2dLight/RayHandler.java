@@ -181,10 +181,7 @@ public class RayHandler implements Disposable {
 			shadowColorInterpolation = options.shadowColorInterpolation;
 		}
 		
-
-		render_buffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);		        
-		//		Renderer batchRenderer = new PolygonSpriteBatchRendererAdapter(spritebatch);
-		//		buffer.addRenderer(batchRenderer);
+		render_buffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);
 		render_buffer.initialize((int)app.gdx.getscreenwidth(),
 				(int)app.gdx.getscreenheight());
 		
@@ -203,17 +200,7 @@ public class RayHandler implements Disposable {
 		setBlurNum(2);
 		setCulling(false);
 		setBlur(true);
-
 		setDiffuseLight(true);
-
-//		shadowBlendFunc.set(GL20.GL_SRC_ALPHA, 
-//					GL20.GL_ONE);
-
-//		shadowBlendFunc.set(GL20.GL_ZERO, 
-//				GL20.GL_ONE_MINUS_SRC_ALPHA);
-
-//		diffuseBlendFunc.set(GL20.GL_ZERO, 
-//					GL20.GL_SRC_COLOR);
 
 	}
 
@@ -227,12 +214,12 @@ public class RayHandler implements Disposable {
 		setBlurNum(2);
 	}
 
-	public void setBlendGround() {
+	public void setBlendLight() {
 		setBlendDef();
 		setAmbientLight(0.2f, 0.2f, 0.2f, 1f);
 	}
 
-	public void setBlendSpace() {
+	public void setBlendAura() {
 		setBlendDef();
 		shadowBlendFunc.set(GL20.GL_SRC_COLOR, GL20.GL_ONE);
 		setDiffuseLight(false);
@@ -240,19 +227,8 @@ public class RayHandler implements Disposable {
 
 	public void setBlendView() {
 		setBlendDef();
-		
-//		diffuseBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_ZERO);
-//		setDiffuseLight(true);
-//		setAmbientLight(0.0f, 0.0f, 0.0f, 1f);
-
-		buffer_clear_color.set(Utl.color(0,0));
-//		diffuseBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_ZERO);
-//		setDiffuseLight(true);
-//		setBlur(false);
 		setBlurNum(1);
-//		setAmbientLight(1.0f, 1.0f, 1.0f, 0f);
 		setDiffuseLight(false);
-//		shadowBlendFunc.set(GL20.GL_ZERO, GL20.GL_SRC_ALPHA);
 		shadowBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_ONE_MINUS_SRC_ALPHA);
 	}
 	
@@ -270,15 +246,9 @@ public class RayHandler implements Disposable {
 		
 		render_buffer.begin(); 
 		
-//			ScreenUtils.clear(app.gdx.drawer.buffer_clear_color);
-
-//			Color c = app.gdx.drawer.buffer_clear_color;
 		Color c = Utl.color(0,0);
         Gdx.gl.glClearColor(c.r,c.g,c.b,c.a);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-//
-//	        Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
-//	        Gdx.gl20.glEnable(GL20.GL_BLEND);
         
 		app.gdx.drawer.restart_batch();
 		
@@ -300,11 +270,6 @@ public class RayHandler implements Disposable {
 			for (Light l : temp) l.setActive(true);
 			temp.clear();
 			
-	
-	//		app.gdx.drawer.pause_batch();
-			
-	//	        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
-			
 			render_buffer.end();
 	        
 			cam.setToOrtho(false, (int)(app.gdx.getscreenwidth()), 
@@ -324,8 +289,7 @@ public class RayHandler implements Disposable {
 			Vector2 u = new Vector2(0f,1f).rotateRad(-view.val_cam_rot.get());
 			cam.up.set(u.x, u.y, 0f);
 			cam.update();
-	
-	//			app.gdx.drawer.flush();
+			
 			for (Rectangle r : Utl.duplic(app.gui.scissors)) {
 				scissors.add(r); ScissorStack.popScissors(); }
 			app.gui.scissors.clear();
@@ -344,8 +308,6 @@ public class RayHandler implements Disposable {
 			render_buffer.begin(); 
 			
 			renderOnly();
-
-//			app.gdx.drawer.restart_batch();
 			
 		} else {
 
@@ -372,70 +334,6 @@ public class RayHandler implements Disposable {
 	}
 	
 	
-	
-	
-	
-	
-//	public void endRender() { 
-//		
-//		app.gdx.drawer.pause_batch();
-//		
-////	        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
-//		
-//		render_buffer.end();
-//        
-//		cam.setToOrtho(false, (int)(app.gdx.getscreenwidth()), 
-//				(int)(app.gdx.getscreenheight()));
-//		Vector2 view_center = new Vector2(view.val_pos.get());
-//		view_center.x += view.val_view_size.x() / 2.0f;
-//		view_center.y -= view.val_view_size.y() / 2.0f + nGUI.book.RS;
-//		float scale = view.val_cam_scale.get();
-//		float sclinv = 1f / scale;
-//		Vector2 m = new Vector2(view_center)
-//				.sub(app.gdx.getscreenwidth() / 2.0f, app.gdx.getscreenheight() / 2.0f);
-//		m.scl(sclinv).rotateRad(-view.val_cam_rot.get());
-//		m.add(view.val_cam_pos.get()).scl(-1f);
-//		cam.zoom = sclinv;
-//		cam.position.set(m.x, m.y, 0f);
-//		cam.direction.set(0f, 0f, -1f);
-//		Vector2 u = new Vector2(0f,1f).rotateRad(-view.val_cam_rot.get());
-//		cam.up.set(u.x, u.y, 0f);
-//		cam.update();
-//
-////			app.gdx.drawer.flush();
-//		for (Rectangle r : Utl.duplic(app.gui.scissors)) {
-//			scissors.add(r); ScissorStack.popScissors(); }
-//		app.gui.scissors.clear();
-//
-//		setCombinedMatrix(cam.combined,
-//				m.x, m.y, app.gdx.getscreenwidth(), app.gdx.getscreenheight()); 
-//		
-//		
-//		update();
-//		prepareRender();
-//		
-//		
-////			app.gdx.drawer.flush();
-//		for (Rectangle r : Utl.duplic(scissors)) {
-//			app.gui.scissors.add(r); ScissorStack.pushScissors(r); }
-//		scissors.clear();
-//
-//		render_buffer.begin(); 
-//		
-//		renderOnly();
-//		
-//		render_buffer.end();
-//
-//		app.gdx.drawer.spritebatch.begin();
-//		app.gdx.drawer.spritebatch.draw(render_buffer.getTexture(), 0, 0, 
-//				app.gdx.getscreenwidth(), 
-//				app.gdx.getscreenheight(), 
-//				0, 0, 1, 1);
-//		app.gdx.drawer.spritebatch.end();
-//		
-//		app.gdx.drawer.spritebatch.begin();
-//		
-//	}
 	
 	
 	
@@ -600,16 +498,7 @@ public class RayHandler implements Disposable {
 		}
 
 		if (useLightMap) {
-			if (customViewport) {
-				lightMap.frameBuffer.end();
-//				lightMap.frameBuffer.end(
-//					viewportX,
-//					viewportY,
-//					viewportWidth,
-//					viewportHeight);
-			} else {
-				lightMap.frameBuffer.end();
-			}
+			lightMap.frameBuffer.end();
 		}
 
 		if (useLightMap && pseudo3d) {
@@ -622,16 +511,7 @@ public class RayHandler implements Disposable {
 				light.dynamicShadowRender();
 			}
 
-			if (customViewport) {
-				lightMap.frameBuffer.end();
-//				lightMap.shadowBuffer.end(
-//						viewportX,
-//						viewportY,
-//						viewportWidth,
-//						viewportHeight);
-			} else {
-				lightMap.shadowBuffer.end();
-			}
+			lightMap.shadowBuffer.end();
 		}
 
 		boolean needed = lightRenderedLastFrame > 0;

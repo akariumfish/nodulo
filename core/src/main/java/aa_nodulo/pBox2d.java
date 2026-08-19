@@ -378,16 +378,18 @@ public class pBox2d extends pSystem {
 				pBody b1 = (pBody)ba.getUserData();
 				pBody b2 = (pBody)bb.getUserData();
 
-				if (!b1.hasParam("hitzone") || !b2.hasParam("damagezone")) {
-					pBody t = b1; b1 = b2; b2 = t; }
-				if (!b1.hasParam("hitzone") || !b2.hasParam("damagezone")) return;
+				if (!b1.hasParam("hp") || !b2.hasParam("hitzone")) {
+					pBody t = b1; b1 = b2; b2 = t; 
+					Body bt = ba; ba = bb; bb = bt; 
+					Fixture ft = fa; fa = fb; fb = ft; }
+				if (!b1.hasParam("hp") || !b2.hasParam("hitzone")) return;
 				
-				int damage = b2.getInt("damagezone", "damage");
-				b1.setInt("hitzone", "hitpoint", b1.getInt("hitzone", "hitpoint") - damage);
+				int damage = b2.getInt("hitzone", "damage");
+				b1.setInt("hp", "hp", b1.getInt("hp", "hp") - damage);
 				
-				if (b1.getInt("hitzone", "hitpoint") <= 0) {
+				if (b1.getInt("hp", "hp") <= 0) {
 					if (!clearing_bodys.contains(ba)) clearing_bodys.add(ba);
-					if (b1.hasParam("avatar") && 
+					if (b1.getBoo("hitpoint","avatar") && 
 							app.getSystem(pGeom.class) != null) 
 						app.getSystem(pGeom.class).game_over();
 				}
@@ -454,6 +456,7 @@ public class pBox2d extends pSystem {
 					attachToBody(pl, body);
 					PointLight pl2 = tilemap.newGroundLight(60, 
 							new Color(1f,1f,1f,0.8f), 900, 0, 0);
+					pl2.setSoft(false);
 					attachToBody(pl2, body);
 				}
 

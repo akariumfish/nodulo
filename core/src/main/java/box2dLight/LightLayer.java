@@ -20,7 +20,7 @@ public class LightLayer {
 	
 	public nTileMap map;
 	
-	public enum MODE { DEFAULT, GROUND, SPACE, VIEW }
+	public enum MODE { DEFAULT, LIGHT, AURA, VIEW }
 	
 	public MODE mode = MODE.DEFAULT;
 	
@@ -30,11 +30,11 @@ public class LightLayer {
 		if (mode == MODE.DEFAULT) {
 			rayHandler.setBlendDef();
 			active = false;
-		} else if (mode == MODE.GROUND) {
-			rayHandler.setBlendGround();
+		} else if (mode == MODE.LIGHT) {
+			rayHandler.setBlendLight();
 			active = true;
-		} else if (mode == MODE.SPACE) {
-			rayHandler.setBlendSpace(); 
+		} else if (mode == MODE.AURA) {
+			rayHandler.setBlendAura(); 
 			active = true;
 		} else if (mode == MODE.VIEW) {
 			rayHandler.setBlendView(); 
@@ -60,22 +60,21 @@ public class LightLayer {
 		for (MapObject m : ml.getObjects()) {
 			if (m.getProperties().get("pointlight", Boolean.class) != null && 
 					m.getProperties().get("pointlight", Boolean.class)) {
-				
 				MapProperties prop = m.getProperties();
-				
 				int ray = prop.get("ray", Integer.class);
 				float dist = prop.get("dist", Float.class);
 				Color col = prop.get("color", Color.class);
 				Vector2 pos = map.mapToSpace(prop.get("x", Float.class), 
 						prop.get("y", Float.class));
 				new PointLight(this, ray, col, dist, pos.x, pos.y);
-				
-//				Iterator<String> iter = m.getProperties().getKeys();
-//				while (iter.hasNext()) {
-//					String k = iter.next();
-//					Utl.logn(k+" "+prop.get(k));
-//				}
-				
+			}
+			if (m.getProperties().get("dirlight", Boolean.class) != null && 
+					m.getProperties().get("dirlight", Boolean.class)) {
+				MapProperties prop = m.getProperties();
+				int ray = prop.get("ray", Integer.class);
+				float dir = prop.get("dir", Float.class); // 0 = 0deg, 0.5 = 180deg
+				Color col = prop.get("color", Color.class);
+				new DirectionalLight(this, ray, col, dir * 360f);
 			}
 		}
 	}

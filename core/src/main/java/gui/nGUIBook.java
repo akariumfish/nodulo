@@ -177,8 +177,8 @@ public class nGUIBook {
 
 		book.newModel("CL_def_graph")
 		.set_color_background(Utl.color(120))
-		.set_color_outline(Utl.color(210))
-		.setOutlineWeight(6)
+		.set_color_outline(Utl.color(40))
+		.setOutlineWeight(5)
 		;
 		book.newModel("CL_release_graph")
 		.set_color_background(Utl.color(0,20))

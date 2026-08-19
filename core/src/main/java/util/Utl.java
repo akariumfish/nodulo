@@ -54,7 +54,11 @@ public class Utl {
 	
 	public static int clamp(int v, int min, int max) {
 		if (v > max) v = max; if (v < min) v = min; return v; }
-	
+	public static int rgbToInt(Color c) {
+		int r = (int)(255f*c.r); int g = (int)(255f*c.g); 
+		int b = (int)(255f*c.b); int a = (int)(255f*c.a);
+	    return rgbToInt(r,g,b,a);
+	}
 	public static int rgbToInt(int red, int green, int blue, int alpha) {
 	    alpha = clamp(alpha, 0, 255);
 	    red = clamp(red, 0, 255);

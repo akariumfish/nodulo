@@ -77,6 +77,7 @@ public abstract class Light implements Disposable {
 	protected final Vector2 tmpEnd = new Vector2();
 	protected final Vector2 tmpVec = new Vector2();
 	public final Vector2 center = new Vector2();
+	
 	public LightLayer layer;
 
 	public Light(LightLayer layer, int rays, Color color,

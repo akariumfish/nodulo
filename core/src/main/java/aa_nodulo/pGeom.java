@@ -66,45 +66,93 @@ public class pGeom extends pSystem {
 		nRun geom_prop_run = new nRun() {public void run() {
 			pStandard stand = arg(0,pStandard.class);
 			if (stand == null) return;
-			
-			stand.newRun("set_def", new nRun() {public void run() {
+
+			stand.addInitRun(new nRun() {public void run() {
+				instance.run("empty_geom");
+			}});
+			stand.newRun("empty_geom", new nRun() {public void run() {
+				Color fill = nGUI.book.getModel("CL_graph").color_background;
+				Color line = nGUI.book.getModel("CL_graph").color_outline;
+				float thick = nGUI.book.getModel("CL_graph").outlineWeight;
+				instance.setVar("fill_color", Utl.rgbToInt(fill));
+				instance.setVar("line_color", Utl.rgbToInt(line));
+				instance.setVar("line_thick", thick);
 				pParam par = instance.object("param", pParam.class);
 				if (par == null) return; 
 				par.collecEmpty("point");
+				par.collecEmpty("color1");
+				par.collecEmpty("color2");
 				par.collecEmpty("faceA");
 				par.collecEmpty("faceB");
 				par.collecEmpty("faceC");
+				par.collecEmpty("faceT");
+				par.collecEmpty("lineA");
+				par.collecEmpty("lineB");
+				par.collecEmpty("lineT");
+				par.collecEmpty("light");
+				par.collecEmpty("light_dist");
+				par.collecEmpty("aura");
+				par.collecEmpty("aura_dist");
+				par.collecEmpty("halo");
+				par.collecEmpty("halo_rad");
+			}});
+			stand.newRun("add_point", new nRun() {public void run() {
+				float x = arg(0, Float.class);
+				float y = arg(1, Float.class);
+				pParam par = instance.object("param", pParam.class);
+				if (par == null) return; 
+				par.collecAdd("point", new Vector2(x,y)); 
+				par.collecAdd("color1", instance.getVar("fill_color")); 
+				par.collecAdd("color2", instance.getVar("line_color")); 
+			}});
+			stand.newRun("add_line", new nRun() {public void run() {
+				int p1 = arg(0, Integer.class);
+				int p2 = arg(1, Integer.class);
+				pParam par = instance.object("param", pParam.class);
+				if (par == null) return; 
+				par.collecAdd("lineA", p1);
+				par.collecAdd("lineB", p2);
+				par.collecAdd("lineT", instance.getVar("line_thick")); 
+			}});
+			stand.newRun("add_face", new nRun() {public void run() {
+				int p1 = arg(0, Integer.class);
+				int p2 = arg(1, Integer.class);
+				int p3 = arg(2, Integer.class);
+				pParam par = instance.object("param", pParam.class);
+				if (par == null) return; 
+				par.collecAdd("faceA", p1);
+				par.collecAdd("faceB", p2);
+				par.collecAdd("faceC", p3);
+				par.collecAdd("faceT", instance.getVar("line_thick")); 
+			}});
+			stand.newRun("set_def", new nRun() {public void run() {
+				instance.run("empty_geom");
+				pParam par = instance.object("param", pParam.class);
+				if (par == null) return; 
 				Vector2 v = new Vector2(80,0); 
 				Vector2 v2 = new Vector2(80,0); 
 				v.rotateRad((float)(2f*Math.PI/3f)); 
 				v2.rotateRad((float)(2f*Math.PI/3f)); 
 				v2.rotateRad((float)(2f*Math.PI/3f)); 
-				par.collecAdd("point", v); 
-				par.collecAdd("point", new Vector2(80,0)); 
-				par.collecAdd("point", v2);
-				par.collecAdd("faceA", (int)0);
-				par.collecAdd("faceB", (int)1);
-				par.collecAdd("faceC", (int)2);
+				instance.run("add_point", v.x, v.y); 
+				instance.run("add_point", 80f, 0f); 
+				instance.run("add_point", v2.x, v2.y);
+				instance.run("add_face", (int)0, (int)1, (int)2);
 			}});
 			stand.newRun("set_trig", new nRun() {public void run() {
 				float r = arg(0, Float.class);
+				instance.run("empty_geom");
 				pParam par = instance.object("param", pParam.class);
 				if (par == null) return; 
-				par.collecEmpty("point");
-				par.collecEmpty("faceA");
-				par.collecEmpty("faceB");
-				par.collecEmpty("faceC");
 				Vector2 v = new Vector2(r,0); 
 				Vector2 v2 = new Vector2(r,0); 
 				v.rotateRad((float)(2f*Math.PI/3f)); 
 				v2.rotateRad((float)(2f*Math.PI/3f)); 
 				v2.rotateRad((float)(2f*Math.PI/3f)); 
-				par.collecAdd("point", v); 
-				par.collecAdd("point", new Vector2(r,0)); 
-				par.collecAdd("point", v2);
-				par.collecAdd("faceA", (int)0);
-				par.collecAdd("faceB", (int)1);
-				par.collecAdd("faceC", (int)2);
+				instance.run("add_point", v.x, v.y); 
+				instance.run("add_point", r, 0f); 
+				instance.run("add_point", v2.x, v2.y);
+				instance.run("add_face", (int)0, (int)1, (int)2);
 			}});
 			stand.newRun("add_trig", new nRun() {public void run() {
 				float r = arg(0, Float.class);
@@ -116,39 +164,303 @@ public class pGeom extends pSystem {
 				v2.rotateRad((float)(2f*Math.PI/3f)); 
 				v2.rotateRad((float)(2f*Math.PI/3f)); 
 				int col_size = par.getCollecSize("point");
-				par.collecAdd("point", v); 
-				par.collecAdd("point", new Vector2(r,0)); 
-				par.collecAdd("point", v2);
-				par.collecAdd("faceA", col_size+(int)0);
-				par.collecAdd("faceB", col_size+(int)1);
-				par.collecAdd("faceC", col_size+(int)2);
+				instance.run("add_point", v.x, v.y); 
+				instance.run("add_point", r, 0f); 
+				instance.run("add_point", v2.x, v2.y);
+				instance.run("add_face", 
+						col_size+(int)0, col_size+(int)1, col_size+(int)2);
 			}});
-			stand.newRun("set_rect", new nRun() {public void run() {
-				float r = arg(0, Float.class);
+			stand.newRun("new_trig", new nRun() {public void run() {
+				float x = arg(0, Float.class);
+				float y = arg(1, Float.class);
+				float rad = arg(2, Float.class);
+				float rot = arg(3, Float.class);
 				pParam par = instance.object("param", pParam.class);
 				if (par == null) return; 
-				par.collecEmpty("point");
-				par.collecEmpty("faceA");
-				par.collecEmpty("faceB");
-				par.collecEmpty("faceC");
-				Vector2 v = new Vector2(r,0); 
-				Vector2 v2 = new Vector2(r,0);
-				Vector2 v3 = new Vector2(r,0);
-				Vector2 v4 = new Vector2(r,0); 
-				v.rotateRad((float)(3f*Math.PI/4f)); 
-				v2.rotateRad((float)(1f*Math.PI/4f)); 
-				v3.rotateRad((float)(-1f*Math.PI/4f));
-				v4.rotateRad((float)(-3f*Math.PI/4f)); 
-				par.collecAdd("point", v); 
-				par.collecAdd("point", v2);
-				par.collecAdd("point", v3);
-				par.collecAdd("point", v4);
-				par.collecAdd("faceA", (int)0);
-				par.collecAdd("faceB", (int)1);
-				par.collecAdd("faceC", (int)2);
-				par.collecAdd("faceA", (int)2);
-				par.collecAdd("faceB", (int)3);
-				par.collecAdd("faceC", (int)0);
+				Vector2 p = new Vector2(x,y); 
+				Vector2 v = new Vector2(rad,0); 
+				Vector2 v1 = new Vector2(rad,0); 
+				Vector2 v2 = new Vector2(rad,0); 
+				v.rotateRad((float)(2f*Math.PI/3f));
+				v.rotateRad(rot).add(p);
+				v1.rotateRad(rot).add(p);
+				v2.rotateRad((float)(2f*Math.PI/3f)); 
+				v2.rotateRad((float)(2f*Math.PI/3f));
+				v2.rotateRad(rot).add(p); 
+				int col_size = par.getCollecSize("point");
+				instance.run("add_point", v.x, v.y); 
+				instance.run("add_point", v1.x, v1.y); 
+				instance.run("add_point", v2.x, v2.y);
+				instance.run("add_face", 
+						col_size+(int)0, col_size+(int)1, col_size+(int)2);
+			}});
+			stand.newRun("new_face", new nRun() {public void run() {
+				float x1 = arg(0, Float.class);
+				float y1 = arg(1, Float.class);
+				float x2 = arg(2, Float.class);
+				float y2 = arg(3, Float.class);
+				float x3 = arg(4, Float.class);
+				float y3 = arg(5, Float.class);
+				pParam par = instance.object("param", pParam.class);
+				if (par == null) return;  
+				int col_size = par.getCollecSize("point");
+				instance.run("add_point", x1, y1); 
+				instance.run("add_point", x2, y2); 
+				instance.run("add_point", x3, y3);
+				instance.run("add_face", 
+						col_size+(int)0, col_size+(int)1, col_size+(int)2);
+			}});
+			
+			
+			
+			
+			stand.newRun("pop_editor", new nRun() {public void run() {
+
+				instance.obtainVar("sel_point", (int)-1);
+				
+				nInterface interf = PlaneApplet.app.gui.get_popWindow();
+
+				interf.add_col();
+				interf.add_row();
+				interf.add_row_label(9," Geom Editor ");
+
+				interf.add_row();
+				nWidget preview = interf.add_row_label(9,"");
+
+				interf.set_param("entry_height","0.8");
+				interf.add_row();
+				nWidgetGroup pointlist = interf.add_treelist(9,5);
+				interf.set_param("entry_height","1");
+
+				interf.add_row();
+				
+				interf.add_col();
+				interf.add_row();
+				nRun pointlist_run = new nRun(instance) { public void run() {
+					pInstance inst = (pInstance)builder;
+					pParam geom = inst.object("param", pParam.class);
+					if (geom == null) return; 
+					ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
+					interf.change_current_list(pointlist);
+					int i = 0;
+					for (Vector2 v : point) {
+						interf.add_list_entry("point "+i+" : "+v.x+" "+v.y);
+						interf.go_up_tree();
+						i++;
+					}
+					ArrayList<Integer> faceA = geom.getCollecData("faceA", Integer.class);
+					ArrayList<Integer> faceB = geom.getCollecData("faceB", Integer.class);
+					ArrayList<Integer> faceC = geom.getCollecData("faceC", Integer.class);
+					if (faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
+							faceC.size() != faceB.size()) return;
+
+					ArrayList<Integer> lineA = geom.getCollecData("lineA", Integer.class);
+					ArrayList<Integer> lineB = geom.getCollecData("lineB", Integer.class);
+					if (lineA.size() != lineB.size()) return;
+					for (i = 0 ; i < faceA.size() ; i++) {
+						int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
+						interf.add_list_entry("face "+i+" : "+p1+" "+p2+" "+p3);
+						interf.go_up_tree();
+					}
+					for (i = 0 ; i < lineA.size() ; i++) {
+						int p1 = lineA.get(i), p2 = lineB.get(i);
+						interf.add_list_entry("line "+i+" : "+p1+" "+p2);
+						interf.go_up_tree();
+					}
+				
+				}};
+				
+				nRun move_run = new nRun(instance) { public void run() {
+					pInstance inst = (pInstance)builder;
+					float mx = arg(0,Float.class), my = arg(1,Float.class);
+					int sel_point = inst.getVar("sel_point", Integer.class);
+					pParam geom = inst.object("param", pParam.class);
+					if (geom == null) return; 
+					ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
+					if (sel_point >= 0 && sel_point < point.size()) {
+						Vector2 v = new Vector2(point.get(sel_point));
+						v.add(mx,my);
+						geom.collecSet("point", sel_point, v); 
+						pointlist_run.do_run(inst); }
+				}};
+				nRun add_run = new nRun(instance) { public void run() {
+					pInstance inst = (pInstance)builder;
+					inst.run("add_trig", 60f);
+				}};
+				interf.add_row_trigg(3,"U", new nRun(instance) { public void run() {
+					move_run.do_run((pInstance)builder, 0f, 10f); }});
+				interf.add_row();
+				interf.add_row_trigg(3,"L", new nRun(instance) { public void run() {
+					move_run.do_run((pInstance)builder, -10f, 0f); }});
+				interf.add_row_trigg(3,"R", new nRun(instance) { public void run() {
+					move_run.do_run((pInstance)builder, 10f, 0f); }});
+				interf.add_row();
+				interf.add_row_trigg(3,"D", new nRun(instance) { public void run() {
+					move_run.do_run((pInstance)builder, 0f, -10f); }});
+
+				interf.add_row();
+				interf.add_row_trigg(3,"CCW", new nRun(instance) { public void run() {
+					pInstance inst = (pInstance)builder;
+					int sel_point = inst.getVar("sel_point", Integer.class);
+					pParam geom = inst.object("param", pParam.class);
+					if (geom == null) return; 
+					ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
+					if (sel_point >= 0 && sel_point < point.size()) {
+						Vector2 v = new Vector2(point.get(sel_point))
+								.rotateRad(((float)Math.PI)/12f);
+						geom.collecSet("point", sel_point, v);
+						pointlist_run.do_run(inst); 
+					} }});
+				interf.add_row_trigg(3,"CW", new nRun(instance) { public void run() {
+					pInstance inst = (pInstance)builder;
+					int sel_point = inst.getVar("sel_point", Integer.class);
+					pParam geom = inst.object("param", pParam.class);
+					if (geom == null) return; 
+					ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
+					if (sel_point >= 0 && sel_point < point.size()) {
+						Vector2 v = new Vector2(point.get(sel_point))
+								.rotateRad(-((float)Math.PI)/12f);
+						geom.collecSet("point", sel_point, v);
+						pointlist_run.do_run(inst); 
+					} }});
+
+				interf.add_row();
+				interf.add_row_trigg(3,"mag -", new nRun(instance) { public void run() {
+					pInstance inst = (pInstance)builder;
+					int sel_point = inst.getVar("sel_point", Integer.class);
+					pParam geom = inst.object("param", pParam.class);
+					if (geom == null) return; 
+					ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
+					if (sel_point >= 0 && sel_point < point.size()) {
+						Vector2 v = new Vector2(point.get(sel_point));
+						float l = v.len(); float l2 = l - 10f;
+						if (l > 0 && l2 > 0) v.scl(l2 / l);
+						geom.collecSet("point", sel_point, v);
+						pointlist_run.do_run(inst); 
+					} }});
+				interf.add_row_trigg(3,"mag +", new nRun(instance) { public void run() {
+					pInstance inst = (pInstance)builder;
+					int sel_point = inst.getVar("sel_point", Integer.class);
+					pParam geom = inst.object("param", pParam.class);
+					if (geom == null) return; 
+					ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
+					if (sel_point >= 0 && sel_point < point.size()) {
+						Vector2 v = new Vector2(point.get(sel_point));
+						float l = v.len(); float l2 = l + 10f;
+						if (l > 0) v.scl(l2 / l); else v.set(10,0);
+						geom.collecSet("point", sel_point, v);
+						pointlist_run.do_run(inst); 
+					} }});
+				
+
+				interf.add_row();
+				interf.add_row_label(6, "");
+				interf.add_row();
+				interf.add_row_label(1, "");
+				interf.add_row_trigg(4,"ADD", new nRun(instance) { public void run() {
+					add_run.do_run((pInstance)builder); 
+				}});
+				interf.add_row_label(1, "");
+
+				
+				pointlist_run.do_run(instance);
+				
+				preview.setSize(RS*14f,RS*14f);
+				nRun pr = new nRun() {public void run() { 
+					PlaneApplet app = PlaneApplet.app;
+					app.fill(40); app.rect(0,0,RS*14f,RS*14f);
+					app.push(); app.translate(RS*7f,RS*7f); app.scale(2f);
+					
+					app.stroke(255,0,0,255,2f); app.line(0,-80,0,80);
+					app.stroke(0,255,0,255,2f); app.line(-80,0,80,0);
+					app.pop();
+					
+					pParam geom = instance.object("param", pParam.class);
+					if (geom == null) return; 
+					app.push(); app.translate(RS*7f,RS*7f); app.scale(2f);
+					
+					ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
+
+					ArrayList<Integer> faceA = geom.getCollecData("faceA", Integer.class);
+					ArrayList<Integer> faceB = geom.getCollecData("faceB", Integer.class);
+					ArrayList<Integer> faceC = geom.getCollecData("faceC", Integer.class);
+					if (faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
+							faceC.size() != faceB.size()) return;
+
+					ArrayList<Integer> lineA = geom.getCollecData("lineA", Integer.class);
+					ArrayList<Integer> lineB = geom.getCollecData("lineB", Integer.class);
+					if (lineA.size() != lineB.size()) return;
+				
+					app.stroke(255,255,255,255,3f);
+					app.noFill();
+
+					for (int i = 0 ; i < faceA.size() ; i++) {
+						int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
+						if (p1 < 0 || p1 >= point.size() || 
+								p2 < 0 || p2 >= point.size() || 
+								p3 < 0 || p3 >= point.size()) continue;
+						app.polygon(point.get(p1), 
+								point.get(p2), 
+								point.get(p3));
+					}
+					for (int i = 0 ; i < lineA.size() ; i++) {
+						int p1 = lineA.get(i), p2 = lineB.get(i);
+						if (p1 < 0 || p1 >= point.size() || p2 < 0 || p2 >= point.size()) continue;
+						app.line(point.get(p1), point.get(p2));
+					}
+					app.fill(220); app.noStroke();
+					for (Vector2 v : point) {
+							app.circle(v.x, v.y, 3f);
+					}
+					
+					int sel_point = instance.getVar("sel_point", Integer.class);
+					if (sel_point >= 0 && sel_point < point.size()) {
+						Vector2 v = point.get(sel_point);
+						app.fill(255,180,0,255);
+						app.circle(v.x, v.y, 10f);
+					}
+
+					Vector2 mouse = new Vector2(app.input.mouse);
+					mouse.sub(preview.getPos()).sub(RS*7f,RS*7f).scl(0.5f);
+					for (Vector2 v : point) {
+						Vector2 l = new Vector2(v).sub(mouse);
+//						app.fill(255,180,0,255);
+//						app.circle(n.x, n.y, 10f);
+//						app.circle(mouse.x, mouse.y, 10f);
+						if (l.len() <= 10f) {
+							app.fill(255,255,0,255);
+							app.circle(v.x, v.y, 10f);
+						}
+					}
+					
+					app.pop();
+				}};
+				preview.setCustomDrawer(new nDrawable(instance) {public void drawing() { 
+					pr.do_run((pInstance)builder); }});
+				preview.addEventLogic(new nRun(instance) {public void run() { 
+					pInstance inst = (pInstance)builder;
+					pParam geom = inst.object("param", pParam.class);
+					if (geom == null) return; 
+					ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
+					Vector2 mouse = new Vector2(App.ap.input.mouse);
+					mouse.sub(preview.getPos()).sub(RS*7f,RS*7f).scl(0.5f);
+					int i = 0;
+					for (Vector2 v : point) {
+						Vector2 l = new Vector2(v).sub(mouse);
+						if (l.len() <= 10f && App.ap.input.mouseLeft.trigClick) {
+							inst.setVar("sel_point", i); 
+							break; }
+						i++; 
+					}
+					if (i >= point.size() && 
+							preview.globalrect.contains(App.ap.input.mouse) && 
+							App.ap.input.mouseLeft.trigClick)
+						inst.setVar("sel_point", (int)-1);
+				}});
+				
+				App.ap.addEventNextFrame(new nRun() { public void run() {
+					PlaneApplet.app.gui.pop_popwindow("Geom"); 
+				}});
 			}});
 			
 			
@@ -178,252 +490,7 @@ public class pGeom extends pSystem {
 			.commande(pNode.getCom(CT.COM_ADD_ROW))
 			.openSec()
 				.param("run", new nRun() {public void run() {
-					
-					instance.obtainVar("sel_point", (int)-1);
-					
-					nInterface interf = PlaneApplet.app.gui.get_popWindow();
-
-					interf.add_col();
-					interf.add_row();
-					interf.add_row_label(9," Geom Editor ");
-
-					interf.add_row();
-					nWidget preview = interf.add_row_label(9,"");
-
-					interf.set_param("entry_height","0.8");
-					interf.add_row();
-					nWidgetGroup pointlist = interf.add_treelist(9,5);
-					interf.set_param("entry_height","1");
-
-					interf.add_row();
-					
-					interf.add_col();
-					interf.add_row();
-					nRun pointlist_run = new nRun(instance) { public void run() {
-						pInstance inst = (pInstance)builder;
-						pParam geom = inst.object("param", pParam.class);
-						if (geom == null) return; 
-						ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
-						interf.change_current_list(pointlist);
-						int i = 0;
-						for (Vector2 v : point) {
-							interf.add_list_entry("point "+i+" : "+v.x+" "+v.y);
-							interf.go_up_tree();
-							i++;
-						}
-						ArrayList<Integer> faceA = geom.getCollecData("faceA", Integer.class);
-						ArrayList<Integer> faceB = geom.getCollecData("faceB", Integer.class);
-						ArrayList<Integer> faceC = geom.getCollecData("faceC", Integer.class);
-						if (faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
-								faceC.size() != faceB.size()) return;
-
-						ArrayList<Integer> lineA = geom.getCollecData("lineA", Integer.class);
-						ArrayList<Integer> lineB = geom.getCollecData("lineB", Integer.class);
-						if (lineA.size() != lineB.size()) return;
-						for (i = 0 ; i < faceA.size() ; i++) {
-							int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
-							interf.add_list_entry("face "+i+" : "+p1+" "+p2+" "+p3);
-							interf.go_up_tree();
-						}
-						for (i = 0 ; i < lineA.size() ; i++) {
-							int p1 = lineA.get(i), p2 = lineB.get(i);
-							interf.add_list_entry("line "+i+" : "+p1+" "+p2);
-							interf.go_up_tree();
-						}
-					
-					}};
-					
-					nRun move_run = new nRun(instance) { public void run() {
-						pInstance inst = (pInstance)builder;
-						float mx = arg(0,Float.class), my = arg(1,Float.class);
-						int sel_point = inst.getVar("sel_point", Integer.class);
-						pParam geom = inst.object("param", pParam.class);
-						if (geom == null) return; 
-						ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
-						if (sel_point >= 0 && sel_point < point.size()) {
-							Vector2 v = new Vector2(point.get(sel_point));
-							v.add(mx,my);
-							geom.collecSet("point", sel_point, v); 
-							pointlist_run.do_run(inst); }
-					}};
-					nRun add_run = new nRun(instance) { public void run() {
-						pInstance inst = (pInstance)builder;
-						inst.run("add_trig", 60f);
-					}};
-					interf.add_row_trigg(3,"U", new nRun(instance) { public void run() {
-						move_run.do_run((pInstance)builder, 0f, 10f); }});
-					interf.add_row();
-					interf.add_row_trigg(3,"L", new nRun(instance) { public void run() {
-						move_run.do_run((pInstance)builder, -10f, 0f); }});
-					interf.add_row_trigg(3,"R", new nRun(instance) { public void run() {
-						move_run.do_run((pInstance)builder, 10f, 0f); }});
-					interf.add_row();
-					interf.add_row_trigg(3,"D", new nRun(instance) { public void run() {
-						move_run.do_run((pInstance)builder, 0f, -10f); }});
-
-					interf.add_row();
-					interf.add_row_trigg(3,"CCW", new nRun(instance) { public void run() {
-						pInstance inst = (pInstance)builder;
-						int sel_point = inst.getVar("sel_point", Integer.class);
-						pParam geom = inst.object("param", pParam.class);
-						if (geom == null) return; 
-						ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
-						if (sel_point >= 0 && sel_point < point.size()) {
-							Vector2 v = new Vector2(point.get(sel_point))
-									.rotateRad(((float)Math.PI)/12f);
-							geom.collecSet("point", sel_point, v);
-							pointlist_run.do_run(inst); 
-						} }});
-					interf.add_row_trigg(3,"CW", new nRun(instance) { public void run() {
-						pInstance inst = (pInstance)builder;
-						int sel_point = inst.getVar("sel_point", Integer.class);
-						pParam geom = inst.object("param", pParam.class);
-						if (geom == null) return; 
-						ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
-						if (sel_point >= 0 && sel_point < point.size()) {
-							Vector2 v = new Vector2(point.get(sel_point))
-									.rotateRad(-((float)Math.PI)/12f);
-							geom.collecSet("point", sel_point, v);
-							pointlist_run.do_run(inst); 
-						} }});
-
-					interf.add_row();
-					interf.add_row_trigg(3,"mag -", new nRun(instance) { public void run() {
-						pInstance inst = (pInstance)builder;
-						int sel_point = inst.getVar("sel_point", Integer.class);
-						pParam geom = inst.object("param", pParam.class);
-						if (geom == null) return; 
-						ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
-						if (sel_point >= 0 && sel_point < point.size()) {
-							Vector2 v = new Vector2(point.get(sel_point));
-							float l = v.len(); float l2 = l - 10f;
-							if (l > 0 && l2 > 0) v.scl(l2 / l);
-							geom.collecSet("point", sel_point, v);
-							pointlist_run.do_run(inst); 
-						} }});
-					interf.add_row_trigg(3,"mag +", new nRun(instance) { public void run() {
-						pInstance inst = (pInstance)builder;
-						int sel_point = inst.getVar("sel_point", Integer.class);
-						pParam geom = inst.object("param", pParam.class);
-						if (geom == null) return; 
-						ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
-						if (sel_point >= 0 && sel_point < point.size()) {
-							Vector2 v = new Vector2(point.get(sel_point));
-							float l = v.len(); float l2 = l + 10f;
-							if (l > 0) v.scl(l2 / l); else v.set(10,0);
-							geom.collecSet("point", sel_point, v);
-							pointlist_run.do_run(inst); 
-						} }});
-					
-
-					interf.add_row();
-					interf.add_row_label(6, "");
-					interf.add_row();
-					interf.add_row_label(1, "");
-					interf.add_row_trigg(4,"ADD", new nRun(instance) { public void run() {
-						add_run.do_run((pInstance)builder); 
-					}});
-					interf.add_row_label(1, "");
-
-					
-					pointlist_run.do_run(instance);
-					
-					preview.setSY(RS*7f);
-					nRun pr = new nRun() {public void run() { 
-						PlaneApplet app = PlaneApplet.app;
-						app.fill(40); app.rect(0,0,210,210);
-						app.push(); app.translate(105,105);
-						app.stroke(255,0,0,255,2f); app.line(0,-80,0,80);
-						app.stroke(0,255,0,255,2f); app.line(-80,0,80,0);
-						app.pop();
-						
-						pParam geom = instance.object("param", pParam.class);
-						if (geom == null) return; 
-						app.push(); app.translate(105,105);
-						
-						ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
-
-						ArrayList<Integer> faceA = geom.getCollecData("faceA", Integer.class);
-						ArrayList<Integer> faceB = geom.getCollecData("faceB", Integer.class);
-						ArrayList<Integer> faceC = geom.getCollecData("faceC", Integer.class);
-						if (faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
-								faceC.size() != faceB.size()) return;
-
-						ArrayList<Integer> lineA = geom.getCollecData("lineA", Integer.class);
-						ArrayList<Integer> lineB = geom.getCollecData("lineB", Integer.class);
-						if (lineA.size() != lineB.size()) return;
-					
-						app.stroke(255,255,255,255,3f);
-						app.noFill();
-
-						for (int i = 0 ; i < faceA.size() ; i++) {
-							int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
-							if (p1 < 0 || p1 >= point.size() || 
-									p2 < 0 || p2 >= point.size() || 
-									p3 < 0 || p3 >= point.size()) continue;
-							app.polygon(point.get(p1), 
-									point.get(p2), 
-									point.get(p3));
-						}
-						for (int i = 0 ; i < lineA.size() ; i++) {
-							int p1 = lineA.get(i), p2 = lineB.get(i);
-							if (p1 < 0 || p1 >= point.size() || p2 < 0 || p2 >= point.size()) continue;
-							app.line(point.get(p1), point.get(p2));
-						}
-						app.fill(220); app.noStroke();
-						for (Vector2 v : point) {
-								app.circle(v.x, v.y, 3f);
-						}
-						
-						int sel_point = instance.getVar("sel_point", Integer.class);
-						if (sel_point >= 0 && sel_point < point.size()) {
-							Vector2 v = point.get(sel_point);
-							app.fill(255,180,0,255);
-							app.circle(v.x, v.y, 10f);
-						}
-
-						Vector2 mouse = new Vector2(app.input.mouse);
-						mouse.sub(preview.getPos()).sub(105,105);
-						for (Vector2 v : point) {
-							Vector2 l = new Vector2(v).sub(mouse);
-//							app.fill(255,180,0,255);
-//							app.circle(n.x, n.y, 10f);
-//							app.circle(mouse.x, mouse.y, 10f);
-							if (l.len() <= 10f) {
-								app.fill(255,255,0,255);
-								app.circle(v.x, v.y, 10f);
-							}
-						}
-						
-						app.pop();
-					}};
-					preview.setCustomDrawer(new nDrawable(instance) {public void drawing() { 
-						pr.do_run((pInstance)builder); }});
-					preview.addEventLogic(new nRun(instance) {public void run() { 
-						pInstance inst = (pInstance)builder;
-						pParam geom = inst.object("param", pParam.class);
-						if (geom == null) return; 
-						ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
-						Vector2 mouse = new Vector2(App.ap.input.mouse);
-						mouse.sub(preview.getPos()).sub(105,105);
-						int i = 0;
-						for (Vector2 v : point) {
-							Vector2 l = new Vector2(v).sub(mouse);
-							if (l.len() <= 10f && App.ap.input.mouseLeft.trigClick) {
-								inst.setVar("sel_point", i); 
-								break; }
-							i++; 
-						}
-						if (i >= point.size() && 
-								preview.globalrect.contains(App.ap.input.mouse) && 
-								App.ap.input.mouseLeft.trigClick)
-							inst.setVar("sel_point", (int)-1);
-					}});
-					
-					App.ap.addEventNextFrame(new nRun() { public void run() {
-						PlaneApplet.app.gui.pop_popwindow("Geom"); 
-					}});
-				}})
+					instance.run("pop_editor"); }})
 				.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "editor", "editor", (int)8)
 			.closeSec()
 			.commande(pNode.getCom(CT.COM_ADD_ROW))
@@ -466,6 +533,8 @@ public class pGeom extends pSystem {
 		.addData("pos", new Vector2())
 		.addData("rot", 0f)
 		.addData("scale", 1f)
+		.addData("aabb_pos", new Vector2())
+		.addData("aabb_size", new Vector2())
 		;
 		
 		
@@ -473,23 +542,26 @@ public class pGeom extends pSystem {
 		pProperty geom = pProperty.newGeneralProperty("geom")
 		.setGroupFlag("draw")
 		.addCollec("point", Vector2.class)
+		.addCollec("color1", Integer.class)
+		.addCollec("color2", Integer.class)
 		.addCollec("lineA", Integer.class)
 		.addCollec("lineB", Integer.class)
+		.addCollec("lineT", Float.class)
 		.addCollec("faceA", Integer.class)
 		.addCollec("faceB", Integer.class)
 		.addCollec("faceC", Integer.class)
+		.addCollec("faceT", Float.class)
+		
+		.addCollec("light", Integer.class)
+		.addCollec("light_dist", Float.class)
+		.addCollec("aura", Integer.class)
+		.addCollec("aura_dist", Float.class)
+		.addCollec("halo", Integer.class)
+		.addCollec("halo_rad", Float.class)
+		
 		.addNodeRun(geom_prop_run)
 		;
 
-		geom.newLocalProperty("info_shape")
-		.setRuntime()
-		.setLocalVal()
-		.addData("aabb_pos", new Vector2())
-		.addData("aabb_size", new Vector2())
-		.addData("area", 1f)
-		;
-		
-		
 		
 		
 		
@@ -516,27 +588,20 @@ public class pGeom extends pSystem {
 
 		
 
-		pProperty hittable = pProperty.newGeneralProperty("hittable")
+		pProperty hitpoint = pProperty.newGeneralProperty("hitpoint")
+		.addData("avatar", false)
 		;
-		hittable.newLocalProperty("hitzone")
-		.addData("hitpoint", (int)5)
-		;
-		hittable.newOptionalLocalProperty("avatar")
+		hitpoint.newLocalProperty("hp")
+		.addData("hp", (int)5)
 		;
 
-		pProperty.newGeneralProperty("damagezone")
+		pProperty.newGeneralProperty("hitzone")
 		.addData("damage", (int)1)
 		;
-
-		pFamily.newFamily("hitzone")
-		.addProp("ref")
-		.addProp("hitzone")
-		;
-		pFamily.newFamily("damagezone")
-		.addProp("damagezone")
-		;
 		
-		
+		pFamily.newFamily("hitpoint")
+		.addProp("hp")
+		;
 		
 		
 		
@@ -548,10 +613,6 @@ public class pGeom extends pSystem {
 		pFamily.newFamily("aabb")
 		.addProp("ref")
 		.addProp("geom")
-		.addProp("info_shape")
-		;
-		pFamily.newFamily("aabb_drawable")
-		.addProp("info_shape")
 		;
 		
 		
@@ -560,13 +621,6 @@ public class pGeom extends pSystem {
 
 		
 		pProperty interactif = pProperty.newGeneralProperty("interactif");
-
-//		interactif.addClearRun(new nRun() {public void run() {
-//			pBody bod = arg(0,pBody.class);
-//			pGeom geo = bod.space.app.getSystem(pGeom.class);
-//			if (geo == null || bod == null) return;
-//			
-//		}});
 
 		interactif.newLocalProperty("mouse")
 		.setLocalVal()
@@ -589,7 +643,7 @@ public class pGeom extends pSystem {
 		;
 
 		pFamily.newFamily("aabb_clickable")
-		.addProp("info_shape")
+		.addProp("ref")
 		.addProp("clickable")
 		;
 
@@ -658,21 +712,21 @@ public class pGeom extends pSystem {
 //		.addData("dist", 1000f, "min", 100f, "max", 4000f, "granulo", 100f)
 //		;
 //
-//		nRun run_ctrl_time = new nRun() { public void run(Object o) { 
-//			pBody bod = (pBody)o; if (bod == null) return;
-//			pTime time = bod.space.app.time;
-//			if (bod.hasParam("matter") && bod.hasParam("ctrl_time")) {
-//				float strength = bod.getFlt("ctrl_time","strength");
-//				if (bod.getBoo("ctrl_time","activate") && 
-//						time.get_tickrate_fact() != strength) {
-//					time.set_tickrate_fact(strength); } }
-//		}};
-//
-//		pGeom.newControlProp("time",run_ctrl_time)
-//		.setFullSync()
-//		.addData("activate", false)
-//		.addData("strength", 3f, "min", 0.25f, "max", 4f)
-//		;
+		nRun run_ctrl_time = new nRun() { public void run(Object o) { 
+			pBody bod = (pBody)o; if (bod == null) return;
+			pTime time = bod.space.app.time;
+			if (bod.hasParam("matter") && bod.hasParam("ctrl_time")) {
+				float strength = bod.getFlt("ctrl_time","strength");
+				if (bod.getBoo("ctrl_time","activate") && 
+						time.get_tickrate_fact() != strength) {
+					time.set_tickrate_fact(strength); } }
+		}};
+
+		pGeom.newControlProp("time",coordinate,run_ctrl_time)
+		.setFullSync()
+		.addData("activate", false)
+		.addData("strength", 3f, "min", 0.25f, "max", 4f)
+		;
 
 		
 
@@ -1113,10 +1167,10 @@ public class pGeom extends pSystem {
 			for (pBody b : space.familyMember("drawable")) draw_body(app, b);
 	
 		if (val_do_draw.get()) {
-			for (pBody b : space.familyMember("hitzone")) {
-				if (!b.hasParam("hitzone") || !b.hasParam("ref")) continue;
+			for (pBody b : space.familyMember("hitpoint")) {
+				if (!b.hasParam("hp") || !b.hasParam("ref")) continue;
 				Vector2 p = b.getVec("ref", "pos");
-				int hp = b.getInt("hitzone", "hitpoint");
+				int hp = b.getInt("hp", "hp");
 				app.text(""+hp, p.x, p.y, 24);
 			}
 		}
@@ -1127,7 +1181,7 @@ public class pGeom extends pSystem {
 		else if (val_do_hover_draw.get())
 			for (pBody b : space.familyMember("aabb_clickable")) draw_hover_aabb(b);
 		else if (val_do_aabb_draw.get())
-			for (pBody b : space.familyMember("aabb_drawable")) draw_aabb(b);
+			for (pBody b : space.familyMember("aabb")) draw_aabb(b);
 	}
 
 	public static Vector2 toRef(pBody b, Vector2 v) {
@@ -1146,14 +1200,9 @@ public class pGeom extends pSystem {
 	}
 	
 	
-	
-	
-	
-	
-	
 	public boolean test_clic(pBody b) {
-		Vector2 pos = b.getVec("info_shape", "aabb_pos");
-		Vector2 size = b.getVec("info_shape", "aabb_size");
+		Vector2 pos = b.getVec("ref", "aabb_pos");
+		Vector2 size = b.getVec("ref", "aabb_size");
 		Vector2 m = new Vector2();
 		m.set(app.view.mouse_in_view());
 		Rectangle aabb = new Rectangle(pos.x, pos.y, size.x, size.y);
@@ -1206,45 +1255,42 @@ public class pGeom extends pSystem {
 			return;
 		}
 		boolean fill = graph.getBoo("fill");
-		if (fill) {
-			Color col_fill = Utl.color(
-					graph.getInt("fill_r"), 
-					graph.getInt("fill_g"), 
-					graph.getInt("fill_b"), 
-					graph.getInt("fill_a") );
-			app.fill(col_fill);
-			app.noStroke();
-			
-			for (int i = 0 ; i < faceA.size() ; i++) {
-				int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
-				if (p1 < 0 || p1 >= point.size() || 
-						p2 < 0 || p2 >= point.size() || 
-						p3 < 0 || p3 >= point.size()) continue;
+		boolean line = graph.getBoo("line");
+		float thick = graph.getFlt("thick");
+		Color col_fill = Utl.color(
+				graph.getInt("fill_r"), 
+				graph.getInt("fill_g"), 
+				graph.getInt("fill_b"), 
+				graph.getInt("fill_a") );
+		Color col_line = Utl.color(
+				graph.getInt("line_r"), 
+				graph.getInt("line_g"), 
+				graph.getInt("line_b"), 
+				graph.getInt("line_a") );
+		
+		for (int i = 0 ; i < faceA.size() ; i++) {
+			int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
+			if (p1 < 0 || p1 >= point.size() || 
+					p2 < 0 || p2 >= point.size() || 
+					p3 < 0 || p3 >= point.size()) continue;
+			if (fill) {
+				app.fill(col_fill);
+				app.noStroke();
 				app.polygon(toRef(b, point.get(p1)), 
 						toRef(b, point.get(p2)), 
 						toRef(b, point.get(p3)));
 			}
-		} 
-		boolean line = graph.getBoo("line");
+			if (line) {
+				app.stroke(col_line, thick);
+				app.noFill();
+				app.polygon(toRef(b, point.get(p1)), 
+						toRef(b, point.get(p2)), 
+						toRef(b, point.get(p3)));
+			}
+		}
 		if (line) {
-			float thick = graph.getFlt("thick");
-			Color col_line = Utl.color(
-					graph.getInt("line_r"), 
-					graph.getInt("line_g"), 
-					graph.getInt("line_b"), 
-					graph.getInt("line_a") );
 			app.stroke(col_line, thick);
 			app.noFill();
-
-			for (int i = 0 ; i < faceA.size() ; i++) {
-				int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
-				if (p1 < 0 || p1 >= point.size() || 
-						p2 < 0 || p2 >= point.size() || 
-						p3 < 0 || p3 >= point.size()) continue;
-				app.polygon(toRef(b, point.get(p1)), 
-						toRef(b, point.get(p2)), 
-						toRef(b, point.get(p3)));
-			}
 			for (int i = 0 ; i < lineA.size() ; i++) {
 				int p1 = lineA.get(i), p2 = lineB.get(i);
 				if (p1 < 0 || p1 >= point.size() || p2 < 0 || p2 >= point.size()) continue;
@@ -1296,8 +1342,7 @@ public class pGeom extends pSystem {
 
 
 	public static void calc_info_shape(pBody b) {
-		if (!b.hasParam("ref") || !b.hasParam("info_shape") || 
-				!b.hasParam("geom")) return;
+		if (!b.hasParam("ref") || !b.hasParam("geom")) return;
 		pParam geom = b.param("geom");
 		ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
 		if (point == null) return;
@@ -1315,45 +1360,18 @@ public class pGeom extends pSystem {
 				if (v.x > size.x) size.x = v.x;
 				if (v.y > size.y) size.y = v.y;
 			}
-			b.setVec("info_shape", "aabb_pos", pos);
-			b.setVec("info_shape", "aabb_size", size);
-			
-//			ArrayList<Integer> faceA = geom.getCollecData("faceA", Integer.class);
-//			ArrayList<Integer> faceB = geom.getCollecData("faceB", Integer.class);
-//			ArrayList<Integer> faceC = geom.getCollecData("faceC", Integer.class);
-//			if (faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
-//					faceC.size() != faceB.size()) return;
-//			float area = 0;
-//			Polygon poly = new Polygon();
-//			float[] vert = new float[6];
-//			Vector2 v1 = new Vector2(), v2 = new Vector2(), v3 = new Vector2();
-//			for (int i = 0 ; i < faceA.size() ; i++) {
-//				int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
-//				if (p1 < 0 || p1 >= point.size() || 
-//						p2 < 0 || p2 >= point.size() || 
-//						p3 < 0 || p3 >= point.size()) continue;
-//				v1.set(toRef(b, point.get(p1)));
-//				v2.set(toRef(b, point.get(p2)));
-//				v3.set(toRef(b, point.get(p3)));
-//				vert[0] = v1.x; vert[1] = v1.y;
-//				vert[2] = v2.x; vert[3] = v2.y;
-//				vert[4] = v3.x; vert[5] = v3.y;
-//				poly.setVertices(vert);
-//				area += poly.area();
-//			}
-//			b.setFlt("info_shape", "area", area);
-			
+			b.setVec("ref", "aabb_pos", pos);
+			b.setVec("ref", "aabb_size", size);
 		} else {
-			b.setVec("info_shape", "aabb_pos", b.getVec("ref", "pos"));
-			b.setVec("info_shape", "aabb_size", new Vector2());
-			b.setFlt("info_shape", "area", 1f);
+			b.setVec("ref", "aabb_pos", b.getVec("ref", "pos"));
+			b.setVec("ref", "aabb_size", new Vector2());
 		}
 	}
 
 	public void draw_aabb(pBody b) {
-		if (!b.hasParam("info_shape")) return;
-		Vector2 pos = b.getVec("info_shape", "aabb_pos");
-		Vector2 size = b.getVec("info_shape", "aabb_size");
+		if (!b.hasParam("ref")) return;
+		Vector2 pos = b.getVec("ref", "aabb_pos");
+		Vector2 size = b.getVec("ref", "aabb_size");
 		app.stroke(255, 0, 255, 127, 2f); 
 		app.noFill();
 		Vector2 p1 = new Vector2(pos.x+size.x,pos.y);
@@ -1363,9 +1381,9 @@ public class pGeom extends pSystem {
 	}
 
 	public void draw_hover_aabb(pBody b) {
-		if (!b.hasParam("info_shape")) return;
-		Vector2 pos = b.getVec("info_shape", "aabb_pos");
-		Vector2 size = b.getVec("info_shape", "aabb_size");
+		if (!b.hasParam("ref")) return;
+		Vector2 pos = b.getVec("ref", "aabb_pos");
+		Vector2 size = b.getVec("ref", "aabb_size");
 		if (b.hasParam("highlightable") && b.getBoo("highlightable", "lighted")) {
 			int lr = b.getInt("highlightable", "light_red");
 			int lg = b.getInt("highlightable", "light_green");
@@ -1389,9 +1407,9 @@ public class pGeom extends pSystem {
 	}
 	
 	public void draw_clic_aabb(pBody b) {
-		if (!b.hasParam("info_shape")) return;
-		Vector2 pos = b.getVec("info_shape", "aabb_pos");
-		Vector2 size = b.getVec("info_shape", "aabb_size");
+		if (!b.hasParam("ref")) return;
+		Vector2 pos = b.getVec("ref", "aabb_pos");
+		Vector2 size = b.getVec("ref", "aabb_size");
 		if (b.hasParam("highlightable") && b.getBoo("highlightable", "lighted")) {
 			int lr = b.getInt("highlightable", "light_red");
 			int lg = b.getInt("highlightable", "light_green");

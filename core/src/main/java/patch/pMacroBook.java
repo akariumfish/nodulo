@@ -38,33 +38,25 @@ public class pMacroBook {
 		Macro bullet_blueprint = new Macro("bullet_blueprint")
 		.addNode("blueprint", "blueprint", 	0f, 		0f).getMacro()
 //		.addNode("interactif", "interactif", -1200f, 	300f).getMacro()
-//		.addNode("ownable", "ownable", 		-600f, 	0f).addSetVar("acquire", true).getMacro()
 		.addNode("physic", "physic", 		-600f, 	900f)
 		.addSetVar("dynamic", true)
 		.addSetVar("use_ctrl_box", true)
 		.addSetVar("light", true)
 		.addSetVar("contact_break", true)
-//		.addSetVar("use_dynamic", true)
-//		.addSetVar("use_ctrl_box", true)
-//		.addSetVar("use_light", true)
-//		.addSetVar("use_contact_break", true)
-////		.addSetVar("use_sensor", true)
+		.addSetVar("sensor", true)
 		.getMacro()
-		.addNode("coordinate", "coordinate", -600f, 	600f)
-//			.addSetVar("add_ctrl_pop", true)
-			.getMacro()
+		.addNode("coordinate", "coordinate", -600f, 	600f).getMacro()
 		.addNode("graph", "graph", 			-600f, 	-600f)
-			.addSetVar("line", true).addSetVar("halo", true)
+			.addSetVar("line", false).addSetVar("halo", true)
 			.addSetVar("thick", 1f).getMacro()
 		.addNode("geom", "geom", 			-600f, 	-900f).getMacro()
-		.addNode("damagezone", "damagezone", -600f, 	0f).getMacro()
+		.addNode("hitzone", "hitzone", -600f, 	0f).getMacro()
 		.addLink("coordinate", "param", "blueprint", "param_in")
 		.addLink("graph", "param", "blueprint", "param_in")
 		.addLink("geom", "param", "blueprint", "param_in")
-		.addLink("damagezone", "param", "blueprint", "param_in")
+		.addLink("hitzone", "param", "blueprint", "param_in")
 		.addLink("physic", "param", "blueprint", "param_in")
 //		.addLink("interactif", "param", "blueprint", "param_in")
-//		.addLink("ownable", "param", "blueprint", "param_in")
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
 			pInstance geom = list.get("geom");
@@ -82,7 +74,6 @@ public class pMacroBook {
 		.addNode("blueprint", "blueprint", 	0f, 		0f).getMacro()
 		.addNode("coordinate", "coordinate", -600f, 	600f).addSetVar("use_ctrl_pop", true).getMacro()
 		.addNode("interactif", "interactif", -600f, 	300f).getMacro()
-//		.addNode("ownable", "ownable", 		-600f, 	0f).addSetVar("acquire", true).getMacro()
 		.addNode("graph", "graph", 			-600f, 	-600f)
 			.addSetVar("line", true).addSetVar("fill", true).getMacro()
 		.addNode("geom", "geom", 			-600f, 	-900f).getMacro()
@@ -90,27 +81,14 @@ public class pMacroBook {
 		.addSetVar("dynamic", true)
 		.addSetVar("use_ctrl_box", true)
 		.addSetVar("aura", true)
-////		.addSetVar("use_kinematic", true)
-//		.addSetVar("use_dynamic", true)
-//		.addSetVar("use_ctrl_box", true)
-//		.addSetVar("use_cone_light", true)
-////		.addSetVar("def_kinematic_rad", 70f)
-////		.addSetVar("def_light_dist", 80f)
-////		.addSetVar("def_light_r", (int)200)
-////		.addSetVar("def_light_g", (int)200)
-////		.addSetVar("def_light_b", (int)0)
-////		.addSetVar("def_light_a", (int)200)
 		.getMacro()
-		.addNode("hittable", "hittable", 	-600f, 	1050f)
-//		.addSetVar("use_avatar", true)
-		.getMacro()
+		.addNode("hitpoint", "hitpoint", 	-600f, 	1050f).getMacro()
 		.addLink("coordinate", "param", "blueprint", "param_in")
 		.addLink("interactif", "param", "blueprint", "param_in")
 		.addLink("graph", "param", "blueprint", "param_in")
 		.addLink("geom", "param", "blueprint", "param_in")
-//		.addLink("ownable", "param", "blueprint", "param_in")
 		.addLink("physic", "param", "blueprint", "param_in")
-		.addLink("hittable", "param", "blueprint", "param_in")
+		.addLink("hitpoint", "param", "blueprint", "param_in")
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
 			pInstance geom = list.get("geom");
@@ -120,46 +98,39 @@ public class pMacroBook {
 			list.get("blueprint").setVar("name", "mob_print");
 			
 			list.get("geom").patch.app.addDelayEvent(2, new nRun() { public void run() {
-				geom.run("set_def"); 
+				geom.run("empty_geom");
+				geom.run("new_trig",0f,0f,80f,0f);
+				geom.run("new_trig",0f,0f,30f,(float)Math.PI);
 			}});
 		}})
 		;
 
 		Macro body_blueprint = new Macro("body_blueprint")
 		.addNode("blueprint", "blueprint", 	0f, 		0f).getMacro()
-		.addNode("coordinate", "coordinate", -600f, 	600f).addSetVar("use_ctrl_pop", true).getMacro()
+		.addNode("coordinate", "coordinate", -600f, 	600f)
+			.addSetVar("use_ctrl_pop", true)
+			.addSetVar("use_ctrl_time", true)
+			.getMacro()
 		.addNode("interactif", "interactif", -600f, 	300f).getMacro()
-//		.addNode("ownable", "ownable", 		-600f, 	0f).addSetVar("acquire", true).getMacro()
 		.addNode("graph", "graph", 			-600f, 	-600f)
-			.addSetVar("line", true).addSetVar("fill", true).getMacro()
+			.addSetVar("line", true).addSetVar("fill", true)
+			.getMacro()
 		.addNode("geom", "geom", 			-600f, 	-900f).getMacro()
 		.addNode("physic", "physic", 		-600f, 	900f)
-		.addSetVar("dynamic", true)
-		.addSetVar("use_ctrl_box", true)
-		.addSetVar("aura", true)
-		.addSetVar("view_light", true)
-////		.addSetVar("use_kinematic", true)
-//		.addSetVar("use_dynamic", true)
-//		.addSetVar("use_ctrl_box", true)
-//		.addSetVar("use_cone_light", true)
-//		.addSetVar("use_view_light", true)
-////		.addSetVar("def_kinematic_rad", 70f)
-////		.addSetVar("def_light_dist", 80f)
-////		.addSetVar("def_light_r", (int)200)
-////		.addSetVar("def_light_g", (int)200)
-////		.addSetVar("def_light_b", (int)0)
-////		.addSetVar("def_light_a", (int)200)
+			.addSetVar("dynamic", true)
+			.addSetVar("use_ctrl_box", true)
+			.addSetVar("aura", true)
+			.addSetVar("view_light", true)
 		.getMacro()
-		.addNode("hittable", "hittable", 	-600f, 	1050f)
-//		.addSetVar("use_avatar", true)
+		.addNode("hitpoint", "hitpoint", 	-600f, 	1050f)
+			.addSetVar("avatar", true)
 		.getMacro()
 		.addLink("coordinate", "param", "blueprint", "param_in")
 		.addLink("interactif", "param", "blueprint", "param_in")
 		.addLink("graph", "param", "blueprint", "param_in")
 		.addLink("geom", "param", "blueprint", "param_in")
-//		.addLink("ownable", "param", "blueprint", "param_in")
 		.addLink("physic", "param", "blueprint", "param_in")
-		.addLink("hittable", "param", "blueprint", "param_in")
+		.addLink("hitpoint", "param", "blueprint", "param_in")
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
 			pInstance geom = list.get("geom");
@@ -169,7 +140,18 @@ public class pMacroBook {
 			list.get("blueprint").setVar("name", "body_print");
 			
 			list.get("geom").patch.app.addDelayEvent(2, new nRun() { public void run() {
-				geom.run("set_def"); 
+				geom.run("empty_geom");
+				geom.run("new_face",-40f,20f,80f,20f,-40f,40f);
+				geom.run("new_face",-40f,-20f,80f,-20f,-40f,-40f);
+				geom.run("new_trig",-15f,50f,35f,0f);
+				geom.run("new_trig",-15f,-50f,35f,0f);
+				geom.run("new_trig",0f,0f,80f,0f);
+				geom.run("new_trig",-10f,0f,35f,0f);
+			}});
+			
+			App.ap.addDelayEvent(60, new nRun() { public void run() {
+				if (PlaneApplet.app.config.POP_BODY_EDITOR) 
+					geom.run("pop_editor");
 			}});
 		}})
 		;
@@ -218,14 +200,26 @@ public class pMacroBook {
 			.addRun(new nRun() { public void run() {
 				nMap<pInstance> list = arg(0, nMap.class);
 				
-				list.get("set_body_param").setVar("script", true);
-				list.get("get_body_param").setVar("script", true);
-				list.get("avatar").setVar("script", true);
-				list.get("auto_move").setVar("script", true);
-				list.get("auto_shoot").setVar("script", true);
+//				list.get("set_body_param").setVar("script", true);
+//				list.get("get_body_param").setVar("script", true);
+//				list.get("avatar").setVar("script", true);
+//				list.get("auto_move").setVar("script", true);
+//				list.get("auto_shoot").setVar("script", true);
 				
 			}})
 			;
+
+		
+		Macro mod = new Macro("mob")
+		.addMacro("exac", pMacro.getMacro("exec_actor"), 		-300f,	-150f)
+			.addSetVar("exac_exec", "target_ref", "auto_move")
+			.addSetVar("exac_actor", "print_name", "mob_print")
+		.addMacro("exec", pMacro.getMacro("executor"), 		300f,	300f)
+			.addSetVar("exec_exec", "target_ref", "auto_shoot")
+			.addSetVar("exec_time", "delay", (int)20)
+			.addLink("exac_actor", "co_register", "exec_exec", "co_reg")
+		;
+		
 		
 		Macro main_exemple = new Macro("main_exemple")
 			.addMacro("exac", pMacro.getMacro("exec_actor"), 		600f,	150f)
@@ -241,22 +235,10 @@ public class pMacroBook {
 				.addSetVar("reg_ref", "mode").getMacro()
 			.addLink("reg_in_mode", "co_reg", "exac_exec", "co_reg")
 			.addLink("ui_ui_switch", "out", "reg_in_mode", "co_in")
-			.addMacro("exac_shoot1", pMacro.getMacro("exec_actor"), 		-900f,	600f)
-				.addSetVar("exac_shoot1_exec", "target_ref", "auto_move")
-				.addSetVar("exac_shoot1_actor", "pop_pos", new Vector2(400,900)) 
-				.addSetVar("exac_shoot1_actor", "print_name", "mob_print")
-			.addMacro("exec_shoot1", pMacro.getMacro("executor"), 		-600f,	1050f)
-				.addSetVar("exec_shoot1_exec", "target_ref", "auto_shoot")
-				.addSetVar("exec_shoot1_time", "delay", (int)30)
-				.addLink("exac_shoot1_actor", "co_register", "exec_shoot1_exec", "co_reg")
-			.addMacro("exac_shoot2", pMacro.getMacro("exec_actor"), 		-900f,	-1050f)
-				.addSetVar("exac_shoot2_exec", "target_ref", "auto_move")
-				.addSetVar("exac_shoot2_actor", "pop_pos", new Vector2(800,-900)) 
-				.addSetVar("exac_shoot2_actor", "print_name", "mob_print")
-			.addMacro("exec_shoot2", pMacro.getMacro("executor"), 		-600f,	-600f)
-				.addSetVar("exec_shoot2_exec", "target_ref", "auto_shoot")
-				.addSetVar("exec_shoot2_time", "delay", (int)30)
-				.addLink("exac_shoot2_actor", "co_register", "exec_shoot2_exec", "co_reg")
+			.addMacro("shoot1", pMacro.getMacro("mob"), 		-900f,	600f)
+				.addSetVar("shoot1_exac_actor", "pop_pos", new Vector2(400,900)) 
+			.addMacro("shoot2", pMacro.getMacro("mob"), 		-900f,	-600f)
+				.addSetVar("shoot2_exac_actor", "pop_pos", new Vector2(800,-900)) 
 			
 			.addNode("text", "text", 						-300f,		1500f).getMacro()
 			.addRun(new nRun() { public void run() {
@@ -377,7 +359,11 @@ public class pMacroBook {
 				.com("get_last")
 			
 		.com("add_close")
-		
+
+		.com("add_set_param", "ctrl_time", "activate")
+		.com("add_get_reg_in_at", "body", "body")
+		.com("add_get_input_at", "data", "key_space_state")
+
 		.com("add_set_param", "ctrl_pop", "pop")
 		.com("add_get_reg_in_at", "body", "body")
 		.com("add_get_input_at", "data", "mouse_right_click")

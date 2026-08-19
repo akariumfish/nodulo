@@ -387,24 +387,10 @@ public class nTileMap {
 					renderMapLayer(childLayer);
 				}
 			} else {
-				if (layer instanceof TiledMapTileLayer) {
-					if (box.drawtile()) {
-
-//						view.app.gdx.drawer.begin();
-
-//						rayHandler.endLayeredRender();
-//
-//						rayHandler.beginRender();
-
-//						batch.begin();
-						
-						renderTileLayer((TiledMapTileLayer)layer);
-
-//						batch.end();
-						
-					}
+				if ((layer instanceof TiledMapTileLayer) && box.drawtile()) {
+					renderTileLayer((TiledMapTileLayer)layer);
 				} else if (layer instanceof TiledMapImageLayer) {
-//					renderImageLayer((TiledMapImageLayer)layer);
+					renderImageLayer((TiledMapImageLayer)layer);
 				} else {
 					renderObjects(layer);
 				}
@@ -414,8 +400,6 @@ public class nTileMap {
 		@Override
 		public void renderObjects (MapLayer layer) {
 			if (box.drawlight() && 
-//					layer.getProperties().get("light", Boolean.class) != null && 
-//					layer.getProperties().get("light", Boolean.class) &&
 					layer.getProperties().get("lightlayer", LightLayer.class) != null) {
 				LightLayer ll = layer.getProperties()
 						.get("lightlayer", LightLayer.class);
@@ -423,9 +407,9 @@ public class nTileMap {
 				rayHandler.renderLayer(ll);
 				batch.begin();
 			} else {
-//				for (MapObject object : layer.getObjects()) {
-//					renderObject(object);
-//				}
+				for (MapObject object : layer.getObjects()) {
+					renderObject(object);
+				}
 			}
 		}
 
