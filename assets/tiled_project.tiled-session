@@ -1,5 +1,5 @@
 {
-    "activeFile": "",
+    "activeFile": "Map.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -9,11 +9,11 @@
             "scaleInEditor": 5.5
         },
         "Map.tmx": {
-            "scale": 2,
-            "selectedLayer": 0,
+            "scale": 1.5,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 268.25,
-                "y": 274.75
+                "x": 260.33333333333337,
+                "y": 312.33333333333326
             }
         },
         "Map.tmx#Lighting": {

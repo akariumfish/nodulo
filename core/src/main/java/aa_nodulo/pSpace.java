@@ -21,6 +21,7 @@ import net.nNetwork;
 import util.*;
 import app.App;
 import patch.pAnk;
+import patch.pNodeSpace;
 import patch.pStandard;
 
 public class pSpace {
@@ -627,11 +628,13 @@ public class pSpace {
 		body_pool.load();
 		
 		for (pBody b : body_pool.all()) { 
-			app.getSystem(pGeom.class).init_body(b); }
+//			app.getSystem(pGeom.class).init_body(b); 
+			pNodeSpace.init_body(b);
+		}
 		
 		app.addDelayEvent(1,new nRun() { public void run() {
 			for (pBody b : body_pool.all()) {
-				app.getSystem(pGeom.class).init_body(b);
+//				app.getSystem(pGeom.class).init_body(b);
 //				plane.getSystem(pFlux.class).init_body(b);
 //				if (b.hasParam("selectable") && b.getBoo("selectable","selected")) {
 //					plane.getSystem(pGraph.class).select_body(b); } 

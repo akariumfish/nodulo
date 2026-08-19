@@ -127,7 +127,7 @@ public class pView {
 //				view.got_cam_scale_target = true;
 //			}})
 //			.param("keys", new String[] {"var","flt"}, "filters", new String[] {"var","flt"}) 
-//			.run(pBric.getRun(Code.RUN_CO_IN), "scale", "scale", (int)6)
+//			.run(pBric.getRun(Code.RUN_CO_IN), "ref", "scale", (int)6)
 //		.closeSec()
 //		.commande(pBric.getCom(Code.ADD_ROW))
 //		.openSec()

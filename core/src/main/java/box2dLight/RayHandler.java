@@ -94,7 +94,7 @@ public class RayHandler implements Disposable {
 	 * 
 	 * <p>NOTE: DO NOT MODIFY THIS LIST
 	 */
-	final Array<Light> disabledLights = new Array<Light>(false, 16);
+	public final Array<Light> disabledLights = new Array<Light>(false, 16);
 
 	LightMap lightMap;
 	final ShaderProgram lightShader;
@@ -200,7 +200,7 @@ public class RayHandler implements Disposable {
 		
 
 		setAmbientLight(0.1f, 0.1f, 0.1f, 1f);
-		setBlurNum(5);
+		setBlurNum(2);
 		setCulling(false);
 		setBlur(true);
 
@@ -224,6 +224,7 @@ public class RayHandler implements Disposable {
 		setAmbientLight(0.0f, 0.0f, 0.0f, 0f);
 		buffer_clear_color.set(def_buffer_clear_color);
 		setBlur(true);
+		setBlurNum(2);
 	}
 
 	public void setBlendGround() {

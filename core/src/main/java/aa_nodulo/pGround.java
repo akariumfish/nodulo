@@ -58,7 +58,7 @@ public class pGround extends pSystem {
 			app.storeSystemType(bloc.ref, this.getClass());
 
 			val_do_draw = bloc.obtainBoo("val_do_draw", app.config.DRAW_GROUND);
-			val_draw_fog = bloc.obtainBoo("val_draw_fog", false);
+			val_draw_fog = bloc.obtainBoo("val_draw_fog", true);
 			val_grid_ground = bloc.obtainBoo("val_grid_ground", false);
 			val_white_ground = bloc.obtainBoo("val_white_ground", false);
 			val_limit_dist = bloc.obtainFlt("val_limit_dist", 8000f);
@@ -133,7 +133,7 @@ public class pGround extends pSystem {
 			
 			box = app.getSystem(pBox2d.class);
 
-			app.view.addDrawable(0,draw_ground_run);
+			app.view.addDrawable(1,draw_ground_run);
 			app.view.addDrawable(15,draw_fog_run);
 			space = app.space;
 			view = app.view;

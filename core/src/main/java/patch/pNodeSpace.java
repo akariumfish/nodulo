@@ -265,6 +265,31 @@ public class pNodeSpace {
 		
 		return pop;
 	}
+
+	public static pBody init_body(pBody pop) {
+		if (pop == null) return null;
+		pSpace space = pop.space;
+		if (space == null) return null;
+		
+//		ArrayList<String> prop_refs = 
+//				;
+//		ArrayList<String> param_refs = 
+//				bluep.getCollecData("param_ref", String.class);
+//		if (prop_refs.size() != param_refs.size()) {
+//			pop.clear(); return null; }
+		
+		for (String prop_ref : pop.params.allKey()) {
+//			String prop_ref = prop_refs.get(i);
+			pProperty gene_prop = pProperty.get(prop_ref);
+			if (gene_prop == null || !gene_prop.is_general) continue;
+			for (nRun n : gene_prop.body_init_run) n.do_run(pop);
+		}
+		
+		pop.update_families();
+		space.update_families();
+		
+		return pop;
+	}
 	
 	
 
@@ -382,7 +407,7 @@ public class pNodeSpace {
 							instance.getVar("pop_pos", Vector2.class));
 				}
 				if (instance.hasVar("pop_size")) {
-					if (pop.hasParam("scale")) pop.setFlt("scale", "scale", 
+					if (pop.hasParam("ref")) pop.setFlt("ref", "scale", 
 							instance.getVar("pop_size", Float.class));
 				}
 				
