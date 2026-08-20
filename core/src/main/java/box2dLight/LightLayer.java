@@ -20,7 +20,7 @@ public class LightLayer {
 	
 	public nTileMap map;
 	
-	public enum MODE { DEFAULT, LIGHT, AURA, VIEW }
+	public enum MODE { DEFAULT, LIGHT, AURA, VISION, COLOR, WVISION }
 	
 	public MODE mode = MODE.DEFAULT;
 	
@@ -36,10 +36,16 @@ public class LightLayer {
 		} else if (mode == MODE.AURA) {
 			rayHandler.setBlendAura(); 
 			active = true;
-		} else if (mode == MODE.VIEW) {
-			rayHandler.setBlendView(); 
-			active = map.box.drawviewfilter();
-		}
+		} else if (mode == MODE.VISION) {
+			rayHandler.setBlendVision(); 
+			active = map.box.drawvision();
+		} else if (mode == MODE.COLOR) {
+			rayHandler.setBlendColor(); 
+			active = true;
+		} else if (mode == MODE.WVISION) {
+			rayHandler.setBlendVision(); 
+			active = map.box.drawvision();
+		} 
 	}
 	
 	public LightLayer(nTileMap tm, MapLayer ml) {
@@ -66,15 +72,23 @@ public class LightLayer {
 				Color col = prop.get("color", Color.class);
 				Vector2 pos = map.mapToSpace(prop.get("x", Float.class), 
 						prop.get("y", Float.class));
-				new PointLight(this, ray, col, dist, pos.x, pos.y);
+				PointLight pl = new PointLight(this, ray, col, dist, pos.x, pos.y);
+//				pl.setSoft(true);
+//				pl.setSoftnessLength(2.5f);
 			}
-			if (m.getProperties().get("dirlight", Boolean.class) != null && 
-					m.getProperties().get("dirlight", Boolean.class)) {
+			if (m.getProperties().get("conelight", Boolean.class) != null && 
+					m.getProperties().get("conelight", Boolean.class)) {
 				MapProperties prop = m.getProperties();
 				int ray = prop.get("ray", Integer.class);
 				float dir = prop.get("dir", Float.class); // 0 = 0deg, 0.5 = 180deg
+				float cone = prop.get("cone", Float.class); // 0 = 0deg, 0.5 = 180deg
+				float dist = prop.get("dist", Float.class);
 				Color col = prop.get("color", Color.class);
-				new DirectionalLight(this, ray, col, dir * 360f);
+				Vector2 pos = map.mapToSpace(prop.get("x", Float.class), 
+						prop.get("y", Float.class));
+				ConeLight cl = new ConeLight(this, ray, col, dist, 
+						pos.x, pos.y, dir * 360f, cone * 360f);
+				cl.setSoft(false);
 			}
 		}
 	}

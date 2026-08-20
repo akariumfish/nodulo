@@ -1,19 +1,20 @@
 {
-    "activeFile": "Map.tmx",
+    "activeFile": "",
     "expandedProjectPaths": [
         "."
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "": {
+            "scaleInDock": 1,
             "scaleInEditor": 5.5
         },
         "Map.tmx": {
-            "scale": 1.5,
+            "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 260.33333333333337,
-                "y": 312.33333333333326
+                "x": 983,
+                "y": 981
             }
         },
         "Map.tmx#Lighting": {

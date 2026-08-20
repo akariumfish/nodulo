@@ -472,7 +472,8 @@ public class pPatch {
 			val_cam_pos.set(app.config.DEF_PATCH_POS);
 			if (app.config.PATCH_START_COLLAPSED) view.metode("run_collapse");
 		}
-
+		sBoo val_grid = view.object("val_grid", sBoo.class);
+		val_grid.set(true);
 		
 		
 		app.gui.add_info_text("patch zoom: ", view.object("val_cam_scale", sFlt.class));

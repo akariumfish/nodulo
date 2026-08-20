@@ -217,6 +217,7 @@ public class RayHandler implements Disposable {
 	public void setBlendLight() {
 		setBlendDef();
 		setAmbientLight(0.2f, 0.2f, 0.2f, 1f);
+		setBlur(false);
 	}
 
 	public void setBlendAura() {
@@ -225,13 +226,21 @@ public class RayHandler implements Disposable {
 		setDiffuseLight(false);
 	}
 
-	public void setBlendView() {
+	public void setBlendVision() {
 		setBlendDef();
 		setBlurNum(1);
 		setDiffuseLight(false);
 		shadowBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_ONE_MINUS_SRC_ALPHA);
 	}
-	
+
+	public void setBlendColor() {
+		setBlendDef();
+		setBlurNum(1);
+		setAmbientLight(0.1f, 0.1f, 0.1f, 1f);
+		setDiffuseLight(false);
+		shadowBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_ONE);
+	}
+
 	
 	
 
@@ -472,7 +481,7 @@ public class RayHandler implements Disposable {
 		lightRenderedLastFrame = 0;
 
 		Gdx.gl.glDepthMask(false);
-		Gdx.gl.glEnable(GL20.GL_BLEND);
+		Gdx.gl.glEnable(GL20.GL_BLEND); 
 
 		boolean useLightMap = (shadows || blur);
 		if (useLightMap) {

@@ -47,7 +47,7 @@ public class pGround extends pSystem {
 
 		pView view;
 
-		int size = 96;
+		int size = 128;
 		Color[] ground_colors, fog_colors;
 		float cell_size = 300f;
 		Color ground_col, fog_col, border_col;
@@ -59,7 +59,7 @@ public class pGround extends pSystem {
 
 			val_do_draw = bloc.obtainBoo("val_do_draw", app.config.DRAW_GROUND);
 			val_draw_fog = bloc.obtainBoo("val_draw_fog", true);
-			val_grid_ground = bloc.obtainBoo("val_grid_ground", false);
+			val_grid_ground = bloc.obtainBoo("val_grid_ground", true);
 			val_white_ground = bloc.obtainBoo("val_white_ground", false);
 			val_limit_dist = bloc.obtainFlt("val_limit_dist", 8000f);
 			
@@ -85,7 +85,7 @@ public class pGround extends pSystem {
 //					Utl.logn(""+x+" "+y+" "+dist);
 
 					float limit = val_limit_dist.get()*0.75f;
-					float glimit = limit*1.25f/0.75f;
+					float glimit = limit*1.25f/0.85f;
 					float grid_end = (grid.getWidth()/2f)*cell_size*0.5f;
 					float fog_start = limit / 3f;
 					float grid_alpha = 1f;
@@ -177,8 +177,10 @@ public class pGround extends pSystem {
 					app.pop();
 				} 
 				if (val_grid_ground.get()) {
+					Vector2 p = new Vector2(view.val_cam_pos.get());
+					p.scl(1f/8f);
 					app.push();
-					app.translate(-size*cell_size/2f,-size*cell_size/2f);
+					app.translate(p.x-size*cell_size/2f,p.y-size*cell_size/2f);
 					app.gdx.drawer.grid(size, cell_size, ground_colors);
 					app.pop();
 				} 
@@ -186,8 +188,11 @@ public class pGround extends pSystem {
 		}
 		public void draw_fog() { 
 			if (val_do_draw.get() && val_draw_fog.get()) {
+				Vector2 p = new Vector2(view.val_cam_pos.get());
+				p.scl(-1f);
+				p.scl(1f/2f);
 				app.push();
-				app.translate(-size*cell_size,-size*cell_size);
+				app.translate(p.x-size*cell_size,p.y-size*cell_size);
 				app.gdx.drawer.grid(size, cell_size*2f, fog_colors);
 				app.pop();
 			}

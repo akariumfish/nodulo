@@ -924,7 +924,7 @@ public class nGUIBook {
 		book.newModel("VP_center", new nModel() { public nWidget custom_init(nWidget w) { 
 			w.setCustomDrawer(new nDrawable() { public void drawing() {
 				App app = App.ap;
-				int line_nb = 20;
+				int line_nb = 40;
 				int line_sp = (int)pNode.BRIC_GRID_SIZE * 20;
 
 				float scalefact = 1f;///w.globalscale;
@@ -987,7 +987,7 @@ public class nGUIBook {
 
 				nWidget grid = g.addWidget("grid", 
 						gui.addWidget("CW_header_button"));
-				grid.setSwitchState(true).setSwitch().setText("G")
+				grid.setSwitchState(false).setSwitch().setText("G")
 				.set_color_pressed(Utl.color(80))
 				.set_color_hovered(Utl.color(120))
 				.set_color_standby(Utl.color(40));
@@ -1341,7 +1341,7 @@ public class nGUIBook {
 						g.addObject("val_border", val_border);
 						border.setLink(val_border);
 						run_border_view.run();
-						sBoo val_grid = v.obtainBoo("val_grid", true);
+						sBoo val_grid = v.obtainBoo("val_grid", false);
 						g.addObject("val_grid", val_grid);
 						grid.setLink(val_grid);
 						run_grid_view.run();

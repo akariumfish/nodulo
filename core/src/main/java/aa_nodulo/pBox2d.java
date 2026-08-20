@@ -184,7 +184,7 @@ public class pBox2d extends pSystem {
 
 		public pSpace space;
 
-		public sBoo val_do_draw, val_do_viewfilter, 
+		public sBoo val_do_draw, val_draw_vision, 
 			val_do_ray, val_do_calc, val_do_tile, val_edit_tile;
 		
 		public sInt val_body_nb, val_light_nb;
@@ -204,7 +204,7 @@ public class pBox2d extends pSystem {
 			useNetFrame();
 
 			val_do_draw = bloc.obtainBoo("val_do_draw", false);
-			val_do_viewfilter = bloc.obtainBoo("val_do_viewfilter", true);
+			val_draw_vision = bloc.obtainBoo("val_draw_vision", true);
 			val_do_ray = bloc.obtainBoo("val_do_ray", true);
 			val_do_calc = bloc.obtainBoo("val_do_calc", true);
 			val_do_tile = bloc.obtainBoo("val_do_tile", true);
@@ -267,7 +267,7 @@ public class pBox2d extends pSystem {
 			interf.add_row_label(2, "");
 			interf.add_row_switch_boo(4, "physic", "val_do_calc");
 			interf.add_row();
-			interf.add_row_switch_boo(4, "filter", "val_do_viewfilter");
+			interf.add_row_switch_boo(4, "vision", "val_draw_vision");
 			interf.add_row_label(2, "");
 			interf.add_row_switch_boo(4, "light", "val_do_ray");
 			interf.add_row();
@@ -276,9 +276,8 @@ public class pBox2d extends pSystem {
 			interf.add_row_switch_boo(4, "edit", "val_edit_tile");
 
 			interf.add_row();
-			interf.add_row_watch(10, "Body : ", "val_body_nb");
-			interf.add_row();
-			interf.add_row_watch(10, "Light : ", "val_light_nb");
+			interf.add_row_watch(5, "Body : ", "val_body_nb");
+			interf.add_row_watch(5, "Light : ", "val_light_nb");
 			
 		}
 
@@ -322,7 +321,7 @@ public class pBox2d extends pSystem {
 		public boolean drawtile() { return val_do_tile.get(); }
 		public boolean drawlight() { 
 			return val_do_ray.get() && app.gdx.drawer.USE_FX; }
-		public boolean drawviewfilter() { return val_do_viewfilter.get(); }
+		public boolean drawvision() { return val_draw_vision.get(); }
 		
 		public void pre_draw() { 
 			tilemap.beginRender();
@@ -454,14 +453,11 @@ public class pBox2d extends pSystem {
 					PointLight pl = tilemap.newSpaceLight(90, 
 							new Color(1f,0.6f,0.4f,1f), 400, 0, 0);
 					attachToBody(pl, body);
-					PointLight pl2 = tilemap.newGroundLight(60, 
-							new Color(1f,1f,1f,0.8f), 900, 0, 0);
-					pl2.setSoft(false);
-					attachToBody(pl2, body);
 				}
 
 				if (b.getBoo("physic", "view_light")) {
-					attachToBody(tilemap.newViewLight(), body);
+					attachToBody(tilemap.newVisionLight(), body);
+					attachToBody(tilemap.newWallVisionLight(), body);
 				}
 
 				if (b.getBoo("physic", "light")) {
@@ -473,9 +469,6 @@ public class pBox2d extends pSystem {
 					PointLight l = tilemap.newSpaceLight(rays, col, dist, 0, 0);
 					l.setColor(col.r,col.g,col.b,col.a);
 					attachToBody(l, body, pos.x, pos.y);
-					PointLight l2 = tilemap.newGroundLight(rays, col, dist, 0, 0);
-					l2.setColor(col.r,col.g,col.b,col.a);
-					attachToBody(l2, body, pos.x, pos.y);
 				}
 
 				if (!b.getBoo("physic", "copy_geom") || !b.hasParam("geom")) {

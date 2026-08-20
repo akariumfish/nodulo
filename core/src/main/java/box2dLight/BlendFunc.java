@@ -9,8 +9,8 @@ public class BlendFunc {
 	
 	final int default_sfactor;
 	final int default_dfactor;
-	int sfactor;
-	int dfactor;
+	public int sfactor;
+	public int dfactor;
 	
 	public BlendFunc(int sfactor, int dfactor) {
 		this.default_sfactor = sfactor;

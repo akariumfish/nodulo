@@ -34,6 +34,8 @@ import box2dLight.PointLight;
 import box2dLight.RayHandler;
 import box2dLight.TileLayer;
 import gui.nGUI;
+import util.Utl;
+import util.nRun;
 
 import static com.badlogic.gdx.graphics.g2d.Batch.C1;
 import static com.badlogic.gdx.graphics.g2d.Batch.C2;
@@ -68,9 +70,11 @@ public class nTileMap {
 	private pView view; 
 	private OrthographicCamera cam;
 
-	public LightLayer viewLayer;
+	public LightLayer visionLayer;
+	public LightLayer wallvisionLayer;
 	public LightLayer groundLayer;
 	public LightLayer spaceLayer;
+	public TileLayer maskLayer = null;
 
 	public RayHandler rayHandler;
 	public pBox2d box;
@@ -116,10 +120,15 @@ public class nTileMap {
 				TiledMapTileLayer tl = (TiledMapTileLayer) layer;
 				TileLayer ll = new TileLayer(this, tl);
 			}
-			if (prop.get("view", Boolean.class) != null && 
-					prop.get("view", Boolean.class)) {
+			if (prop.get("vision", Boolean.class) != null && 
+					prop.get("vision", Boolean.class)) {
 				LightLayer ll = new LightLayer(this, layer);
-				if (viewLayer == null) viewLayer = ll;
+				if (visionLayer == null) visionLayer = ll;
+			}
+			if (prop.get("wall_vision", Boolean.class) != null && 
+					prop.get("wall_vision", Boolean.class)) {
+				LightLayer ll = new LightLayer(this, layer);
+				if (wallvisionLayer == null) wallvisionLayer = ll;
 			}
 			if (prop.get("light", Boolean.class) != null && 
 					prop.get("light", Boolean.class)) {
@@ -135,12 +144,13 @@ public class nTileMap {
 		
 		brush = new StaticTiledMapTile(new TextureRegion(generatePixel(
 				tile_width, tile_height, Color.TEAL)));
-
+		
 	}
 	
 	public void dispose() {
 		rayHandler.dispose();
 	}
+
 
 	public float getWidth() {
 		return getMapWidth() * tile_scale;
@@ -183,14 +193,24 @@ public class nTileMap {
 		return new PointLight(groundLayer, ray, col, dist, x, y);
 	}
 
-	public PointLight newViewLight() {
-		PointLight p = new PointLight(viewLayer, 720, 
-				new Color(1f,1f,1f,0.85f), 15000, 0, 0);
+	public PointLight newVisionLight() {
+		PointLight p = new PointLight(visionLayer, 720, 
+				new Color(1f,1f,1f,0.80f), 15000, 0, 0);
 		p.setSoft(false);
 		return p;
 	}
 
+	public PointLight newWallVisionLight() {
+		PointLight p = new PointLight(wallvisionLayer, 180, 
+				new Color(1f,1f,1f,0.80f), 10000, 0, 0);
+		p.setSoftnessLength(300);
+		return p;
+	}
+	
+	boolean has_ground_mask = false;
+
 	public void beginRender() {
+		maskLayer = null;
 		rayHandler.beginRender();
 	}
 	public void renderFront() {
@@ -200,14 +220,25 @@ public class nTileMap {
 		render();
 	}
 	public void endRender() { 
+
+		if (has_ground_mask && maskLayer != null) {
+			view.app.gdx.drawer.end();
+			prepareRender();
+			renderer.setView(cam.projection, 
+					-view.app.gdx.getscreenwidth() / 2f, 
+					-view.app.gdx.getscreenheight() / 2f,
+					view.app.gdx.getscreenwidth(), 
+					view.app.gdx.getscreenheight());
+			renderer.maskRender(maskLayer);
+			view.app.gdx.drawer.begin();
+		}
+		has_ground_mask = false;
 		
 		rayHandler.endLayeredRender();
 
 	}
-	public void render() {
+	public void prepareRender() {
 
-		view.app.gdx.drawer.end();
-		
 		float scale = view.val_cam_scale.get();
 		float sclinv = 1f / scale;
 
@@ -241,6 +272,12 @@ public class nTileMap {
 		cam.up.set(u.x, u.y, 0f);
 		cam.update();
 
+	}
+	public void render() {
+
+		view.app.gdx.drawer.end();
+		
+		prepareRender();
 		render(cam.projection, 
 				-view.app.gdx.getscreenwidth() / 2f, 
 				-view.app.gdx.getscreenheight() / 2f,
@@ -322,13 +359,42 @@ public class nTileMap {
 			super(map, unitScale);
 		}
 
+		public void maskRender(TileLayer layer) { 
+
+			tmp_transf.set(batch.getTransformMatrix());
+			batch.setTransformMatrix(transform);
+			batch.setProjectionMatrix(projection);
+
+			int dst_f = batch.getBlendDstFunc();
+			int dst_a = batch.getBlendDstFuncAlpha();
+			int src_f = batch.getBlendSrcFunc();
+			int src_a = batch.getBlendSrcFuncAlpha();
+			
+			batch.setBlendFunction(GL20.GL_ZERO, GL20.GL_SRC_ALPHA);
+			
+			beginRender();
+
+			renderTileLayer(layer.layer);
+			
+			endRender();
+
+			batch.setBlendFunctionSeparate(src_f,dst_f,src_a,dst_a);
+			
+			transform.setToTranslation(0f,0f,0f);
+			batch.setTransformMatrix(tmp_transf);
+			batch.setProjectionMatrix(tmp_proj);
+			
+		}
+
 		public Matrix4 transform = new Matrix4().setToTranslation(0f,0f,0f);
+		public Matrix4 projection = new Matrix4().setToTranslation(0f,0f,0f);
 		public Matrix4 tmp_proj = new Matrix4().setToTranslation(0f,0f,0f);
 		public Matrix4 tmp_transf = new Matrix4().setToTranslation(0f,0f,0f);
 		@Override
-		public void setView (Matrix4 projection, float x, float y, float width, float height) {
+		public void setView (Matrix4 proj, float x, float y, float width, float height) {
 			tmp_proj.set(batch.getProjectionMatrix());
-			batch.setProjectionMatrix(projection);
+			projection.set(proj);
+			batch.setProjectionMatrix(proj);
 			viewBounds.set(x, y, width, height);
 		}
 		
@@ -340,20 +406,19 @@ public class nTileMap {
 
 			tmp_transf.set(batch.getTransformMatrix());
 			batch.setTransformMatrix(transform);
-
-
+			
 			for (MapLayer layer : map.getLayers()) {
 				if (!layer.isVisible()) continue;
 				if (space == null) {
 					if (layer.getProperties().get("space", Boolean.class) != null && 
 							layer.getProperties().get("space", Boolean.class)) {
-						space = layer; break; }
+						space = layer; renderMapLayer(layer); break; }
 					renderMapLayer(layer);
 				} else {
+					if (space == null) renderMapLayer(layer);
 					if (layer.getProperties().get("space", Boolean.class) != null && 
 							layer.getProperties().get("space", Boolean.class)) {
 						space = null; }
-					if (space == null) renderMapLayer(layer);
 				}
 			}
 			
@@ -389,6 +454,14 @@ public class nTileMap {
 			} else {
 				if ((layer instanceof TiledMapTileLayer) && box.drawtile()) {
 					renderTileLayer((TiledMapTileLayer)layer);
+					if (layer.getProperties().get("tilelayer", TileLayer.class) != null) {
+						TileLayer ll = layer.getProperties()
+								.get("tilelayer", TileLayer.class);
+						if (ll.ground_mask) {
+							maskLayer = ll;
+							has_ground_mask = true;
+						}
+					} 
 				} else if (layer instanceof TiledMapImageLayer) {
 					renderImageLayer((TiledMapImageLayer)layer);
 				} else {

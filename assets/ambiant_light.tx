@@ -2,8 +2,8 @@
 <template>
  <object>
   <properties>
-   <property name="color" type="color" value="#beffffff"/>
-   <property name="dist" type="float" value="4500"/>
+   <property name="color" type="color" value="#32ffffff"/>
+   <property name="dist" type="float" value="6000"/>
    <property name="pointlight" type="bool" value="true"/>
    <property name="ray" type="int" value="180"/>
   </properties>

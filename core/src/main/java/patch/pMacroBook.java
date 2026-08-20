@@ -47,7 +47,7 @@ public class pMacroBook {
 		.getMacro()
 		.addNode("coordinate", "coordinate", -600f, 	600f).getMacro()
 		.addNode("graph", "graph", 			-600f, 	-600f)
-			.addSetVar("line", false).addSetVar("halo", true)
+			.addSetVar("line", true).addSetVar("halo", true)
 			.addSetVar("thick", 1f).getMacro()
 		.addNode("geom", "geom", 			-600f, 	-900f).getMacro()
 		.addNode("hitzone", "hitzone", -600f, 	0f).getMacro()
@@ -200,11 +200,11 @@ public class pMacroBook {
 			.addRun(new nRun() { public void run() {
 				nMap<pInstance> list = arg(0, nMap.class);
 				
-//				list.get("set_body_param").setVar("script", true);
-//				list.get("get_body_param").setVar("script", true);
-//				list.get("avatar").setVar("script", true);
-//				list.get("auto_move").setVar("script", true);
-//				list.get("auto_shoot").setVar("script", true);
+				list.get("set_body_param").setVar("script", true);
+				list.get("get_body_param").setVar("script", true);
+				list.get("avatar").setVar("script", true);
+				list.get("auto_move").setVar("script", true);
+				list.get("auto_shoot").setVar("script", true);
 				
 			}})
 			;
@@ -216,7 +216,7 @@ public class pMacroBook {
 			.addSetVar("exac_actor", "print_name", "mob_print")
 		.addMacro("exec", pMacro.getMacro("executor"), 		300f,	300f)
 			.addSetVar("exec_exec", "target_ref", "auto_shoot")
-			.addSetVar("exec_time", "delay", (int)20)
+			.addSetVar("exec_time", "delay", (int)25)
 			.addLink("exac_actor", "co_register", "exec_exec", "co_reg")
 		;
 		
@@ -239,6 +239,8 @@ public class pMacroBook {
 				.addSetVar("shoot1_exac_actor", "pop_pos", new Vector2(400,900)) 
 			.addMacro("shoot2", pMacro.getMacro("mob"), 		-900f,	-600f)
 				.addSetVar("shoot2_exac_actor", "pop_pos", new Vector2(800,-900)) 
+			.addMacro("shoot3", pMacro.getMacro("mob"), 		-900f,	-1800f)
+				.addSetVar("shoot3_exac_actor", "pop_pos", new Vector2(1200,0)) 
 			
 			.addNode("text", "text", 						-300f,		1500f).getMacro()
 			.addRun(new nRun() { public void run() {
@@ -340,7 +342,10 @@ public class pMacroBook {
 						.com("add_axe_vec_at", "in")
 						.com("add_flt_at", "y", 0f)
 							.com("add_mult_at", "x")
-								.com("add_flt_at", "in", 150f)
+								.com("add_mult_at", "in")
+									.com("add_get_input_at", "in", "cam_height")
+									.com("add_flt_at", "fact", 1f/3f)
+									.com("get_last")
 								.com("add_get_input_at", "fact", "cam_scale_inv")
 								.com("get_last")
 							.com("get_last")
