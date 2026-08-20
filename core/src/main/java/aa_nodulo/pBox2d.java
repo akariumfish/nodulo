@@ -167,32 +167,50 @@ public class pBox2d extends pSystem {
 
 
 		}
+		
+		
+		
+		
+		
+
+		ArrayList<nDrawable> drawRun = new ArrayList<nDrawable>();
+		HashMap<nDrawable, Integer> drawPrio = new HashMap<nDrawable, Integer>();
+		int max_prio = 0;
+		
+		public pBox2d addDrawable(nDrawable r) { addDrawable(0,r); return this; }
+		public pBox2d addDrawable(int prio, nDrawable r) { 
+			drawRun.add(r); drawPrio.put(r, prio); max_prio = Math.max(max_prio, prio); return this; }
+		public pBox2d removeDrawable(nDrawable r) { drawRun.remove(r); return this; }
+		public pBox2d clearDrawable() { drawRun.clear(); return this; }
+
+		
+		
+		
+		
 
 		public pBox2d() { 
 			super(); 
 			tick_run = new nRun() { public void run(Object o) { tick((float)o); }};
 			net_tick_run = new nRun() { public void run(Object o) { net_tick((float)o); }};
-			tile_draw_run = new nDrawable() { public void drawing() { draw_tile(); }}; 
-			pre_draw_run = new nDrawable() { public void drawing() { pre_draw(); }}; 
-			ray_draw_run = new nDrawable() { public void drawing() { draw_ray(); }}; 
+			draw_run = new nDrawable() { public void drawing() { draw(); }}; 
 		}
 
 		nRun tick_run, net_tick_run;
-		nDrawable pre_draw_run, tile_draw_run, ray_draw_run;
+		nDrawable draw_run;
 		
 		public pBox2d init(sValueBloc b) { return (pBox2d) super.init(b); }
-
+		
 		public pSpace space;
 
 		public sBoo val_do_draw, val_draw_vision, 
 			val_do_ray, val_do_calc, val_do_tile, val_edit_tile;
 		
 		public sInt val_body_nb, val_light_nb;
-
+		
 		public World world;
 		public Box2DRenderer boxRenderer;
 
-		nTileMap tilemap;
+		nRenderer renderer;
 
 		pView view;
 		
@@ -213,7 +231,6 @@ public class pBox2d extends pSystem {
 			val_light_nb = bloc.obtainInt("val_light_nb", 0);
 			
 			
-			
 			world = new World(new Vector2(0, 0), true);
 
 			pBox2d box = this;
@@ -231,7 +248,7 @@ public class pBox2d extends pSystem {
 			//		boolean drawVelocities, boolean drawContacts
 			boxRenderer = new Box2DRenderer(app, true, true, true, true, true, true);
 			
-			tilemap = new nTileMap("Map.tmx", this, world);
+			renderer = new nRenderer("Map.tmx", this, world);
 			
 		}
 		public void system_load() {
@@ -242,9 +259,7 @@ public class pBox2d extends pSystem {
 			app.time.addEventTick(tick_run);
 			app.time.addEventNetTick(net_tick_run);
 			
-			view.addDrawable(2,pre_draw_run);
-			view.addDrawable(3,tile_draw_run);
-			view.addDrawable(11,ray_draw_run);
+			view.addDrawable(10,draw_run);
 			//		if (!app.RELEASE) 
 			tool_setup(true);
 
@@ -252,11 +267,9 @@ public class pBox2d extends pSystem {
 		public void system_clear() {
 			app.time.removeEventTick(tick_run);
 			app.time.removeEventNetTick(net_tick_run);
-			app.view.removeDrawable(tile_draw_run);
-			app.view.removeDrawable(pre_draw_run);
-			app.view.removeDrawable(ray_draw_run);
+			app.view.removeDrawable(draw_run);
 
-			tilemap.dispose();
+			renderer.dispose();
 		}
 
 		public void tool_init(nInterface interf) {
@@ -278,13 +291,13 @@ public class pBox2d extends pSystem {
 			interf.add_row();
 			interf.add_row_watch(5, "Body : ", "val_body_nb");
 			interf.add_row_watch(5, "Light : ", "val_light_nb");
-			
+
 		}
 
 		public void frame(float delta) { 
 			val_body_nb.set(bodys.size());
-			val_light_nb.set(tilemap.rayHandler.lightList.size + 
-					tilemap.rayHandler.disabledLights.size);
+			val_light_nb.set(renderer.rayHandler.lightList.size + 
+					renderer.rayHandler.disabledLights.size);
 		}
 
 		private float accumulator = 0;
@@ -323,32 +336,43 @@ public class pBox2d extends pSystem {
 			return val_do_ray.get() && app.gdx.drawer.USE_FX; }
 		public boolean drawvision() { return val_draw_vision.get(); }
 		
-		public void pre_draw() { 
-			tilemap.beginRender();
+		public void draw_drawer() {
+
+			view.app.gdx.drawer.begin();
+			
+			ArrayList<nDrawable> alldraw = Utl.duplic(drawRun);
+			
+			for (int prio = 0 ; prio <= max_prio ; prio++)
+				for (nDrawable d : drawRun) 
+					if (drawPrio.get(d) == prio) { d.drawing(); alldraw.remove(d); } 
+			
+			for (nDrawable d : alldraw) d.drawing(); 
+
+			view.app.gdx.drawer.end();
+			
 		}
-		public void draw_tile() { 
+
+		public void draw() { 
+			
 			if (val_edit_tile.get() && val_do_tile.get()) {
 				if (app.input.mouseLeft.trigClick && 
 						app.view.mouse_is_hover_view()) {
-					tilemap.addCell(app.view.mouse_in_view()); }
+					renderer.addCell(app.view.mouse_in_view()); }
 				if (app.input.mouseRight.trigClick && 
 						app.view.mouse_is_hover_view()) {
-					tilemap.delCell(app.view.mouse_in_view()); }
+					renderer.delCell(app.view.mouse_in_view()); }
 			}
-			tilemap.renderBack();
-		}
-
-		public void draw_ray() { 
-
-			tilemap.renderFront();
-
-			tilemap.endRender();
+			
+			renderer.render(); 
 			
 			if (val_do_draw.get()) {
 				boxRenderer.render(world);
 				
 				app.stroke(255,0,255,255,5f); app.fill(55,0,55,255);
-				for (Light light : tilemap.rayHandler.lightList) {
+				for (Light light : renderer.rayHandler.lightList) {
+					app.circle(light.getPosition().x, light.getPosition().y, 12f);
+				}
+				for (Light light : renderer.rayHandler.disabledLights) {
 					app.circle(light.getPosition().x, light.getPosition().y, 12f);
 				}
 				
@@ -408,8 +432,8 @@ public class pBox2d extends pSystem {
 		//		private int joint_nb = 0;
 		
 		public HashMap<Body,ArrayList<Light>> lights = new HashMap<Body,ArrayList<Light>>();
-		public void attachToBody(PointLight l , Body b) { attachToBody(l,b,0f,0f); }
-		public void attachToBody(PointLight l , Body b, float x, float y) {
+		public void attachToBody(PositionalLight l , Body b) { attachToBody(l,b,0f,0f); }
+		public void attachToBody(PositionalLight l , Body b, float x, float y) {
 			if (lights.get(b) == null) lights.put(b, new ArrayList<Light>());
 			lights.get(b).add(l);
 			l.setIgnoreAttachedBody(true);
@@ -443,21 +467,25 @@ public class pBox2d extends pSystem {
 				
 				body.setUserData(b);
 				
-				tilemap.rayHandler.transparent.add(body);
+//				renderer.rayHandler.transparent.add(body);
+				renderer.groundLayer.transparent.add(body);
 				
 				if (b.getBoo("physic", "contact_break")) {
 					break_bodys.add(body);
 				}
 
 				if (b.getBoo("physic", "aura")) {
-					PointLight pl = tilemap.newSpaceLight(90, 
+					PointLight pl = renderer.newSpaceLight(90, 
 							new Color(1f,0.6f,0.4f,1f), 400, 0, 0);
 					attachToBody(pl, body);
 				}
 
 				if (b.getBoo("physic", "view_light")) {
-					attachToBody(tilemap.newVisionLight(), body);
-					attachToBody(tilemap.newWallVisionLight(), body);
+					
+					renderer.newVisionLight(body);
+					
+//					attachToBody(tilemap.newVisionLight(), body);
+//					attachToBody(tilemap.newWallVisionLight(), body);
 				}
 
 				if (b.getBoo("physic", "light")) {
@@ -466,9 +494,10 @@ public class pBox2d extends pSystem {
 					float dist = b.getFlt("physic", "light_dist");
 					Color col = Utl.color(b.getInt("physic", "r"), b.getInt("physic", "g"), 
 							b.getInt("physic", "b"), b.getInt("physic", "a"));
-					PointLight l = tilemap.newSpaceLight(rays, col, dist, 0, 0);
+					PointLight l = renderer.newSpaceLight(rays, col, dist, 0, 0);
 					l.setColor(col.r,col.g,col.b,col.a);
 					attachToBody(l, body, pos.x, pos.y);
+					renderer.rayHandler.transparent.add(body);
 				}
 
 				if (!b.getBoo("physic", "copy_geom") || !b.hasParam("geom")) {
@@ -531,7 +560,7 @@ public class pBox2d extends pSystem {
 				for (Light l : lights.get(body)) l.remove();
 				lights.get(body).clear();
 			}
-			tilemap.rayHandler.transparent.remove(body);
+			renderer.rayHandler.transparent.remove(body);
 			break_bodys.remove(body);
 			clearing_bodys.remove(body);
 		}

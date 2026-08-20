@@ -13,6 +13,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.IntArray;
 
+import util.Utl;
+
 /**
  * Light is data container for all the light parameters. When created lights
  * are automatically added to rayHandler and could be removed by calling
@@ -492,6 +494,13 @@ public abstract class Light implements Disposable {
 				return -1;
 			
 			for (Body b : rayHandler.transparent) if (fixture.getBody() == b)
+				return -1;
+			
+			if (layer.use_blocker && 
+					!Utl.has(layer.light_blocker, fixture.getBody()))
+				return -1;
+			
+			for (Body b : layer.transparent) if (fixture.getBody() == b)
 				return -1;
 			
 			// if (fixture.isSensor())

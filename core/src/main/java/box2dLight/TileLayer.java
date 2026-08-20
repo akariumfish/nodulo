@@ -1,5 +1,7 @@
 package box2dLight;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -8,13 +10,11 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
-import aa_nodulo.nTileMap;
+import aa_nodulo.nRenderer;
 
-public class TileLayer {
+public class TileLayer extends nRenderer.Layer {
 
 	public TiledMapTileLayer layer;
-	
-	public nTileMap map;
 	
 	public boolean ground_mask = false;
 	
@@ -44,16 +44,17 @@ public class TileLayer {
 	public Cell[][] cells;
 	
 	public final int width, height;
-	
-	public TileLayer(nTileMap tm, TiledMapTileLayer ml) {
-		super();
-		map = tm;
+
+	public ArrayList<Body> ground_bod = new ArrayList<Body>();
+
+	public TileLayer(nRenderer tm, TiledMapTileLayer ml) {
+		super(tm);
 		layer = ml;
 
 		layer.getProperties().put("tilelayer", this);
 		
-		width = map.getMapWidth();
-		height = map.getMapHeight();
+		width = rend.getMapWidth();
+		height = rend.getMapHeight();
 		
 		cells = new Cell[width][height];
 		
@@ -98,18 +99,32 @@ public class TileLayer {
 	}
 	public void build_wall(int x, int y, int w, int h, boolean transp) {
 		if (!test_place(x,y,w,h)) return;
-		Vector2 p = map.getCellPos(x,y);
-		p.add(w*map.tile_scale/2f,h*map.tile_scale/2f);
+		Vector2 p = rend.getCellPos(x,y);
+		p.add(w*rend.tile_scale/2f,h*rend.tile_scale/2f);
 		BodyDef groundBodyDef = new BodyDef();  
 		groundBodyDef.position.set(p);  
-		Body groundBody = map.world.createBody(groundBodyDef);  
-		if (transp) map.rayHandler.transparent.add(groundBody);
+		Body groundBody = rend.world.createBody(groundBodyDef);  
+		
+		if (!transp) ground_bod.add(groundBody);
+		
+//		if (transp) rend.rayHandler.transparent.add(groundBody);
 		PolygonShape groundBox = new PolygonShape();  
-		groundBox.setAsBox(w*map.tile_scale/2f,h*map.tile_scale/2f);
+		groundBox.setAsBox(w*rend.tile_scale/2f,h*rend.tile_scale/2f);
 		groundBody.createFixture(groundBox, 0.0f);
 		groundBox.dispose();
 		for (int i = x ; i < x + w ; i++)
 			for (int j = y ; j < y + h ; j++) 
 				cells[i][j].build = true;
+	}
+
+	@Override
+	public void render() {
+		
+		rend.renderer.render(this);
+		
+		if (ground_mask) {
+			rend.maskLayer = this;
+			rend.has_ground_mask = true;
+		} 
 	}
 }

@@ -1020,13 +1020,16 @@ public class pGeom extends pSystem {
 
 		app.time.addEventTick(tick_run);
 		app.time.addEventNetTick(net_tick_run);
-		app.view.addDrawable(5, draw_run);
+		
+//		app.view.addDrawable(5, draw_run);
 		app.view.addDrawable(20, draw_aabb_run);
 		space = app.space;
 
 //		if (!app.RELEASE) 
 			tool_setup(false);
-		
+		app.addDelayEvent(1,new nRun() { public void run() {
+			app.getSystem(pBox2d.class).addDrawable(5, draw_run);
+		}});		
 //		plane.addEventSave(new nRun() { public void run() {
 //			
 //		}});
@@ -1071,7 +1074,9 @@ public class pGeom extends pSystem {
 	public void system_clear() {
 		app.time.removeEventTick(tick_run);
 		app.time.removeEventNetTick(net_tick_run);
-		app.view.removeDrawable(draw_run);
+		if (app.getSystem(pBox2d.class) != null) 
+			app.getSystem(pBox2d.class).removeDrawable(draw_run);
+//		app.view.removeDrawable(draw_run);
 		app.view.removeDrawable(draw_aabb_run);
 	}
 	
@@ -1157,23 +1162,23 @@ public class pGeom extends pSystem {
 		calc_ref();
 	}
 	public void draw() { 
-		if (val_do_draw.get() && val_do_limit.get()) {
-			app.noFill();
-			app.stroke(150,0,0,200,90f);
-			app.circle(0,0,val_limit_dist.get());
-		}
+//		if (val_do_draw.get() && val_do_limit.get()) {
+//			app.noFill();
+//			app.stroke(150,0,0,200,90f);
+//			app.circle(0,0,val_limit_dist.get());
+//		}
 
 		if (val_do_draw.get())
 			for (pBody b : space.familyMember("drawable")) draw_body(app, b);
 	
-		if (val_do_draw.get()) {
-			for (pBody b : space.familyMember("hitpoint")) {
-				if (!b.hasParam("hp") || !b.hasParam("ref")) continue;
-				Vector2 p = b.getVec("ref", "pos");
-				int hp = b.getInt("hp", "hp");
-				app.text(""+hp, p.x, p.y, 24);
-			}
-		}
+//		if (val_do_draw.get()) {
+//			for (pBody b : space.familyMember("hitpoint")) {
+//				if (!b.hasParam("hp") || !b.hasParam("ref")) continue;
+//				Vector2 p = b.getVec("ref", "pos");
+//				int hp = b.getInt("hp", "hp");
+//				app.text(""+hp, p.x, p.y, 24);
+//			}
+//		}
 	}
 	public void draw_aabb() { 
 		if (val_do_click_draw.get())
@@ -1215,6 +1220,10 @@ public class pGeom extends pSystem {
 		if (!b.hasParam("ref") || !b.hasParam("graph") || 
 				!b.hasParam("geom")) return;
 		draw_geom_graph(app, b, b.param("geom"), b.param("graph"));
+		if (!b.hasParam("hp")) return;
+		Vector2 p = b.getVec("ref", "pos");
+		int hp = b.getInt("hp", "hp");
+		app.text(""+hp, p.x, p.y, 24);
 	}
 
 	public static void draw_geom_graph(PlaneApplet app, pBody b, pParam geom, pParam graph) {

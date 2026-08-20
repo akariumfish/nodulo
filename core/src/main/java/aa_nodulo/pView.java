@@ -239,7 +239,7 @@ public class pView {
 
 	public sVec val_cam_pos;
 
-	public sVec val_limit_pos;
+	public sVec val_limit_pos, val_mouse_in_view;
 	public sFlt val_cam_scale, val_cam_rot, val_zoom_min, val_zoom_max;
 	public sBoo val_do_limit, val_wallp;
 	
@@ -278,6 +278,7 @@ public class pView {
 		val_cam_scale = view.object("val_cam_scale", sFlt.class);
 		val_cam_rot = view.object("val_cam_rot", sFlt.class);
 		val_wallp = view.object("val_wallp", sBoo.class);
+		val_mouse_in_view = bloc.obtainVec("val_mouse_in_view");
 		
 		if (!app.config.STARTUP_LOAD) {
 			if (app.config.RELEASE) {
@@ -300,8 +301,10 @@ public class pView {
 		}
 
 		
-			
+
 		app.gui.add_info_text("space zoom: ", view.object("val_cam_scale", sFlt.class));
+
+		app.gui.add_info_text("Smouse: ", val_mouse_in_view);
 		
 		nWidget view_backref = view.get("backref");
 		
@@ -402,6 +405,10 @@ public class pView {
 	}
 
 	public void frame(float d) {
+		if (mouse_is_hover_view()) 
+			val_mouse_in_view.set(mouse_in_view());
+		else val_mouse_in_view.set(0,0);
+		
 		if (got_center_ratio_target) {
 			view.metode("set_center_ratio", val_center_ratio_target.get());
 			got_center_ratio_target = false;

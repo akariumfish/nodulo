@@ -207,7 +207,9 @@ public class RayHandler implements Disposable {
 	public void setBlendDef() {
 		diffuseBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_ZERO);
 		shadowBlendFunc.set(GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA);
+//		simpleBlendFunc.set(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
 		setDiffuseLight(true);
+		setShadows(true);
 		setAmbientLight(0.0f, 0.0f, 0.0f, 0f);
 		buffer_clear_color.set(def_buffer_clear_color);
 		setBlur(true);
@@ -217,7 +219,6 @@ public class RayHandler implements Disposable {
 	public void setBlendLight() {
 		setBlendDef();
 		setAmbientLight(0.2f, 0.2f, 0.2f, 1f);
-		setBlur(false);
 	}
 
 	public void setBlendAura() {
@@ -228,9 +229,6 @@ public class RayHandler implements Disposable {
 
 	public void setBlendVision() {
 		setBlendDef();
-		setBlurNum(1);
-		setDiffuseLight(false);
-		shadowBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	public void setBlendColor() {
@@ -251,16 +249,12 @@ public class RayHandler implements Disposable {
 	
 	public void beginRender() { 
 		
-		app.gdx.drawer.pause_batch();
-		
 		render_buffer.begin(); 
 		
 		Color c = Utl.color(0,0);
         Gdx.gl.glClearColor(c.r,c.g,c.b,c.a);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
-		app.gdx.drawer.restart_batch();
-		
 	}
 
 	private ArrayList<Light> temp = new ArrayList<Light>();
@@ -327,18 +321,14 @@ public class RayHandler implements Disposable {
 
 	public void endLayeredRender() { 
 
-		app.gdx.drawer.pause_batch();
-		
 		render_buffer.end();
 
 		app.gdx.drawer.spritebatch.begin();
+		
 		app.gdx.drawer.spritebatch.draw(render_buffer.getTexture(), 0, 0, 
 				app.gdx.getscreenwidth(), 
 				app.gdx.getscreenheight(), 
 				0, 0, 1, 1);
-		app.gdx.drawer.spritebatch.end();
-		
-		app.gdx.drawer.restart_batch();
 		
 	}
 	

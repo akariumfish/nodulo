@@ -1,20 +1,24 @@
 {
     "activeFile": "",
+    "automapping.whileDrawing": true,
     "expandedProjectPaths": [
         "."
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "": {
-            "scaleInDock": 1,
-            "scaleInEditor": 5.5
+            "scaleInDock": 2,
+            "scaleInEditor": 4
+        },
+        ":/automap-tiles.tsx": {
+            "scaleInDock": 1
         },
         "Map.tmx": {
             "scale": 0.5,
-            "selectedLayer": 1,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 983,
-                "y": 981
+                "x": 961,
+                "y": 1025
             }
         },
         "Map.tmx#Lighting": {
@@ -26,11 +30,14 @@
             "scaleInEditor": 4
         },
         "Map2.tmx": {
-            "scale": 1.5,
+            "expandedObjectLayers": [
+                2
+            ],
+            "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 250.33333333333337,
-                "y": 219
+                "x": 993,
+                "y": 1059
             }
         },
         "Map2.tmx#Lighting": {
@@ -68,18 +75,35 @@
         },
         "Map4.tmx#Tilemap": {
             "scaleInDock": 1
+        },
+        "tileset.tsx": {
+            "scaleInEditor": 4
         }
     },
+    "last.externalTilesetPath": "C:/Users/user/Desktop/code/java/libgdx/nodulo/assets",
+    "last.imagePath": "C:/Users/user/Desktop/code/java/libgdx/nodulo/assets",
     "last.objectTemplatePath": "C:/Users/user/Desktop/code/java/libgdx/nodulo/assets",
+    "map.height": 128,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 128,
     "openFiles": [
         "Map.tmx"
     ],
     "project": "tiled_project.tiled-project",
     "property.type": "bool",
     "recentFiles": [
+        "tileset.tsx",
         "Map.tmx",
         "Map4.tmx",
         "Map3.tmx",
         "Map2.tmx"
-    ]
+    ],
+    "tileset.embedInMap": true,
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    },
+    "tileset.useTransparentColor": true
 }
