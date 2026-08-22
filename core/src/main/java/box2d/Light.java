@@ -3,6 +3,7 @@ package box2d;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Filter;
@@ -11,8 +12,11 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.IntArray;
+import com.badlogic.gdx.utils.Pools;
 
+import app.nDrawer;
 import util.Utl;
 
 /**
@@ -453,7 +457,7 @@ public abstract class Light implements Disposable {
 	/**
 	 * Internal method for mesh update depending on ray number
 	 */
-	void setRayNum(int rays) {
+	void setRayNum(int rays) { 
 		if (rays < MIN_RAYS)
 			rays = MIN_RAYS;
 
@@ -478,6 +482,8 @@ public abstract class Light implements Disposable {
 	static private Filter globalFilterA = null;
 	/** This light specific filter **/
 	private Filter filterA = null;
+	
+	private Light this_light = this;
 
 	final RayCastCallback ray = new RayCastCallback() {
 		@Override
@@ -508,6 +514,14 @@ public abstract class Light implements Disposable {
 			mx[m_index] = point.x;
 			my[m_index] = point.y;
 			f[m_index] = fraction;
+//			if (this_light instanceof ChainLight) {
+//				ChainLight ch = ((ChainLight)this_light);
+//				if (ch.rayBidirectional) {
+//					ch.mx2[ch.m_index2] = point.x;
+//					ch.my2[ch.m_index2] = point.y;
+//					ch.f2[ch.m_index2] = fraction;
+//				}
+//			}
 			return fraction;
 		}
 	};
@@ -622,5 +636,20 @@ public abstract class Light implements Disposable {
 		}
 
 	};
+	
+	public void debugRender(nDrawer.Drawer draw) {
+		draw.stroke(255,0,255,255,8f); draw.fill(55,0,55,255);
+		draw.circle(getPosition().x, getPosition().y, 20f);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 }

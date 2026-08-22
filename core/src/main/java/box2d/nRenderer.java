@@ -188,6 +188,27 @@ public class nRenderer {
 			visionLayer.light_blocker.add(body); }
 		
 		lightLayer.newCrossAmbiantLight(Utl.color(255), tileLayer);
+		
+
+		float[] path = new float[] {
+//				-200f,0f,
+//				-2000f,0f
+				
+				-200f,0f,
+				-800f,0f, 
+				-800f,300f, 
+				-1400f,300f 
+				
+				};
+		
+		colorLayer.newChainLight(900, Utl.color(255), 500f, path);
+		
+//		ChainLight ch = new ChainLight(colorLayer, 900, Utl.color(255), 500f, 
+//				1, path);
+//		ch.setSoft(false);
+//		ch = new ChainLight(colorLayer, 900, Utl.color(255), 500f, 
+//				-1, path);
+//		ch.setSoft(false);
 	}
 	
 	public void loadLayerObject(MapLayer layer) {

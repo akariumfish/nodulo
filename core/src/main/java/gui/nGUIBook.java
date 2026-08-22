@@ -1826,6 +1826,14 @@ public class nGUIBook {
 					nRun t = (nRun)o;
 					g.addObject("pick_event", t);
 				} } );
+
+				g.addMetode("set_pick", new nRun() { public void run(Object o) {
+					String t = (String)o;
+					for (nWidget w : pick_list) {
+						if (w.getText().equals(t)) w.setOn(); 
+						else w.setOff(); 
+					}
+				} } );
 				
 				return g;
 			} 

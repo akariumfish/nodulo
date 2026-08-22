@@ -343,6 +343,7 @@ public class nDrawer {
 		r = transf.transform(r);
 		circle(r.x+r.width/2f, r.y+r.height/2f, Math.min(r.width, r.height)/2f); return this; }
 	public nDrawer circle(float x, float y, float r) {
+		if (r <= 0) return this;
 		Circle c = transf.transform(new Circle(x,y,r));
 		if (do_fill) drawer.filledEllipse(c.x, c.y, c.radius, c.radius, 0, color_fill, color_fill);
 		if (do_stroke) { drawer.setColor(color_stroke); drawer.circle(c.x, c.y, c.radius, strokeW * transf.getScale()); } 
@@ -462,6 +463,10 @@ public class nDrawer {
 		public void text(String t, Vector2 v, float s, Color c); 
 		public void text(String t, float x, float y, float s); 
 		public void text(String t, float x, float y, float s, Color c); 
+		
+		public void line(float x1, float y1, float x2, float y2, Color c1, Color c2);
+		public void face(float x1, float y1, float x2, float y2, float x3, float y3, 
+				Color c1, Color c2, Color c3);
 
 		public void halo(Vector2 p, float r, Color c1, Color c2);
 		

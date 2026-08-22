@@ -16,6 +16,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Pools;
 
+import app.nDrawer;
+
 /**
  * A light whose ray starting points are evenly distributed along a chain of
  * vertices
@@ -31,6 +33,7 @@ public class ChainLight extends Light {
 	public final FloatArray chain;
 
 	protected int rayDirection;
+//	boolean rayBidirectional = false;
 	protected float bodyAngle;
 	protected float bodyAngleOffset;
 
@@ -38,16 +41,31 @@ public class ChainLight extends Light {
 
 	protected final FloatArray segmentAngles = new FloatArray();
 	protected final FloatArray segmentLengths = new FloatArray();
+//	protected final FloatArray segmentAngles2 = new FloatArray();
+//	protected final FloatArray segmentLengths2 = new FloatArray();
 
 	protected final float[] startX;
 	protected final float[] startY;
 	protected final float[] endX;
 	protected final float[] endY;
+//	protected final float[] startX2;
+//	protected final float[] startY2;
+//	protected final float[] endX2;
+//	protected final float[] endY2;
+//	protected float segments2[];
+//	protected int m_index2 = 0;
+//	protected float[] mx2;
+//	protected float[] my2;
+//	protected float[] f2;
+//	protected Mesh lightMesh2;
+//	protected Mesh softShadowMesh2;
 
 	protected final Vector2 bodyPosition = new Vector2();
 	protected final Vector2 tmpEnd = new Vector2();
 	protected final Vector2 tmpStart = new Vector2();
 	protected final Vector2 tmpPerp = new Vector2();
+//	protected final Vector2 tmpEnd2 = new Vector2();
+//	protected final Vector2 tmpStart2 = new Vector2();
 	protected final Vector2 tmpVec = new Vector2();
 
 	protected final Matrix3 zeroPosition = new Matrix3();
@@ -57,29 +75,10 @@ public class ChainLight extends Light {
 	protected final Rectangle chainLightBounds = new Rectangle();
 	protected final Rectangle rayHandlerBounds = new Rectangle();
 	
-	/**
-	 * Creates chain light without vertices, they can be added any time later
-	 * 
-	 * @param rayHandler
-	 *            not {@code null} instance of RayHandler
-	 * @param rays
-	 *            number of rays - more rays make light to look more realistic
-	 *            but will decrease performance, can't be less than MIN_RAYS
-	 * @param color
-	 *            color, set to {@code null} to use the default color
-	 * @param distance
-	 *            distance of light, soft shadow length is set to distance * 0.1f
-	 * @param rayDirection
-	 *            direction of rays
-	 *            <ul>
-	 *            <li>1 = left</li>
-	 *            <li>-1 = right</li>
- 	 *            </ul>
- 	 */
-	public ChainLight(LightLayer layer, int rays, Color color,
-			float distance, int rayDirection) {
-		this(layer, rays, color, distance, rayDirection, null);
-	}
+//	public ChainLight(LightLayer layer, int rays, Color color,
+//			float distance, float[] chain) {
+//		this(layer, rays, color, distance, 0, chain);
+//	}
 
 	/**
 	 * Creates chain light from specified vertices
@@ -109,11 +108,18 @@ public class ChainLight extends Light {
 		super(layer, rays, color, distance, 0f);
 		rayStartOffset = ChainLight.defaultRayStartOffset;
 		this.rayDirection = rayDirection;
+//		if (rayDirection == 0) {
+//			rayBidirectional = true; this.rayDirection = 1; }
 		vertexNum = (vertexNum - 1) * 2;
+		
 		endX = new float[rays];
 		endY = new float[rays];
 		startX = new float[rays];
 		startY = new float[rays];
+//		endX2 = new float[rays];
+//		endY2 = new float[rays];
+//		startX2 = new float[rays];
+//		startY2 = new float[rays];
 		this.chain = (chain != null) ?
 					 new FloatArray(chain) : new FloatArray();
 
@@ -132,6 +138,16 @@ public class ChainLight extends Light {
 				0, new VertexAttribute(Usage.Position, 2, "vertex_positions"),
 				new VertexAttribute(Usage.ColorPacked, 4, "quad_colors"),
 				new VertexAttribute(Usage.Generic, 1, "s"));
+//		lightMesh2 = new Mesh(
+//				vertexDataType, false, vertexNum, 0,
+//				new VertexAttribute(Usage.Position, 2, "vertex_positions"),
+//				new VertexAttribute(Usage.ColorPacked, 4, "quad_colors"),
+//				new VertexAttribute(Usage.Generic, 1, "s"));
+//		softShadowMesh2 = new Mesh(
+//				vertexDataType, false, vertexNum * 2,
+//				0, new VertexAttribute(Usage.Position, 2, "vertex_positions"),
+//				new VertexAttribute(Usage.ColorPacked, 4, "quad_colors"),
+//				new VertexAttribute(Usage.Generic, 1, "s"));
 		setMesh();
 	}
 	
@@ -158,18 +174,26 @@ public class ChainLight extends Light {
 		rayHandler.lightRenderedLastFrame++;
 		lightMesh.render(
 			rayHandler.lightShader, GL20.GL_TRIANGLE_STRIP, 0, vertexNum);
-		
+
+//		if (rayBidirectional) {
+//			lightMesh2.render(
+//					rayHandler.lightShader, GL20.GL_TRIANGLE_STRIP, 0, vertexNum);	
+//		}
 		if (soft && !xray) {
 			softShadowMesh.render(
 				rayHandler.lightShader, GL20.GL_TRIANGLE_STRIP, 0, vertexNum);
+//			if (rayBidirectional) {
+//				softShadowMesh2.render(
+//						rayHandler.lightShader, GL20.GL_TRIANGLE_STRIP, 0, vertexNum);
+//			}
 		}
 	}
 	
 	/**
 	 * Draws a polygon, using ray start and end points as vertices
 	 */
-	public void debugRender(ShapeRenderer shapeRenderer) {
-		shapeRenderer.setColor(Color.YELLOW);
+	public void debugRender(nDrawer.Drawer draw) {
+		draw.stroke(0,255,255,255,8f); draw.fill(0,0);
 		FloatArray vertices = Pools.obtain(FloatArray.class);
 		vertices.clear();
 		for (int i = 0; i < rayNum; i++) {
@@ -178,7 +202,17 @@ public class ChainLight extends Light {
 		for (int i = rayNum - 1; i > -1; i--) {
 			vertices.addAll(startX[i], startY[i]);
 		}
-		shapeRenderer.polygon(vertices.shrink());
+		draw.polygon(vertices.shrink());
+//		if (rayBidirectional) {
+//			vertices.clear();
+//			for (int i = 0; i < rayNum; i++) {
+//				vertices.addAll(mx2[i], my2[i]);
+//			}
+//			for (int i = rayNum - 1; i > -1; i--) {
+//				vertices.addAll(startX2[i], startY2[i]);
+//			}
+//			draw.polygon(vertices.shrink());
+//		}
 		Pools.free(vertices);
 	}
 	
@@ -250,6 +284,14 @@ public class ChainLight extends Light {
 		for (int i = rayNum - 1; i > -1; i--) {
 			vertices.addAll(startX[i], startY[i]);
 		}
+//		if (rayBidirectional) {
+//			for (int i = 0; i < rayNum; i++) {
+//				vertices.addAll(mx2[i], my2[i]);
+//			}
+//			for (int i = rayNum - 1; i > -1; i--) {
+//				vertices.addAll(startX2[i], startY2[i]);
+//			}
+//		}
 		
 		int intersects = 0;
 		for (int i = 0; i < vertices.size; i += 2) {
@@ -265,6 +307,26 @@ public class ChainLight extends Light {
 
 		Pools.free(vertices);
 		return result;
+	}
+	/**
+	 * Internal method for mesh update depending on ray number
+	 */
+	@Override
+	void setRayNum(int rays) { 
+		if (rays < MIN_RAYS)
+			rays = MIN_RAYS;
+
+		rayNum = rays;
+		vertexNum = rays + 1;
+
+		segments = new float[vertexNum * 8];
+//		segments2 = new float[vertexNum * 8];
+		mx = new float[vertexNum];
+		my = new float[vertexNum];
+		f = new float[vertexNum];
+//		mx2 = new float[vertexNum];
+//		my2 = new float[vertexNum];
+//		f2 = new float[vertexNum];
 	}
 	
 	/**
@@ -308,20 +370,34 @@ public class ChainLight extends Light {
 		Spinor rayAngle = Pools.obtain(Spinor.class);
 		
 		int segmentCount = chain.size / 2 - 1;
-		
+
 		segmentAngles.clear();
 		segmentLengths.clear();
+//		segmentAngles2.clear();
+//		segmentLengths2.clear();
 		float remainingLength = 0;
+//		float remainingLength2 = 0;
 		
 		for (int i = 0, j = 0; i < chain.size - 2; i += 2, j++) {
 			v1.set(chain.items[i + 2], chain.items[i + 3])
 				.sub(chain.items[i], chain.items[i + 1]);
 			segmentLengths.add(v1.len());
 			segmentAngles.add(
-				v1.rotate90(rayDirection).angle() * MathUtils.degreesToRadians
+				v1.rotate90(rayDirection).angleDeg() * MathUtils.degreesToRadians
 			);
 			remainingLength += segmentLengths.items[j];
 		}
+//		if (rayBidirectional) {
+//			for (int i = 0, j = 0; i < chain.size - 2; i += 2, j++) {
+//					v1.set(chain.items[i + 2], chain.items[i + 3])
+//					.sub(chain.items[i], chain.items[i + 1]);
+//				segmentLengths2.add(v1.len());
+//				segmentAngles2.add(
+//					v1.rotate90(-rayDirection).angleDeg() * MathUtils.degreesToRadians
+//				);
+//				remainingLength2 += segmentLengths2.items[j];
+//			}
+//		}
 		
 		int rayNumber = 0;
 		int remainingRays = rayNum;
@@ -375,6 +451,61 @@ public class ChainLight extends Light {
 			remainingLength -= segmentLengths.items[i];
 			
 		}
+
+//		if (rayBidirectional) {
+//			rayNumber = 0;
+//			remainingRays = rayNum;
+//			
+//			for (int i = 0; i < segmentCount; i++) {
+//				// get this and adjacent segment angles
+//				previousAngle.set(
+//					(i == 0) ?
+//					segmentAngles2.items[i] : segmentAngles2.items[i - 1]);
+//				currentAngle.set(segmentAngles2.items[i]);
+//				nextAngle.set(
+//					(i == segmentAngles2.size - 1) ?
+//					segmentAngles2.items[i] : segmentAngles2.items[i + 1]);
+//				
+//				// interpolate to find actual start and end angles
+//				startAngle.set(previousAngle).slerp(currentAngle, 0.5f);
+//				endAngle.set(currentAngle).slerp(nextAngle, 0.5f);
+//
+//				int segmentVertex = i * 2;
+//				vSegmentStart.set(
+//					chain.items[segmentVertex], chain.items[segmentVertex + 1]);
+//				vDirection.set(
+//					chain.items[segmentVertex + 2], chain.items[segmentVertex + 3]
+//				).sub(vSegmentStart).nor();
+//
+//				float raySpacing = remainingLength2 / remainingRays;
+//				int segmentRays = (i == segmentCount - 1) ?
+//					remainingRays :
+//					(int) ((segmentLengths2.items[i] / remainingLength2) *
+//							remainingRays);
+//				
+//				for (int j = 0; j < segmentRays; j++) {
+//					float position = j * raySpacing;
+//
+//					// interpolate ray angle based on position within segment
+//					rayAngle.set(startAngle).slerp(
+//						endAngle, position / segmentLengths2.items[i]);
+//					float angle = rayAngle.angle();
+//					vRayOffset.set(this.rayStartOffset, 0).rotateRad(angle);
+//					v1.set(vDirection).scl(position).add(vSegmentStart).add(vRayOffset);
+//					
+//					this.startX2[rayNumber] = v1.x;
+//					this.startY2[rayNumber] = v1.y;
+//					v2.set(distance, 0).rotateRad(angle).add(v1);
+//					this.endX2[rayNumber] = v2.x;
+//					this.endY2[rayNumber] = v2.y;
+//					rayNumber++;
+//				}
+//				
+//				remainingRays -= segmentRays;
+//				remainingLength2 -= segmentLengths2.items[i];
+//				
+//			}
+//		}
 		
 		Pools.free(v1);
 		Pools.free(v2);
@@ -405,6 +536,15 @@ public class ChainLight extends Light {
 			tmpVec.set(endX[i], endY[i]).mul(rotateAroundZero).mul(restorePosition);
 			endX[i] = tmpVec.x;
 			endY[i] = tmpVec.y;
+			
+//			if (rayBidirectional) {
+//				tmpVec.set(startX2[i], startY2[i]).mul(rotateAroundZero).mul(restorePosition);
+//				startX2[i] = tmpVec.x;
+//				startY2[i] = tmpVec.y;
+//				tmpVec.set(endX2[i], endY2[i]).mul(rotateAroundZero).mul(restorePosition);
+//				endX2[i] = tmpVec.x;
+//				endY2[i] = tmpVec.y;
+//			}
 		}
 	}
 	
@@ -441,6 +581,19 @@ public class ChainLight extends Light {
 				.mul(restorePosition);
 			endX[i] = tmpVec.x;
 			endY[i] = tmpVec.y;
+
+//			if (rayBidirectional) {
+//				tmpVec.set(startX2[i], startY2[i]).mul(zeroPosition).mul(rotateAroundZero)
+//					.mul(restorePosition);
+//				startX2[i] = tmpVec.x;
+//				startY2[i] = tmpVec.y;
+//	
+//				tmpVec.set(endX2[i], endY2[i]).mul(zeroPosition).mul(rotateAroundZero)
+//					.mul(restorePosition);
+//				endX2[i] = tmpVec.x;
+//				endY2[i] = tmpVec.y;
+//				
+//			}
 		}
 	}
 	
@@ -458,6 +611,21 @@ public class ChainLight extends Light {
 				rayHandler.world.rayCast(ray, tmpStart, tmpEnd);
 			}
 		}
+//		if (rayBidirectional) {
+//			for (int i = 0; i < rayNum; i++) {
+//				m_index2 = i;
+//				f2[i] = 1f;
+//				tmpEnd2.x = endX2[i];
+//				mx2[i] = tmpEnd2.x;
+//				tmpEnd2.y = endY2[i];
+//				my2[i] = tmpEnd2.y;
+//				tmpStart2.x = startX2[i];
+//				tmpStart2.y = startY2[i];
+//				if (rayHandler.world != null && !xray) {
+//					rayHandler.world.rayCast(ray, tmpStart2, tmpEnd2);
+//				}			
+//			}
+//		}
 		setMesh();
 	}
 	
@@ -474,6 +642,21 @@ public class ChainLight extends Light {
 			segments[size++] = 1 - f[i];
 		}
 		lightMesh.setVertices(segments, 0, size);
+//		if (rayBidirectional) {
+//			size = 0;
+//			for (int i = 0; i < rayNum; i++) {
+//				segments2[size++] = startX2[i];
+//				segments2[size++] = startY2[i];
+//				segments2[size++] = colorF;
+//				segments2[size++] = 1;
+//				segments2[size++] = mx2[i];
+//				segments2[size++] = my2[i];
+//				segments2[size++] = colorF;
+//				segments2[size++] = 1 - f2[i];
+//			}
+//			lightMesh2.setVertices(segments2, 0, size);
+//		}
+		
 		if (!soft || xray) return;
 
 		size = 0;
@@ -491,6 +674,25 @@ public class ChainLight extends Light {
 			segments[size++] = 0f;
 		}
 		softShadowMesh.setVertices(segments, 0, size);
+//		if (rayBidirectional) {
+//			size = 0;
+//			for (int i = 0; i < rayNum; i++) {
+//				segments2[size++] = mx2[i];
+//				segments2[size++] = my2[i];
+//				segments2[size++] = colorF;
+//				final float s = (1 - f2[i]);
+//				segments2[size++] = s;
+//				tmpPerp.set(mx2[i], my2[i]).sub(startX2[i], startY2[i]).nor()
+//					.scl(softShadowLength * s).add(mx2[i], my2[i]);
+//				segments2[size++] = tmpPerp.x;
+//				segments2[size++] = tmpPerp.y;
+//				segments2[size++] = zeroColorBits;
+//				segments2[size++] = 0f;
+//			}
+//			softShadowMesh2.setVertices(segments2, 0, size);
+//		}
+
+		
 	}
 	
 	/** Internal method for bounding rectangle recalculation **/
@@ -510,6 +712,18 @@ public class ChainLight extends Light {
 			minY = minY < startY[i] ? minY : startY[i];
 			minY = minY < my[i] ? minY : my[i];
 		}
+//		if (rayBidirectional) {
+//			for (int i = 0; i < rayNum; i++) {
+//				maxX = maxX > startX2[i] ? maxX : startX2[i];
+//				maxX = maxX > mx2[i] ? maxX : mx2[i];
+//				minX = minX < startX2[i] ? minX : startX2[i];
+//				minX = minX < mx2[i] ? minX : mx2[i];
+//				maxY = maxY > startY2[i] ? maxY : startY2[i];
+//				maxY = maxY > my2[i] ? maxY : my2[i];
+//				minY = minY < startY2[i] ? minY : startY2[i];
+//				minY = minY < my2[i] ? minY : my2[i];
+//			}
+//		}
 		chainLightBounds.set(minX, minY, maxX - minX, maxY - minY);
 		rayHandlerBounds.set(
 			rayHandler.x1, rayHandler.y1,

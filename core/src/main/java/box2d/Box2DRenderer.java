@@ -74,9 +74,16 @@ public class Box2DRenderer implements Disposable {
 	}
 
 	/** This assumes that the projection matrix has already been set. */
-	public void render (World world) {//, Matrix4 projMatrix) {
-//		renderer.setProjectionMatrix(projMatrix);
+	public void render (World world) {
 		renderBodies(world);
+	}
+
+	/** This assumes that the projection matrix has already been set. */
+	public void render (RayHandler ray) {
+		ray.view.app.gdx.drawer.flush();
+		for (Light light : ray.lightList) light.debugRender(app);
+		ray.view.app.gdx.drawer.flush();
+		for (Light light : ray.disabledLights) light.debugRender(app);
 	}
 
 	public final Color SHAPE_NOT_ACTIVE = new Color(0.5f, 0.5f, 0.3f, 1);

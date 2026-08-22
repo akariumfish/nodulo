@@ -81,21 +81,21 @@ public class pGeom extends pSystem {
 				pParam par = instance.object("param", pParam.class);
 				if (par == null) return; 
 				par.collecEmpty("point");
-				par.collecEmpty("color1");
-				par.collecEmpty("color2");
+				par.collecEmpty("color");
 				par.collecEmpty("faceA");
 				par.collecEmpty("faceB");
 				par.collecEmpty("faceC");
 				par.collecEmpty("faceT");
-				par.collecEmpty("lineA");
-				par.collecEmpty("lineB");
-				par.collecEmpty("lineT");
-				par.collecEmpty("light");
-				par.collecEmpty("light_dist");
-				par.collecEmpty("aura");
-				par.collecEmpty("aura_dist");
-				par.collecEmpty("halo");
-				par.collecEmpty("halo_rad");
+				par.collecEmpty("faceL");
+//				par.collecEmpty("lineA");
+//				par.collecEmpty("lineB");
+//				par.collecEmpty("lineT");
+//				par.collecEmpty("light");
+//				par.collecEmpty("light_dist");
+//				par.collecEmpty("aura");
+//				par.collecEmpty("aura_dist");
+//				par.collecEmpty("halo");
+//				par.collecEmpty("halo_rad");
 			}});
 			stand.newRun("add_point", new nRun() {public void run() {
 				float x = arg(0, Float.class);
@@ -103,18 +103,17 @@ public class pGeom extends pSystem {
 				pParam par = instance.object("param", pParam.class);
 				if (par == null) return; 
 				par.collecAdd("point", new Vector2(x,y)); 
-				par.collecAdd("color1", instance.getVar("fill_color")); 
-				par.collecAdd("color2", instance.getVar("line_color")); 
+				par.collecAdd("color", instance.getVar("fill_color")); 
 			}});
-			stand.newRun("add_line", new nRun() {public void run() {
-				int p1 = arg(0, Integer.class);
-				int p2 = arg(1, Integer.class);
-				pParam par = instance.object("param", pParam.class);
-				if (par == null) return; 
-				par.collecAdd("lineA", p1);
-				par.collecAdd("lineB", p2);
-				par.collecAdd("lineT", instance.getVar("line_thick")); 
-			}});
+//			stand.newRun("add_line", new nRun() {public void run() {
+//				int p1 = arg(0, Integer.class);
+//				int p2 = arg(1, Integer.class);
+//				pParam par = instance.object("param", pParam.class);
+//				if (par == null) return; 
+//				par.collecAdd("lineA", p1);
+//				par.collecAdd("lineB", p2);
+//				par.collecAdd("lineT", instance.getVar("line_thick")); 
+//			}});
 			stand.newRun("add_face", new nRun() {public void run() {
 				int p1 = arg(0, Integer.class);
 				int p2 = arg(1, Integer.class);
@@ -125,6 +124,7 @@ public class pGeom extends pSystem {
 				par.collecAdd("faceB", p2);
 				par.collecAdd("faceC", p3);
 				par.collecAdd("faceT", instance.getVar("line_thick")); 
+				par.collecAdd("faceL", instance.getVar("line_color")); 
 			}});
 			stand.newRun("set_def", new nRun() {public void run() {
 				instance.run("empty_geom");
@@ -219,19 +219,59 @@ public class pGeom extends pSystem {
 
 				instance.obtainVar("sel_point", (int)-1);
 				
+				float pvs = 3f;
+				float pvw = RS*7f*pvs;
+				float pvh = RS*7f*pvs;
+				
 				nInterface interf = PlaneApplet.app.gui.get_popWindow();
+				
 
 				interf.add_col();
 				interf.add_row();
-				interf.add_row_label(9," Geom Editor ");
+				interf.add_row_label((int)(7*pvs) + 8,"EDITOR");
+
+				interf.add_row();
+				interf.add_row_label((int)(7*pvs) + 4, "");
+				nWidget empty_geom_widg = interf.add_row_trigg(4,"EMPTY");
+				
+				
+
+				interf.add_line();
+				interf.add_col();
+				interf.add_row();
+				interf.add_row_label(2,"Pnt");
+
+				interf.add_row();
+				nWidgetGroup pointpick = 
+						interf.add_picklist(2,(int)(7*pvs));
+				
+				nRun sel_point = new nRun() { public void run() {
+					if (args.length != 1) return;
+					int id = arg(0, Integer.class);
+					if(instance.getVar("sel_point", Integer.class) == id) 
+						return;
+					instance.setVar("sel_point", id); 
+					pointpick.metode("set_pick", ""+id);
+				}};
+				
+				pointpick.metode("set_pick_event", new nRun(instance) { public void run(Object o) {
+					pInstance inst = (pInstance)builder;
+					String t = (String)o;
+					sel_point.do_run(inst, Utl.toint(t));
+				}});
+				interf.add_row();
+
+				interf.add_col();
+				interf.add_row();
+				interf.add_row_label((int)(7*pvs)," ");
 
 				interf.add_row();
 				nWidget preview = interf.add_row_label(9,"");
 
-				interf.set_param("entry_height","0.8");
-				interf.add_row();
-				nWidgetGroup pointlist = interf.add_treelist(9,5);
-				interf.set_param("entry_height","1");
+//				interf.set_param("entry_height","0.8");
+//				interf.add_row();
+//				nWidgetGroup pointlist = interf.add_treelist(20,5);
+//				interf.set_param("entry_height","1");
 
 				interf.add_row();
 				
@@ -242,33 +282,38 @@ public class pGeom extends pSystem {
 					pParam geom = inst.object("param", pParam.class);
 					if (geom == null) return; 
 					ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
-					interf.change_current_list(pointlist);
+					interf.change_current_list(pointpick);
 					int i = 0;
 					for (Vector2 v : point) {
-						interf.add_list_entry("point "+i+" : "+v.x+" "+v.y);
-						interf.go_up_tree();
+						interf.add_list_entry(""+i);
+//						interf.add_list_entry("point "+i+" : "+v.x+" "+v.y);
+//						interf.go_up_tree();
 						i++;
 					}
-					ArrayList<Integer> faceA = geom.getCollecData("faceA", Integer.class);
-					ArrayList<Integer> faceB = geom.getCollecData("faceB", Integer.class);
-					ArrayList<Integer> faceC = geom.getCollecData("faceC", Integer.class);
-					if (faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
-							faceC.size() != faceB.size()) return;
+//					ArrayList<Integer> faceA = geom.getCollecData("faceA", Integer.class);
+//					ArrayList<Integer> faceB = geom.getCollecData("faceB", Integer.class);
+//					ArrayList<Integer> faceC = geom.getCollecData("faceC", Integer.class);
+//					if (faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
+//							faceC.size() != faceB.size()) return;
+//
+//					ArrayList<Integer> lineA = geom.getCollecData("lineA", Integer.class);
+//					ArrayList<Integer> lineB = geom.getCollecData("lineB", Integer.class);
+//					if (lineA.size() != lineB.size()) return;
+//					for (i = 0 ; i < faceA.size() ; i++) {
+//						int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
+//						interf.add_list_entry("face "+i+" : "+p1+" "+p2+" "+p3);
+//						interf.go_up_tree();
+//					}
+//					for (i = 0 ; i < lineA.size() ; i++) {
+//						int p1 = lineA.get(i), p2 = lineB.get(i);
+//						interf.add_list_entry("line "+i+" : "+p1+" "+p2);
+//						interf.go_up_tree();
+//					}
 
-					ArrayList<Integer> lineA = geom.getCollecData("lineA", Integer.class);
-					ArrayList<Integer> lineB = geom.getCollecData("lineB", Integer.class);
-					if (lineA.size() != lineB.size()) return;
-					for (i = 0 ; i < faceA.size() ; i++) {
-						int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
-						interf.add_list_entry("face "+i+" : "+p1+" "+p2+" "+p3);
-						interf.go_up_tree();
-					}
-					for (i = 0 ; i < lineA.size() ; i++) {
-						int p1 = lineA.get(i), p2 = lineB.get(i);
-						interf.add_list_entry("line "+i+" : "+p1+" "+p2);
-						interf.go_up_tree();
-					}
-				
+					if(inst.getVar("sel_point", Integer.class) == null) 
+						return;
+					pointpick.metode("set_pick", ""+
+						inst.getVar("sel_point", Integer.class));
 				}};
 				
 				nRun move_run = new nRun(instance) { public void run() {
@@ -283,10 +328,6 @@ public class pGeom extends pSystem {
 						v.add(mx,my);
 						geom.collecSet("point", sel_point, v); 
 						pointlist_run.do_run(inst); }
-				}};
-				nRun add_run = new nRun(instance) { public void run() {
-					pInstance inst = (pInstance)builder;
-					inst.run("add_trig", 60f);
 				}};
 				interf.add_row_trigg(3,"U", new nRun(instance) { public void run() {
 					move_run.do_run((pInstance)builder, 0f, 10f); }});
@@ -353,24 +394,32 @@ public class pGeom extends pSystem {
 						pointlist_run.do_run(inst); 
 					} }});
 				
-
+				
 				interf.add_row();
 				interf.add_row_label(6, "");
 				interf.add_row();
-				interf.add_row_label(1, "");
-				interf.add_row_trigg(4,"ADD", new nRun(instance) { public void run() {
-					add_run.do_run((pInstance)builder); 
+				interf.add_row_trigg(6,"+PNT", new nRun(instance) { public void run() {
+					((pInstance)builder).run("add_point", 0f, 0f);
+					pointlist_run.do_run((pInstance)builder);
 				}});
-				interf.add_row_label(1, "");
+				
+				empty_geom_widg.addEventTrigger(new nRun(instance) { public void run() {
+					((pInstance)builder).run("empty_geom");
+					pointlist_run.do_run((pInstance)builder);
+				}});
+				
+				
+				
+
 
 				
 				pointlist_run.do_run(instance);
-				
-				preview.setSize(RS*14f,RS*14f);
+
+				preview.setSize(pvw,pvh);
 				nRun pr = new nRun() {public void run() { 
 					PlaneApplet app = PlaneApplet.app;
-					app.fill(40); app.rect(0,0,RS*14f,RS*14f);
-					app.push(); app.translate(RS*7f,RS*7f); app.scale(2f);
+					app.fill(40); app.rect(0,0,pvw,pvh);
+					app.push(); app.translate(pvw/2f,pvh/2f); app.scale(pvs);
 					
 					app.stroke(255,0,0,255,2f); app.line(0,-80,0,80);
 					app.stroke(0,255,0,255,2f); app.line(-80,0,80,0);
@@ -378,37 +427,41 @@ public class pGeom extends pSystem {
 					
 					pParam geom = instance.object("param", pParam.class);
 					if (geom == null) return; 
-					app.push(); app.translate(RS*7f,RS*7f); app.scale(2f);
+					app.push(); app.translate(pvw/2f,pvh/2f); app.scale(pvs);
+					
+					
+					pGeom.draw_geom_graph(app, null, geom, null);
+					
 					
 					ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
 
-					ArrayList<Integer> faceA = geom.getCollecData("faceA", Integer.class);
-					ArrayList<Integer> faceB = geom.getCollecData("faceB", Integer.class);
-					ArrayList<Integer> faceC = geom.getCollecData("faceC", Integer.class);
-					if (faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
-							faceC.size() != faceB.size()) return;
-
-					ArrayList<Integer> lineA = geom.getCollecData("lineA", Integer.class);
-					ArrayList<Integer> lineB = geom.getCollecData("lineB", Integer.class);
-					if (lineA.size() != lineB.size()) return;
-				
-					app.stroke(255,255,255,255,3f);
-					app.noFill();
-
-					for (int i = 0 ; i < faceA.size() ; i++) {
-						int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
-						if (p1 < 0 || p1 >= point.size() || 
-								p2 < 0 || p2 >= point.size() || 
-								p3 < 0 || p3 >= point.size()) continue;
-						app.polygon(point.get(p1), 
-								point.get(p2), 
-								point.get(p3));
-					}
-					for (int i = 0 ; i < lineA.size() ; i++) {
-						int p1 = lineA.get(i), p2 = lineB.get(i);
-						if (p1 < 0 || p1 >= point.size() || p2 < 0 || p2 >= point.size()) continue;
-						app.line(point.get(p1), point.get(p2));
-					}
+//					ArrayList<Integer> faceA = geom.getCollecData("faceA", Integer.class);
+//					ArrayList<Integer> faceB = geom.getCollecData("faceB", Integer.class);
+//					ArrayList<Integer> faceC = geom.getCollecData("faceC", Integer.class);
+//					if (faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
+//							faceC.size() != faceB.size()) return;
+//
+//					ArrayList<Integer> lineA = geom.getCollecData("lineA", Integer.class);
+//					ArrayList<Integer> lineB = geom.getCollecData("lineB", Integer.class);
+//					if (lineA.size() != lineB.size()) return;
+//				
+//					app.stroke(255,255,255,255,2f);
+//					app.noFill();
+//
+//					for (int i = 0 ; i < faceA.size() ; i++) {
+//						int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
+//						if (p1 < 0 || p1 >= point.size() || 
+//								p2 < 0 || p2 >= point.size() || 
+//								p3 < 0 || p3 >= point.size()) continue;
+//						app.polygon(point.get(p1), 
+//								point.get(p2), 
+//								point.get(p3));
+//					}
+//					for (int i = 0 ; i < lineA.size() ; i++) {
+//						int p1 = lineA.get(i), p2 = lineB.get(i);
+//						if (p1 < 0 || p1 >= point.size() || p2 < 0 || p2 >= point.size()) continue;
+//						app.line(point.get(p1), point.get(p2));
+//					}
 					app.fill(220); app.noStroke();
 					for (Vector2 v : point) {
 							app.circle(v.x, v.y, 3f);
@@ -418,19 +471,19 @@ public class pGeom extends pSystem {
 					if (sel_point >= 0 && sel_point < point.size()) {
 						Vector2 v = point.get(sel_point);
 						app.fill(255,180,0,255);
-						app.circle(v.x, v.y, 10f);
+						app.circle(v.x, v.y, 4f);
 					}
 
 					Vector2 mouse = new Vector2(app.input.mouse);
-					mouse.sub(preview.getPos()).sub(RS*7f,RS*7f).scl(0.5f);
+					mouse.sub(preview.getPos()).sub(pvw/2f,pvh/2f).scl(1f/pvs);
 					for (Vector2 v : point) {
 						Vector2 l = new Vector2(v).sub(mouse);
 //						app.fill(255,180,0,255);
 //						app.circle(n.x, n.y, 10f);
 //						app.circle(mouse.x, mouse.y, 10f);
-						if (l.len() <= 10f) {
+						if (l.len() <= 8f) {
 							app.fill(255,255,0,255);
-							app.circle(v.x, v.y, 10f);
+							app.circle(v.x, v.y, 3f);
 						}
 					}
 					
@@ -444,19 +497,19 @@ public class pGeom extends pSystem {
 					if (geom == null) return; 
 					ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
 					Vector2 mouse = new Vector2(App.ap.input.mouse);
-					mouse.sub(preview.getPos()).sub(RS*7f,RS*7f).scl(0.5f);
+					mouse.sub(preview.getPos()).sub(pvw/2f,pvh/2f).scl(1f/pvs);
 					int i = 0;
 					for (Vector2 v : point) {
 						Vector2 l = new Vector2(v).sub(mouse);
-						if (l.len() <= 10f && App.ap.input.mouseLeft.trigClick) {
-							inst.setVar("sel_point", i); 
+						if (l.len() <= 8f && App.ap.input.mouseLeft.trigClick) {
+							sel_point.do_run(inst, i);
 							break; }
 						i++; 
 					}
 					if (i >= point.size() && 
 							preview.globalrect.contains(App.ap.input.mouse) && 
 							App.ap.input.mouseLeft.trigClick)
-						inst.setVar("sel_point", (int)-1);
+						sel_point.do_run(inst, (int)-1);
 				}});
 				
 				App.ap.addEventNextFrame(new nRun() { public void run() {
@@ -542,23 +595,28 @@ public class pGeom extends pSystem {
 		
 		pProperty geom = pProperty.newGeneralProperty("geom")
 		.setGroupFlag("draw")
+		.addData("halo", false)
 		.addCollec("point", Vector2.class)
-		.addCollec("color1", Integer.class)
-		.addCollec("color2", Integer.class)
-		.addCollec("lineA", Integer.class)
-		.addCollec("lineB", Integer.class)
-		.addCollec("lineT", Float.class)
+		.addCollec("color", Integer.class)
+//		.addCollec("color3", Integer.class)
+//		.addCollec("lineA", Integer.class)
+//		.addCollec("lineB", Integer.class)
+//		.addCollec("lineT", Float.class)
 		.addCollec("faceA", Integer.class)
 		.addCollec("faceB", Integer.class)
 		.addCollec("faceC", Integer.class)
 		.addCollec("faceT", Float.class)
+		.addCollec("faceL", Integer.class)
+//		.addCollec("circleC", Integer.class)
+//		.addCollec("circleR", Float.class)
+//		.addCollec("circleT", Float.class)
 		
-		.addCollec("light", Integer.class)
-		.addCollec("light_dist", Float.class)
-		.addCollec("aura", Integer.class)
-		.addCollec("aura_dist", Float.class)
-		.addCollec("halo", Integer.class)
-		.addCollec("halo_rad", Float.class)
+//		.addCollec("light", Integer.class)
+//		.addCollec("light_dist", Float.class)
+//		.addCollec("aura", Integer.class)
+//		.addCollec("aura_dist", Float.class)
+//		.addCollec("halo", Integer.class)
+//		.addCollec("halo_rad", Float.class)
 		
 		.addNodeRun(geom_prop_run)
 		;
@@ -566,25 +624,25 @@ public class pGeom extends pSystem {
 		
 		
 		
-		Color fill = nGUI.book.getModel("CL_graph").color_background;
-		Color line = nGUI.book.getModel("CL_graph").color_outline;
-		float thick = nGUI.book.getModel("CL_graph").outlineWeight;
-		
-		pProperty graph = pProperty.newGeneralProperty("graph")
-		.setGroupFlag("draw")
-		.addData("line", true)
-		.addData("fill", false)
-		.addData("halo", false)
-		.addData("thick", thick, "min", 1f, "max", 12f, "granulo", 1f)
-		.addData("line_r", (int)(line.r*255), "def", (int)(line.r*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
-		.addData("line_g", (int)(line.g*255), "def", (int)(line.g*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
-		.addData("line_b", (int)(line.b*255), "def", (int)(line.b*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
-		.addData("line_a", (int)(line.a*255), "def", (int)(line.a*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
-		.addData("fill_r", (int)(fill.r*255), "def", (int)(fill.r*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
-		.addData("fill_g", (int)(fill.g*255), "def", (int)(fill.g*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
-		.addData("fill_b", (int)(fill.b*255), "def", (int)(fill.b*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
-		.addData("fill_a", (int)(fill.a*255), "def", (int)(fill.a*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
-		;
+//		Color fill = nGUI.book.getModel("CL_graph").color_background;
+//		Color line = nGUI.book.getModel("CL_graph").color_outline;
+//		float thick = nGUI.book.getModel("CL_graph").outlineWeight;
+//		
+//		pProperty graph = pProperty.newGeneralProperty("graph")
+//		.setGroupFlag("draw")
+//		.addData("line", true)
+//		.addData("fill", false)
+//		.addData("halo", false)
+//		.addData("thick", thick, "min", 1f, "max", 12f, "granulo", 1f)
+//		.addData("line_r", (int)(line.r*255), "def", (int)(line.r*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
+//		.addData("line_g", (int)(line.g*255), "def", (int)(line.g*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
+//		.addData("line_b", (int)(line.b*255), "def", (int)(line.b*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
+//		.addData("line_a", (int)(line.a*255), "def", (int)(line.a*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
+//		.addData("fill_r", (int)(fill.r*255), "def", (int)(fill.r*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
+//		.addData("fill_g", (int)(fill.g*255), "def", (int)(fill.g*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
+//		.addData("fill_b", (int)(fill.b*255), "def", (int)(fill.b*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
+//		.addData("fill_a", (int)(fill.a*255), "def", (int)(fill.a*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
+//		;
 
 
 		
@@ -1232,86 +1290,99 @@ public class pGeom extends pSystem {
 		ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
 		if (point == null) return;
 		
+		ArrayList<Integer> color = geom.getCollecData("color", Integer.class);
+		if (color == null || color.size() != point.size()) return;
+		
 		ArrayList<Integer> faceA = geom.getCollecData("faceA", Integer.class);
 		ArrayList<Integer> faceB = geom.getCollecData("faceB", Integer.class);
 		ArrayList<Integer> faceC = geom.getCollecData("faceC", Integer.class);
+		ArrayList<Float> faceT = geom.getCollecData("faceT", Float.class);
+		ArrayList<Integer> faceL = geom.getCollecData("faceL", Integer.class);
 		if (faceA == null || faceB == null || faceC == null || 
+				faceT == null || faceL == null || 
 				faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
-				faceC.size() != faceB.size()) return;
+				faceA.size() != faceT.size() || faceA.size() != faceL.size()) return;
 
-		ArrayList<Integer> lineA = geom.getCollecData("lineA", Integer.class);
-		ArrayList<Integer> lineB = geom.getCollecData("lineB", Integer.class);
-		if (lineA == null || lineB == null || 
-				lineA.size() != lineB.size()) return;
+//		ArrayList<Integer> lineA = geom.getCollecData("lineA", Integer.class);
+//		ArrayList<Integer> lineB = geom.getCollecData("lineB", Integer.class);
+//		if (lineA == null || lineB == null || 
+//				lineA.size() != lineB.size()) return;
 		
-		if (graph == null) {
-			app.stroke(255,255,255,255,3f);
-			app.noFill();
-
+//		if (graph == null) { 
+			Vector2 ps1 = new Vector2();
+			Vector2 ps2 = new Vector2();
+			Vector2 ps3 = new Vector2();
 			for (int i = 0 ; i < faceA.size() ; i++) {
 				int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
 				if (p1 < 0 || p1 >= point.size() || 
 						p2 < 0 || p2 >= point.size() || 
 						p3 < 0 || p3 >= point.size()) continue;
-				app.polygon(toRef(b, point.get(p1)), 
-						toRef(b, point.get(p2)), 
-						toRef(b, point.get(p3)));
-			}
-			for (int i = 0 ; i < lineA.size() ; i++) {
-				int p1 = lineA.get(i), p2 = lineB.get(i);
-				if (p1 < 0 || p1 >= point.size() || p2 < 0 || p2 >= point.size()) continue;
-				app.line(toRef(b, point.get(p1)), toRef(b, point.get(p2)));
-			}
-			return;
-		}
-		boolean fill = graph.getBoo("fill");
-		boolean line = graph.getBoo("line");
-		float thick = graph.getFlt("thick");
-		Color col_fill = Utl.color(
-				graph.getInt("fill_r"), 
-				graph.getInt("fill_g"), 
-				graph.getInt("fill_b"), 
-				graph.getInt("fill_a") );
-		Color col_line = Utl.color(
-				graph.getInt("line_r"), 
-				graph.getInt("line_g"), 
-				graph.getInt("line_b"), 
-				graph.getInt("line_a") );
-		
-		for (int i = 0 ; i < faceA.size() ; i++) {
-			int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
-			if (p1 < 0 || p1 >= point.size() || 
-					p2 < 0 || p2 >= point.size() || 
-					p3 < 0 || p3 >= point.size()) continue;
-			if (fill) {
-				app.fill(col_fill);
-				app.noStroke();
-				app.polygon(toRef(b, point.get(p1)), 
-						toRef(b, point.get(p2)), 
-						toRef(b, point.get(p3)));
-			}
-			if (line) {
-				app.stroke(col_line, thick);
+				ps1.set(toRef(b, point.get(p1)));
+				ps2.set(toRef(b, point.get(p2)));
+				ps3.set(toRef(b, point.get(p3)));
+				app.face(ps1.x,ps1.y,ps2.x,ps2.y,ps3.x,ps3.y, 
+						Utl.intToColor(color.get(p1)), 
+						Utl.intToColor(color.get(p2)), 
+						Utl.intToColor(color.get(p3)));
+				app.stroke(Utl.intToColor(faceL.get(i)),faceT.get(i));
 				app.noFill();
-				app.polygon(toRef(b, point.get(p1)), 
-						toRef(b, point.get(p2)), 
-						toRef(b, point.get(p3)));
+				app.polygon(ps1,ps2,ps3);
 			}
-		}
-		if (line) {
-			app.stroke(col_line, thick);
-			app.noFill();
-			for (int i = 0 ; i < lineA.size() ; i++) {
-				int p1 = lineA.get(i), p2 = lineB.get(i);
-				if (p1 < 0 || p1 >= point.size() || p2 < 0 || p2 >= point.size()) continue;
-				app.line(toRef(b, point.get(p1)), toRef(b, point.get(p2)));
-			}
-		} 
-		boolean halo = graph.getBoo("halo");
-		if (halo) {
-			app.halo(b.getVec("ref", "pos"), 12, 
-					Utl.color(255,0,0,0), Utl.color(255,100,100,255));
-		}
+//			for (int i = 0 ; i < lineA.size() ; i++) {
+//				int p1 = lineA.get(i), p2 = lineB.get(i);
+//				if (p1 < 0 || p1 >= point.size() || p2 < 0 || p2 >= point.size()) continue;
+//				app.line(toRef(b, point.get(p1)), toRef(b, point.get(p2)));
+//			}
+//			return;
+//		}
+//		boolean fill = graph.getBoo("fill");
+//		boolean line = graph.getBoo("line");
+//		float thick = graph.getFlt("thick");
+//		Color col_fill = Utl.color(
+//				graph.getInt("fill_r"), 
+//				graph.getInt("fill_g"), 
+//				graph.getInt("fill_b"), 
+//				graph.getInt("fill_a") );
+//		Color col_line = Utl.color(
+//				graph.getInt("line_r"), 
+//				graph.getInt("line_g"), 
+//				graph.getInt("line_b"), 
+//				graph.getInt("line_a") );
+//		
+//		for (int i = 0 ; i < faceA.size() ; i++) {
+//			int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
+//			if (p1 < 0 || p1 >= point.size() || 
+//					p2 < 0 || p2 >= point.size() || 
+//					p3 < 0 || p3 >= point.size()) continue;
+//			if (fill) {
+//				app.fill(col_fill);
+//				app.noStroke();
+//				app.polygon(toRef(b, point.get(p1)), 
+//						toRef(b, point.get(p2)), 
+//						toRef(b, point.get(p3)));
+//			}
+//			if (line) {
+//				app.stroke(col_line, thick);
+//				app.noFill();
+//				app.polygon(toRef(b, point.get(p1)), 
+//						toRef(b, point.get(p2)), 
+//						toRef(b, point.get(p3)));
+//			}
+//		}
+////		if (line) {
+////			app.stroke(col_line, thick);
+////			app.noFill();
+////			for (int i = 0 ; i < lineA.size() ; i++) {
+////				int p1 = lineA.get(i), p2 = lineB.get(i);
+////				if (p1 < 0 || p1 >= point.size() || p2 < 0 || p2 >= point.size()) continue;
+////				app.line(toRef(b, point.get(p1)), toRef(b, point.get(p2)));
+////			}
+////		} 
+//		boolean halo = graph.getBoo("halo");
+//		if (halo) {
+//			app.halo(b.getVec("ref", "pos"), 12, 
+//					Utl.color(255,0,0,0), Utl.color(255,100,100,255));
+//		}
 	}
 	
 	

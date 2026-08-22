@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
 import aa_nodulo.pView;
+import app.nDrawer;
 import gui.nGUI;
 import util.Utl;
 
@@ -256,6 +257,15 @@ public class RectLight extends Light {
 		if (staticLight) dirty = true;
 	}
 
+	@Override
+	public void debugRender(nDrawer.Drawer draw) {
+		draw.stroke(0,255,255,255,8f); draw.fill(0,0);
+		draw.push(); draw.rotate(direction * MathUtils.degreesToRadians);
+		draw.translate(getPosition().x, getPosition().y);
+		draw.rect(0, 0, size.x, size.y);
+		draw.pop();
+	}
+	
 	@Override
 	public Vector2 getPosition() {
 		tmpPosition.x = start_pos.x;

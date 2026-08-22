@@ -278,6 +278,15 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 	public void halo(Vector2 p, float r, Color c1, Color c2) {
 		gdx.drawer.halo(p,r,c1,c2); }
 	
+	public void line(float x1, float y1, float x2, float y2, 
+			Color c1, Color c2) {
+		gdx.drawer.line(x1,y1,x2,y2,c1,c2);
+	}
+	public void face(float x1, float y1, float x2, float y2, 
+			float x3, float y3, Color c1, Color c2, Color c3) {
+		gdx.drawer.face(x1,y1,x2,y2,x3,y3,c1,c2,c3);
+	}
+
 	public void push() { 
 		gdx.drawer.push(); }
 	public void pop() { 

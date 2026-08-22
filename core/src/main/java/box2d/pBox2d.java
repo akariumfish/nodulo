@@ -194,7 +194,8 @@ public class pBox2d extends pSystem {
 		
 		public pSpace space;
 
-		public sBoo val_draw_debug, val_draw_vision, val_draw_tile, 
+		public sBoo val_draw_debug, val_draw_ray_debug, 
+			val_draw_vision, val_draw_tile, 
 			val_draw_light, val_draw_color, val_draw_aura, 
 			val_do_calc, val_edit_tile;
 		
@@ -215,6 +216,7 @@ public class pBox2d extends pSystem {
 			useNetFrame();
 
 			val_draw_debug = bloc.obtainBoo("val_draw_debug", false);
+			val_draw_ray_debug = bloc.obtainBoo("val_draw_ray_debug", false);
 			val_draw_vision = bloc.obtainBoo("val_draw_vision", true);
 			val_draw_tile = bloc.obtainBoo("val_draw_tile", true);
 			val_draw_light = bloc.obtainBoo("val_draw_light", true);
@@ -274,7 +276,15 @@ public class pBox2d extends pSystem {
 			interf.add_row();
 			interf.add_row_switch_boo(4, "debug", "val_draw_debug");
 			interf.add_row_label(1, "");
-			interf.add_row_switch_boo(5, "simulation", "val_do_calc");
+			interf.add_row_switch_boo(4, "dbg_ray", "val_draw_ray_debug");
+//			interf.add_row();
+//			interf.add_row_label(10, "");
+			interf.add_row();
+			interf.add_row_label(2, "");
+			interf.add_row_switch_boo(6, "simulation", "val_do_calc");
+			interf.add_row_label(2, "");
+//			interf.add_row();
+//			interf.add_row_label(10, "");
 			interf.add_row();
 			interf.add_row_switch_boo(4, "vision", "val_draw_vision");
 			interf.add_row_label(2, "");
@@ -368,18 +378,12 @@ public class pBox2d extends pSystem {
 			}
 			
 			renderer.render(); 
-			
+
 			if (val_draw_debug.get()) {
 				boxRenderer.render(world);
-				
-				app.stroke(255,0,255,255,5f); app.fill(55,0,55,255);
-				for (Light light : renderer.rayHandler.lightList) {
-					app.circle(light.getPosition().x, light.getPosition().y, 12f);
-				}
-				for (Light light : renderer.rayHandler.disabledLights) {
-					app.circle(light.getPosition().x, light.getPosition().y, 12f);
-				}
-				
+			}
+			if (val_draw_ray_debug.get()) {
+				boxRenderer.render(renderer.rayHandler);
 			}
 		}
 

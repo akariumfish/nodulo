@@ -8,6 +8,8 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.*;
 
+import app.nDrawer;
+
 /**
  * Light shaped as a circle with given radius
  * 
@@ -101,4 +103,12 @@ public class PointLight extends PositionalLight {
 	public void setDirection(float directionDegree) {
 	}
 
+	public void debugRender(nDrawer.Drawer draw) {
+		draw.stroke(0,255,255,255,8f); draw.fill(55,0,55,255);
+		draw.circle(getPosition().x, getPosition().y, 20f);
+		draw.fill(0,0);
+		if (distance > 0) 
+			draw.circle(getPosition().x, getPosition().y, distance);
+	}
+	
 }

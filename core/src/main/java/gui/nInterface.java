@@ -455,6 +455,7 @@ public class nInterface  implements Poolable {
 			list.get("ref").setParent(ent);
 			ent.force_calc();
 			list.metode("set_height", ent.getSY());
+			list.metode("set_width", ent.getSX());
 			ent.setBoundChild(true);
 			
 			current_list = list;
@@ -481,6 +482,7 @@ public class nInterface  implements Poolable {
 			list.get("ref").setParent(ent);
 			ent.force_calc();
 			list.metode("set_height", ent.getSY());
+			list.metode("set_width", ent.getSX());
 			ent.setBoundChild(true);
 			
 			current_list = list;

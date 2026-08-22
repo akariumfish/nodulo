@@ -229,7 +229,7 @@ public class pMacroBook {
 			.addNode("ui", "UI", 								0f,		-300f)
 				.addRunPop("ui_switch", "pop_plug_node", 
 						"UI_widg_out", "UI_switch", "UI_widg_in").getMacro()
-				.addSetVar("ui_ui_switch", "state", false)
+				.addSetVar("ui_ui_switch", "state", true)
 				.addSetVar("ui_ui_switch", "widg_text", "mode")
 			.addNode("reg_in_mode", "reg_in", 					600f,	-300f)
 				.addSetVar("reg_ref", "mode").getMacro()

@@ -2,6 +2,9 @@ package box2d;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+
+import app.nDrawer;
 
 /**
  * Light shaped as a circle's sector with given radius, direction and angle
@@ -112,4 +115,20 @@ public class ConeLight extends PositionalLight {
 		}
 	}
 
+	public void debugRender(nDrawer.Drawer draw) {
+		draw.stroke(0,255,255,255,8f); draw.fill(55,0,55,255);
+		draw.circle(getPosition().x, getPosition().y, 20f);
+		Vector2 p1 = new Vector2(distance,0);
+		p1.rotateRad(direction * MathUtils.degreesToRadians + 
+				coneDegree * MathUtils.degreesToRadians / 2f);
+		p1.add(getPosition().x, getPosition().y);
+		draw.line(getPosition().x, getPosition().y, p1.x, p1.y);
+		Vector2 p2 = new Vector2(distance,0);
+		p2.rotateRad(direction * MathUtils.degreesToRadians - 
+				coneDegree * MathUtils.degreesToRadians / 2f);
+		p2.add(getPosition().x, getPosition().y);
+		draw.line(getPosition().x, getPosition().y, p2.x, p2.y);
+		draw.line(p1.x, p1.y, p2.x, p2.y);
+	}
+	
 }

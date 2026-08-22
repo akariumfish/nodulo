@@ -119,6 +119,14 @@ public class LightLayer extends nRenderer.Layer {
 	public RectLight newRectLight(int ray, Color col, float x, float y, float w, float h, float d) {
 		return new RectLight(this, ray, col, x, y, w, h, d); } 
 
+
+	public void newChainLight(int ray, Color col, float dist, float[] path) {
+		new ChainLight(this, ray, col, dist, 1, path); 
+		new ChainLight(this, ray, col, dist, -1, path); } 
+	public ChainLight newChainLight(int ray, Color col, float dist, int norm, float[] path) {
+		return new ChainLight(this, ray, col, dist, norm, path); } 
+	
+	
 	public void newCrossAmbiantLight(Color col, TileLayer tl) {
 		newCrossAmbiantLight(col, tl.getWidth(), tl.getHeight(), tl.getTileWidth()); }
 	public void newCrossAmbiantLight(Color col, float mapwidth, float mapheight, float wallsize) {
