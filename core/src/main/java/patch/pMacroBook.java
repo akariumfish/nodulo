@@ -46,13 +46,10 @@ public class pMacroBook {
 		.addSetVar("sensor", true)
 		.getMacro()
 		.addNode("coordinate", "coordinate", -600f, 	600f).getMacro()
-		.addNode("graph", "graph", 			-600f, 	-600f)
-			.addSetVar("line", true).addSetVar("halo", true)
-			.addSetVar("thick", 1f).getMacro()
-		.addNode("geom", "geom", 			-600f, 	-900f).getMacro()
+		.addNode("geom", "geom", 			-600f, 	-900f)
+			.addSetVar("halo", true).getMacro()
 		.addNode("hitzone", "hitzone", -600f, 	0f).getMacro()
 		.addLink("coordinate", "param", "blueprint", "param_in")
-		.addLink("graph", "param", "blueprint", "param_in")
 		.addLink("geom", "param", "blueprint", "param_in")
 		.addLink("hitzone", "param", "blueprint", "param_in")
 		.addLink("physic", "param", "blueprint", "param_in")
@@ -60,7 +57,6 @@ public class pMacroBook {
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
 			pInstance geom = list.get("geom");
-			pInstance graph = list.get("graph");
 			
 			list.get("blueprint").setVar("name", "bullet_print");
 			
@@ -74,8 +70,6 @@ public class pMacroBook {
 		.addNode("blueprint", "blueprint", 	0f, 		0f).getMacro()
 		.addNode("coordinate", "coordinate", -600f, 	600f).addSetVar("use_ctrl_pop", true).getMacro()
 		.addNode("interactif", "interactif", -600f, 	300f).getMacro()
-		.addNode("graph", "graph", 			-600f, 	-600f)
-			.addSetVar("line", true).addSetVar("fill", true).getMacro()
 		.addNode("geom", "geom", 			-600f, 	-900f).getMacro()
 		.addNode("physic", "physic", 		-600f, 	900f)
 		.addSetVar("dynamic", true)
@@ -85,15 +79,12 @@ public class pMacroBook {
 		.addNode("hitpoint", "hitpoint", 	-600f, 	1050f).getMacro()
 		.addLink("coordinate", "param", "blueprint", "param_in")
 		.addLink("interactif", "param", "blueprint", "param_in")
-		.addLink("graph", "param", "blueprint", "param_in")
 		.addLink("geom", "param", "blueprint", "param_in")
 		.addLink("physic", "param", "blueprint", "param_in")
 		.addLink("hitpoint", "param", "blueprint", "param_in")
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
 			pInstance geom = list.get("geom");
-			pInstance graph = list.get("graph");
-			graph.run("pop_param_data", "fill");
 			
 			list.get("blueprint").setVar("name", "mob_print");
 			
@@ -112,9 +103,6 @@ public class pMacroBook {
 			.addSetVar("use_ctrl_time", true)
 			.getMacro()
 		.addNode("interactif", "interactif", -600f, 	300f).getMacro()
-		.addNode("graph", "graph", 			-600f, 	-600f)
-			.addSetVar("line", true).addSetVar("fill", true)
-			.getMacro()
 		.addNode("geom", "geom", 			-600f, 	-900f).getMacro()
 		.addNode("physic", "physic", 		-600f, 	900f)
 			.addSetVar("dynamic", true)
@@ -127,15 +115,12 @@ public class pMacroBook {
 		.getMacro()
 		.addLink("coordinate", "param", "blueprint", "param_in")
 		.addLink("interactif", "param", "blueprint", "param_in")
-		.addLink("graph", "param", "blueprint", "param_in")
 		.addLink("geom", "param", "blueprint", "param_in")
 		.addLink("physic", "param", "blueprint", "param_in")
 		.addLink("hitpoint", "param", "blueprint", "param_in")
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
 			pInstance geom = list.get("geom");
-			pInstance graph = list.get("graph");
-			graph.run("pop_param_data", "fill");
 			
 			list.get("blueprint").setVar("name", "body_print");
 			

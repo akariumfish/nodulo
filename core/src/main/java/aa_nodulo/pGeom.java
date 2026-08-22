@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import app.App;
+import app.nDrawer;
 import box2d.pBox2d;
 import data.sBloc_Builder;
 import data.sBoo;
@@ -398,9 +399,21 @@ public class pGeom extends pSystem {
 				interf.add_row();
 				interf.add_row_label(6, "");
 				interf.add_row();
-				interf.add_row_trigg(6,"+PNT", new nRun(instance) { public void run() {
+				interf.add_row_trigg(3,"+PNT", new nRun(instance) { public void run() {
 					((pInstance)builder).run("add_point", 0f, 0f);
 					pointlist_run.do_run((pInstance)builder);
+				}});
+				interf.add_row_trigg(3,"+TRIG", new nRun(instance) { public void run() {
+					((pInstance)builder).run("add_trig", 60f);
+					pointlist_run.do_run((pInstance)builder);
+				}});
+				
+				interf.add_row();
+				interf.add_row_label(6, "");
+				interf.add_row();
+				interf.add_row_trigg(6,"DEL PNT", new nRun(instance) { public void run() {
+//					((pInstance)builder).run("add_point", 0f, 0f);
+//					pointlist_run.do_run((pInstance)builder);
 				}});
 				
 				empty_geom_widg.addEventTrigger(new nRun(instance) { public void run() {
@@ -418,60 +431,31 @@ public class pGeom extends pSystem {
 				preview.setSize(pvw,pvh);
 				nRun pr = new nRun() {public void run() { 
 					PlaneApplet app = PlaneApplet.app;
-					app.fill(40); app.rect(0,0,pvw,pvh);
+					app.fill(0); app.rect(0,0,pvw,pvh);
 					app.push(); app.translate(pvw/2f,pvh/2f); app.scale(pvs);
 					
-					app.stroke(255,0,0,255,2f); app.line(0,-80,0,80);
-					app.stroke(0,255,0,255,2f); app.line(-80,0,80,0);
+					app.stroke(255,0,0,255,2f); app.line(0,-100,0,100);
+					app.stroke(0,255,0,255,2f); app.line(-100,0,100,0);
 					app.pop();
 					
 					pParam geom = instance.object("param", pParam.class);
 					if (geom == null) return; 
 					app.push(); app.translate(pvw/2f,pvh/2f); app.scale(pvs);
 					
-					
-					pGeom.draw_geom_graph(app, null, geom, null);
-					
+					pGeom.draw_geom(app, null, geom);
 					
 					ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
-
-//					ArrayList<Integer> faceA = geom.getCollecData("faceA", Integer.class);
-//					ArrayList<Integer> faceB = geom.getCollecData("faceB", Integer.class);
-//					ArrayList<Integer> faceC = geom.getCollecData("faceC", Integer.class);
-//					if (faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
-//							faceC.size() != faceB.size()) return;
-//
-//					ArrayList<Integer> lineA = geom.getCollecData("lineA", Integer.class);
-//					ArrayList<Integer> lineB = geom.getCollecData("lineB", Integer.class);
-//					if (lineA.size() != lineB.size()) return;
-//				
-//					app.stroke(255,255,255,255,2f);
-//					app.noFill();
-//
-//					for (int i = 0 ; i < faceA.size() ; i++) {
-//						int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
-//						if (p1 < 0 || p1 >= point.size() || 
-//								p2 < 0 || p2 >= point.size() || 
-//								p3 < 0 || p3 >= point.size()) continue;
-//						app.polygon(point.get(p1), 
-//								point.get(p2), 
-//								point.get(p3));
-//					}
-//					for (int i = 0 ; i < lineA.size() ; i++) {
-//						int p1 = lineA.get(i), p2 = lineB.get(i);
-//						if (p1 < 0 || p1 >= point.size() || p2 < 0 || p2 >= point.size()) continue;
-//						app.line(point.get(p1), point.get(p2));
-//					}
+					
 					app.fill(220); app.noStroke();
 					for (Vector2 v : point) {
-							app.circle(v.x, v.y, 3f);
+							app.circle(v.x, v.y, 1.5f);
 					}
 					
 					int sel_point = instance.getVar("sel_point", Integer.class);
 					if (sel_point >= 0 && sel_point < point.size()) {
 						Vector2 v = point.get(sel_point);
 						app.fill(255,180,0,255);
-						app.circle(v.x, v.y, 4f);
+						app.circle(v.x, v.y, 3f);
 					}
 
 					Vector2 mouse = new Vector2(app.input.mouse);
@@ -483,7 +467,7 @@ public class pGeom extends pSystem {
 //						app.circle(mouse.x, mouse.y, 10f);
 						if (l.len() <= 8f) {
 							app.fill(255,255,0,255);
-							app.circle(v.x, v.y, 3f);
+							app.circle(v.x, v.y, 2f);
 						}
 					}
 					
@@ -562,7 +546,7 @@ public class pGeom extends pSystem {
 				pParam par = instance.object("param", pParam.class);
 				if (par == null) return; 				
 				app.push(); app.translate(90,90);
-				pGeom.draw_geom_graph(app, null, par, null); 
+				pGeom.draw_geom(app, null, par); 
 				app.pop();
 			}}) 
 			.commande(pNode.getCom(CT.COM_ADD_WIDGET))
@@ -622,30 +606,6 @@ public class pGeom extends pSystem {
 		;
 
 		
-		
-		
-//		Color fill = nGUI.book.getModel("CL_graph").color_background;
-//		Color line = nGUI.book.getModel("CL_graph").color_outline;
-//		float thick = nGUI.book.getModel("CL_graph").outlineWeight;
-//		
-//		pProperty graph = pProperty.newGeneralProperty("graph")
-//		.setGroupFlag("draw")
-//		.addData("line", true)
-//		.addData("fill", false)
-//		.addData("halo", false)
-//		.addData("thick", thick, "min", 1f, "max", 12f, "granulo", 1f)
-//		.addData("line_r", (int)(line.r*255), "def", (int)(line.r*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
-//		.addData("line_g", (int)(line.g*255), "def", (int)(line.g*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
-//		.addData("line_b", (int)(line.b*255), "def", (int)(line.b*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
-//		.addData("line_a", (int)(line.a*255), "def", (int)(line.a*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
-//		.addData("fill_r", (int)(fill.r*255), "def", (int)(fill.r*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
-//		.addData("fill_g", (int)(fill.g*255), "def", (int)(fill.g*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
-//		.addData("fill_b", (int)(fill.b*255), "def", (int)(fill.b*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
-//		.addData("fill_a", (int)(fill.a*255), "def", (int)(fill.a*255), "min", 0f, "max", 255f, "granulo", 1f, "hide", true)
-//		;
-
-
-		
 
 		pProperty hitpoint = pProperty.newGeneralProperty("hitpoint")
 		.addData("avatar", false)
@@ -667,7 +627,6 @@ public class pGeom extends pSystem {
 		pFamily.newFamily("drawable")
 		.addProp("ref")
 		.addProp("geom")
-		.addProp("graph")
 		;
 		pFamily.newFamily("aabb")
 		.addProp("ref")
@@ -1221,23 +1180,8 @@ public class pGeom extends pSystem {
 		calc_ref();
 	}
 	public void draw() { 
-//		if (val_do_draw.get() && val_do_limit.get()) {
-//			app.noFill();
-//			app.stroke(150,0,0,200,90f);
-//			app.circle(0,0,val_limit_dist.get());
-//		}
-
 		if (val_do_draw.get())
 			for (pBody b : space.familyMember("drawable")) draw_body(app, b);
-	
-//		if (val_do_draw.get()) {
-//			for (pBody b : space.familyMember("hitpoint")) {
-//				if (!b.hasParam("hp") || !b.hasParam("ref")) continue;
-//				Vector2 p = b.getVec("ref", "pos");
-//				int hp = b.getInt("hp", "hp");
-//				app.text(""+hp, p.x, p.y, 24);
-//			}
-//		}
 	}
 	public void draw_aabb() { 
 		if (val_do_click_draw.get())
@@ -1276,16 +1220,15 @@ public class pGeom extends pSystem {
 	
 
 	public void draw_body(PlaneApplet app, pBody b) {
-		if (!b.hasParam("ref") || !b.hasParam("graph") || 
-				!b.hasParam("geom")) return;
-		draw_geom_graph(app, b, b.param("geom"), b.param("graph"));
+		if (!b.hasParam("ref") || !b.hasParam("geom")) return;
+		draw_geom(app, b, b.param("geom"));
 		if (!b.hasParam("hp")) return;
 		Vector2 p = b.getVec("ref", "pos");
 		int hp = b.getInt("hp", "hp");
 		app.text(""+hp, p.x, p.y, 24);
 	}
 
-	public static void draw_geom_graph(PlaneApplet app, pBody b, pParam geom, pParam graph) {
+	public static void draw_geom(nDrawer.Drawer app, pBody b, pParam geom) {
 		if (geom == null) return;
 		ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
 		if (point == null) return;
@@ -1378,11 +1321,11 @@ public class pGeom extends pSystem {
 ////				app.line(toRef(b, point.get(p1)), toRef(b, point.get(p2)));
 ////			}
 ////		} 
-//		boolean halo = graph.getBoo("halo");
-//		if (halo) {
-//			app.halo(b.getVec("ref", "pos"), 12, 
-//					Utl.color(255,0,0,0), Utl.color(255,100,100,255));
-//		}
+		boolean halo = geom.getBoo("halo");
+		if (halo) {
+			app.halo(b.getVec("ref", "pos"), 12, 
+					Utl.color(255,0,0,0), Utl.color(255,100,100,255));
+		}
 	}
 	
 	
