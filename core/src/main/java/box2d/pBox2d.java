@@ -1,36 +1,28 @@
-package aa_nodulo;
+package box2d;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
-import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
-import com.noodle.nodulo.GdxApp;
 
-import app.App;
-import box2dLight.*;
+import aa_nodulo.PlaneApplet;
+import aa_nodulo.pBody;
+import aa_nodulo.pFamily;
+import aa_nodulo.pGeom;
+import aa_nodulo.pParam;
+import aa_nodulo.pProperty;
+import aa_nodulo.pSpace;
+import aa_nodulo.pSystem;
+import aa_nodulo.pView;
 import data.*;
 import gui.*;
 import util.Utl;
 import util.nMap;
 import util.nPool;
 import util.nRun;
-import patch.*;
-import patch.pMacro.Macro;
-import patch.pMacro.MacroScript;
 
 public class pBox2d extends pSystem {
 
@@ -202,8 +194,9 @@ public class pBox2d extends pSystem {
 		
 		public pSpace space;
 
-		public sBoo val_do_draw, val_draw_vision, 
-			val_do_ray, val_do_calc, val_do_tile, val_edit_tile;
+		public sBoo val_draw_debug, val_draw_vision, val_draw_tile, 
+			val_draw_light, val_draw_color, val_draw_aura, 
+			val_do_calc, val_edit_tile;
 		
 		public sInt val_body_nb, val_light_nb;
 		
@@ -221,11 +214,13 @@ public class pBox2d extends pSystem {
 
 			useNetFrame();
 
-			val_do_draw = bloc.obtainBoo("val_do_draw", false);
+			val_draw_debug = bloc.obtainBoo("val_draw_debug", false);
 			val_draw_vision = bloc.obtainBoo("val_draw_vision", true);
-			val_do_ray = bloc.obtainBoo("val_do_ray", true);
+			val_draw_tile = bloc.obtainBoo("val_draw_tile", true);
+			val_draw_light = bloc.obtainBoo("val_draw_light", true);
+			val_draw_aura = bloc.obtainBoo("val_draw_aura", true);
+			val_draw_color = bloc.obtainBoo("val_draw_color", true);
 			val_do_calc = bloc.obtainBoo("val_do_calc", true);
-			val_do_tile = bloc.obtainBoo("val_do_tile", true);
 			val_edit_tile = bloc.obtainBoo("val_edit_tile", false);
 			val_body_nb = bloc.obtainInt("val_body_nb", 0);
 			val_light_nb = bloc.obtainInt("val_light_nb", 0);
@@ -260,6 +255,7 @@ public class pBox2d extends pSystem {
 			app.time.addEventNetTick(net_tick_run);
 			
 			view.addDrawable(10,draw_run);
+			
 			//		if (!app.RELEASE) 
 			tool_setup(true);
 
@@ -276,15 +272,19 @@ public class pBox2d extends pSystem {
 
 			interf.setContext(bloc);
 			interf.add_row();
-			interf.add_row_switch_boo(4, "draw", "val_do_draw");
-			interf.add_row_label(2, "");
-			interf.add_row_switch_boo(4, "physic", "val_do_calc");
+			interf.add_row_switch_boo(4, "debug", "val_draw_debug");
+			interf.add_row_label(1, "");
+			interf.add_row_switch_boo(5, "simulation", "val_do_calc");
 			interf.add_row();
 			interf.add_row_switch_boo(4, "vision", "val_draw_vision");
 			interf.add_row_label(2, "");
-			interf.add_row_switch_boo(4, "light", "val_do_ray");
+			interf.add_row_switch_boo(4, "light", "val_draw_light");
 			interf.add_row();
-			interf.add_row_switch_boo(4, "tile", "val_do_tile");
+			interf.add_row_switch_boo(4, "aura", "val_draw_aura");
+			interf.add_row_label(2, "");
+			interf.add_row_switch_boo(4, "color", "val_draw_color");
+			interf.add_row();
+			interf.add_row_switch_boo(4, "tile", "val_draw_tile");
 			interf.add_row_label(2, "");
 			interf.add_row_switch_boo(4, "edit", "val_edit_tile");
 
@@ -331,9 +331,13 @@ public class pBox2d extends pSystem {
 
 		}
 
-		public boolean drawtile() { return val_do_tile.get(); }
+//		public boolean drawtile() { return val_do_mask.get(); }
 		public boolean drawlight() { 
-			return val_do_ray.get() && app.gdx.drawer.USE_FX; }
+			return val_draw_light.get() && app.gdx.drawer.USE_FX; }
+		public boolean drawaura() { 
+			return val_draw_aura.get() && app.gdx.drawer.USE_FX; }
+		public boolean drawcolor() { 
+			return val_draw_color.get() && app.gdx.drawer.USE_FX; }
 		public boolean drawvision() { return val_draw_vision.get(); }
 		
 		public void draw_drawer() {
@@ -354,18 +358,18 @@ public class pBox2d extends pSystem {
 
 		public void draw() { 
 			
-			if (val_edit_tile.get() && val_do_tile.get()) {
+			if (val_edit_tile.get()) {
 				if (app.input.mouseLeft.trigClick && 
 						app.view.mouse_is_hover_view()) {
-					renderer.addCell(app.view.mouse_in_view()); }
+					renderer.tileLayer.addCell(app.view.mouse_in_view()); }
 				if (app.input.mouseRight.trigClick && 
 						app.view.mouse_is_hover_view()) {
-					renderer.delCell(app.view.mouse_in_view()); }
+					renderer.tileLayer.delCell(app.view.mouse_in_view()); }
 			}
 			
 			renderer.render(); 
 			
-			if (val_do_draw.get()) {
+			if (val_draw_debug.get()) {
 				boxRenderer.render(world);
 				
 				app.stroke(255,0,255,255,5f); app.fill(55,0,55,255);
@@ -439,6 +443,12 @@ public class pBox2d extends pSystem {
 			l.setIgnoreAttachedBody(true);
 			l.attachToBody(b, x, y);
 		}
+		public void attachToBody(RectLight l , Body b, float x, float y, float d) {
+			if (lights.get(b) == null) lights.put(b, new ArrayList<Light>());
+			lights.get(b).add(l);
+			l.setIgnoreAttachedBody(true);
+			l.attachToBody(b, x, y, d);
+		}
 		
 		public void init_body(pBody b) {
 			app.addEventNextFrame(new nRun(b) {public void run() {
@@ -467,15 +477,15 @@ public class pBox2d extends pSystem {
 				
 				body.setUserData(b);
 				
-//				renderer.rayHandler.transparent.add(body);
-				renderer.groundLayer.transparent.add(body);
+				renderer.lightLayer.transparent.add(body);
+				renderer.visionLayer.transparent.add(body);
 				
 				if (b.getBoo("physic", "contact_break")) {
 					break_bodys.add(body);
 				}
 
 				if (b.getBoo("physic", "aura")) {
-					PointLight pl = renderer.newSpaceLight(90, 
+					PointLight pl = renderer.newAuraLight(
 							new Color(1f,0.6f,0.4f,1f), 400, 0, 0);
 					attachToBody(pl, body);
 				}
@@ -484,17 +494,23 @@ public class pBox2d extends pSystem {
 					
 					renderer.newVisionLight(body);
 					
-//					attachToBody(tilemap.newVisionLight(), body);
-//					attachToBody(tilemap.newWallVisionLight(), body);
+//					attachToBody(renderer.colorLayer.newRectLight(
+//							10, new Color(1f,0f,0f,1f), 0f, 0f, 200f, 40f), 
+//							body, 80f, -20f, 0f);
+					
+//					RectLight rl = renderer.auraLayer.newRectLight(
+//							30, new Color(1f,0.5f,0.5f,1f), 0f, 0f, 100f, 100f);
+//					rl.setSoftnessLength(50f);
+//					attachToBody(rl, body, -40f, 50f, 180f);
+					
 				}
 
 				if (b.getBoo("physic", "light")) {
-					int rays = 120;
 					Vector2 pos = b.getVec("physic", "light_pos");
 					float dist = b.getFlt("physic", "light_dist");
 					Color col = Utl.color(b.getInt("physic", "r"), b.getInt("physic", "g"), 
 							b.getInt("physic", "b"), b.getInt("physic", "a"));
-					PointLight l = renderer.newSpaceLight(rays, col, dist, 0, 0);
+					PointLight l = renderer.newAuraLight(col, dist, 0, 0);
 					l.setColor(col.r,col.g,col.b,col.a);
 					attachToBody(l, body, pos.x, pos.y);
 					renderer.rayHandler.transparent.add(body);
@@ -561,6 +577,9 @@ public class pBox2d extends pSystem {
 				lights.get(body).clear();
 			}
 			renderer.rayHandler.transparent.remove(body);
+			renderer.visionLayer.transparent.remove(body);
+			renderer.lightLayer.transparent.remove(body);
+			renderer.auraLayer.transparent.remove(body);
 			break_bodys.remove(body);
 			clearing_bodys.remove(body);
 		}

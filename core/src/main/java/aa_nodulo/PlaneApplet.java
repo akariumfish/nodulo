@@ -84,13 +84,15 @@ public class PlaneApplet extends App {
 		public String STARTUP_LOAD_FILE = "";
 		public String STARTUP_NEW_FILE = "";
 
-		public boolean VIEW_START_WALLPAPER = true;
+		public boolean VIEW_START_WALLPAPER = false;
 		public boolean VIEW_START_COLLAPSED = false;
 //		public float DEF_VIEW_ZOOM = 0.07f;
-		public float DEF_VIEW_ZOOM = 0.03f;
+		public float DEF_VIEW_ZOOM = 0.3f;
 		public Vector2 DEF_VIEW_POS = new Vector2(0f,0f);
-		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
-		public Vector2 DEF_VIEW_WIN_SZ = new Vector2(910f,370f);
+//		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
+//		public Vector2 DEF_VIEW_WIN_SZ = new Vector2(910f,370f);
+		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,900f);
+		public Vector2 DEF_VIEW_WIN_SZ = new Vector2(910f,770f);
 		public boolean PATCH_START_WALLPAPER = false;
 		public boolean PATCH_START_COLLAPSED = true;
 		public float DEF_PATCH_ZOOM = 0.1f;
@@ -350,7 +352,10 @@ public class PlaneApplet extends App {
 	
 	public <T extends pSystem> T getSystem(Class<T> ct) { 
 		String ref = system_refs.get(ct);
-		if (systems.get(ref) != null) return (T)systems.get(ref); else return null; }
+		if (systems.get(ref) != null) return (T)systems.get(ref); else {
+			Utl.logn("ERROR : PlaneApplet could not find system "+ct.getName());
+			return null; }
+		}
 
 	
 	

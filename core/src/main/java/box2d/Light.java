@@ -1,4 +1,4 @@
-package box2dLight;
+package box2d;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -591,6 +591,17 @@ public abstract class Light implements Disposable {
 		if (ignoreBody && fixture.getBody() == getBody()) {
 			return false;
 		}
+
+		for (Body b : rayHandler.transparent) if (fixture.getBody() == b)
+			return false;
+		
+		if (layer.use_blocker && 
+				!Utl.has(layer.light_blocker, fixture.getBody()))
+			return false;
+		
+		for (Body b : layer.transparent) if (fixture.getBody() == b)
+			return false;
+		
 		//We only add the affectedFixtures once
 		return !affectedFixtures.contains(fixture, true);
 	}

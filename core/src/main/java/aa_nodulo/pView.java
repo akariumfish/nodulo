@@ -179,6 +179,12 @@ public class pView {
 	public Vector2 mouse_in_view() {
 		Vector2 m = new Vector2(app.input.mouse);
 		m.set(view_ref.revertWarp(m)); return m; }
+	public Vector2 to_view(Vector2 v) {
+		Vector2 m = new Vector2(v);
+		m.set(view_ref.revertWarp(m)); return m; }
+	public Vector2 to_screen(Vector2 v) {
+		Vector2 m = new Vector2(v);
+		m.set(view_ref.revertWarp(m)); return m; }
 	
 	public nWidget add_toolbar_trigg(String t, nRun r) {
 		nWidget w1 = bar_interf.add_row_trigg(2, t);
@@ -299,6 +305,10 @@ public class pView {
 			}
 			if (app.config.VIEW_START_COLLAPSED) view.metode("run_collapse");
 		}
+		
+//		sBoo val_grid = view.object("val_grid", sBoo.class);
+//		val_grid.set(true);
+		
 
 		
 

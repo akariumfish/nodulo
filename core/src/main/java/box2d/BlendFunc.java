@@ -1,4 +1,4 @@
-package box2dLight;
+package box2d;
 
 import com.badlogic.gdx.Gdx;
 

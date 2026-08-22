@@ -1,4 +1,4 @@
-package box2dLight;
+package box2d;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -13,6 +13,7 @@ import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
 
 class LightMap {
 	private ShaderProgram shadowShader;
+	private ShaderProgram pseudo3dShader;
 	VfxFrameBuffer frameBuffer;
 	private Mesh lightMapMesh;
 
@@ -70,6 +71,7 @@ class LightMap {
 			final Color c = rayHandler.ambientLight;
 			ShaderProgram shader = shadowShader;
 			if (rayHandler.pseudo3d) {
+//				shader = pseudo3dShader;
 				shader.bind();
 				if (RayHandler.isDiffuse) {
 					rayHandler.diffuseBlendFunc.apply();
@@ -159,7 +161,12 @@ class LightMap {
 		
 		disposeShaders();
 
-		shadowShader = rayHandler.pseudo3d ? DynamicShadowShader.createShadowShader() : ShadowShader.createShadowShader();
+//		shadowShader = rayHandler.pseudo3d ? DynamicShadowShader.createShadowShader() : 
+//				ShadowShader.createShadowShader();
+		
+		shadowShader = ShadowShader.createShadowShader();
+		pseudo3dShader = DynamicShadowShader.createShadowShader();
+		
 		diffuseShader = DiffuseShader.createShadowShader();
 
 		withoutShadowShader = WithoutShadowShader.createShadowShader();
@@ -170,6 +177,8 @@ class LightMap {
 	private void disposeShaders() {
 		if (shadowShader != null)
 			shadowShader.dispose();
+		if (pseudo3dShader != null)
+			pseudo3dShader.dispose();
 		if (diffuseShader != null)
 			diffuseShader.dispose();
 		if (withoutShadowShader != null)

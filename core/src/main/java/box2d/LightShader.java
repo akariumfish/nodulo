@@ -1,7 +1,9 @@
-package box2dLight;
+package box2d;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+
+import box2dLight.RayHandler;
 
 public final class LightShader {
 	static final public ShaderProgram createLightShader() {

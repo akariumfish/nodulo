@@ -40,7 +40,6 @@ public class pGround extends pSystem {
 		public pGround init(sValueBloc b) { return (pGround) super.init(b); }
 
 		public pSpace space;
-		public pBox2d box;
 
 		public sBoo val_do_draw, val_draw_fog, val_grid_ground, val_white_ground;
 		sFlt val_limit_dist;
@@ -62,6 +61,41 @@ public class pGround extends pSystem {
 			val_grid_ground = bloc.obtainBoo("val_grid_ground", true);
 			val_white_ground = bloc.obtainBoo("val_white_ground", false);
 			val_limit_dist = bloc.obtainFlt("val_limit_dist", 8000f);
+			
+		}
+		public void system_load() {
+			
+			app.view.addDrawable(1,draw_ground_run);
+			app.view.addDrawable(15,draw_fog_run);
+			space = app.space;
+			view = app.view;
+			//		if (!app.RELEASE) 
+			tool_setup(false);
+
+		}
+		public void system_clear() {
+			app.view.removeDrawable(draw_ground_run);
+			app.view.removeDrawable(draw_fog_run);
+		}
+
+		public void tool_init(nInterface interf) {
+
+			interf.setContext(bloc);
+			interf.add_row();
+			interf.add_row_switch_boo(4, "draw", "val_do_draw");
+			interf.add_row_label(2, "");
+			interf.add_row_switch_boo(4, "fog", "val_draw_fog");
+			interf.add_row();
+			interf.add_row_switch_boo(4, "grid", "val_grid_ground");
+			interf.add_row_label(2, "");
+			interf.add_row_switch_boo(4, "white", "val_white_ground");
+
+		}
+		
+		private boolean grid_is_build = false;
+		public void build_grid() {
+			if (grid_is_build) return;
+			grid_is_build = true;
 			
 			final Grid grid = new Grid(size);
 			NoiseGenerator noiseGenerator = new NoiseGenerator();
@@ -127,37 +161,6 @@ public class pGround extends pSystem {
 							fog_col.r*c2, fog_col.g*c2, fog_col.b*c2, cel*fog_col.a);
 				}
 			}
-
-		}
-		public void system_load() {
-			
-			box = app.getSystem(pBox2d.class);
-
-			app.view.addDrawable(1,draw_ground_run);
-			app.view.addDrawable(15,draw_fog_run);
-			space = app.space;
-			view = app.view;
-			//		if (!app.RELEASE) 
-			tool_setup(false);
-
-		}
-		public void system_clear() {
-			app.view.removeDrawable(draw_ground_run);
-			app.view.removeDrawable(draw_fog_run);
-		}
-
-		public void tool_init(nInterface interf) {
-
-			interf.setContext(bloc);
-			interf.add_row();
-			interf.add_row_switch_boo(4, "draw", "val_do_draw");
-			interf.add_row_label(2, "");
-			interf.add_row_switch_boo(4, "fog", "val_draw_fog");
-			interf.add_row();
-			interf.add_row_switch_boo(4, "grid", "val_grid_ground");
-			interf.add_row_label(2, "");
-			interf.add_row_switch_boo(4, "white", "val_white_ground");
-
 		}
 
 		public void frame(float delta) { }
@@ -177,6 +180,7 @@ public class pGround extends pSystem {
 					app.pop();
 				} 
 				if (val_grid_ground.get()) {
+					build_grid();
 					Vector2 p = new Vector2(view.val_cam_pos.get());
 					p.scl(1f/8f);
 					app.push();
@@ -188,6 +192,7 @@ public class pGround extends pSystem {
 		}
 		public void draw_fog() { 
 			if (val_do_draw.get() && val_draw_fog.get()) {
+				build_grid();
 				Vector2 p = new Vector2(view.val_cam_pos.get());
 				p.scl(-1f);
 				p.scl(1f/2f);

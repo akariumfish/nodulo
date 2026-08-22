@@ -1044,9 +1044,14 @@ public class nWidget extends nModel implements Poolable, nClearable {
 		childstackorigin_calc_done = false;
 		for(nWidget w : childs) w.undone_calc_child();
 	}
-	
+
 	public Vector2 revertWarp(Vector2 v) {
 		v.set(warptransform.revert(v));
+		return v;
+	}
+
+	public Vector2 applyWarp(Vector2 v) {
+		v.set(warptransform.transform(v));
 		return v;
 	}
 
@@ -1600,7 +1605,7 @@ public class nWidget extends nModel implements Poolable, nClearable {
 		if (vw_flt != null) { text = watcher_pre_text + Utl.trimFlt(vw_flt.get(), float_rez) + watcher_post_text; }
 		if (vw_boo != null) { text = watcher_pre_text + vw_boo.get() + watcher_post_text; }
 		if (vw_str != null) { text = watcher_pre_text + vw_str.get() + watcher_post_text; }
-		if (vw_vec != null) { text = watcher_pre_text + vw_vec.x() + ":" + vw_vec.y() + watcher_post_text; }
+		if (vw_vec != null) { text = watcher_pre_text + Utl.trimFlt(vw_vec.x(), float_rez) + ":" + Utl.trimFlt(vw_vec.y(), float_rez) + watcher_post_text; }
 		if (vw_tab != null) { text = watcher_pre_text + watcher_post_text; }
 		if (vl_vec != null) { setPosition(vl_vec.get()); }
 		if (vl_boo != null) { setSwitchState(vl_boo.get()); }

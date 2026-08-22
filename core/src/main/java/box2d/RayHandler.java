@@ -1,4 +1,4 @@
-package box2dLight;
+package box2d;
 
 import java.util.ArrayList;
 
@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
@@ -121,14 +120,25 @@ public class RayHandler implements Disposable {
 
 	/** camera matrix corners */
 	float x1, x2, y1, y2;
+	Vector2 c = new Vector2(),
+			c1 = new Vector2(),
+			c2 = new Vector2(),
+			c3 = new Vector2(),
+			c4 = new Vector2(),
+			sz = new Vector2();
 
 	World world;
 
 	VfxFrameBuffer render_buffer;
 	
 	PlaneApplet app;
+	pBox2d box;
 	pView view;
 	OrthographicCamera cam;
+	
+	static int LIGHT_PIX_SIZE = 2;
+	static int LIGHT_DEG_SIZE = 8;
+	static int LIGHT_AMB_DIV = 50;
 	
 	/**
 	 * Class constructor specifying the physics world from where collision
@@ -149,29 +159,15 @@ public class RayHandler implements Disposable {
 	 * @see #RayHandler(World, int, int, RayHandlerOptions)
 	 */
 	public RayHandler(PlaneApplet a, OrthographicCamera c, World world) {
-		this(a, c, world, Gdx.graphics.getWidth() / 4, Gdx.graphics
-				.getHeight() / 4, null);
-	}
-
-	public RayHandler(PlaneApplet a, OrthographicCamera c, World world, RayHandlerOptions options) {
-		this(a, c, world, Gdx.graphics.getWidth() / 4, Gdx.graphics
-				.getHeight() / 4, options);
-	}
-
-	/**
-	 * Class constructor specifying the physics world from where collision
-	 * geometry is taken, and size of FBO used for intermediate rendering.
-	 * 
-	 * @see #RayHandler(World)
-	 */
-	public RayHandler(PlaneApplet a, OrthographicCamera c, World world, int fboWidth, int fboHeight) {
-		this(a, c, world, fboWidth, fboHeight, null);
+		this(a, c, world, Gdx.graphics.getWidth() / LIGHT_PIX_SIZE, Gdx.graphics
+				.getHeight() / LIGHT_PIX_SIZE, null);
 	}
 
 	public RayHandler(PlaneApplet a, OrthographicCamera c, World world, int fboWidth, int fboHeight, RayHandlerOptions options) {
 		this.world = world;
 		this.app = a; 
 		this.view = app.view;
+		this.box = app.getSystem(pBox2d.class);
 		this.cam = c;
 		
 		if (options != null) {
@@ -179,6 +175,10 @@ public class RayHandler implements Disposable {
 			gammaCorrection = options.gammaCorrection;
 			pseudo3d = options.pseudo3d;
 			shadowColorInterpolation = options.shadowColorInterpolation;
+		} else {
+			gammaCorrection = true;
+			pseudo3d = false;
+			shadowColorInterpolation = true;
 		}
 		
 		render_buffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);
@@ -194,37 +194,38 @@ public class RayHandler implements Disposable {
 
 		resizeFBO(fboWidth, fboHeight);
 		lightShader = LightShader.createLightShader();
-		
 
-		setAmbientLight(0.1f, 0.1f, 0.1f, 1f);
-		setBlurNum(2);
 		setCulling(false);
-		setBlur(true);
-		setDiffuseLight(true);
+		
+		setBlendDef();
 
 	}
 
 	public void setBlendDef() {
 		diffuseBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_ZERO);
 		shadowBlendFunc.set(GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA);
-//		simpleBlendFunc.set(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+		simpleBlendFunc.set(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
 		setDiffuseLight(true);
 		setShadows(true);
 		setAmbientLight(0.0f, 0.0f, 0.0f, 0f);
 		buffer_clear_color.set(def_buffer_clear_color);
 		setBlur(true);
 		setBlurNum(2);
+		setPseudo3dLight(false, false);
 	}
 
 	public void setBlendLight() {
 		setBlendDef();
 		setAmbientLight(0.2f, 0.2f, 0.2f, 1f);
+
 	}
 
 	public void setBlendAura() {
 		setBlendDef();
+		setAmbientLight(0.1f, 0.1f, 0.1f, 1f);
 		shadowBlendFunc.set(GL20.GL_SRC_COLOR, GL20.GL_ONE);
 		setDiffuseLight(false);
+		setPseudo3dLight(true, true);
 	}
 
 	public void setBlendVision() {
@@ -257,9 +258,12 @@ public class RayHandler implements Disposable {
         
 	}
 
+	float scale = 1f;
+	float sclinv = 1f;
+	float rot = 0f;
+	float rotDeg = 0f;
 	private ArrayList<Light> temp = new ArrayList<Light>();
 	public void renderLayer(LightLayer layer) { 
-
 		temp.clear();
 		for (Light l : lightList) temp.add(l);
 		for (Light l : temp) l.setActive(false);
@@ -280,8 +284,10 @@ public class RayHandler implements Disposable {
 			Vector2 view_center = new Vector2(view.val_pos.get());
 			view_center.x += view.val_view_size.x() / 2.0f;
 			view_center.y -= view.val_view_size.y() / 2.0f + nGUI.book.RS;
-			float scale = view.val_cam_scale.get();
-			float sclinv = 1f / scale;
+			scale = view.val_cam_scale.get();
+			sclinv = 1f / scale;
+			rot = view.val_cam_rot.get();
+			rotDeg = Utl.radToDeg(rot);
 			Vector2 m = new Vector2(view_center)
 					.sub(app.gdx.getscreenwidth() / 2.0f, app.gdx.getscreenheight() / 2.0f);
 			m.scl(sclinv).rotateRad(-view.val_cam_rot.get());
@@ -292,18 +298,25 @@ public class RayHandler implements Disposable {
 			Vector2 u = new Vector2(0f,1f).rotateRad(-view.val_cam_rot.get());
 			cam.up.set(u.x, u.y, 0f);
 			cam.update();
-			
+
+			app.gdx.drawer.flush();
 			for (Rectangle r : Utl.duplic(app.gui.scissors)) {
 				scissors.add(r); ScissorStack.popScissors(); }
 			app.gui.scissors.clear();
 	
+			m.set(view.val_cam_pos.get());
+			
 			setCombinedMatrix(cam.combined,
-					m.x, m.y, app.gdx.getscreenwidth(), app.gdx.getscreenheight()); 
+//					view_center.x,view_center.y,
+//					0f,0f,
+					m.x,m.y,
+					app.gdx.getscreenwidth()*sclinv, 
+					app.gdx.getscreenheight()*sclinv, 
+					view.val_cam_rot.get()); 
 			
 			update();
 			prepareRender();
 			
-//			app.gdx.drawer.flush();
 			for (Rectangle r : Utl.duplic(scissors)) {
 				app.gui.scissors.add(r); ScissorStack.pushScissors(r); }
 			scissors.clear();
@@ -314,7 +327,7 @@ public class RayHandler implements Disposable {
 			
 		} else {
 
-			for (Light l : layer.lightList) l.update();
+//			for (Light l : layer.lightList) l.update();
 			
 		}
 	}
@@ -349,27 +362,27 @@ public class RayHandler implements Disposable {
 		lightMap = new LightMap(this, fboWidth, fboHeight);
 	}
 	
-	/**
-	 * Sets combined matrix basing on camera position, rotation and zoom
-	 * 
-	 * <p> Same as calling:
-	 * {@code setCombinedMatrix(
-	 *                camera.combined,
-	 *                camera.position.x,
-	 *                camera.position.y,
-	 *                camera.viewportWidth * camera.zoom,
-	 *                camera.viewportHeight * camera.zoom );}
-	 * 
-	 * @see #setCombinedMatrix(Matrix4, float, float, float, float)
-	 */
-	public void setCombinedMatrix(OrthographicCamera camera) {
-		this.setCombinedMatrix(
-				camera.combined,
-				camera.position.x,
-				camera.position.y,
-				camera.viewportWidth * camera.zoom,
-				camera.viewportHeight * camera.zoom);
-	}
+//	/**
+//	 * Sets combined matrix basing on camera position, rotation and zoom
+//	 * 
+//	 * <p> Same as calling:
+//	 * {@code setCombinedMatrix(
+//	 *                camera.combined,
+//	 *                camera.position.x,
+//	 *                camera.position.y,
+//	 *                camera.viewportWidth * camera.zoom,
+//	 *                camera.viewportHeight * camera.zoom );}
+//	 * 
+//	 * @see #setCombinedMatrix(Matrix4, float, float, float, float)
+//	 */
+//	public void setCombinedMatrix(OrthographicCamera camera) {
+//		this.setCombinedMatrix(
+//				camera.combined,
+//				camera.position.x,
+//				camera.position.y,
+//				camera.viewportWidth * camera.zoom,
+//				camera.viewportHeight * camera.zoom);
+//	}
 
 
 	/**
@@ -395,17 +408,40 @@ public class RayHandler implements Disposable {
 	 * @see #setCombinedMatrix(OrthographicCamera)
 	 */
 	public void setCombinedMatrix(Matrix4 combined, float x, float y,
-			float viewPortWidth, float viewPortHeight) {
+			float viewPortWidth, float viewPortHeight, float viewportRot) {
 		
 		System.arraycopy(combined.val, 0, this.combined.val, 0, 16);
 		// updateCameraCorners
+//		final float halfViewPortWidth = viewPortWidth * 0.5f;
+//		x1 = x - halfViewPortWidth;
+//		x2 = x + halfViewPortWidth;
+//		
+//		final float halfViewPortHeight = viewPortHeight * 0.5f;
+//		y1 = y - halfViewPortHeight;
+//		y2 = y + halfViewPortHeight;
+		
+		c.set(x,y);
 		final float halfViewPortWidth = viewPortWidth * 0.5f;
-		x1 = x - halfViewPortWidth;
-		x2 = x + halfViewPortWidth;
-
+		float x1 = x - halfViewPortWidth;
+		float x2 = x + halfViewPortWidth;
+		
 		final float halfViewPortHeight = viewPortHeight * 0.5f;
-		y1 = y - halfViewPortHeight;
-		y2 = y + halfViewPortHeight;
+		float y1 = y - halfViewPortHeight;
+		float y2 = y + halfViewPortHeight;
+		c1.set(x1,y1);
+		c2.set(x1,y2);
+		c3.set(x2,y2);
+		c4.set(x1,y2);
+		c1.rotateRad(viewportRot);
+		c2.rotateRad(viewportRot);
+		c3.rotateRad(viewportRot);
+		c4.rotateRad(viewportRot);
+		this.x1 = Math.min(Math.min(c1.x,c2.x),Math.min(c3.x,c4.x));
+		this.x2 = Math.max(Math.max(c1.x,c2.x),Math.max(c3.x,c4.x));
+		this.y1 = Math.min(Math.min(c1.y,c2.y),Math.min(c3.y,c4.y));
+		this.y2 = Math.max(Math.max(c1.y,c2.y),Math.max(c3.y,c4.y));
+//		
+//		sz.set(viewPortWidth,viewPortHeight);
 	}
 
 	/**
@@ -504,6 +540,7 @@ public class RayHandler implements Disposable {
 			lightMap.shadowBuffer.begin();
 			Gdx.gl.glClearColor(buffer_clear_color.r, buffer_clear_color.g, 
 					buffer_clear_color.b, buffer_clear_color.a);
+//			Gdx.gl.glClearColor(0f,0f,0f,1f);
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 			for (Light light : lightList) {
@@ -832,7 +869,7 @@ public class RayHandler implements Disposable {
 	 * @param flag enable pseudo 3d effect
 	 * @param interpolateShadows interpolate shadow color
 	 */
-	public void setPseudo3dLight(boolean flag, boolean interpolateShadows) {
+	public void setPseudo3dLight(boolean flag, boolean interpolateShadows) { 
 		pseudo3d = flag;
 		shadowColorInterpolation = interpolateShadows;
 

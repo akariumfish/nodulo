@@ -9,6 +9,7 @@ import java.util.Map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -24,6 +25,16 @@ import data.sVec;
 
 public class Utl {
 	
+	
+	public static boolean getBoo(MapProperties prop, String r) {
+		return (prop.get(r, Boolean.class) != null && 
+				prop.get(r, Boolean.class));
+	}
+	
+	
+	
+	public static float radToDeg(float d) {
+		return d/((float)Math.PI)*360f; }
 	
 	
 	/**

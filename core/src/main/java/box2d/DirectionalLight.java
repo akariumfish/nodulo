@@ -1,4 +1,4 @@
-package box2dLight;
+package box2d;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -18,6 +18,10 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.Shape.Type;
+
+import aa_nodulo.pView;
+import gui.nGUI;
+import util.Utl;
 
 /**
  * Light which source is at infinite distance
@@ -104,45 +108,100 @@ public class DirectionalLight extends Light {
 	
 	@Override
 	void update() {
-		if (rayHandler.pseudo3d) {
-			float width = (rayHandler.x2 - rayHandler.x1);
-			float height = (rayHandler.y2 - rayHandler.y1);
-			float sizeOfScreen = width > height ? width : height;
-			xDisp = -sizeOfScreen * cos;
-			yDisp = -sizeOfScreen * sin;
+		
 
-			prepareFixtureData();
-			updateDynamicShadowMeshes();
-		}
+//		sin = MathUtils.sinDeg(direction - rayHandler.rotDeg);
+//		cos = MathUtils.cosDeg(direction - rayHandler.rotDeg);
+		
+		
+//		if (rayHandler.pseudo3d) {
+//			float width = (rayHandler.x2 - rayHandler.x1);
+//			float height = (rayHandler.y2 - rayHandler.y1);
+//			float sizeOfScreen = width > height ? width : height;
+//			xDisp = -sizeOfScreen * cos;
+//			yDisp = -sizeOfScreen * sin;
+//
+//			prepareFixtureData();
+//			updateDynamicShadowMeshes();
+//		}
 
 		if (staticLight && !dirty) {
 			return;
 		}
 		dirty = false;
-
-		final float width = (rayHandler.x2 - rayHandler.x1);
-		final float height = (rayHandler.y2 - rayHandler.y1);
-		final float sizeOfScreen = width > height ? width : height;
-
-		float xAxelOffSet = sizeOfScreen * cos;
-		float yAxelOffSet = sizeOfScreen * sin;
-
-		// preventing length <0 assertion error on box2d.
-		if ((xAxelOffSet * xAxelOffSet < 0.1f) && (yAxelOffSet * yAxelOffSet < 0.1f)) {
-			xAxelOffSet = 1;
-			yAxelOffSet = 1;
-		}
 		
-		final float widthOffSet = sizeOfScreen * -sin;
-		final float heightOffSet = sizeOfScreen * cos;
+		pView view = rayHandler.view;
 
-		float x = (rayHandler.x1 + rayHandler.x2) * 0.5f - widthOffSet;
-		float y = (rayHandler.y1 + rayHandler.y2) * 0.5f - heightOffSet;
+		Vector2 screen_center = new Vector2(view.app.gdx.getscreenwidth() / 2f, 
+				view.app.gdx.getscreenheight() / 2f);
+		Vector2 view_origin = new Vector2(view.val_pos.get());
+		view_origin.x += view.val_view_size.x() / 2.0f;
+		view_origin.y -= view.val_view_size.y() + nGUI.book.RS;
 
-		final float portionX = 2f * widthOffSet / (rayNum - 1);
-		x = (MathUtils.floor(x / (portionX * 2))) * portionX * 2;
-		final float portionY = 2f * heightOffSet / (rayNum - 1);
-		y = (MathUtils.ceil(y / (portionY * 2))) * portionY * 2;
+		Vector2 view_world_origin = new Vector2(view.to_view(view_origin));
+		
+		Vector2 view_center = new Vector2(view.val_pos.get());
+		view_center.x += view.val_view_size.x() / 2.0f;
+		view_center.y -= view.val_view_size.y() / 2.0f + nGUI.book.RS;
+		float scale = view.val_cam_scale.get();
+		float sclinv = 1f / scale;
+		float rot = view.val_cam_rot.get();
+		float rotDeg = Utl.radToDeg(rot);
+//		
+		Vector2 m = new Vector2();
+		
+		m.add(view.val_cam_pos.get());
+		m.scl(sclinv);
+		m.rotateRad(view.val_cam_rot.get());
+		
+		m.add(view_center);
+		m.sub(screen_center);
+		
+//		Vector2 dim = new Vector2((rayHandler.x2 - rayHandler.x1), 
+//				(rayHandler.y2 - rayHandler.y1));
+//		
+////		dim.scl(rayHandler.sclinv);
+//		
+//		final float width = dim.x;
+//		final float height = dim.y;
+//		final float sizeOfScreen = width > height ? width : height;
+
+//		float xAxelOffSet = sizeOfScreen;//sizeOfScreen * cos;
+//		float yAxelOffSet = 0f;//sizeOfScreen * sin;
+//
+//		// preventing length <0 assertion error on box2d.
+//		if ((xAxelOffSet * xAxelOffSet < 0.1f) && (yAxelOffSet * yAxelOffSet < 0.1f)) {
+//			xAxelOffSet = 1;
+//			yAxelOffSet = 1;
+//		}
+		
+//		final float widthOffSet = sizeOfScreen * -sin;
+//		final float heightOffSet = sizeOfScreen * cos;
+//		final float widthOffSet = m.x + sizeOfScreen * -sin;
+//		final float heightOffSet = m.y + sizeOfScreen * cos;
+
+//		float x = (rayHandler.x1 + rayHandler.x2) * 0.5f - widthOffSet;
+//		float y = (rayHandler.y1 + rayHandler.y2) * 0.5f - heightOffSet;
+		float x = view_world_origin.x;
+		float y = view_world_origin.y;
+
+//		final float portionX = 2f * widthOffSet / (rayNum - 1);
+//		x = (MathUtils.floor(x / (portionX * 2))) * portionX * 2;
+//		final float portionY = 2f * heightOffSet / (rayNum - 1);
+//		y = (MathUtils.ceil(y / (portionY * 2))) * portionY * 2;
+////		y = (MathUtils.floor(y / (portionY * 2))) * portionY * 2;
+
+		m.set(view.app.gdx.getscreenheight() * sclinv / 2f,0);
+		m.rotateRad(-rot);
+		float xAxelOffSet = m.x;
+		float yAxelOffSet = m.y;
+
+		m.set(0, view.app.gdx.getscreenheight()).scl(sclinv);
+		m.rotateRad(-rot);
+		
+		final float portionX = m.x / (rayNum - 1);
+		final float portionY = m.y / (rayNum - 1);
+		
 		for (int i = 0; i < rayNum; i++) {
 			final float steppedX = i * portionX + x;
 			final float steppedY = i * portionY + y;

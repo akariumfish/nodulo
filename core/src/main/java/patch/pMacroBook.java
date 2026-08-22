@@ -224,7 +224,7 @@ public class pMacroBook {
 		Macro main_exemple = new Macro("main_exemple")
 			.addMacro("exac", pMacro.getMacro("exec_actor"), 		600f,	150f)
 				.addSetVar("exac_exec", "target_ref", "func_avatar")
-				.addSetVar("exac_actor", "pop_pos", new Vector2(0,200)) 
+				.addSetVar("exac_actor", "pop_pos", new Vector2(0,0)) 
 				.addSetVar("exac_actor", "print_name", "body_print")
 			.addNode("ui", "UI", 								0f,		-300f)
 				.addRunPop("ui_switch", "pop_plug_node", 
