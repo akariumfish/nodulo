@@ -26,6 +26,94 @@ import data.sVec;
 public class Utl {
 	
 	
+	
+	
+	public interface Priorizable { public int getSortingPriority(); }
+	public interface Ordered { 
+		public boolean isOrderedPre(); 
+		public boolean isOrderedMid(); 
+		public boolean isOrderedPost(); }
+
+
+	public static <T extends Ordered & Priorizable> 
+	ArrayList<T> orderPrioDuplic(ArrayList<T> l) {
+		ArrayList<T> list = new ArrayList<T>();
+		int max_prio = 0;
+		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
+		for (int i = max_prio ; i >= 0 ; i--) 
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPre()) list.add(r);
+		for (int i = max_prio ; i >= 0 ; i--) 
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedMid()) list.add(r);
+		for (int i = max_prio ; i >= 0 ; i--) 
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPost()) list.add(r);
+		return list; }
+	public static <T extends Ordered & Priorizable> ArrayList<T> orderRevPrioDuplic(ArrayList<T> l) {
+		ArrayList<T> list = new ArrayList<T>();
+		int max_prio = 0;
+		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
+		for (int i = 0 ; i <= max_prio ; i++)
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPre()) list.add(r);
+		for (int i = 0 ; i <= max_prio ; i++)
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedMid()) list.add(r);
+		for (int i = 0 ; i <= max_prio ; i++)
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPost()) list.add(r);
+		return list; }
+	
+	public static <T extends Ordered> ArrayList<T> orderDuplic(ArrayList<T> l) {
+		ArrayList<T> list = new ArrayList<T>();
+		for (T r : l) if (r.isOrderedPre()) list.add(r);
+		for (T r : l) if (r.isOrderedMid()) list.add(r);
+		for (T r : l) if (r.isOrderedPost()) list.add(r);
+		return list; }
+
+	public static <T extends Priorizable> ArrayList<T> prioDuplic(ArrayList<T> l) {
+		ArrayList<T> list = new ArrayList<T>();
+		int max_prio = 0;
+		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
+		for (int i = max_prio ; i >= 0 ; i--)
+			for (T r : l) if (r.getSortingPriority() == i) list.add(r);
+		return list; }
+	public static <T extends Priorizable> ArrayList<T> revprioDuplic(ArrayList<T> l) {
+		ArrayList<T> list = new ArrayList<T>();
+		int max_prio = 0;
+		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
+		for (int i = 0 ; i <= max_prio ; i++)
+			for (T r : l) if (r.getSortingPriority() == i) list.add(r);
+		return list; }
+	
+	
+	private static final ArrayList<Object> sorting_tmp_list = new ArrayList<Object>();
+	@SuppressWarnings("unchecked")
+	public static <T extends Ordered> void orderSort(ArrayList<T> l) {
+		sorting_tmp_list.clear();
+		for (T r : l) if (r.isOrderedPre()) sorting_tmp_list.add(r);
+		for (T r : l) if (r.isOrderedMid()) sorting_tmp_list.add(r);
+		for (T r : l) if (r.isOrderedPost()) sorting_tmp_list.add(r);
+		l.clear(); for (Object r : sorting_tmp_list) l.add((T)r);
+		sorting_tmp_list.clear(); }
+	@SuppressWarnings("unchecked")
+	public static <T extends Priorizable> void prioSort(ArrayList<T> l) {
+		sorting_tmp_list.clear();
+		int max_prio = 0;
+		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
+		for (int i = max_prio ; i >= 0 ; i--)
+			for (T r : l) if (r.getSortingPriority() == i) sorting_tmp_list.add(r);
+		l.clear(); for (Object r : sorting_tmp_list) l.add((T)r);
+		sorting_tmp_list.clear(); }
+	@SuppressWarnings("unchecked")
+	public static <T extends Priorizable> void revprioSort(ArrayList<T> l) {
+		sorting_tmp_list.clear();
+		int max_prio = 0;
+		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
+		for (int i = 0 ; i <= max_prio ; i++)
+			for (T r : l) if (r.getSortingPriority() == i) sorting_tmp_list.add(r);
+		l.clear(); for (Object r : sorting_tmp_list) l.add((T)r);
+		sorting_tmp_list.clear(); }
+	
+	
+	
+	
+	
 	public static boolean getBoo(MapProperties prop, String r) {
 		return (prop.get(r, Boolean.class) != null && 
 				prop.get(r, Boolean.class));

@@ -306,8 +306,8 @@ public class pView {
 			if (app.config.VIEW_START_COLLAPSED) view.metode("run_collapse");
 		}
 		
-//		sBoo val_grid = view.object("val_grid", sBoo.class);
-//		val_grid.set(true);
+		sBoo val_grid = view.object("val_grid", sBoo.class);
+		val_grid.set(true);
 		
 
 		

@@ -26,6 +26,73 @@ import patch.pStandard;
 
 public class pSpace {
 	
+	
+	
+
+	public static void build() {
+		
+		float RS = nGUI.book.RS;
+		
+		// model for storing and recalling the state of space elements :
+		
+		// a value
+		pProperty.newProperty("value")
+		.addData("class", (int)0)
+		.addData("val", "");
+
+		// model to apply to a param data
+		pProperty.newProperty("data_value")
+		.addData("data_ref", "")
+		.addData("data_class", (int)0)
+		.addData("data_val", "");
+		
+		// model to apply to a param
+		pProperty archetype = pProperty.newProperty("archetype");
+		archetype.addData("name", "")
+		.addData("prop_ref", "") // ref of prop of params this can be applied to
+		.addCollecRef("vals", "data_value") // value to set at application
+		.addCollec("args", String.class) // data to ask as arg at application
+		;
+		
+		
+		// model for creating space elements :
+		
+		// model to build a param from an arch
+		pProperty.newProperty("arch_print")
+		.addData("arch_name", "")
+		.addRef("arch", "archetype")
+		.addCollecRef("args", "value") // args for the arch
+		.addCollecRef("sets", "data_value") // data to set at build
+		.addCollec("args", String.class) // data to ask as arg at build
+		;
+
+		// model for building a body
+		pProperty.newProperty("bodyprint")
+		.addData("name", "")
+		.addCollecRef("prints", "arch_print") // each pop a param for the body
+		//at build it will ask args for arch_prints
+		;
+		
+
+		// model for building a bodyprint
+		pProperty.newProperty("print_builder")
+		.addData("print_name", "")
+		.addCollecRef("args", "value") // args for the print
+		;
+
+		// model to build a group of body
+		pProperty.newProperty("builder")
+		.addData("name", "")
+		.addCollecRef("builds", "print_builder")
+		;
+		
+		
+	}
+	
+	
+	
+	
+	
 
 	ArrayList<nRun> eventSpaceStart = new ArrayList<nRun>();
 //	ArrayList<nRun> eventSpaceClear = new ArrayList<nRun>();

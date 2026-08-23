@@ -8,6 +8,9 @@ import util.Utl;
 import data.sPoolable;
 import data.sTab;
 import data.sValueBloc;
+import patch.pInstance;
+import patch.pPar;
+import patch.pStandard;
 import util.nMap;
 
 public class pParam extends sPoolable {
@@ -272,6 +275,7 @@ public class pParam extends sPoolable {
 		prop = p; space = s; 
 		
 		users.clear();
+		if (objects != null) objects.clear();
 		
 		for (int i = 0 ; i < Utl.data_type_nb ; i++) {
 			data_used[i] = prop.getDataUsed(Utl.data_type[i]); }
@@ -324,7 +328,6 @@ public class pParam extends sPoolable {
 	}
 	
 	public void empty() {
-		
 //		for (pCollec c : collec_list) c.empty();
 		
 		setAllDef();
@@ -361,6 +364,9 @@ public class pParam extends sPoolable {
 		
 		for (String r : prop.ref_vals.allKey()) setRef(r, "");
 		for (String r : prop.body_vals.allKey()) setBody(r, "");
+
+		if (objects != null) objects.clear();
+		objects = null;
 		
 //		for (int i = 0 ; i < ref_used ; i++) refs[i] = ""; 
 //		for (int i = 0 ; i < body_used ; i++) bodys[i] = "";
@@ -372,6 +378,98 @@ public class pParam extends sPoolable {
 		if (o != null) return (T)o;
 		return null;
 	}
+	
+	
+	
+	
+	
+	
+
+	public nMap<Object> objects = null;
+	
+	private void buildObjectMap() { 
+		if (objects == null) objects = new nMap<Object>(); }
+	
+	public pParam addObject(String ref, Object r) {
+		buildObjectMap();
+		if (r != null) objects.put(ref, r); return this; }
+
+	public pParam removeObject(String ref, Object r) {
+		if (objects == null) return this; 
+		if (r != null) objects.remove(ref, r); return this; }
+
+	public pParam removeObject(String ref) { 
+		if (objects == null) return this; 
+		if (hasObject(ref)) removeObject(ref, object(ref)); return this; }
+	
+	public pParam setObject(String ref, Object r) {
+		buildObjectMap();
+		Object old = object(ref); if (old != null) removeObject(ref, old);
+		addObject(ref, r); return this; }
+	
+	public boolean hasObject(String ref) { return objects != null && objects.hasKey(ref); }
+	public boolean hasObject(String ref, Class<?> cl) { 
+		return objects != null && objects.get(ref) != null && objects.get(ref).getClass() == cl; }
+	
+	public Object object(String ref) { if (objects == null) return null; return objects.get(ref); }
+	
+	public <T> T object(String ref, Class<T> cl) { 
+		if (objects == null) return null; 
+		Object o = objects.get(ref);
+		if (o != null && cl.isAssignableFrom(o.getClass())) 
+			return (T)o; else return null; }
+	
+	
+	
+	
+
+	public void run(String ref, Object ... v) {
+		if (prop == null) return;
+		pProperty.RunDef rd = prop.getRunDef(ref);
+		if (rd == null) {
+			Utl.logn("ERROR : pParam.run : runDef <"+ref+"> dont exist"
+					+ " param "+pool_ref+" prop "+prop.ref);
+			return; }
+		rd.run.context = this;
+		rd.run.do_run(v); }
+	
+	public Object get(String ref, Object ... v) {
+		if (prop == null) return null;
+		pProperty.RunDef rd = prop.getRunDef(ref);
+		if (rd == null) {
+			Utl.logn("ERROR : pParam.get : runDef <"+ref+"> dont exist"
+					+ " param "+pool_ref+" prop "+prop.ref);
+			return null; }
+		rd.run.context = this;
+		return rd.run.do_get(v); }
+	
+	public <T> T get(String ref, Class<T> cl, Object ... v) {
+		if (prop == null) return null;
+		pProperty.RunDef rd = prop.getRunDef(ref);
+		if (rd == null) {
+			Utl.logn("ERROR : pParam.get : runDef <"+ref+"> dont exist"
+					+ " param "+pool_ref+" prop "+prop.ref);
+			return null; }
+		rd.run.context = this;
+		return rd.run.do_get(cl,v); }
+	
+	public pParam get_this(String ref, Object ... v) {
+		if (prop == null) return null;
+		pProperty.RunDef rd = prop.getRunDef(ref);
+		if (rd == null) {
+			Utl.logn("ERROR : pParam.get_this : runDef <"+ref+"> dont exist"
+					+ " param "+pool_ref+" prop "+prop.ref);
+			return null; }
+		rd.run.context = this;
+		rd.run.do_get(v);
+		return this; }
+	
+	
+	
+	
+	
+	
+	
 	
 
 	public int getCollecSize(String r) {

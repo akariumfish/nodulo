@@ -148,6 +148,7 @@ public class ChainLight extends Light {
 //				0, new VertexAttribute(Usage.Position, 2, "vertex_positions"),
 //				new VertexAttribute(Usage.ColorPacked, 4, "quad_colors"),
 //				new VertexAttribute(Usage.Generic, 1, "s"));
+		updateChain();
 		setMesh();
 	}
 	

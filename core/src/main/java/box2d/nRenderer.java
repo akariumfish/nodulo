@@ -15,6 +15,7 @@ import aa_nodulo.PlaneApplet;
 import aa_nodulo.pView;
 import util.Utl;
 import util.nRun;
+import app.App;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -161,12 +162,50 @@ public class nRenderer {
 		auraLayer = roomGroup.newLightLayer(LightLayer.MODE.AURA,1);
 		roomGroup.newRunLayer(2).addRun(new nRun() { public void run() {
 			box.draw_drawer(); }});
-		colorLayer = roomGroup.newLightLayer(LightLayer.MODE.COLOR,3);
-		lightLayer = roomGroup.newLightLayer(LightLayer.MODE.LIGHT,4);
+		colorLayer = roomGroup.newLightLayer(LightLayer.MODE.COLOR,4);
+		lightLayer = roomGroup.newLightLayer(LightLayer.MODE.LIGHT,5);
 
-		visionLayer = newLightLayer(LightLayer.MODE.VISION,5);
+		visionLayer = newLightLayer(LightLayer.MODE.VISION,6);
+
+//		roomGroup.newRunLayer(7).addRun(new nRun() { public void run() {
+//			geo.debugRender(App.ap); }});
+		
+		geo = new GeomLayer(this,3);
+		
+		g = new Geom(geo);
+
+		float d = -70f, l = 80f, w = 40f;
+		g.begin();
+		grow(g, 0,0, 0, l, w);
+		grow(g, d, l, w);
+		grow(g, 0, l, w);
+		grow(g, -d, l, w);
+		grow(g, 0, l, w);
+		g.end();
 
 	}
+	
+	GeomLayer geo;
+	public Geom g;
+
+	Vector2 v1 = new Vector2();
+	Vector2 v2 = new Vector2();
+	Vector2 l1 = new Vector2();
+	float prevDir = 0;
+	private void grow(Geom g, float x, float y, float dir, 
+			float len, float width) {
+		v1.set(x,y);
+		v2.set(len,0).rotateDeg(dir).add(x,y);
+		l1.set(0,1).rotateDeg(dir).scl(width);
+		g.add(v1.x,v1.y, v1.x+l1.x,v1.y+l1.y);
+		g.add(v2.x,v2.y, v2.x+l1.x,v2.y+l1.y);
+		prevDir = dir;
+	}
+	private void grow(Geom g, float dir, float len, float width) {
+		grow(g,v2.x,v2.y,dir,len,width); }
+	
+	
+	
 
 	public void processMap(TiledMap tilemap) {
 		int layer_cnt = tilemap.getLayers().getCount();

@@ -17,6 +17,7 @@ import patch.pPar;
 import patch.pPatch;
 import patch.pProcess;
 import patch.pStandard;
+import patch.pStandard.RunDef;
 
 public class pProperty {
 
@@ -60,6 +61,23 @@ public class pProperty {
 //		
 //		
 //	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 
 	public static nMap<pProperty> general_propertys = new nMap<pProperty>(); 
@@ -137,9 +155,18 @@ public class pProperty {
 	
 	
 	
-	public ArrayList<nRun> clear_runs = new ArrayList<nRun>();
 	
-	public void addClearRun(nRun n) { clear_runs.add(n); }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public pProperty copy(pProperty s) {
 
@@ -188,9 +215,6 @@ public class pProperty {
 			}
 		}
 		
-		for (Map.Entry<String,Class<?>> me : s.data_class.entrySet()) 
-			data_class.put(me.getKey(), me.getValue());
-
 		for (Map.Entry<String, nMap<Object>> me : s.settings.entrySet()) {
 			String ct = me.getKey();
 			if (settings.get(ct) != null) {
@@ -226,16 +250,7 @@ public class pProperty {
 	public boolean mode_fullsync = false;
 	public boolean mode_localval = false;
 	public boolean mode_common = false;
-
-//	public pProperty addable() { return addable(false); }
-//	public pProperty addable(boolean def_add) { 
-//		if (addable_props.hasKey(ref)) {
-//			Utl.logn("ERROR: cant make property addable, <"+ref+"> allready exist");
-//			return null; }
-//		addable_props.put(ref,this);
-//		if (def_add) def_added_props.put(ref,this);
-//		return this; 
-//	}
+	
 	public pProperty setRuntime() { mode_runtime = true; return this; }
 	public pProperty setNoSync() { mode_nosync = true; return this; }
 	public pProperty setFullSync() { mode_fullsync = true; return this; }
@@ -250,6 +265,11 @@ public class pProperty {
 	public ArrayList<nRun> node_run = new ArrayList<nRun>();
 	public pProperty addNodeRun(nRun r) { node_run.add(r); return this; }
 
+	
+	
+	
+	
+	
 	public ArrayList<nRun> body_init_run = new ArrayList<nRun>();
 //	public ArrayList<nRun> body_clear_run = new ArrayList<nRun>();
 	public pProperty addBodyInitRun(nRun r) { body_init_run.add(r); return this; }
@@ -260,65 +280,78 @@ public class pProperty {
 //	public pProperty addFrameRun(nRun r) { frame_runs.add(r); return this; }
 //	public pProperty addTickRun(nRun r) { tick_runs.add(r); return this; }
 	
+
+	public ArrayList<nRun> clear_runs = new ArrayList<nRun>();
+	
+	public void addClearRun(nRun n) { clear_runs.add(n); }
 	
 	
-	public void def_to_tab(sTab t, int c) {
-		t.set(c, 0, true);
-		
-		int cnt = 1;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
-		for (int i = 0 ; i < Utl.data_type_nb ; i++) {
-			for (int j = 0 ; j < data_used[i] ; j++) {
-				String dtrf = null;
-				for (Map.Entry<String,Integer> me : data_vals.get(Utl.data_type[i]).entrySet()) {
-					if (me.getValue() == j) dtrf = me.getKey(); }
-				if (dtrf == null) continue;
-				if (i == Utl.type_class_index.get(Vector2.class)) {  
-					Vector2 v = (Vector2)data_defs.get(Utl.data_type[i]).get(dtrf);
-					t.set(c, cnt+(j*2), v.x);
-					t.set(c, cnt+(j*2)+1, v.y);
-				} else if (i == Utl.type_class_index.get(Float.class)) {  
-					float v = (float)data_defs.get(Utl.data_type[i]).get(dtrf);
-					t.set(c, cnt+j, v);
-				} else if (i == Utl.type_class_index.get(Integer.class)) {  
-					int v = (int)data_defs.get(Utl.data_type[i]).get(dtrf);
-					t.set(c, cnt+j, v);
-				} else if (i == Utl.type_class_index.get(Boolean.class)) { 
-					boolean v = (boolean)data_defs.get(Utl.data_type[i]).get(dtrf);
-					t.set(c, cnt+j, v);
-				} else if (i == Utl.type_class_index.get(String.class)) { 
-					String v = (String)data_defs.get(Utl.data_type[i]).get(dtrf);
-					t.set(c, cnt+j, v);
-				}
-			}
-			cnt += data_used[i] * Utl.type_data_size.get(Utl.data_type[i]);
-		}
-		
-		for (int j = 0 ; j < collec_used ; j++) {
-			t.set(c, cnt+j, "");
-		}
-		cnt += collec_used;
+	public pProperty newRun(String r, nRun run) { new RunDef(r, run); return this; }
+	public pProperty replaceRun(String r, nRun run) {
+		RunDef old = getRunDef(r);
+		if (old != null) rundefs.remove(old);
+		new RunDef(r, run); return this; }
 
-		for (int j = 0 ; j < ref_used ; j++) {
-			t.set(c, cnt+j, "");
+	public RunDef getRunDef(String r) {
+		for (RunDef d : rundefs) if (d.ref.equals(r)) return d; return null; }
+	
+	public ArrayList<RunDef> rundefs = new ArrayList<RunDef>(); 
+	
+	public class RunDef {
+		public String ref;
+		public nRun run;
+		public RunDef(RunDef r) {
+			ref = Utl.copy(r.ref); 
+			run = r.run;
+			rundefs.add(this);
 		}
-		cnt += ref_used;
-
-		for (int j = 0 ; j < body_used ; j++) {
-			t.set(c, cnt+j, "");
+		public RunDef(String r, nRun rn) {//Class<?> ct, 
+			ref = r; run = rn;
+			rundefs.add(this);
 		}
-		cnt += body_used;
-		
 	}
-	public int data_size() {
-		int cnt = 1;
-		for (int i = 0 ; i < Utl.data_type_nb ; i++) 
-			cnt += data_used[i] * Utl.type_data_size.get(Utl.data_type[i]);
-		cnt += collec_used;
-		cnt += ref_used;
-		cnt += body_used;
-		return cnt;
-	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -520,9 +553,20 @@ public class pProperty {
 		if (data_set == null) return null;
 		return Utl.copy(data_set.get(s));
 	}
+
+	private void put_setting(String ref, String s, Object o) {
+		nMap<Object> data_set = settings.get(ref);
+		if (data_set == null) { 
+			data_set = new nMap<Object>();
+			settings.put(ref, data_set);
+		}
+		data_set.put(s,Utl.copy(o));
+	}
 	
 	public HashMap<String, nMap<Object>> settings = 
 			new HashMap<String, nMap<Object>>();
+	
+	
 	
 	public pProperty addCollec(String ref, Class<?> ct, String s1, Object o1) {
 		addCollec(ref, ct);
@@ -601,15 +645,80 @@ public class pProperty {
 		put_setting(ref, s1, o1); put_setting(ref, s2, o2); put_setting(ref, s3, o3); put_setting(ref, s4, o4); put_setting(ref, s5, o5);
 		return this; }
 	
-	private void put_setting(String ref, String s, Object o) {
-		nMap<Object> data_set = settings.get(ref);
-		if (data_set == null) { 
-			data_set = new nMap<Object>();
-			settings.put(ref, data_set);
-		}
-		data_set.put(s,Utl.copy(o));
-	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	public void def_to_tab(sTab t, int c) {
+		t.set(c, 0, true);
+		
+		int cnt = 1;
+
+		for (int i = 0 ; i < Utl.data_type_nb ; i++) {
+			for (int j = 0 ; j < data_used[i] ; j++) {
+				String dtrf = null;
+				for (Map.Entry<String,Integer> me : data_vals.get(Utl.data_type[i]).entrySet()) {
+					if (me.getValue() == j) dtrf = me.getKey(); }
+				if (dtrf == null) continue;
+				if (i == Utl.type_class_index.get(Vector2.class)) {  
+					Vector2 v = (Vector2)data_defs.get(Utl.data_type[i]).get(dtrf);
+					t.set(c, cnt+(j*2), v.x);
+					t.set(c, cnt+(j*2)+1, v.y);
+				} else if (i == Utl.type_class_index.get(Float.class)) {  
+					float v = (float)data_defs.get(Utl.data_type[i]).get(dtrf);
+					t.set(c, cnt+j, v);
+				} else if (i == Utl.type_class_index.get(Integer.class)) {  
+					int v = (int)data_defs.get(Utl.data_type[i]).get(dtrf);
+					t.set(c, cnt+j, v);
+				} else if (i == Utl.type_class_index.get(Boolean.class)) { 
+					boolean v = (boolean)data_defs.get(Utl.data_type[i]).get(dtrf);
+					t.set(c, cnt+j, v);
+				} else if (i == Utl.type_class_index.get(String.class)) { 
+					String v = (String)data_defs.get(Utl.data_type[i]).get(dtrf);
+					t.set(c, cnt+j, v);
+				}
+			}
+			cnt += data_used[i] * Utl.type_data_size.get(Utl.data_type[i]);
+		}
+		
+		for (int j = 0 ; j < collec_used ; j++) {
+			t.set(c, cnt+j, "");
+		}
+		cnt += collec_used;
+
+		for (int j = 0 ; j < ref_used ; j++) {
+			t.set(c, cnt+j, "");
+		}
+		cnt += ref_used;
+
+		for (int j = 0 ; j < body_used ; j++) {
+			t.set(c, cnt+j, "");
+		}
+		cnt += body_used;
+		
+	}
+	public int data_size() {
+		int cnt = 1;
+		for (int i = 0 ; i < Utl.data_type_nb ; i++) 
+			cnt += data_used[i] * Utl.type_data_size.get(Utl.data_type[i]);
+		cnt += collec_used;
+		cnt += ref_used;
+		cnt += body_used;
+		return cnt;
+	}
 	
 
 	

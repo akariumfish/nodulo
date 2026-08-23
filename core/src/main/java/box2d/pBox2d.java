@@ -217,10 +217,10 @@ public class pBox2d extends pSystem {
 
 			val_draw_debug = bloc.obtainBoo("val_draw_debug", false);
 			val_draw_ray_debug = bloc.obtainBoo("val_draw_ray_debug", false);
-			val_draw_vision = bloc.obtainBoo("val_draw_vision", true);
+			val_draw_vision = bloc.obtainBoo("val_draw_vision", false);
 			val_draw_tile = bloc.obtainBoo("val_draw_tile", true);
 			val_draw_light = bloc.obtainBoo("val_draw_light", true);
-			val_draw_aura = bloc.obtainBoo("val_draw_aura", true);
+			val_draw_aura = bloc.obtainBoo("val_draw_aura", false);
 			val_draw_color = bloc.obtainBoo("val_draw_color", true);
 			val_do_calc = bloc.obtainBoo("val_do_calc", true);
 			val_edit_tile = bloc.obtainBoo("val_edit_tile", false);
@@ -497,6 +497,12 @@ public class pBox2d extends pSystem {
 				if (b.getBoo("physic", "view_light")) {
 					
 					renderer.newVisionLight(body);
+					
+					
+					
+					renderer.g.attachToBody(body, 0f,0f,0f);
+					
+					
 					
 //					attachToBody(renderer.colorLayer.newRectLight(
 //							10, new Color(1f,0f,0f,1f), 0f, 0f, 200f, 40f), 

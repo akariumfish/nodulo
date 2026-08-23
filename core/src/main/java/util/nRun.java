@@ -2,10 +2,67 @@ package util;
 
 import java.util.ArrayList;
 
+import aa_nodulo.pParam;
 import patch.pInstance;
 import patch.pPar;
 
-public abstract class nRun {
+public abstract class nRun implements Utl.Priorizable, Utl.Ordered {
+	
+	
+	
+	
+	@SuppressWarnings("serial")
+	public class RunArray extends ArrayList<nRun> {
+		public RunArray() { super(); }
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	private class RunStackEntry {
+		int prio = 0; boolean pre = false, mid = true, post = false; }
+	
+	private RunStackEntry stack_entry = null;
+	
+	public int getSortingPriority() { return stack_entry.prio; }
+	public boolean isOrderedPre() { return stack_entry.pre; }
+	public boolean isOrderedMid() { return stack_entry.mid; }
+	public boolean isOrderedPost() { return stack_entry.post; }
+
+	public nRun setPrio(int p) {
+		if (stack_entry == null) stack_entry = new RunStackEntry();
+		stack_entry.prio = p; return this; }
+	public nRun setPre() {
+		if (stack_entry == null) stack_entry = new RunStackEntry();
+		stack_entry.pre = true; stack_entry.mid = false; return this; }
+	public nRun setPost() {
+		if (stack_entry == null) stack_entry = new RunStackEntry();
+		stack_entry.post = true; stack_entry.mid = false; return this; }
+	public nRun setPreMid() {
+		if (stack_entry == null) stack_entry = new RunStackEntry();
+		stack_entry.pre = true; return this; }
+	public nRun setMidPost() {
+		if (stack_entry == null) stack_entry = new RunStackEntry();
+		stack_entry.post = true; return this; }
+	public nRun setPreMidPost() {
+		if (stack_entry == null) stack_entry = new RunStackEntry();
+		stack_entry.post = true; stack_entry.pre = true; return this; }
+	
+	
+
+	public static ArrayList<nRun> buildPrioList(ArrayList<nRun> e) { 
+		return Utl.orderPrioDuplic(e); }
+	
+	
+	
+	
+	
+	
+	
 	
 	public boolean to_clear = false;
 	public Object builder = null; 
@@ -66,29 +123,39 @@ public abstract class nRun {
 	
 	
 	
-	public void do_run(Object ... v) { 
-		instance = null; param = null; answer = null; args = v; /*args = Applet.toArray(v)*/; run(); }
+	
+	
+	public Object context = null;
+	public <T> T context(Class<T> ct) { return (T)context; }
+	public pParam contextParam() { return (pParam)context; }
+	
+	
+	
+	
+	
+	public void do_run(Object ... v) {  
+		instance = null; param = null; answer = null; args = v; /*args = Applet.toArray(v)*/; run(); context = null; }
 	public void do_run(pPar p, Object ... v) { 
-		instance = null; param = p; answer = null; args = v; /*args = Applet.toArray(v)*/; run(); }
+		instance = null; param = p; answer = null; args = v; /*args = Applet.toArray(v)*/; run(); context = null; }
 	public void do_run(pInstance c, Object ... v) { 
-		instance = c; param = null; answer = null; args = v; /*args = Applet.toArray(v)*/; run(); }
+		instance = c; param = null; answer = null; args = v; /*args = Applet.toArray(v)*/; run(); context = null; }
 	public void do_run(pInstance c, pPar p, Object ... v) { 
 //		if (v != null) Applet.app.log("prun.do_run() : v length = "+v.length);
 //		if (v != null && v.length == 1 && v[0] instanceof Object[]) v = (Object[])v[0];
 		instance = c; param = p; answer = null; args = v;
 //		if (v != null) Applet.app.log("prun.do_run() : args length = "+args.length);
 		/*args = Applet.toArray(v)*/; 
-		run(); }
+		run();  context = null; }
 
 	public void do_run(nRun answ, Object ... v) { 
-		instance = null; param = null; answer = answ; args = v; run(); }
+		instance = null; param = null; answer = answ; args = v; run(); context = null; }
 	public void do_run(pPar p, nRun answ, Object ... v) { 
-		instance = null; param = p; answer = answ; args = v; run(); }
+		instance = null; param = p; answer = answ; args = v; run(); context = null; }
 	public void do_run(pInstance c, nRun answ, Object ... v) { 
-		instance = c; param = null; answer = answ; args = v; run(); }
+		instance = c; param = null; answer = answ; args = v; run(); context = null; }
 	public void do_run(pInstance c, pPar p, nRun answ, Object ... v) { 
 		instance = c; param = p; answer = answ; args = v;
-		run(); }
+		run();  context = null; }
 	
 	public Object do_get(Object ... v) { 
 		instance = null; param = null; answer = null; args = v; /*args = Applet.toArray(v)*/; return get(); }
@@ -129,13 +196,13 @@ public abstract class nRun {
 	
 
 	public static void runList(ArrayList<nRun> e, Object ... v) { 
-		for (nRun r : Utl.duplic(e)) r.do_run(v); }
+		for (nRun r : Utl.duplic(e)) if (r != null) r.do_run(v); }
 	public static void runList(ArrayList<nRun> e, pInstance cont, Object ... v) { 
-		for (nRun r : Utl.duplic(e)) r.do_run(cont,v); }
+		for (nRun r : Utl.duplic(e)) if (r != null) r.do_run(cont,v); }
 	public static void runList(ArrayList<nRun> e, pPar par, Object ... v) { 
-		for (nRun r : Utl.duplic(e)) r.do_run(par,v); }
+		for (nRun r : Utl.duplic(e)) if (r != null) r.do_run(par,v); }
 	public static void runList(ArrayList<nRun> e, pInstance cont, pPar par, Object ... v) { 
-		for (nRun r : Utl.duplic(e)) r.do_run(cont,par,v); }
+		for (nRun r : Utl.duplic(e)) if (r != null) r.do_run(cont,par,v); }
 	
 	
 	

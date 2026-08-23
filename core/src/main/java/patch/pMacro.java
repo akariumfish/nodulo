@@ -33,7 +33,7 @@ public class pMacro {
 
 	public static Macro getMacro(String r) { return all_macros.get(r); }
 	
-	public static class Macro {
+	public static class Macro extends nScripted {
 		public String ref;
 		public nMap<Macro> macros = new nMap<Macro>();
 		public nMap<Vector2> macros_pos = new nMap<Vector2>();
@@ -44,7 +44,7 @@ public class pMacro {
 		public nMap<String> scripts = new nMap<String>();
 		public ArrayList<nRun> runs = new ArrayList<nRun>();
 		public Macro(String r) {
-			ref = r; 
+			ref = Utl.copy(r); 
 			if (all_macros.hasKey(r)) all_macros.remove(r);
 			all_macros.put(r, this);
 //			newMacro(r, new nRun() { public Object get() {
@@ -59,6 +59,16 @@ public class pMacro {
 //						for (pInstance b : list.all()) { b.run("select"); }
 //					}});
 //				return list.all(); }});
+		}
+		
+		public void rename(String n) {
+			if (all_macros.hasKey(ref)) all_macros.remove(ref);
+			all_macros.put(n, this);
+			ref = Utl.copy(n); 
+		}
+		@Override
+		protected void empty() {
+			
 		}
 		
 		public MacroNode addNode(String r, String m, float x, float y) {
@@ -81,7 +91,7 @@ public class pMacro {
 		public Macro addTileScript(String targ_ref, String script_ref) {
 			scripts.put(targ_ref, script_ref); return this; }
 		public Macro addRun(nRun r) { runs.add(r); return this; }
-		
+
 		private nMap<pInstance> list = new nMap<pInstance>();
 		public ArrayList<pInstance> add(pSheet sheet) { return add(sheet, false); }
 		public ArrayList<pInstance> add(pSheet sheet, boolean to_cam) {
@@ -263,7 +273,7 @@ public class pMacro {
 		if (all_scripts.hasKey(r)) all_scripts.get(r).tile_pop(tile); 
 		else { Utl.logn("ERROR : pMacro.tile_pop_script : MacroScript <"+r+"> dont exist"); }}
 	
-	public static class MacroScript {
+	public static class MacroScript extends nScripted {
 		public String ref; 
 		public ArrayList<MacroScriptCom> coms = new ArrayList<MacroScriptCom>();
 		public MacroScript(String r) { ref = r; all_scripts.put(r,this); }
@@ -294,6 +304,10 @@ public class pMacro {
 					Utl.logn("ERROR : MacroScript.tile_pop() : too many args");
 				}
 			}
+		}
+		@Override
+		protected void empty() {
+			
 		}
 	}
 	public static class MacroScriptCom {

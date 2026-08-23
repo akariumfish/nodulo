@@ -13,6 +13,7 @@ import aa_nodulo.PlaneApplet;
 import aa_nodulo.pGeom;
 import aa_nodulo.pGround;
 import aa_nodulo.pProperty;
+import aa_nodulo.pSpace;
 import aa_nodulo.pTime;
 import aa_nodulo.pView;
 import app.App;
@@ -40,6 +41,7 @@ public class pPatch {
 //			app.setPref("release_FS", "DEF_PATCH_WIN_SZ", new Vector2(660f,950f));
 //		}});
 
+		if (!has_build_statics) pSpace.build();
 		pGround.build(data); 
 		pGeom.build(data); 
 		pBox2d.build(data); 
