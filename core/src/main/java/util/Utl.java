@@ -13,20 +13,52 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.noodle.nodulo.GdxApp;
 
+import aa_nodulo.pProperty;
 import app.App;
+import data.File_Bloc;
 import data.sBoo;
 import data.sFlt;
 import data.sInt;
 import data.sStr;
 import data.sValue;
+import data.sValueBloc;
 import data.sVec;
+import net.nNetwork;
+import util.nPool.Poolable;
 
 public class Utl {
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static class OrderedImplement implements Ordered {
+		protected boolean pre = false, mid = true, post = false;
+		public boolean isOrderedPre() { return pre; }
+		public boolean isOrderedMid() { return mid; }
+		public boolean isOrderedPost() { return post; }
+	}
+	public static class PriorizableImplement implements Priorizable {
+		protected int prio = 0; 
+		public int getSortingPriority() { return prio; }
+	}
+	public static class OrderedPriorizableImplement implements Ordered, Priorizable {
+		protected int prio = 0; protected boolean pre = false, mid = true, post = false;
+		public int getSortingPriority() { return prio; }
+		public boolean isOrderedPre() { return pre; }
+		public boolean isOrderedMid() { return mid; }
+		public boolean isOrderedPost() { return post; }
+	}
 	
 	public interface Priorizable { public int getSortingPriority(); }
 	public interface Ordered { 
@@ -107,6 +139,32 @@ public class Utl {
 		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
 		for (int i = 0 ; i <= max_prio ; i++)
 			for (T r : l) if (r.getSortingPriority() == i) sorting_tmp_list.add(r);
+		l.clear(); for (Object r : sorting_tmp_list) l.add((T)r);
+		sorting_tmp_list.clear(); }
+	@SuppressWarnings("unchecked")
+	public static <T extends Ordered & Priorizable> void orderPrioSort(ArrayList<T> l) {
+		sorting_tmp_list.clear();
+		int max_prio = 0;
+		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
+		for (int i = max_prio ; i >= 0 ; i--) 
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPre()) sorting_tmp_list.add(r);
+		for (int i = max_prio ; i >= 0 ; i--) 
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedMid()) sorting_tmp_list.add(r);
+		for (int i = max_prio ; i >= 0 ; i--) 
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPost()) sorting_tmp_list.add(r);
+		l.clear(); for (Object r : sorting_tmp_list) l.add((T)r);
+		sorting_tmp_list.clear(); }
+	@SuppressWarnings("unchecked")
+	public static <T extends Ordered & Priorizable> void orderRevPrioSort(ArrayList<T> l) {
+		sorting_tmp_list.clear();
+		int max_prio = 0;
+		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
+		for (int i = 0 ; i <= max_prio ; i++)
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPre()) sorting_tmp_list.add(r);
+		for (int i = 0 ; i <= max_prio ; i++)
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedMid()) sorting_tmp_list.add(r);
+		for (int i = 0 ; i <= max_prio ; i++)
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPost()) sorting_tmp_list.add(r);
 		l.clear(); for (Object r : sorting_tmp_list) l.add((T)r);
 		sorting_tmp_list.clear(); }
 	
@@ -456,6 +514,208 @@ public class Utl {
 	
 	
 	
+	
+	
+	
+	
+	
+
+	// ------------------EXPERIMENTAL---------------------- // TODO
+	// ----------------------------------------------------
+
+//	public static class sPrim extends sValue {
+////		public String asStr() { return Utl.copy(val); }
+//		public String getString() { return Utl.to_string(val); }
+//		public void clear() { 
+//			super.clear(); 
+////			data.str_pool.free(this);
+//		}
+//		
+//		Object val = null;
+//		
+//		public sPrim() { super(); }
+//		
+//		//called when obtained from pool
+//		public sPrim init(sValueBloc b, String n, String s) {
+//			super.init(b, "prm", n, s); return this; }
+//			
+//		//called when freed by pool
+//		@Override
+//		public void reset() {
+//			super.reset();
+//			val = null; 
+//		}
+//	
+////		public String get() { return Utl.copy(val); }
+////		public boolean equals(String v) { return val.equals(v); }
+////		public void set(String v) { 
+////			run_events_allset(); 
+////			if (!v.equals(val)) { 
+////				
+////				doChange(); 
+////			} 
+////		}
+//		protected void save_to_bloc(File_Bloc svb) { super.save_to_bloc(svb);
+////			svb.newData("val", val);
+//		}
+//		protected void load_from_bloc(File_Bloc svb) { super.load_from_bloc(svb);
+////			set(svb.getString("val"));
+//		}
+//		public void toNetMsg(nNetwork.UpdateValue uv) {
+////			uv.put("val", val);
+//		}
+//		public void fromNetMsg(nNetwork.UpdateValue uv) {
+////			set(uv.getStr("val"));
+//		}
+//	
+//		public Object get_val() { return val; }
+//	
+//	}
+	
+
+	// can be any primitive but garenty its a primitive
+	public static class Prim { 
+		public Prim() { if (value != null) Utl.free(value); value = null; }
+		public Prim(Object o) { if (value != null) Utl.free(value); value = o; }
+		public void reset() { if (value != null) Utl.free(value); value = null; }
+		public Object value;
+		public Object get() { return value; }
+		public <T> T get(Class<?> ct) { return (T)value; }
+		public <T> T set(T v) { value = v; return v; }
+		public <T> Prim edit(T v) { value = v; return this; }
+		public String to_string() { return Utl.to_string(value); }
+		public String to_code() { return Utl.to_code(value); }
+		public static Prim from_string(String o, Class<?> ct) { return Utl.obtain(Prim.class).edit(Utl.from_string(o,ct)); }
+		public static Prim from_obj(Object o) { return Utl.obtain(Prim.class).edit(o); }
+		public static Prim new_obj(Class<?> ct) { return Utl.obtain(Prim.class).edit(Utl.new_object(ct)); }
+		public static Prim obtain(Class<?> ct) { return Utl.obtain(Prim.class).edit(Utl.obtain(ct)); }
+		public void free() { Utl.free(this); }
+		
+	}
+	
+
+	public static <T> T obtain(Class<T> ct) { if (ct == null) return null; 
+		return (T)prim_pool_map.get(ct).obtain(); }
+	public static <T> void free(T t) { 
+		if (t == null) return; ((PrimitivePool<T>)prim_pool_map.get(t.getClass())).free(t); }
+
+	private static HashMap<Class<?>,PrimitivePool<?>> prim_pool_map = 
+			new HashMap<Class<?>,PrimitivePool<?>>();
+
+	private static HashMap<Class<?>,PrimitivePool<?>> prim_array_pool_map = 
+			new HashMap<Class<?>,PrimitivePool<?>>();
+
+	public static final Class<?>[] prim = new Class<?>[] {
+		Byte.class, Integer.class, Float.class, Boolean.class, String.class, Vector2.class
+		, Prim.class 
+		};
+
+	private static final nRun common_run_new_obj = new nRun() {
+		public Object get(Object o) { return Utl.new_object((Class<?>)o); } };
+	private static final nRun common_run_new_array = new nRun() {
+		public Object get(Object o1, Object o2) { return Utl.new_array((Class<?>)o1, (int)o2); } };
+		
+//	public static final nRun[] run_new_object = new nRun[] { 
+//			common_run_new_obj, common_run_new_obj, common_run_new_obj, 
+//			common_run_new_obj, common_run_new_obj, common_run_new_obj
+//			, common_run_new_obj 
+//			};
+	
+	private static void build_prim() {
+		
+		for (Class<?> c : prim) prim_pool_map.put(c, 	newPrimitivePool(c));
+		
+	}
+
+	private static <T> PrimitivePool<T> newPrimitivePool(Class<T> ct) {
+		return new PrimitivePool<T>() {
+			protected T newObject() { return (T)common_run_new_obj.get(ct); } };
+	}
+
+	private static <T> PrimitivePool<T> newPrimitiveArrayPool(Class<T> ct) {
+		return new PrimitivePool<T>() {
+			protected T newObject() { return (T)common_run_new_obj.get(ct); } };
+	}
+
+	public static abstract class PrimitivePool<T> {
+
+		private final Array<T> freeObjects;
+		private final ArrayList<T> allObjects;
+
+		public PrimitivePool() {
+			freeObjects = new Array<T>(false, 0);
+			allObjects = new ArrayList<T>();
+		}
+		public PrimitivePool(boolean isArray) { this(); this.isArray = isArray; }
+		
+		abstract protected T newObject();
+		protected T newArray(int i) { return null; }
+		private boolean isArray = false;
+		private T getNew(int...i) { if (isArray) return newArray(i[0]); else return newObject(); }
+
+		public ArrayList<T> all() { return allObjects; }
+		public ArrayList<T> tmp_all() { return Utl.copy(allObjects); }
+
+		public int size() { return allObjects.size(); }
+
+		public T get(int i) { return allObjects.get(i); }
+		
+		public T obtain(int...i) {
+			T t = freeObjects.size == 0 ? getNew(i) : freeObjects.pop();
+			allObjects.add(t);
+			if (t instanceof Poolable) ((Poolable)t).pool_init();
+			return t;
+		}
+		
+		protected void reset (T object) {
+			if (object instanceof Poolable) ((Poolable)object).reset();
+		}
+		
+		protected void discard (T object) {
+			reset(object);
+		}
+		
+		public void free (T object) {
+			if (object == null) throw new IllegalArgumentException("object cannot be null.");
+			if (freeObjects.contains(object, true)) return; 
+			
+			if (allObjects.contains(object)) {
+				while (allObjects.contains(object)) allObjects.remove(object);
+				reset(object); }
+		}
+		
+		public void freeAll() {
+			for (T t : Utl.duplic(allObjects)) free(t);
+			allObjects.clear();
+		}
+		
+		/** Removes and discards all free objects from this pool. */
+		public void clearFreeObjs () {
+			Array<T> freeObjects = this.freeObjects;
+			for (int i = 0, n = freeObjects.size; i < n; i++)
+				discard(freeObjects.get(i));
+			freeObjects.clear();
+		}
+
+		public void dispose() {
+			freeAll();
+			clearFreeObjs(); // reset then clear free objects
+		}
+		
+	}
+	
+	
+	
+	
+	// ----------------------------------------------------
+	// ----------------------------------------------------
+	
+	
+	
+	
+	
+	
+	
 
 	public static final int data_type_nb = 5;
 	public static final Class<?>[] data_type = new Class<?>[data_type_nb];
@@ -464,6 +724,8 @@ public class Utl {
 	public static final byte[] type_id = new byte[data_type_nb];
 	
 	public static void build() {
+		
+		build_prim();
 
 		new_type(Float.class, "flt", "FLT", sFlt.class, 1);
 		new_type(Integer.class, "int", "INT", sInt.class, 1);
@@ -476,6 +738,8 @@ public class Utl {
 		nPainting.register();
 		
 	}
+
+	
 	static class vType {
 		public String name, ref, type, type_maj;
 		public Class<?> _class; public Class<? extends sValue> sval;
@@ -515,9 +779,25 @@ public class Utl {
 	public static HashMap<Class<?>, Integer> type_class_index = new HashMap<Class<?>, Integer>();
 	public static HashMap<Class<?>, Integer> type_data_size = new HashMap<Class<?>, Integer>();
 
+	
+	
+	
+	
+	
+	
+	
 	public static boolean type_is_used(Class<?> ct) {
-		return type_class_name.get(ct) != null; }
+		return type_class_name.get(ct) != null || ct == Byte.class; }
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public static String to_string(Object o) {
 		if (o == null) return "null";
 		if (!type_is_used(o.getClass())) return "??";
@@ -530,6 +810,8 @@ public class Utl {
 			return Integer.toString((int)o);
 		} else if (o instanceof Boolean) {
 			return Boolean.toString((boolean)o);
+		} else if (o instanceof Byte) {
+			return Byte.toString((byte)o);
 		} else if (o instanceof String) {
 			return (String)o;
 		}
@@ -545,6 +827,8 @@ public class Utl {
 			return Float.toString((float)o)+"f";
 		} else if (o instanceof Integer) {
 			return "(int)"+Integer.toString((int)o);
+		} else if (o instanceof Byte) {
+			return "(byte)"+Byte.toString((byte)o);
 		} else if (o instanceof Boolean) {
 			return Boolean.toString((boolean)o);
 		} else if (o instanceof String) {
@@ -577,6 +861,13 @@ public class Utl {
 			} catch (NumberFormatException ex) {
 				logn(ex.toString());
 			} }
+		else if (ct == Byte.class) {
+			try {
+				Object v = Byte.parseByte(o);
+				return (T)v; 
+			} catch (NumberFormatException ex) {
+				logn(ex.toString());
+			} }
 		else if (ct == Boolean.class) {
 			try {
 				Object v = Boolean.parseBoolean(o);
@@ -589,6 +880,11 @@ public class Utl {
 		return null;
 	}
 
+	
+	
+	
+	
+	
 	public static <T> T new_object(Class<T> ct) {
 		if (!type_is_used(ct)) return null;
 		if (ct == Vector2.class) {
@@ -605,6 +901,42 @@ public class Utl {
 			return (T)v; }
 		else if (ct == String.class) {
 			return (T)""; }
+		else if (ct == Byte.class) {
+			Object v = (byte)0;
+			return (T)v; }
+		return null;
+	}
+
+	public static <T> T[] new_array(Class<T> ct, int len) {
+		if (!type_is_used(ct)) return null;
+		if (ct == Integer.class) 		{ return (T[])new Integer[len]; }
+		else if (ct == Float.class) 	{ return (T[])new Float[len]; }
+		else if (ct == Boolean.class) 	{ return (T[])new Boolean[len]; }
+		else if (ct == String.class) 	{ return (T[])new String[len]; }
+		else if (ct == Vector2.class) 	{ return (T[])new Vector2[len]; }
+		else if (ct == Byte.class) 	{ return (T[])new Byte[len]; }
+		return null;
+	}
+
+	public static <T> T[][] new_bidim_array(Class<T> ct, int len) {
+		if (!type_is_used(ct)) return null;
+		if (ct == Integer.class) 		{ return (T[][])new Integer[len][]; }
+		else if (ct == Float.class) 		{ return (T[][])new Float[len][]; }
+		else if (ct == Boolean.class) 	{ return (T[][])new Boolean[len][]; }
+		else if (ct == String.class) 	{ return (T[][])new String[len][]; }
+		else if (ct == Vector2.class) 	{ return (T[][])new Vector2[len][]; }
+		else if (ct == Byte.class) 		{ return (T[][])new Byte[len][]; }
+		return null;
+	}
+
+	public static <T> T[][][] new_tridim_array(Class<T> ct, int len) {
+		if (!type_is_used(ct)) return null;
+		if (ct == Integer.class) 		{ return (T[][][])new Integer[len][][]; }
+		else if (ct == Float.class) 		{ return (T[][][])new Float[len][][]; }
+		else if (ct == Boolean.class) 	{ return (T[][][])new Boolean[len][][]; }
+		else if (ct == String.class) 	{ return (T[][][])new String[len][][]; }
+		else if (ct == Vector2.class) 	{ return (T[][][])new Vector2[len][][]; }
+		else if (ct == Byte.class) 		{ return (T[][][])new Byte[len][][]; }
 		return null;
 	}
 	

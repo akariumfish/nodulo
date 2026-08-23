@@ -220,12 +220,12 @@ public class pMacroBook {
 				.addSetVar("reg_ref", "mode").getMacro()
 			.addLink("reg_in_mode", "co_reg", "exac_exec", "co_reg")
 			.addLink("ui_ui_switch", "out", "reg_in_mode", "co_in")
-//			.addMacro("shoot1", pMacro.getMacro("mob"), 		-900f,	600f)
-//				.addSetVar("shoot1_exac_actor", "pop_pos", new Vector2(400,900)) 
-//			.addMacro("shoot2", pMacro.getMacro("mob"), 		-900f,	-600f)
-//				.addSetVar("shoot2_exac_actor", "pop_pos", new Vector2(800,-900)) 
-//			.addMacro("shoot3", pMacro.getMacro("mob"), 		-900f,	-1800f)
-//				.addSetVar("shoot3_exac_actor", "pop_pos", new Vector2(1200,0)) 
+			.addMacro("shoot1", pMacro.getMacro("mob"), 		-900f,	600f)
+				.addSetVar("shoot1_exac_actor", "pop_pos", new Vector2(400,900)) 
+			.addMacro("shoot2", pMacro.getMacro("mob"), 		-900f,	-600f)
+				.addSetVar("shoot2_exac_actor", "pop_pos", new Vector2(800,-900)) 
+			.addMacro("shoot3", pMacro.getMacro("mob"), 		-900f,	-1800f)
+				.addSetVar("shoot3_exac_actor", "pop_pos", new Vector2(1200,0)) 
 			
 			.addNode("text", "text", 						-300f,		1500f).getMacro()
 			.addRun(new nRun() { public void run() {

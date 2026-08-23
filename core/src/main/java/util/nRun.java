@@ -11,10 +11,7 @@ public abstract class nRun implements Utl.Priorizable, Utl.Ordered {
 	
 	
 	
-	@SuppressWarnings("serial")
-	public class RunArray extends ArrayList<nRun> {
-		public RunArray() { super(); }
-	}
+	
 	
 	
 	
@@ -33,30 +30,14 @@ public abstract class nRun implements Utl.Priorizable, Utl.Ordered {
 	public boolean isOrderedMid() { return stack_entry.mid; }
 	public boolean isOrderedPost() { return stack_entry.post; }
 
-	public nRun setPrio(int p) {
-		if (stack_entry == null) stack_entry = new RunStackEntry();
-		stack_entry.prio = p; return this; }
-	public nRun setPre() {
-		if (stack_entry == null) stack_entry = new RunStackEntry();
-		stack_entry.pre = true; stack_entry.mid = false; return this; }
-	public nRun setPost() {
-		if (stack_entry == null) stack_entry = new RunStackEntry();
-		stack_entry.post = true; stack_entry.mid = false; return this; }
-	public nRun setPreMid() {
-		if (stack_entry == null) stack_entry = new RunStackEntry();
-		stack_entry.pre = true; return this; }
-	public nRun setMidPost() {
-		if (stack_entry == null) stack_entry = new RunStackEntry();
-		stack_entry.post = true; return this; }
-	public nRun setPreMidPost() {
-		if (stack_entry == null) stack_entry = new RunStackEntry();
-		stack_entry.post = true; stack_entry.pre = true; return this; }
-	
-	
-
-	public static ArrayList<nRun> buildPrioList(ArrayList<nRun> e) { 
-		return Utl.orderPrioDuplic(e); }
-	
+	public nRun setSorted() {
+		if (stack_entry == null) stack_entry = new RunStackEntry(); return this; }
+	public nRun setPrio(int p) { setSorted(); stack_entry.prio = p; return this; }
+	public nRun setPre() { setSorted(); stack_entry.pre = true; stack_entry.mid = false; return this; }
+	public nRun setPost() { setSorted(); stack_entry.post = true; stack_entry.mid = false; return this; }
+	public nRun setPreMid() { setSorted(); stack_entry.pre = true; return this; }
+	public nRun setMidPost() { setSorted(); stack_entry.post = true; return this; }
+	public nRun setPreMidPost() { setSorted(); stack_entry.post = true; stack_entry.pre = true; return this; }
 	
 	
 	
@@ -134,17 +115,13 @@ public abstract class nRun implements Utl.Priorizable, Utl.Ordered {
 	
 	
 	public void do_run(Object ... v) {  
-		instance = null; param = null; answer = null; args = v; /*args = Applet.toArray(v)*/; run(); context = null; }
+		instance = null; param = null; answer = null; args = v; run(); context = null; }
 	public void do_run(pPar p, Object ... v) { 
-		instance = null; param = p; answer = null; args = v; /*args = Applet.toArray(v)*/; run(); context = null; }
+		instance = null; param = p; answer = null; args = v; run(); context = null; }
 	public void do_run(pInstance c, Object ... v) { 
-		instance = c; param = null; answer = null; args = v; /*args = Applet.toArray(v)*/; run(); context = null; }
+		instance = c; param = null; answer = null; args = v; run(); context = null; }
 	public void do_run(pInstance c, pPar p, Object ... v) { 
-//		if (v != null) Applet.app.log("prun.do_run() : v length = "+v.length);
-//		if (v != null && v.length == 1 && v[0] instanceof Object[]) v = (Object[])v[0];
 		instance = c; param = p; answer = null; args = v;
-//		if (v != null) Applet.app.log("prun.do_run() : args length = "+args.length);
-		/*args = Applet.toArray(v)*/; 
 		run();  context = null; }
 
 	public void do_run(nRun answ, Object ... v) { 
@@ -158,36 +135,36 @@ public abstract class nRun implements Utl.Priorizable, Utl.Ordered {
 		run();  context = null; }
 	
 	public Object do_get(Object ... v) { 
-		instance = null; param = null; answer = null; args = v; /*args = Applet.toArray(v)*/; return get(); }
+		instance = null; param = null; answer = null; args = v; return get(); }
 	public <T> T do_get(Class<T> ct, Object ... v) { 
 		instance = null; param = null; answer = null; args = v; Object o = get(); if (o != null) return (T)o; return null; }
 	public Object do_get(pInstance c, Object ... v) { 
-		instance = c; param = null; answer = null; args = v; /*args = Applet.toArray(v)*/; return get(); }
+		instance = c; param = null; answer = null; args = v; return get(); }
 	public <T> T do_get(pInstance c, Class<T> ct, Object ... v) { 
 		instance = c; param = null; answer = null; args = v; Object o = get(); if (o != null) return (T)o; return null; }
 	public Object do_get(pPar p, Object ... v) { 
-		instance = null; param = p; answer = null; args = v; /*args = Applet.toArray(v)*/; return get(); }
+		instance = null; param = p; answer = null; args = v; return get(); }
 	public <T> T do_get(pPar p, Class<T> ct, Object ... v) { 
 		instance = null; param = p; answer = null; args = v; Object o = get(); if (o != null) return (T)o; return null; }
 	public Object do_get(pInstance c, pPar p, Object ... v) { 
-		instance = c; param = p; answer = null; args = v; /*args = Applet.toArray(v)*/; return get(); }
+		instance = c; param = p; answer = null; args = v; return get(); }
 	public <T> T do_get(pInstance c, pPar p, Class<T> ct, Object ... v) { 
 		instance = c; param = p; answer = null; args = v; Object o = get(); if (o != null) return (T)o; return null; }
 	
 	public Object do_get(nRun answ, Object ... v) { 
-		instance = null; param = null; answer = answ; args = v; /*args = Applet.toArray(v)*/; return get(); }
+		instance = null; param = null; answer = answ; args = v; return get(); }
 	public <T> T do_get(Class<T> ct, nRun answ, Object ... v) { 
 		instance = null; param = null; answer = answ; args = v; Object o = get(); if (o != null) return (T)o; return null; }
 	public Object do_get(pInstance c, nRun answ, Object ... v) { 
-		instance = c; param = null; answer = answ; args = v; /*args = Applet.toArray(v)*/; return get(); }
+		instance = c; param = null; answer = answ; args = v; return get(); }
 	public <T> T do_get(pInstance c, Class<T> ct, nRun answ, Object ... v) { 
 		instance = c; param = null; answer = answ; args = v; Object o = get(); if (o != null) return (T)o; return null; }
 	public Object do_get(pPar p, nRun answ, Object ... v) { 
-		instance = null; param = p; answer = answ; args = v; /*args = Applet.toArray(v)*/; return get(); }
+		instance = null; param = p; answer = answ; args = v; return get(); }
 	public <T> T do_get(pPar p, Class<T> ct, nRun answ, Object ... v) { 
 		instance = null; param = p; answer = answ; args = v; Object o = get(); if (o != null) return (T)o; return null; }
 	public Object do_get(pInstance c, pPar p, nRun answ, Object ... v) { 
-		instance = c; param = p; answer = answ; args = v; /*args = Applet.toArray(v)*/; return get(); }
+		instance = c; param = p; answer = answ; args = v; return get(); }
 	public <T> T do_get(pInstance c, pPar p, Class<T> ct, nRun answ, Object ... v) { 
 		instance = c; param = p; answer = answ; args = v; Object o = get(); if (o != null) return (T)o; return null; }
 
@@ -205,91 +182,16 @@ public abstract class nRun implements Utl.Priorizable, Utl.Ordered {
 		for (nRun r : Utl.duplic(e)) if (r != null) r.do_run(cont,par,v); }
 	
 	
-	
-	
-	
-	
 	public static void runEvents(ArrayList<nRun> e) { 
-		ArrayList<nRun> e2 = new ArrayList<nRun>();
-		for (nRun r : e) e2.add(r); 
-		for (nRun r : e2) if (r != null) r.run();
-//		for (int i = e.size() - 1 ; i >= 0 ; i--) if (i < e.size()) e.get(i).run(); 
-	}
+		for (nRun r : Utl.duplic(e)) if (r != null) r.run(); }
 	public static void runEvents(ArrayList<nRun> e, Object v) { 
-		ArrayList<nRun> e2 = new ArrayList<nRun>();
-		for (nRun r : e) e2.add(r); for (nRun r : e2) r.run(v);
-//		for (int i = e.size() - 1 ; i >= 0 ; i--) if (i < e.size()) e.get(i).run(v); 
-	}
+		for (nRun r : Utl.duplic(e)) if (r != null) r.run(v); }
 	public static void runEvents(ArrayList<nRun> e, Object v1, Object v2) { 
-		ArrayList<nRun> e2 = new ArrayList<nRun>();
-		for (nRun r : e) e2.add(r); for (nRun r : e2) r.run(v1,v2);
-//		for (int i = e.size() - 1 ; i >= 0 ; i--) if (i < e.size()) e.get(i).run(v1,v2); 
-	}
+		for (nRun r : Utl.duplic(e)) if (r != null) r.run(v1,v2); }
 	public static void runEvents(ArrayList<nRun> e, Object v1, Object v2, Object v3) { 
-		ArrayList<nRun> e2 = new ArrayList<nRun>();
-		for (nRun r : e) e2.add(r); for (nRun r : e2) r.run(v1,v2,v3);
-//		for (int i = e.size() - 1 ; i >= 0 ; i--) if (i < e.size()) e.get(i).run(v1,v2,v3); 
-	}
-	
-	public static void clearEvents(ArrayList<nRun> e) { 
-		ArrayList<nRun> e2 = new ArrayList<nRun>();
-		for (nRun r : e) if (r.to_clear) e2.add(r);
-		for (nRun r : e2) e.remove(r);
-	}
+		for (nRun r : Utl.duplic(e)) if (r != null) r.run(v1,v2,v3); }
 	
 	
 	
 	
-	
-	
-	
-
-	
-	
-	
-	
-	
-	// to use in sRun to access run Arg
-//	public sRun.Context srun_context = null; 
-//	public <T> T getArg(String ref, Class<T> ct) {
-//		if (srun_context != null) return srun_context.getArg(ref, ct); else return null; }
-//	public <T> void setArg(String ref, T val) {
-//		if (srun_context != null) srun_context.setArg(ref, val); }
-
-//	public abstract class Context {
-//		public abstract <T> T getVar(String ref, Class<T> ct); 
-//		public abstract <T> void setVar(String ref, T val); 
-//		public abstract sValueBloc getBloc(String ref); 
-//		public abstract <T> T getObj(String ref, Class<T> ct); 
-//		public abstract <T> void setObj(String ref, T val); 
-//
-//		public abstract void run(String ref); 
-//		public abstract void run(String ref, Object o); 
-//		public abstract Object get(String ref); 
-//		public abstract Object get(String ref, Object o); 
-//		
-//	}
-//	
-//	// to use in pBric to access bric var
-//	private Context bric_context = null; 
-//	public void setContext(Context c) { bric_context = c; }
-//	public void copyContext(nRunnable c) { bric_context = c.bric_context; }
-//	public <T> T getVar(String ref, Class<T> ct) {
-//		if (bric_context != null) return bric_context.getVar(ref, ct); else return null; }
-//	public <T> void setVar(String ref, T val) {
-//		if (bric_context != null) bric_context.setVar(ref, val); }
-//	public sValueBloc getBloc(String ref) {
-//		if (bric_context != null) return bric_context.getBloc(ref); else return null; }
-//	public <T> T getObj(String ref, Class<T> ct) {
-//		if (bric_context != null) return bric_context.getObj(ref, ct); else return null; }
-//	public <T> void setObj(String ref, T val) {
-//		if (bric_context != null) bric_context.setObj(ref, val); }
-//	
-//	public void contRun(String ref) {
-//		if (bric_context != null) bric_context.run(ref); }
-//	public Object contGet(String ref) {
-//		if (bric_context != null) return bric_context.get(ref); return null; }
-//	public Object contGet(String ref, Object o) {
-//		if (bric_context != null) return bric_context.get(ref, o); return null; }
-//	
 }

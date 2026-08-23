@@ -172,21 +172,21 @@ public class nRenderer {
 		
 		geo = new GeomLayer(this,3);
 		
-		g = new Geom(geo);
-
-		float d = -70f, l = 80f, w = 40f;
-		g.begin();
-		grow(g, 0,0, 0, l, w);
-		grow(g, d, l, w);
-		grow(g, 0, l, w);
-		grow(g, -d, l, w);
-		grow(g, 0, l, w);
-		g.end();
+//		g = new Geom(geo);
+//
+//		float d = -70f, l = 80f, w = 40f;
+//		g.begin();
+//		grow(g, 0,0, 0, l, w);
+////		grow(g, d, l, w);
+////		grow(g, 0, l, w);
+////		grow(g, -d, l, w);
+////		grow(g, 0, l, w);
+//		g.end();
 
 	}
 	
 	GeomLayer geo;
-	public Geom g;
+//	public Geom g;
 
 	Vector2 v1 = new Vector2();
 	Vector2 v2 = new Vector2();
@@ -229,18 +229,18 @@ public class nRenderer {
 		lightLayer.newCrossAmbiantLight(Utl.color(255), tileLayer);
 		
 
-		float[] path = new float[] {
+//		float[] path = new float[] {
+////				-200f,0f,
+////				-2000f,0f
+//				
 //				-200f,0f,
-//				-2000f,0f
-				
-				-200f,0f,
-				-800f,0f, 
-				-800f,300f, 
-				-1400f,300f 
-				
-				};
-		
-		colorLayer.newChainLight(900, Utl.color(255), 500f, path);
+//				-800f,0f, 
+//				-800f,300f, 
+//				-1400f,300f 
+//				
+//				};
+//		
+//		colorLayer.newChainLight(900, Utl.color(255), 500f, path);
 		
 //		ChainLight ch = new ChainLight(colorLayer, 900, Utl.color(255), 500f, 
 //				1, path);

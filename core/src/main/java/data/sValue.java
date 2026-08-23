@@ -83,7 +83,7 @@ public abstract class sValue extends nLauncher implements nClearable, Poolable {
 	sData data;
 	App app;
 	
-	sValue() { super(); }
+	protected sValue() { super(); }
 	
 	//called when obtained from pool
 	public sValue init(sValueBloc b, String t, String r, String s) {

@@ -15,6 +15,198 @@ import util.nMap;
 
 public class pParam extends sPoolable {
 	
+	int[] data_used; public Object[][] datas;
+	int collec_used; public String[] collecs;
+	int ref_used; public String[] refs;
+	int body_used; public String[] bodys;
+	public ArrayList<pCollec> collec_list = new ArrayList<pCollec>();
+	
+	
+	
+
+	public pSpace space;
+	public pProperty prop;
+	
+	public ArrayList<pBody> users = new ArrayList<pBody>();
+	
+	public pParam() { 
+		data_used = new int[Utl.data_type_nb]; }
+	
+	
+	
+	
+	public void N_init() {
+		
+	}
+	
+	public void N_clear_action() {
+		
+	}
+
+	public boolean N_has(String r, Class<?> ct) { 
+		return false; }
+	
+	public pParam N_set(String r, Object o) {
+		
+		return this; 
+	}
+	
+	public Object N_get(String r) {
+		
+		return null; 
+	}
+	
+	public <T> T N_get(String r, Class<T> ct) { 
+		
+		return null; 
+	}
+	
+	
+//	public String getStr(String r) { return get(r, String.class); }
+//	public int getInt(String r) { return get(r, Integer.class); }
+//	public boolean getBoo(String r) { return get(r, Boolean.class); }
+//	public float getFlt(String r) { return get(r, Float.class); }
+//	public Vector2 getVec(String r) { return get(r, Vector2.class); }
+//	
+//	public pParam setVec(String r, Vector2 v) { 
+//		int val_id = prop.getDataValId(r, Vector2.class);
+//		if (val_id == -1) return this;
+//		int data_id = Utl.type_class_index.get(Vector2.class);
+//		boolean change = !((Vector2)datas[data_id][val_id]).equals(v);
+//		((Vector2)datas[data_id][val_id]).set(v.x,v.y);
+//		if (change) signalChangeData(r, Utl.copy(v));
+//		return this; 
+//	}
+//	public pParam setVec(String r, float x, float y) { 
+//		int val_id = prop.getDataValId(r, Vector2.class);
+//		if (val_id == -1) return this;
+//		int data_id = Utl.type_class_index.get(Vector2.class);
+//		boolean change = !((Vector2)datas[data_id][val_id]).equals(new Vector2(x,y));
+//		((Vector2)datas[data_id][val_id]).set(x,y);
+//		if (change) signalChangeData(r, new Vector2(x,y));
+//		return this; 
+//	}
+//	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+	public nMap<Object> objects = null;
+	
+	private void buildObjectMap() { 
+		if (objects == null) objects = new nMap<Object>(); }
+	
+	public pParam addObject(String ref, Object r) {
+		buildObjectMap();
+		if (r != null) objects.put(ref, r); return this; }
+
+	public pParam removeObject(String ref, Object r) {
+		if (objects == null) return this; 
+		if (r != null) objects.remove(ref, r); return this; }
+
+	public pParam removeObject(String ref) { 
+		if (objects == null) return this; 
+		if (hasObject(ref)) removeObject(ref, object(ref)); return this; }
+	
+	public pParam setObject(String ref, Object r) {
+		buildObjectMap();
+		Object old = object(ref); if (old != null) removeObject(ref, old);
+		addObject(ref, r); return this; }
+	
+	public boolean hasObject(String ref) { return objects != null && objects.hasKey(ref); }
+	public boolean hasObject(String ref, Class<?> cl) { 
+		return objects != null && objects.get(ref) != null && objects.get(ref).getClass() == cl; }
+	
+	public Object object(String ref) { if (objects == null) return null; return objects.get(ref); }
+	
+	public <T> T object(String ref, Class<T> cl) { 
+		if (objects == null) return null; 
+		Object o = objects.get(ref);
+		if (o != null && cl.isAssignableFrom(o.getClass())) 
+			return (T)o; else return null; }
+	
+	
+	
+	
+
+	public void run(String ref, Object ... v) {
+		if (prop == null) return;
+		pProperty.RunDef rd = prop.getRunDef(ref);
+		if (rd == null) {
+			Utl.logn("ERROR : pParam.run : runDef <"+ref+"> dont exist"
+					+ " param "+pool_ref+" prop "+prop.ref);
+			return; }
+		rd.run.context = this;
+		rd.run.do_run(v); }
+	
+	public Object get(String ref, Object ... v) {
+		if (prop == null) return null;
+		pProperty.RunDef rd = prop.getRunDef(ref);
+		if (rd == null) {
+			Utl.logn("ERROR : pParam.get : runDef <"+ref+"> dont exist"
+					+ " param "+pool_ref+" prop "+prop.ref);
+			return null; }
+		rd.run.context = this;
+		return rd.run.do_get(v); }
+	
+	public <T> T get(String ref, Class<T> cl, Object ... v) {
+		if (prop == null) return null;
+		pProperty.RunDef rd = prop.getRunDef(ref);
+		if (rd == null) {
+			Utl.logn("ERROR : pParam.get : runDef <"+ref+"> dont exist"
+					+ " param "+pool_ref+" prop "+prop.ref);
+			return null; }
+		rd.run.context = this;
+		return rd.run.do_get(cl,v); }
+	
+	public pParam get_this(String ref, Object ... v) {
+		if (prop == null) return null;
+		pProperty.RunDef rd = prop.getRunDef(ref);
+		if (rd == null) {
+			Utl.logn("ERROR : pParam.get_this : runDef <"+ref+"> dont exist"
+					+ " param "+pool_ref+" prop "+prop.ref);
+			return null; }
+		rd.run.context = this;
+		rd.run.do_get(v);
+		return this; }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 //	public void signalChangeFull() {
 //		if (prop != null && !prop.mode_nosync && !prop.mode_localval) {
 //			space.signalChange(this); 
@@ -247,30 +439,6 @@ public class pParam extends sPoolable {
 	
 	
 	
-	
-
-	public pSpace space;
-	public pProperty prop;
-	
-	int[] data_used;
-	public Object[][] datas;
-	
-	int collec_used;
-	public String[] collecs;
-	
-	int ref_used;
-	public String[] refs;
-
-	int body_used;
-	public String[] bodys;
-	
-	public ArrayList<pBody> users = new ArrayList<pBody>();
-
-	public ArrayList<pCollec> collec_list = new ArrayList<pCollec>();
-	
-	public pParam() { 
-		data_used = new int[Utl.data_type_nb]; }
-	
 	public pParam init(pSpace s, pProperty p) { 
 		prop = p; space = s; 
 		
@@ -378,92 +546,6 @@ public class pParam extends sPoolable {
 		if (o != null) return (T)o;
 		return null;
 	}
-	
-	
-	
-	
-	
-	
-
-	public nMap<Object> objects = null;
-	
-	private void buildObjectMap() { 
-		if (objects == null) objects = new nMap<Object>(); }
-	
-	public pParam addObject(String ref, Object r) {
-		buildObjectMap();
-		if (r != null) objects.put(ref, r); return this; }
-
-	public pParam removeObject(String ref, Object r) {
-		if (objects == null) return this; 
-		if (r != null) objects.remove(ref, r); return this; }
-
-	public pParam removeObject(String ref) { 
-		if (objects == null) return this; 
-		if (hasObject(ref)) removeObject(ref, object(ref)); return this; }
-	
-	public pParam setObject(String ref, Object r) {
-		buildObjectMap();
-		Object old = object(ref); if (old != null) removeObject(ref, old);
-		addObject(ref, r); return this; }
-	
-	public boolean hasObject(String ref) { return objects != null && objects.hasKey(ref); }
-	public boolean hasObject(String ref, Class<?> cl) { 
-		return objects != null && objects.get(ref) != null && objects.get(ref).getClass() == cl; }
-	
-	public Object object(String ref) { if (objects == null) return null; return objects.get(ref); }
-	
-	public <T> T object(String ref, Class<T> cl) { 
-		if (objects == null) return null; 
-		Object o = objects.get(ref);
-		if (o != null && cl.isAssignableFrom(o.getClass())) 
-			return (T)o; else return null; }
-	
-	
-	
-	
-
-	public void run(String ref, Object ... v) {
-		if (prop == null) return;
-		pProperty.RunDef rd = prop.getRunDef(ref);
-		if (rd == null) {
-			Utl.logn("ERROR : pParam.run : runDef <"+ref+"> dont exist"
-					+ " param "+pool_ref+" prop "+prop.ref);
-			return; }
-		rd.run.context = this;
-		rd.run.do_run(v); }
-	
-	public Object get(String ref, Object ... v) {
-		if (prop == null) return null;
-		pProperty.RunDef rd = prop.getRunDef(ref);
-		if (rd == null) {
-			Utl.logn("ERROR : pParam.get : runDef <"+ref+"> dont exist"
-					+ " param "+pool_ref+" prop "+prop.ref);
-			return null; }
-		rd.run.context = this;
-		return rd.run.do_get(v); }
-	
-	public <T> T get(String ref, Class<T> cl, Object ... v) {
-		if (prop == null) return null;
-		pProperty.RunDef rd = prop.getRunDef(ref);
-		if (rd == null) {
-			Utl.logn("ERROR : pParam.get : runDef <"+ref+"> dont exist"
-					+ " param "+pool_ref+" prop "+prop.ref);
-			return null; }
-		rd.run.context = this;
-		return rd.run.do_get(cl,v); }
-	
-	public pParam get_this(String ref, Object ... v) {
-		if (prop == null) return null;
-		pProperty.RunDef rd = prop.getRunDef(ref);
-		if (rd == null) {
-			Utl.logn("ERROR : pParam.get_this : runDef <"+ref+"> dont exist"
-					+ " param "+pool_ref+" prop "+prop.ref);
-			return null; }
-		rd.run.context = this;
-		rd.run.do_get(v);
-		return this; }
-	
 	
 	
 	

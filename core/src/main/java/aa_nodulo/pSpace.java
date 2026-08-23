@@ -61,7 +61,7 @@ public class pSpace {
 		pProperty.newProperty("arch_print")
 		.addData("arch_name", "")
 		.addRef("arch", "archetype")
-		.addCollecRef("args", "value") // args for the arch
+		.addCollecRef("arch_args", "value") // args for the arch
 		.addCollecRef("sets", "data_value") // data to set at build
 		.addCollec("args", String.class) // data to ask as arg at build
 		;

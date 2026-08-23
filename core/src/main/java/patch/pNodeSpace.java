@@ -257,7 +257,7 @@ public class pNodeSpace {
 			String prop_ref = prop_refs.get(i);
 			pProperty gene_prop = pProperty.get(prop_ref);
 			if (gene_prop == null || bluep.space.param_pools.get(prop_ref) == null) continue;
-			for (nRun n : gene_prop.body_init_run) n.do_run(pop);
+			for (nRun n : gene_prop.body_init_runs) n.do_run(pop);
 		}
 		
 		pop.update_families();
@@ -282,7 +282,7 @@ public class pNodeSpace {
 //			String prop_ref = prop_refs.get(i);
 			pProperty gene_prop = pProperty.get(prop_ref);
 			if (gene_prop == null || !gene_prop.is_general) continue;
-			for (nRun n : gene_prop.body_init_run) n.do_run(pop);
+			for (nRun n : gene_prop.body_init_runs) n.do_run(pop);
 		}
 		
 		pop.update_families();

@@ -298,7 +298,7 @@ public class pBody extends sPoolable {
 	public void clear_action() {
 
 		for (pParam prm : params.all()) if (prm.prop.is_general) {
-			nRun.runList(prm.prop.clear_runs, this); }
+			nRun.runList(prm.prop.body_clear_runs, this); }
 		
 		for (Map.Entry<pFamily, ArrayList<pBody>> me : space.families.entrySet()) {
 			pFamily fam = me.getKey();

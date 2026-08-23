@@ -27,6 +27,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import aa_nodulo.PlaneApplet;
 import gui.nAlign;
+import space.earlygrey.shapedrawer.DefaultSideEstimator;
 import space.earlygrey.shapedrawer.JoinType;
 import space.earlygrey.shapedrawer.ShapeDrawer;
 import util.Utl;
@@ -70,7 +71,7 @@ public class nDrawer {
 	public void restart_batch() { 
 		begin(); 
 	}
-	Texture tex;
+//	Texture tex;
 	private BitmapFont makeFont(String s) {
 
 		FreeTypeFontGenerator fontgenerator = new FreeTypeFontGenerator(
@@ -106,15 +107,20 @@ public class nDrawer {
 		pixmap.dispose();
 
 
-		Pixmap pixmap2 = new Pixmap(1, 1, Format.RGBA8888);
-		pixmap2.setColor(new Color(0f, 0f, 0f, 0.0001f));
-		pixmap2.drawPixel(0, 0);
-		tex = new Texture(pixmap2);
-		pixmap2.dispose();
+//		Pixmap pixmap2 = new Pixmap(1, 1, Format.RGBA8888);
+//		pixmap2.setColor(new Color(0f, 0f, 0f, 0.0001f));
+//		pixmap2.drawPixel(0, 0);
+//		tex = new Texture(pixmap2);
+//		pixmap2.dispose();
 
 
+		// curve sides :
+		int minimumSides = 16;
+		int maximumSides = 1000;
+		float sideMultiplier = 0.5f;
 		TextureRegion region = new TextureRegion(texture, 0, 0, 1, 1);
-		drawer = new ShapeDrawer(spritebatch, region);
+		drawer = new ShapeDrawer(spritebatch, region, 
+				new DefaultSideEstimator(minimumSides, maximumSides, sideMultiplier));
 		
 	}
 	public Matrix4 getTransformMatrix() { return spritebatch.getTransformMatrix(); }
@@ -134,7 +140,8 @@ public class nDrawer {
 	public void begin() {
 		
 		spritebatch.setProjectionMatrix(context.getViewport().getCamera().combined);
-		drawer.updatePixelSize(); 
+//		drawer.updatePixelSize(); 
+		drawer.update(); 
 		if (vfx) {
 			
 		}
@@ -159,9 +166,7 @@ public class nDrawer {
 
 
 
-
-
-
+	
 
 	public nTransform transf = new nTransform();
 	public void push() { transf.push(); }
@@ -291,40 +296,37 @@ public class nDrawer {
 						cl[(x+1)+size*y], cl[(x+1)+size*(y+1)], cl[x+size*(y+1)]);
 			}
 	}
-	public void grid(int size, float cell) {
-		if (color_stack.size() < size*size) return;
-		for (int x = 0 ; x < size - 1 ; x++)
-			for (int y = 0 ; y < size - 1 ; y++) {
-				face((x*cell), (y*cell), ((x+1)*cell), (y*cell), (x*cell), ((y+1)*cell), 
-						color_stack.get(x+size*y), 
-						color_stack.get((x+1)+size*y), 
-						color_stack.get(x+size*(y+1)));
-			}
-	}
-
-
-
-	public void putColor(final ArrayList<Color> cl) {
-		for (Color c : cl) color_stack.add(getColor(c)); }
-	public void putColor(final Color[] cl) {
-		for (Color c : cl) color_stack.add(getColor(c)); }
-	public void putColor(final Color c) { color_stack.add(getColor(c)); }
-	public void putPoint(final ArrayList<Vector2> cl) { for (Vector2 c : cl) point_stack.add(c); }
-	public void putPoint(final Vector2[] cl) { for (Vector2 c : cl) point_stack.add(c); }
-	public void putPoint(final Vector2 c) { point_stack.add(c); }
-	public void resetStack() { color_stack.clear(); point_stack.clear(); }
-
-	private ArrayList<Color> color_stack = new ArrayList<Color>();
-	private ArrayList<Vector2> point_stack = new ArrayList<Vector2>();
-
-	private static HashMap<Integer,Color> colors = new HashMap<Integer,Color>();
-	private Color getColor(Color c) {
-		int id = Utl.rgbToInt((int)(255.0f*c.r), (int)(255.0f*c.g), 
-				(int)(255.0f*c.b), (int)(255.0f*c.a));
-		if (colors.get(id) != null) return colors.get(id);
-		colors.put(id,c);
-		return c;
-	}
+//	public void grid(int size, float cell) {
+//		if (color_stack.size() < size*size) return;
+//		for (int x = 0 ; x < size - 1 ; x++)
+//			for (int y = 0 ; y < size - 1 ; y++) {
+//				face((x*cell), (y*cell), ((x+1)*cell), (y*cell), (x*cell), ((y+1)*cell), 
+//						color_stack.get(x+size*y), 
+//						color_stack.get((x+1)+size*y), 
+//						color_stack.get(x+size*(y+1)));
+//			}
+//	}
+//	public void putColor(final ArrayList<Color> cl) {
+//		for (Color c : cl) color_stack.add(getColor(c)); }
+//	public void putColor(final Color[] cl) {
+//		for (Color c : cl) color_stack.add(getColor(c)); }
+//	public void putColor(final Color c) { color_stack.add(getColor(c)); }
+//	public void putPoint(final ArrayList<Vector2> cl) { for (Vector2 c : cl) point_stack.add(c); }
+//	public void putPoint(final Vector2[] cl) { for (Vector2 c : cl) point_stack.add(c); }
+//	public void putPoint(final Vector2 c) { point_stack.add(c); }
+//	public void resetStack() { color_stack.clear(); point_stack.clear(); }
+//
+//	private ArrayList<Color> color_stack = new ArrayList<Color>();
+//	private ArrayList<Vector2> point_stack = new ArrayList<Vector2>();
+//
+//	private static HashMap<Integer,Color> colors = new HashMap<Integer,Color>();
+//	private Color getColor(Color c) {
+//		int id = Utl.rgbToInt((int)(255.0f*c.r), (int)(255.0f*c.g), 
+//				(int)(255.0f*c.b), (int)(255.0f*c.a));
+//		if (colors.get(id) != null) return colors.get(id);
+//		colors.put(id,c);
+//		return c;
+//	}
 
 
 
