@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.12.2" name="Tilemap" tilewidth="16" tileheight="16" spacing="1" tilecount="143" columns="13">
- <image source="Tilemap.png" width="221" height="186"/>
+<tileset version="1.10" tiledversion="1.12.2" name="Tilemap" tilewidth="16" tileheight="16" spacing="1" tilecount="221" columns="13">
+ <image source="Tilemap.png" width="221" height="288"/>
  <tile id="0">
   <properties>
    <property name="ground" type="bool" value="false"/>
@@ -640,28 +640,28 @@
  </tile>
  <tile id="91">
   <properties>
-   <property name="ground" type="bool" value="false"/>
+   <property name="ground" type="bool" value="true"/>
    <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="92">
   <properties>
-   <property name="ground" type="bool" value="false"/>
+   <property name="ground" type="bool" value="true"/>
    <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="93">
   <properties>
-   <property name="ground" type="bool" value="false"/>
+   <property name="ground" type="bool" value="true"/>
    <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="94">
   <properties>
-   <property name="ground" type="bool" value="false"/>
+   <property name="ground" type="bool" value="true"/>
    <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="false"/>
   </properties>
@@ -696,28 +696,28 @@
  </tile>
  <tile id="99">
   <properties>
-   <property name="ground" type="bool" value="false"/>
+   <property name="ground" type="bool" value="true"/>
    <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="100">
   <properties>
-   <property name="ground" type="bool" value="false"/>
+   <property name="ground" type="bool" value="true"/>
    <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="101">
   <properties>
-   <property name="ground" type="bool" value="false"/>
+   <property name="ground" type="bool" value="true"/>
    <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="102">
   <properties>
-   <property name="ground" type="bool" value="false"/>
+   <property name="ground" type="bool" value="true"/>
    <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="false"/>
   </properties>
@@ -1002,9 +1002,555 @@
    <property name="wall" type="bool" value="false"/>
   </properties>
  </tile>
+ <tile id="143">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="144">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="145">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="146">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="147">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="148">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="149">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="150">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="151">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="152">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="153">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="154">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="155">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="156">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="157">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="158">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="159">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="160">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="161">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="162">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="163">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="164">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="165">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="166">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="167">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="168">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="169">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="170">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="171">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="172">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="173">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="174">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="175">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="176">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="177">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="178">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="179">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="180">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="181">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="182">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="183">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="184">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="185">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="186">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="187">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="188">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="189">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="190">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="191">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="192">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="193">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="194">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="195">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="196">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="197">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="198">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="199">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="200">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="201">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="202">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="203">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="204">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="205">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="206">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="207">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="208">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="209">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="210">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="211">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="212">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="213">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="214">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="215">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="216">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="217">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="218">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="219">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="220">
+  <properties>
+   <property name="ground" type="bool" value="true"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
  <wangsets>
   <wangset name="Ground" type="mixed" tile="-1">
-   <wangcolor name="ground" color="#ff0000" tile="-1" probability="1">
+   <wangcolor name="dirt" color="#ff0000" tile="-1" probability="1">
     <properties>
      <property name="ground" type="bool" value="true"/>
     </properties>
@@ -1019,7 +1565,9 @@
      <property name="void" type="bool" value="true"/>
     </properties>
    </wangcolor>
-   <wangcolor name="mosaic" color="#ff7700" tile="-1" probability="1"/>
+   <wangcolor name="mosaic_dirty" color="#ff7700" tile="-1" probability="1"/>
+   <wangcolor name="cross" color="#00e9ff" tile="-1" probability="1"/>
+   <wangcolor name="default" color="#ff00d8" tile="-1" probability="1"/>
    <wangtile tileid="0" wangid="1,1,2,2,2,1,1,1"/>
    <wangtile tileid="1" wangid="1,1,2,2,2,2,2,1"/>
    <wangtile tileid="2" wangid="1,1,1,1,2,2,2,1"/>
@@ -1111,10 +1659,18 @@
    <wangtile tileid="88" wangid="1,3,1,1,1,3,3,3"/>
    <wangtile tileid="89" wangid="1,3,3,3,1,1,1,3"/>
    <wangtile tileid="90" wangid="1,1,1,1,1,1,1,1"/>
+   <wangtile tileid="91" wangid="6,6,6,3,6,6,6,6"/>
+   <wangtile tileid="92" wangid="6,6,6,6,6,3,6,6"/>
+   <wangtile tileid="93" wangid="6,3,6,6,6,6,6,6"/>
+   <wangtile tileid="94" wangid="6,6,6,6,6,6,6,3"/>
    <wangtile tileid="95" wangid="4,4,4,1,4,4,4,4"/>
    <wangtile tileid="96" wangid="4,4,4,4,4,1,4,4"/>
    <wangtile tileid="97" wangid="4,1,4,4,4,4,4,4"/>
    <wangtile tileid="98" wangid="4,4,4,4,4,4,4,1"/>
+   <wangtile tileid="99" wangid="5,5,5,6,5,5,5,5"/>
+   <wangtile tileid="100" wangid="5,5,5,5,5,6,5,5"/>
+   <wangtile tileid="101" wangid="5,6,5,5,5,5,5,5"/>
+   <wangtile tileid="102" wangid="5,5,5,5,5,5,5,6"/>
    <wangtile tileid="104" wangid="1,1,4,4,4,1,1,1"/>
    <wangtile tileid="105" wangid="1,1,4,4,4,4,4,1"/>
    <wangtile tileid="106" wangid="1,1,1,1,4,4,4,1"/>
@@ -1154,6 +1710,84 @@
    <wangtile tileid="140" wangid="4,1,4,4,4,1,1,1"/>
    <wangtile tileid="141" wangid="4,1,1,1,4,4,4,1"/>
    <wangtile tileid="142" wangid="4,4,4,4,4,4,4,4"/>
+   <wangtile tileid="143" wangid="3,3,6,6,6,3,3,3"/>
+   <wangtile tileid="144" wangid="3,3,6,6,6,6,6,3"/>
+   <wangtile tileid="145" wangid="3,3,3,3,6,6,6,3"/>
+   <wangtile tileid="146" wangid="3,3,3,3,6,3,3,3"/>
+   <wangtile tileid="147" wangid="3,3,6,3,3,3,3,3"/>
+   <wangtile tileid="148" wangid="3,3,6,3,3,3,6,3"/>
+   <wangtile tileid="149" wangid="3,3,3,3,3,3,6,3"/>
+   <wangtile tileid="150" wangid="3,3,6,6,6,3,6,3"/>
+   <wangtile tileid="151" wangid="6,3,6,6,6,6,6,3"/>
+   <wangtile tileid="152" wangid="3,3,6,3,6,6,6,3"/>
+   <wangtile tileid="153" wangid="3,3,6,3,6,3,3,3"/>
+   <wangtile tileid="154" wangid="3,3,3,3,6,3,6,3"/>
+   <wangtile tileid="155" wangid="6,3,3,3,6,3,6,6"/>
+   <wangtile tileid="156" wangid="6,6,6,6,6,3,3,3"/>
+   <wangtile tileid="157" wangid="6,6,6,6,6,6,6,6"/>
+   <wangtile tileid="158" wangid="6,3,3,3,6,6,6,6"/>
+   <wangtile tileid="159" wangid="6,3,3,3,6,3,3,3"/>
+   <wangtile tileid="160" wangid="3,3,6,3,6,3,6,3"/>
+   <wangtile tileid="161" wangid="6,6,6,6,6,6,6,6"/>
+   <wangtile tileid="162" wangid="6,3,6,3,6,3,6,3"/>
+   <wangtile tileid="163" wangid="6,6,6,6,6,3,6,3"/>
+   <wangtile tileid="164" wangid="6,6,6,6,6,6,6,6"/>
+   <wangtile tileid="165" wangid="6,3,6,3,6,6,6,6"/>
+   <wangtile tileid="166" wangid="6,3,6,3,3,3,3,3"/>
+   <wangtile tileid="167" wangid="6,3,3,3,3,3,6,3"/>
+   <wangtile tileid="168" wangid="6,6,6,3,6,3,3,3"/>
+   <wangtile tileid="169" wangid="6,6,6,3,3,3,3,3"/>
+   <wangtile tileid="170" wangid="6,6,6,3,3,3,6,6"/>
+   <wangtile tileid="171" wangid="6,3,3,3,3,3,6,6"/>
+   <wangtile tileid="172" wangid="6,3,3,3,3,3,3,3"/>
+   <wangtile tileid="173" wangid="6,3,6,3,3,3,6,3"/>
+   <wangtile tileid="174" wangid="6,3,6,3,6,3,3,3"/>
+   <wangtile tileid="175" wangid="6,3,3,3,6,3,6,3"/>
+   <wangtile tileid="176" wangid="6,6,6,3,3,3,6,3"/>
+   <wangtile tileid="177" wangid="6,6,6,3,6,3,6,6"/>
+   <wangtile tileid="178" wangid="6,3,6,3,3,3,6,6"/>
+   <wangtile tileid="179" wangid="6,3,6,6,6,3,3,3"/>
+   <wangtile tileid="180" wangid="6,3,3,3,6,6,6,3"/>
+   <wangtile tileid="181" wangid="6,6,6,6,6,6,6,6"/>
+   <wangtile tileid="182" wangid="6,6,5,5,5,6,6,6"/>
+   <wangtile tileid="183" wangid="6,6,5,5,5,5,5,6"/>
+   <wangtile tileid="184" wangid="6,6,6,6,5,5,5,6"/>
+   <wangtile tileid="185" wangid="6,6,6,6,5,6,6,6"/>
+   <wangtile tileid="186" wangid="6,6,5,6,6,6,6,6"/>
+   <wangtile tileid="187" wangid="6,6,5,6,6,6,5,6"/>
+   <wangtile tileid="188" wangid="6,6,6,6,6,6,5,6"/>
+   <wangtile tileid="189" wangid="6,6,5,5,5,6,5,6"/>
+   <wangtile tileid="190" wangid="5,6,5,5,5,5,5,6"/>
+   <wangtile tileid="191" wangid="6,6,5,6,5,5,5,6"/>
+   <wangtile tileid="192" wangid="6,6,5,6,5,6,6,6"/>
+   <wangtile tileid="193" wangid="6,6,6,6,5,6,5,6"/>
+   <wangtile tileid="194" wangid="5,6,6,6,5,6,5,5"/>
+   <wangtile tileid="195" wangid="5,5,5,5,5,6,6,6"/>
+   <wangtile tileid="196" wangid="5,5,5,5,5,5,5,5"/>
+   <wangtile tileid="197" wangid="5,6,6,6,5,5,5,5"/>
+   <wangtile tileid="198" wangid="5,6,6,6,5,6,6,6"/>
+   <wangtile tileid="199" wangid="6,6,5,6,5,6,5,6"/>
+   <wangtile tileid="200" wangid="5,5,5,5,5,5,5,5"/>
+   <wangtile tileid="201" wangid="5,6,5,6,5,6,5,6"/>
+   <wangtile tileid="202" wangid="5,5,5,5,5,6,5,6"/>
+   <wangtile tileid="203" wangid="5,5,5,5,5,5,5,5"/>
+   <wangtile tileid="204" wangid="5,6,5,6,5,5,5,5"/>
+   <wangtile tileid="205" wangid="5,6,5,6,6,6,6,6"/>
+   <wangtile tileid="206" wangid="5,6,6,6,6,6,5,6"/>
+   <wangtile tileid="207" wangid="5,5,5,6,5,6,6,6"/>
+   <wangtile tileid="208" wangid="5,5,5,6,6,6,6,6"/>
+   <wangtile tileid="209" wangid="5,5,5,6,6,6,5,5"/>
+   <wangtile tileid="210" wangid="5,6,6,6,6,6,5,5"/>
+   <wangtile tileid="211" wangid="5,6,6,6,6,6,6,6"/>
+   <wangtile tileid="212" wangid="5,6,5,6,6,6,5,6"/>
+   <wangtile tileid="213" wangid="5,6,5,6,5,6,6,6"/>
+   <wangtile tileid="214" wangid="5,6,6,6,5,6,5,6"/>
+   <wangtile tileid="215" wangid="5,5,5,6,6,6,5,6"/>
+   <wangtile tileid="216" wangid="5,5,5,6,5,6,5,5"/>
+   <wangtile tileid="217" wangid="5,6,5,6,6,6,5,5"/>
+   <wangtile tileid="218" wangid="5,6,5,5,5,6,6,6"/>
+   <wangtile tileid="219" wangid="5,6,6,6,5,5,5,6"/>
+   <wangtile tileid="220" wangid="5,5,5,5,5,5,5,5"/>
   </wangset>
  </wangsets>
 </tileset>
