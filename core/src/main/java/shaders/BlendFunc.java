@@ -1,4 +1,4 @@
-package box2d;
+package shaders;
 
 import com.badlogic.gdx.Gdx;
 

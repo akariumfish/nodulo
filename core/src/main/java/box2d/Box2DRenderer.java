@@ -81,8 +81,8 @@ public class Box2DRenderer implements Disposable {
 	/** This assumes that the projection matrix has already been set. */
 	public void render (RayHandler ray) {
 		ray.view.app.gdx.drawer.flush();
-		for (LightLayer l : ray.layerList)
-		for (RayHandler.AbstractLight light : l.lightList) 
+//		for (LightLayer l : ray.layerList)
+		for (RayHandler.AbstractLight light : ray.lightList) 
 			if (light instanceof Light) ((Light)light).debugRender(app);
 	}
 

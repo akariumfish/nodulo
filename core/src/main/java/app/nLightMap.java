@@ -16,12 +16,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
 
-import box2d.BlendFunc;
-import box2d.DiffuseShader;
-import box2d.DynamicShadowShader;
-import box2d.Gaussian;
-import box2d.ShadowShader;
-import box2d.WithoutShadowShader;
+import shaders.BlendFunc;
+import shaders.DiffuseShader;
+import shaders.DynamicShadowShader;
+import shaders.Gaussian;
+import shaders.ShadowShader;
+import shaders.WithoutShadowShader;
 import util.Utl;
 
 class nLightMap {

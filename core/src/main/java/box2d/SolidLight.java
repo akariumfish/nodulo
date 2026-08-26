@@ -19,8 +19,6 @@ public class SolidLight extends RayHandler.BaseLight {
 	
 	public class Unit extends RayHandler.AbstractLight {
 		
-		final Color color = new Color(0f,0f,0f,0f); 
-		float colorF;
 		private Body body;
 		final Vector2 pos = new Vector2();
 		float rot = 0f;
@@ -31,18 +29,15 @@ public class SolidLight extends RayHandler.BaseLight {
 
 		protected float[] patronX;
 		protected float[] patronY;
+		protected float[] patronC;
 
-		Unit(Color col) {
-			color.set(col);
-			colorF = color.toFloatBits();
+		Unit() {
 			unitList.add(this);
 			unit_nb++;
 			build();
 		}
-		Unit init(Color col) {
+		Unit init() {
 			body = null;
-			color.set(col);
-			colorF = color.toFloatBits();
 			unitList.add(this);
 			unit_nb++;
 			trigUse = 0;
@@ -52,12 +47,15 @@ public class SolidLight extends RayHandler.BaseLight {
 		public void build() {
 			patronX = new float[unitTrig * 3];
 			patronY = new float[unitTrig * 3];
+			patronC = new float[unitTrig];
 		}
 
-		public void trig(float x1, float y1, float x2, float y2, float x3, float y3) {
+		public void trig(float x1, float y1, float x2, float y2, float x3, float y3, 
+				Color c) {
 			patronX[trigUse*3] = x1; patronY[trigUse*3] = y1;
 			patronX[trigUse*3+1] = x2; patronY[trigUse*3+1] = y2;
 			patronX[trigUse*3+2] = x3; patronY[trigUse*3+2] = y3;
+			patronC[trigUse] = c.toFloatBits();
 			trigUse++;
 		}
 
@@ -72,8 +70,6 @@ public class SolidLight extends RayHandler.BaseLight {
 			unit_nb--;
 			freeUnit.add(this);
 			body = null;
-			color.set(0,0,0,0);
-			colorF = color.toFloatBits();
 			trigUse = 0;
 		}
 
@@ -93,7 +89,7 @@ public class SolidLight extends RayHandler.BaseLight {
 			}
 			cos = MathUtils.cos(rot);
 			sin = MathUtils.sin(rot);
-			faceC[unit_cnt] = colorF;
+//			faceC[unit_cnt] = colorF;
 			unitUse[unit_cnt] = trigUse;
 
 			for (int i = 0 ; i < unitTrig && i < trigUse ; i++) {
@@ -105,6 +101,7 @@ public class SolidLight extends RayHandler.BaseLight {
 				point2Y[pind] = pos.y + rotY(patronX[ind2], patronY[ind2]);
 				point3X[pind] = pos.x + rotX(patronX[ind3], patronY[ind3]);
 				point3Y[pind] = pos.y + rotY(patronX[ind3], patronY[ind3]);
+				faceC[pind] = patronC[i];
 				trig_cnt++;
 			}
 			unit_cnt++;
@@ -115,11 +112,11 @@ public class SolidLight extends RayHandler.BaseLight {
 
 	}
 	
-	public Unit newUnit(Color c) {
+	public Unit newUnit() {
 		if (freeUnit.size > 0) 
-			return freeUnit.removeIndex(freeUnit.size - 1).init(c);
+			return freeUnit.removeIndex(freeUnit.size - 1).init();
 		else if (unit_nb >= unitMax) return null;
-		else return new Unit(c);
+		else return new Unit();
 	}
 	
 	
@@ -172,7 +169,7 @@ public class SolidLight extends RayHandler.BaseLight {
 		point2Y = new float[faceNum];
 		point3X = new float[faceNum];
 		point3Y = new float[faceNum];
-		faceC = new float[unit_max];
+		faceC = new float[faceNum];
 		unitUse = new int[unit_max];
 		
 		vertexNum = (vertexNum - 1) * 3;
@@ -214,22 +211,24 @@ public class SolidLight extends RayHandler.BaseLight {
 				rayHandler.lightShader, GL20.GL_TRIANGLES, 0, trig_cnt * 3);
 	}
 
+	private int ind = 0;
 	protected void updateMesh() {
 
 		int size = 0;
 		for (int i = 0; i < unit_nb; i++) 
 			for (int j = 0 ; j < unitUse[i] ; j++) {
-			segments[size++] = point1X[i * unitTrig + j];
-			segments[size++] = point1Y[i * unitTrig + j];
-			segments[size++] = faceC[i];
+				ind = i * unitTrig + j;
+			segments[size++] = point1X[ind];
+			segments[size++] = point1Y[ind];
+			segments[size++] = faceC[ind];
 			segments[size++] = 1;
-			segments[size++] = point2X[i * unitTrig + j];
-			segments[size++] = point2Y[i * unitTrig + j]; 
-			segments[size++] = faceC[i];
+			segments[size++] = point2X[ind];
+			segments[size++] = point2Y[ind]; 
+			segments[size++] = faceC[ind];
 			segments[size++] = 1;
-			segments[size++] = point3X[i * unitTrig + j];
-			segments[size++] = point3Y[i * unitTrig + j]; 
-			segments[size++] = faceC[i];
+			segments[size++] = point3X[ind];
+			segments[size++] = point3Y[ind]; 
+			segments[size++] = faceC[ind];
 			segments[size++] = 1;
 		}
 		lightMesh.setVertices(segments, 0, size);

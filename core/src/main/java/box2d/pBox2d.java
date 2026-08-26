@@ -494,9 +494,12 @@ public class pBox2d extends pSystem {
 				}
 
 				if (b.getBoo("physic", "aura")) {
-					PointLight pl = renderer.newAuraLight(
-							new Color(1f,0.6f,0.4f,1f), 400, 0, 0);
-					attachToBody(pl, body);
+//					PointLight pl = renderer.newAuraLight(
+//							new Color(1f,0.6f,0.4f,1f), 400, 0, 0);
+//					attachToBody(pl, body);
+					SwarmLight.Unit su = renderer.auraLayer.newSwarmLightUnit(
+							new Color(1f,0.6f,0.4f,1f), 400);
+					attachToBody(su, body);
 				}
 
 				if (b.getBoo("physic", "view_light")) {
@@ -549,14 +552,14 @@ public class pBox2d extends pSystem {
 					for (pParam p : b.params.all()) if (p.prop.ref.equals("geom")) {
 						pParam geom = p;
 						ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
+						ArrayList<Integer> color = geom.getCollecData("color", Integer.class);
 						ArrayList<Integer> faceA = geom.getCollecData("faceA", Integer.class);
 						ArrayList<Integer> faceB = geom.getCollecData("faceB", Integer.class);
 						ArrayList<Integer> faceC = geom.getCollecData("faceC", Integer.class);
 						if (faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
-								faceC.size() != faceB.size()) return;
+								color.size() != point.size()) return;
 
-						SolidLight.Unit su = renderer.solidLayer.newSolidLightUnit(
-								new Color(0.6f,0.6f,0.6f,1f));
+						SolidLight.Unit su = renderer.solidLayer.newSolidLightUnit();
 						attachToBody(su, body);
 						
 						for (int i = 0 ; i < faceA.size() ; i++) {
@@ -570,7 +573,6 @@ public class pBox2d extends pSystem {
 							pl[1] = Utl.copy(point.get(p2)); 
 							pl[2] = Utl.copy(point.get(p3));
 							pl[0].scl(s); pl[1].scl(s); pl[2].scl(s);
-							su.trig(pl[0].x, pl[0].y, pl[1].x, pl[1].y, pl[2].x, pl[2].y);
 							PolygonShape polygonshape = new PolygonShape();
 							polygonshape.set(pl);
 							FixtureDef fixtureDef2 = new FixtureDef();
@@ -581,6 +583,15 @@ public class pBox2d extends pSystem {
 							if (b.getBoo("physic", "sensor")) fixtureDef2.isSensor = true;
 							Fixture fixture = body.createFixture(fixtureDef2);
 //							fixture.setUserData(new LightData(1f));
+
+							s = 1.1f;
+							pl[0].scl(s); pl[1].scl(s); pl[2].scl(s);
+							su.trig(pl[0].x, pl[0].y, pl[1].x, pl[1].y, pl[2].x, pl[2].y, 
+									new Color(0.1f,0.1f,0.1f,0.3f));
+							s = 1f / 1.1f;
+							pl[0].scl(s); pl[1].scl(s); pl[2].scl(s);
+							su.trig(pl[0].x, pl[0].y, pl[1].x, pl[1].y, pl[2].x, pl[2].y, 
+									Utl.intToColor(color.get(p1)));
 						}
 					}
 				}

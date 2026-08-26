@@ -28,6 +28,8 @@ import com.noodle.nodulo.GdxApp;
 import aa_nodulo.PlaneApplet;
 import aa_nodulo.pView;
 import gui.nGUI;
+import shaders.BlendFunc;
+import shaders.LightShader;
 import util.Utl;
 import util.nRun;
 
@@ -37,6 +39,15 @@ import util.nRun;
  * @author kalle_h
  */
 public class RayHandler implements Disposable {
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 
 	public static abstract class AbstractLight {
@@ -68,11 +79,13 @@ public class RayHandler implements Disposable {
 			this.layer = layer;
 			layer.lightList.add(this);
 			this.rayHandler = layer.rayHandler;
-//			rayHandler.lightList.add(this);
+			rayHandler.lightList.add(this);
 		}
 		protected boolean ignoreBody = false;
 		protected RayHandler rayHandler;
 		public LightLayer layer;
+		public void remove() { rayHandler.lightList.removeValue(this, true); }		
+		public void remove(boolean doDispose) { rayHandler.lightList.removeValue(this, true); }
 	}
 
 
@@ -177,46 +190,24 @@ public class RayHandler implements Disposable {
 	static int LIGHT_DEG_SIZE = 8;
 	static int LIGHT_AMB_DIV = 50;
 
-	/**
-	 * Class constructor specifying the physics world from where collision
-	 * geometry is taken.
-	 * 
-	 * <p>NOTE: FBO size is 1/4 * screen size and used by default.
-	 *
-	 * Default setting are:
-	 * <ul>
-	 *     <li>culling = true
-	 *     <li>shadows = true
-	 *     <li>diffuse = false
-	 *     <li>blur = true
-	 *     <li>blurNum = 1
-	 *     <li>ambientLight = 0f
-	 * </ul>
-	 * 
-	 * @see #RayHandler(World, int, int, RayHandlerOptions)
-	 */
+	public final Array<RayHandler.AbstractLight> lightList = 
+			new Array<RayHandler.AbstractLight>(false, 16);
+	
 	public RayHandler(PlaneApplet a, World world) {
 		this(a, world, Gdx.graphics.getWidth() / LIGHT_PIX_SIZE, Gdx.graphics
-				.getHeight() / LIGHT_PIX_SIZE, null);
+				.getHeight() / LIGHT_PIX_SIZE);
 	}
 
-	public RayHandler(PlaneApplet a, World world, int fboWidth, int fboHeight, RayHandlerOptions options) {
+	public RayHandler(PlaneApplet a, World world, int fboWidth, int fboHeight) {
 		this.world = world;
 		this.app = a; 
 		this.view = app.view;
 		this.box = app.getSystem(pBox2d.class);
 		this.cam = new FalseCam(GdxApp.WIDTH, GdxApp.HEIGHT, this);
-
-		if (options != null) {
-			isDiffuse = options.isDiffuse;
-			gammaCorrection = options.gammaCorrection;
-			pseudo3d = options.pseudo3d;
-			shadowColorInterpolation = options.shadowColorInterpolation;
-		} else {
-			gammaCorrection = false;
-			pseudo3d = false;
-			shadowColorInterpolation = false;
-		}
+		
+		gammaCorrection = false;
+		pseudo3d = false;
+		shadowColorInterpolation = false;
 
 		render_buffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);
 		render_buffer.initialize((int)app.gdx.getscreenwidth(),
@@ -267,8 +258,6 @@ public class RayHandler implements Disposable {
 	public void setBlendLight() {
 		setBlendDef();
 		setAmbientLight(0.2f, 0.2f, 0.2f, 1f);
-
-//		setPseudo3dLight(true, false);
 	}
 
 	public void setBlendAura() {
@@ -276,13 +265,11 @@ public class RayHandler implements Disposable {
 		setAmbientLight(0.1f, 0.1f, 0.1f, 1f);
 		shadowBlendFunc.set(GL20.GL_SRC_COLOR, GL20.GL_ONE);
 		setDiffuseLight(false);
-//		setPseudo3dLight(true, false);
+		setPseudo3dLight(true, false);
 	}
 
 	public void setBlendVision() {
 		setBlendDef();
-
-//		setPseudo3dLight(true, false);
 	}
 
 	public void setBlendColor() {
@@ -291,18 +278,13 @@ public class RayHandler implements Disposable {
 		setAmbientLight(0.1f, 0.1f, 0.1f, 1f);
 		setDiffuseLight(false);
 		shadowBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_ONE);
-		
-//		setPseudo3dLight(true, false);
 	}
 
 	public void setBlendSolid() {
 		setBlendDef();
-//		setBlur(false);
 		setDiffuseLight(false);
-		setBlurNum(0);
-//		shadowBlendFunc.set(GL20.GL_ONE, GL20.GL_ONE);
+		setBlurNum(1);
 		setShadows(false);
-//		simpleBlendFunc.set(GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_COLOR);
 		simpleBlendFunc.set(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
@@ -328,7 +310,7 @@ public class RayHandler implements Disposable {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 //		//update all lights mesh vertices
-//		for (Light light : lightList) light.update();
+		for (AbstractLight light : lightList) light.update();
 //		for (Light light : disabledLights) light.update();
 		
 	}
@@ -355,7 +337,7 @@ public class RayHandler implements Disposable {
 ////			temp.clear();
 
 //			for (AbstractLight light : lightList) if (light.active) light.update();
-			for (AbstractLight light : layer.lightList) light.update();
+//			for (AbstractLight light : layer.lightList) light.update();
 			
 			render_buffer.end();
 

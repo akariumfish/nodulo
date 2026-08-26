@@ -11,6 +11,12 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
 
+import shaders.DiffuseShader;
+import shaders.DynamicShadowShader;
+import shaders.Gaussian;
+import shaders.ShadowShader;
+import shaders.WithoutShadowShader;
+
 class LightMap {
 	private ShaderProgram shadowShader;
 	private ShaderProgram pseudo3dShader;

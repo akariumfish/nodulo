@@ -265,7 +265,7 @@ public abstract class Light extends RayHandler.BaseLight implements Disposable {
 	 */
 	public void remove(boolean doDispose) {
 //		if (active) {
-//			rayHandler.lightList.removeValue(this, false);
+			rayHandler.lightList.removeValue(this, false);
 //		} else {
 //			rayHandler.disabledLights.removeValue(this, false);
 //		}

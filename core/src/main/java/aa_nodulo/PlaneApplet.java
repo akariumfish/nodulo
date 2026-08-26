@@ -82,7 +82,7 @@ public class PlaneApplet extends App {
 //		public String STARTUP_MODEL_REF = "";
 
 		public String STARTUP_LOAD_FILE = "";
-		public String STARTUP_NEW_FILE = "";
+		public String STARTUP_NEW_FILE = ""; 
 
 		public boolean VIEW_START_WALLPAPER = true;
 		public boolean VIEW_START_COLLAPSED = false;

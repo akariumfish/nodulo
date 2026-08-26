@@ -127,14 +127,14 @@ public class LightLayer extends nRenderer.Layer {
 
 	public ArrayList<SolidLight> solids = new ArrayList<SolidLight>();
 
-	public SolidLight.Unit newSolidLightUnit(Color col) {
+	public SolidLight.Unit newSolidLightUnit() {
 		if (solids.size() == 0) solids.add(new SolidLight(this));
 		SolidLight.Unit unit = null;
 		for (SolidLight s : solids) {
-			unit = s.newUnit(col);
+			unit = s.newUnit();
 			if (unit != null) return unit; }
 		SolidLight swrm = new SolidLight(this);
-		return swrm.newUnit(col); }
+		return swrm.newUnit(); }
 
 	public PointLight newPointLight(Color col, float dist, float x, float y) {
 		return new PointLight(this, 

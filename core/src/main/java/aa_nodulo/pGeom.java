@@ -695,6 +695,83 @@ public class pGeom extends pSystem {
 		
 		
 
+		nRun run_ctrl_mob = new nRun() { public void run(Object o) { 
+			pBody bod = (pBody)o; if (bod == null) return;
+			pGeom geo = PlaneApplet.app.getSystem(pGeom.class);
+			pBox2d box = PlaneApplet.app.getSystem(pBox2d.class);
+			if (box != null && bod.hasParam("box_body") && bod.hasParam("ref") && 
+					bod.hasParam("ctrl_mob") && bod.getBoo("ctrl_mob","activate")) {
+				Vector2 spawn = bod.getVec("ctrl_mob","spawn");
+				Vector2 target = bod.getVec("ctrl_mob","target");
+				Vector2 pos = bod.getVec("ref","pos");
+				Vector2 m = new Vector2();
+				float speed = bod.getFlt("ctrl_mob","speed");
+				boolean direction = bod.getBoo("ctrl_mob","direction");
+				if (direction) {
+					m.set(target).sub(pos);
+				} else {
+					m.set(spawn).sub(pos);
+				}
+				if (m.len() < 80) bod.setBoo("ctrl_mob","direction", !direction);
+				m.nor().scl(speed);
+				box.accel_body(bod,true,m.x,m.y,speed*2f); 
+				box.rot_body_toward(bod,m.angleRad(),speed/40f,speed/30f); 
+			}
+			if (geo != null && bod.hasParam("ref") && bod.hasParam("ctrl_mob")) {
+				if (bod.getBoo("ctrl_mob","shoot")) {
+					if (bod.getInt("ctrl_mob","shoot_counter") < 
+							bod.getInt("ctrl_mob","shoot_delay")) {
+						bod.setInt("ctrl_mob","shoot_counter", 
+								bod.getInt("ctrl_mob","shoot_counter") + (int)1);
+					} else {
+						bod.setInt("ctrl_mob","shoot_counter", 0);
+						String bluep_par = bod.getStr("ctrl_mob","bullet_blueprint");
+						pParam bluep = null;
+						for (pParam p : bod.space.param_pools.get("blueprint").all()) 
+							if (p.getStr("name").equals(bluep_par)) { bluep = p; break; }
+						
+						if (bluep != null) { 
+							pBody pop = pNodeSpace.new_body(bluep);
+							if (pop == null) return;
+
+							Vector2 shoot_pop = bod.getVec("ctrl_mob","shoot_pop");
+							Vector2 shoot_dir = bod.getVec("ctrl_mob","shoot_dir");
+							
+							Vector2 bp = bod.getVec("ref", "pos");
+							Vector2 p = new Vector2(shoot_pop.x,shoot_pop.y);
+							p.add(bp);
+							pop.setVec("ref", "pos", new Vector2(p.x,p.y));
+							pop.setFlt("ref", "rot", shoot_dir.angleRad());
+							
+							pNodeSpace.init_body(pop, bluep);
+							
+							if (box != null) {
+								if (pop.hasParam("ctrl_box")) {
+									pop.setBoo("ctrl_box","accel_move", true);
+									pop.setVec("ctrl_box","accel_dir", shoot_dir.x,shoot_dir.y);
+								}
+							}
+						} 
+					}
+				}
+			}
+		}};
+
+		pGeom.newControlProp("mob",coordinate,run_ctrl_mob)
+		.setFullSync()
+		.addData("activate", true)
+		.addData("direction", true)
+		.addData("speed", 20f)
+		.addData("spawn", new Vector2(400,900))
+		.addData("target", new Vector2(1000,-900))
+		.addData("shoot", true)
+		.addData("bullet_blueprint", "bullet_print")
+		.addData("shoot_counter", (int)0)
+		.addData("shoot_delay", (int)30)
+		.addData("shoot_pop", new Vector2(150,0))
+		.addData("shoot_dir", new Vector2(1,0))
+		;
+
 		
 		
 		

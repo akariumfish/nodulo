@@ -1,7 +1,9 @@
-package box2d;
+package shaders;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+
+import box2d.RayHandler;
 
 public class Gaussian {
 

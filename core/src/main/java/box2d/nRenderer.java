@@ -161,8 +161,6 @@ public class nRenderer {
 		
 //		roomGroup.newRunLayer(2).addRun(new nRun() { public void run() {
 //			box.draw_drawer(); }});
-
-//		geo = new GeomLayer(this,3);
 		
 		solidLayer = roomGroup.newLightLayer(LightLayer.MODE.SOLID,4);
 		
@@ -171,40 +169,7 @@ public class nRenderer {
 
 		visionLayer = newLightLayer(LightLayer.MODE.VISION,7);
 
-//		roomGroup.newRunLayer(7).addRun(new nRun() { public void run() {
-//			geo.debugRender(App.ap); }});
-		
-//		g = new Geom(geo);
-//
-//		float d = -70f, l = 80f, w = 40f;
-//		g.begin();
-//		grow(g, 0,0, 0, l, w);
-////		grow(g, d, l, w);
-////		grow(g, 0, l, w);
-////		grow(g, -d, l, w);
-////		grow(g, 0, l, w);
-//		g.end();
-
 	}
-	
-//	GeomLayer geo;
-//	public Geom g;
-
-	Vector2 v1 = new Vector2();
-	Vector2 v2 = new Vector2();
-	Vector2 l1 = new Vector2();
-	float prevDir = 0;
-	private void grow(Geom g, float x, float y, float dir, 
-			float len, float width) {
-		v1.set(x,y);
-		v2.set(len,0).rotateDeg(dir).add(x,y);
-		l1.set(0,1).rotateDeg(dir).scl(width);
-		g.add(v1.x,v1.y, v1.x+l1.x,v1.y+l1.y);
-		g.add(v2.x,v2.y, v2.x+l1.x,v2.y+l1.y);
-		prevDir = dir;
-	}
-	private void grow(Geom g, float dir, float len, float width) {
-		grow(g,v2.x,v2.y,dir,len,width); }
 	
 	
 	

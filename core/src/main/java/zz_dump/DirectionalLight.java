@@ -1,27 +1,28 @@
-package box2d;
+package zz_dump;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Mesh;
-import com.badlogic.gdx.graphics.Mesh.VertexDataType;
-import com.badlogic.gdx.graphics.VertexAttribute;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.ChainShape;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.EdgeShape;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.Shape;
-import com.badlogic.gdx.physics.box2d.Shape.Type;
-
-import aa_nodulo.pView;
-import gui.nGUI;
-import util.Utl;
+//import com.badlogic.gdx.Gdx;
+//import com.badlogic.gdx.graphics.Color;
+//import com.badlogic.gdx.graphics.GL20;
+//import com.badlogic.gdx.graphics.Mesh;
+//import com.badlogic.gdx.graphics.Mesh.VertexDataType;
+//import com.badlogic.gdx.graphics.VertexAttribute;
+//import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+//import com.badlogic.gdx.math.Intersector;
+//import com.badlogic.gdx.math.MathUtils;
+//import com.badlogic.gdx.math.Vector2;
+//import com.badlogic.gdx.physics.box2d.Body;
+//import com.badlogic.gdx.physics.box2d.ChainShape;
+//import com.badlogic.gdx.physics.box2d.CircleShape;
+//import com.badlogic.gdx.physics.box2d.EdgeShape;
+//import com.badlogic.gdx.physics.box2d.Fixture;
+//import com.badlogic.gdx.physics.box2d.PolygonShape;
+//import com.badlogic.gdx.physics.box2d.Shape;
+//import com.badlogic.gdx.physics.box2d.Shape.Type;
+//
+//import aa_nodulo.pView;
+//import box2d.Light;
+//import gui.nGUI;
+//import util.Utl;
 
 /**
  * Light which source is at infinite distance
