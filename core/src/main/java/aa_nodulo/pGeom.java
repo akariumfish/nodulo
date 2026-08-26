@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.noodle.nodulo.GdxApp;
 
 import app.App;
 import app.nDrawer;
@@ -877,7 +878,7 @@ public class pGeom extends pSystem {
 	nRun run_tool_paramlist_update;
 	public void build_paramlist_tools() {
 		
-		nWidgetGroup sec = app.gui.toolbox.addSection("Selected Body", true);
+		nWidgetGroup sec = app.gui.toolbox.addSection("Selected Body", false);
 		nInterface interf = app.gui.addInterface();
 		interf.pop(sec);
 		interf.setContext(bloc);
@@ -1182,6 +1183,7 @@ public class pGeom extends pSystem {
 	public void draw() { 
 		if (val_do_draw.get())
 			for (pBody b : space.familyMember("drawable")) draw_body(app, b);
+		
 	}
 	public void draw_aabb() { 
 		if (val_do_click_draw.get())
@@ -1190,6 +1192,10 @@ public class pGeom extends pSystem {
 			for (pBody b : space.familyMember("aabb_clickable")) draw_hover_aabb(b);
 		else if (val_do_aabb_draw.get())
 			for (pBody b : space.familyMember("aabb")) draw_aabb(b);
+
+		
+//		GdxApp.app.drawer.test_light(app.view);
+		
 	}
 
 	public static Vector2 toRef(pBody b, Vector2 v) {

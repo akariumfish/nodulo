@@ -9,16 +9,20 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Frustum;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
+import com.noodle.nodulo.GdxApp;
 
 import aa_nodulo.PlaneApplet;
 import aa_nodulo.pView;
@@ -83,11 +87,11 @@ public class RayHandler implements Disposable {
 	 * <p>NOTE: DO NOT MODIFY THIS LIST
 	 */
 	public final Array<Light> lightList = new Array<Light>(false, 16);
-	
-	
-	
+
+
+
 	public final Array<LightLayer> layerList = new Array<LightLayer>(false, 16);
-	
+
 	/**
 	 * This Array contain all the disabled lights.
 	 * 
@@ -104,42 +108,36 @@ public class RayHandler implements Disposable {
 	boolean blur = true;
 
 	/** Experimental mode */
-	boolean pseudo3d = false;
+//	boolean pseudo3d = false;
 	boolean shadowColorInterpolation = false;
 
 	int blurNum = 1;
-	
+
 	boolean customViewport = false;
 	int viewportX = 0;
 	int viewportY = 0;
 	int viewportWidth = Gdx.graphics.getWidth();
 	int viewportHeight = Gdx.graphics.getHeight();
-	
+
 	/** How many lights passed culling and rendered to scene last time */
 	int lightRenderedLastFrame = 0;
 
 	/** camera matrix corners */
 	float x1, x2, y1, y2;
-	Vector2 c = new Vector2(),
-			c1 = new Vector2(),
-			c2 = new Vector2(),
-			c3 = new Vector2(),
-			c4 = new Vector2(),
-			sz = new Vector2();
 
 	World world;
 
 	VfxFrameBuffer render_buffer;
-	
+
 	PlaneApplet app;
 	pBox2d box;
 	pView view;
-	OrthographicCamera cam;
-	
-	static int LIGHT_PIX_SIZE = 2;
+	FalseCam cam;
+
+	static int LIGHT_PIX_SIZE = 4;
 	static int LIGHT_DEG_SIZE = 8;
 	static int LIGHT_AMB_DIV = 50;
-	
+
 	/**
 	 * Class constructor specifying the physics world from where collision
 	 * geometry is taken.
@@ -158,47 +156,60 @@ public class RayHandler implements Disposable {
 	 * 
 	 * @see #RayHandler(World, int, int, RayHandlerOptions)
 	 */
-	public RayHandler(PlaneApplet a, OrthographicCamera c, World world) {
-		this(a, c, world, Gdx.graphics.getWidth() / LIGHT_PIX_SIZE, Gdx.graphics
+	public RayHandler(PlaneApplet a, World world) {
+		this(a, world, Gdx.graphics.getWidth() / LIGHT_PIX_SIZE, Gdx.graphics
 				.getHeight() / LIGHT_PIX_SIZE, null);
 	}
 
-	public RayHandler(PlaneApplet a, OrthographicCamera c, World world, int fboWidth, int fboHeight, RayHandlerOptions options) {
+	public RayHandler(PlaneApplet a, World world, int fboWidth, int fboHeight, RayHandlerOptions options) {
 		this.world = world;
 		this.app = a; 
 		this.view = app.view;
 		this.box = app.getSystem(pBox2d.class);
-		this.cam = c;
-		
+		this.cam = new FalseCam(GdxApp.WIDTH, GdxApp.HEIGHT, this);
+
 		if (options != null) {
 			isDiffuse = options.isDiffuse;
 			gammaCorrection = options.gammaCorrection;
-			pseudo3d = options.pseudo3d;
+//			pseudo3d = options.pseudo3d;
 			shadowColorInterpolation = options.shadowColorInterpolation;
 		} else {
 			gammaCorrection = true;
-			pseudo3d = false;
+//			pseudo3d = false;
 			shadowColorInterpolation = true;
 		}
-		
+
 		render_buffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);
 		render_buffer.initialize((int)app.gdx.getscreenwidth(),
 				(int)app.gdx.getscreenheight());
-		
+
 		app.gdx.addEventScreen(new nRun() { public void run() {
 			render_buffer.reset();
 			render_buffer.initialize((int)app.gdx.getscreenwidth(),
 					(int)app.gdx.getscreenheight());
+			cam.update(app.gdx.getscreenwidth(), app.gdx.getscreenheight());
+			resizeFBO(Gdx.graphics.getWidth() / LIGHT_PIX_SIZE, Gdx.graphics
+					.getHeight() / LIGHT_PIX_SIZE);
 		}});
-		
+
 
 		resizeFBO(fboWidth, fboHeight);
 		lightShader = LightShader.createLightShader();
 
 		setCulling(false);
-		
+
 		setBlendDef();
 
+	}
+
+	/**
+	 * Resize the FBO used for intermediate rendering.
+	 */
+	public void resizeFBO(int fboWidth, int fboHeight) {
+		if (lightMap != null) {
+			lightMap.dispose();
+		}
+		lightMap = new LightMap(this, fboWidth, fboHeight);
 	}
 
 	public void setBlendDef() {
@@ -211,7 +222,7 @@ public class RayHandler implements Disposable {
 		buffer_clear_color.set(def_buffer_clear_color);
 		setBlur(true);
 		setBlurNum(2);
-		setPseudo3dLight(false, false);
+//		setPseudo3dLight(false, false);
 	}
 
 	public void setBlendLight() {
@@ -225,7 +236,7 @@ public class RayHandler implements Disposable {
 		setAmbientLight(0.1f, 0.1f, 0.1f, 1f);
 		shadowBlendFunc.set(GL20.GL_SRC_COLOR, GL20.GL_ONE);
 		setDiffuseLight(false);
-		setPseudo3dLight(true, true);
+//		setPseudo3dLight(true, true);
 	}
 
 	public void setBlendVision() {
@@ -240,35 +251,39 @@ public class RayHandler implements Disposable {
 		shadowBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_ONE);
 	}
 
-	
-	
+
+
 
 	public ArrayList<Body> transparent = new ArrayList<Body>();
-	
 
-	public final ArrayList<Rectangle> scissors = new ArrayList<Rectangle>();
+
 	
 	public void beginRender() { 
+
+		app.gdx.drawer.pause_batch();
 		
 		render_buffer.begin(); 
-		
-		Color c = Utl.color(0,0);
-        Gdx.gl.glClearColor(c.r,c.g,c.b,c.a);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
-	}
 
-	float scale = 1f;
-	float sclinv = 1f;
-	float rot = 0f;
-	float rotDeg = 0f;
+		Color c = Utl.color(0,0);
+		Gdx.gl.glClearColor(c.r,c.g,c.b,c.a);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		//update all lights mesh vertices
+		for (Light light : lightList) light.update();
+		for (Light light : disabledLights) light.update();
+		
+	}
+	
 	private ArrayList<Light> temp = new ArrayList<Light>();
 	public void renderLayer(LightLayer layer) { 
+
+		app.gdx.drawer.flush();
+		
 		temp.clear();
 		for (Light l : lightList) temp.add(l);
 		for (Light l : temp) l.setActive(false);
 		temp.clear();
-		
+
 		layer.prepareRender();
 		if (layer.active) {
 
@@ -278,58 +293,14 @@ public class RayHandler implements Disposable {
 			temp.clear();
 			
 			render_buffer.end();
-	        
-			cam.setToOrtho(false, (int)(app.gdx.getscreenwidth()), 
-					(int)(app.gdx.getscreenheight()));
-			Vector2 view_center = new Vector2(view.val_pos.get());
-			view_center.x += view.val_view_size.x() / 2.0f;
-			view_center.y -= view.val_view_size.y() / 2.0f + nGUI.book.RS;
-			scale = view.val_cam_scale.get();
-			sclinv = 1f / scale;
-			rot = view.val_cam_rot.get();
-			rotDeg = Utl.radToDeg(rot);
-			Vector2 m = new Vector2(view_center)
-					.sub(app.gdx.getscreenwidth() / 2.0f, app.gdx.getscreenheight() / 2.0f);
-			m.scl(sclinv).rotateRad(-view.val_cam_rot.get());
-			m.add(view.val_cam_pos.get()).scl(-1f);
-			cam.zoom = sclinv;
-			cam.position.set(m.x, m.y, 0f);
-			cam.direction.set(0f, 0f, -1f);
-			Vector2 u = new Vector2(0f,1f).rotateRad(-view.val_cam_rot.get());
-			cam.up.set(u.x, u.y, 0f);
-			cam.update();
 
-			app.gdx.drawer.flush();
-			for (Rectangle r : Utl.duplic(app.gui.scissors)) {
-				scissors.add(r); ScissorStack.popScissors(); }
-			app.gui.scissors.clear();
-	
-			m.set(view.val_cam_pos.get());
-			
-			setCombinedMatrix(cam.combined,
-//					view_center.x,view_center.y,
-//					0f,0f,
-					m.x,m.y,
-					app.gdx.getscreenwidth()*sclinv, 
-					app.gdx.getscreenheight()*sclinv, 
-					view.val_cam_rot.get()); 
-			
-			update();
 			prepareRender();
-			
-			for (Rectangle r : Utl.duplic(scissors)) {
-				app.gui.scissors.add(r); ScissorStack.pushScissors(r); }
-			scissors.clear();
-	
+
 			render_buffer.begin(); 
 			
-			renderOnly();
-			
-		} else {
+			lightMap.render();
 
-//			for (Light l : layer.lightList) l.update();
-			
-		}
+		} 
 	}
 
 	public void endLayeredRender() { 
@@ -337,173 +308,25 @@ public class RayHandler implements Disposable {
 		render_buffer.end();
 
 		app.gdx.drawer.spritebatch.begin();
-		
+
 		app.gdx.drawer.spritebatch.draw(render_buffer.getTexture(), 0, 0, 
 				app.gdx.getscreenwidth(), 
 				app.gdx.getscreenheight(), 
 				0, 0, 1, 1);
-		
-	}
-	
-	
-	
-	
-	
-	
-	
 
-	/**
-	 * Resize the FBO used for intermediate rendering.
-	 */
-	public void resizeFBO(int fboWidth, int fboHeight) {
-		if (lightMap != null) {
-			lightMap.dispose();
-		}
-		lightMap = new LightMap(this, fboWidth, fboHeight);
-	}
-	
-//	/**
-//	 * Sets combined matrix basing on camera position, rotation and zoom
-//	 * 
-//	 * <p> Same as calling:
-//	 * {@code setCombinedMatrix(
-//	 *                camera.combined,
-//	 *                camera.position.x,
-//	 *                camera.position.y,
-//	 *                camera.viewportWidth * camera.zoom,
-//	 *                camera.viewportHeight * camera.zoom );}
-//	 * 
-//	 * @see #setCombinedMatrix(Matrix4, float, float, float, float)
-//	 */
-//	public void setCombinedMatrix(OrthographicCamera camera) {
-//		this.setCombinedMatrix(
-//				camera.combined,
-//				camera.position.x,
-//				camera.position.y,
-//				camera.viewportWidth * camera.zoom,
-//				camera.viewportHeight * camera.zoom);
-//	}
-
-
-	/**
-	 * Sets combined camera matrix.
-	 * 
-	 * <p>Matrix must be set to work in box2d coordinates, it will be copied
-	 * and used for culling and rendering. Remember to update it if camera
-	 * changes. This will work with rotated cameras.
-	 * 
-	 * @param combined
-	 *            matrix that include projection and translation matrices
-	 * @param x
-	 *            combined matrix position
-	 * @param y
-	 *            combined matrix position
-	 * @param viewPortWidth
-	 *            NOTE!! use actual size, remember to multiple with zoom value
-	 *            if pulled from OrthoCamera
-	 * @param viewPortHeight
-	 *            NOTE!! use actual size, remember to multiple with zoom value
-	 *            if pulled from OrthoCamera
-	 * 
-	 * @see #setCombinedMatrix(OrthographicCamera)
-	 */
-	public void setCombinedMatrix(Matrix4 combined, float x, float y,
-			float viewPortWidth, float viewPortHeight, float viewportRot) {
-		
-		System.arraycopy(combined.val, 0, this.combined.val, 0, 16);
-		// updateCameraCorners
-//		final float halfViewPortWidth = viewPortWidth * 0.5f;
-//		x1 = x - halfViewPortWidth;
-//		x2 = x + halfViewPortWidth;
-//		
-//		final float halfViewPortHeight = viewPortHeight * 0.5f;
-//		y1 = y - halfViewPortHeight;
-//		y2 = y + halfViewPortHeight;
-		
-		c.set(x,y);
-		final float halfViewPortWidth = viewPortWidth * 0.5f;
-		float x1 = x - halfViewPortWidth;
-		float x2 = x + halfViewPortWidth;
-		
-		final float halfViewPortHeight = viewPortHeight * 0.5f;
-		float y1 = y - halfViewPortHeight;
-		float y2 = y + halfViewPortHeight;
-		c1.set(x1,y1);
-		c2.set(x1,y2);
-		c3.set(x2,y2);
-		c4.set(x1,y2);
-		c1.rotateRad(viewportRot);
-		c2.rotateRad(viewportRot);
-		c3.rotateRad(viewportRot);
-		c4.rotateRad(viewportRot);
-		this.x1 = Math.min(Math.min(c1.x,c2.x),Math.min(c3.x,c4.x));
-		this.x2 = Math.max(Math.max(c1.x,c2.x),Math.max(c3.x,c4.x));
-		this.y1 = Math.min(Math.min(c1.y,c2.y),Math.min(c3.y,c4.y));
-		this.y2 = Math.max(Math.max(c1.y,c2.y),Math.max(c3.y,c4.y));
-//		
-//		sz.set(viewPortWidth,viewPortHeight);
-	}
-
-	/**
-	 * Utility method to check if light is on the screen
-	 * @param x      - light center x-coord 
-	 * @param y      - light center y-coord 
-	 * @param radius - maximal light distance
-	 * 
-	 * @return true if camera screen intersects or contains provided
-	 * light, represented by circle/box area
-	 */
-	boolean intersect(float x, float y, float radius) {
-		return (x1 < (x + radius) && x2 > (x - radius) &&
-				y1 < (y + radius) && y2 > (y - radius));
-	}
-
-	/**
-	 * Updates and renders all active lights.
-	 * 
-	 * <p><b>NOTE!</b> Remember to set combined matrix before this method.
-	 * 
-	 * <p>Don't call this inside of any begin/end statements.
-	 * Call this method after you have rendered background but before UI.
-	 * Box2d bodies can be rendered before or after depending how you want
-	 * the x-ray lights to interact with them.
-	 * 
-	 * @see #update()
-	 * @see #render()
-	 */
-	public void updateAndRender() {
-		update();
-		render();
-	}
-
-	/**
-	 * Manual update method for all active lights.
-	 * 
-	 * <p>Use this if you have less physics steps than rendering steps.
-	 * 
-	 * @see #updateAndRender()
-	 * @see #render()
-	 */
-	public void update() {
-		for (Light light : lightList) {
-			if (light.active) light.update();
-		}
 	}
 
 	/**
 	 * Prepare all lights for rendering.
-	 *
-	 * <p>You should need to use this method only if you want to render lights
-	 * on a frame buffer object. Use {@link #render()} otherwise.
-	 *
-	 * <p><b>NOTE!</b> Don't call this inside of any begin/end statements.
-	 *
-	 * @see #renderOnly()
-	 * @see #render()
 	 */
 	private Color buffer_clear_color = new Color(0f, 0f, 0f, 0f);
 	private final Color def_buffer_clear_color = new Color(0f, 0f, 0f, 0f);
 	public void prepareRender() {
+
+		prepareCombinedMatrix(view);
+
+		removeScissors();
+
 		lightRenderedLastFrame = 0;
 
 		Gdx.gl.glDepthMask(false);
@@ -521,79 +344,136 @@ public class RayHandler implements Disposable {
 
 		ShaderProgram shader = customLightShader != null ? customLightShader : lightShader;
 		shader.bind();
-		{
+//		{
 			lightShader.setUniformMatrix("u_projTrans", combined);
 			shader.setUniformMatrix("u_projTrans", combined);
-			if (customLightShader != null) updateLightShader();
+//			if (customLightShader != null) updateLightShader();
 
 			for (Light light : lightList) if (light.active) {
-				if (customLightShader != null) updateLightShaderPerLight(light);
+//				if (customLightShader != null) updateLightShaderPerLight(light);
 				light.render();
 			}
-		}
+//		}
 
 		if (useLightMap) {
 			lightMap.frameBuffer.end();
 		}
 
-		if (useLightMap && pseudo3d) {
-			lightMap.shadowBuffer.begin();
-			Gdx.gl.glClearColor(buffer_clear_color.r, buffer_clear_color.g, 
-					buffer_clear_color.b, buffer_clear_color.a);
-//			Gdx.gl.glClearColor(0f,0f,0f,1f);
-			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-			for (Light light : lightList) {
-				light.dynamicShadowRender();
-			}
-
-			lightMap.shadowBuffer.end();
-		}
+//		if (useLightMap && pseudo3d) {
+//			lightMap.shadowBuffer.begin();
+//			Gdx.gl.glClearColor(buffer_clear_color.r, buffer_clear_color.g, 
+//					buffer_clear_color.b, buffer_clear_color.a);
+//			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+//
+//			for (Light light : lightList) {
+//				light.dynamicShadowRender();
+//			}
+//
+//			lightMap.shadowBuffer.end();
+//		}
 
 		boolean needed = lightRenderedLastFrame > 0;
 		// this way lot less binding
 		if (needed && blur)
 			lightMap.gaussianBlur(lightMap.frameBuffer, blurNum);
-		if (needed && blur && pseudo3d)
-			lightMap.gaussianBlur(lightMap.shadowBuffer, blurNum);
+//		if (needed && blur && pseudo3d)
+//			lightMap.gaussianBlur(lightMap.shadowBuffer, blurNum);
+
+		restoreScissors();
+
 	}
 
+	
+	private final ArrayList<Rectangle> scissors = new ArrayList<Rectangle>();
+
+	public void removeScissors() {
+		for (Rectangle r : Utl.duplic(app.gui.scissors)) {
+			scissors.add(r); ScissorStack.popScissors(); }
+		app.gui.scissors.clear();
+	}
+	public void restoreScissors() {
+		for (Rectangle r : Utl.duplic(scissors)) {
+			app.gui.scissors.add(r); ScissorStack.pushScissors(r); }
+		scissors.clear();
+	}
+
+	public void prepareCombinedMatrix(pView pview) {
+		cam.prepareCombinedMatrix(pview.val_pos.get(), pview.val_view_size.get(), 
+				pview.val_cam_pos.get(), pview.val_cam_scale.get(), pview.val_cam_rot.get());
+	}
+	private class FalseCam {
+		private final Vector2 position2 = new Vector2();
+		private final Vector3 position = new Vector3();
+		private final Vector3 direction = new Vector3(0, 0, -1);
+		private final Vector3 up = new Vector3(0, 1, 0);
+		private final Matrix4 projection = new Matrix4();
+		private final Matrix4 view = new Matrix4();
+		private final Matrix4 combined = new Matrix4();
+		private final float near = 0;
+		private final float far = 100;
+		private float viewportWidth = 0, viewportHeight = 0;
+		private float zoom = 1;
+		
+		private final RayHandler target;
+
+		public FalseCam(float viewportWidth, float viewportHeight, final RayHandler target) {
+			this.target = target;
+			this.viewportWidth = viewportWidth;
+			this.viewportHeight = viewportHeight;
+			direction.set(0f, 0f, -1f);
+		}
+		public void update(float viewportWidth, float viewportHeight) {
+			this.viewportWidth = viewportWidth;
+			this.viewportHeight = viewportHeight;
+		}
+		public void prepareCombinedMatrix(
+				Vector2 view_pos, Vector2 view_size, 
+				Vector2 cam_pos, float cam_scale, float cam_rot) {
+			
+			zoom = 1f / cam_scale;
+			position2.set(view_pos);
+			position2.x += view_size.x / 2.0f;
+			position2.y -= view_size.y / 2.0f + nGUI.book.RS;
+			position2.sub(app.gdx.getscreenwidth() / 2.0f, app.gdx.getscreenheight() / 2.0f);
+			position2.scl(zoom).rotateRad(-cam_rot);
+			position2.add(cam_pos).scl(-1f);
+			
+			position.set(position2.x, position2.y, 0f);
+			Vector2 u = new Vector2(0f,1f).rotateRad(-cam_rot);
+			up.set(u.x, u.y, 0f);
+			projection.setToOrtho(zoom * -viewportWidth / 2, zoom * (viewportWidth / 2), zoom * -(viewportHeight / 2),
+					zoom * viewportHeight / 2, near, far);
+			view.setToLookAt(direction, up);
+			view.translate(-position.x, -position.y, -position.z);
+			combined.set(projection);
+			Matrix4.mul(combined.val, view.val);
+			System.arraycopy(combined.val, 0, target.combined.val, 0, 16);
+			final float halfViewPortWidth = app.gdx.getscreenwidth() * zoom * 0.5f;
+			target.x1 = cam_pos.x - halfViewPortWidth;
+			target.x2 = cam_pos.x + halfViewPortWidth;
+			final float halfViewPortHeight = app.gdx.getscreenheight() * zoom * 0.5f;
+			target.y1 = cam_pos.y - halfViewPortHeight;
+			target.y2 = cam_pos.y + halfViewPortHeight;
+		}
+	}
+	
+	
+	
+	
 	/**
-	 * Manual rendering method for all lights.
-	 *
-	 * <p><b>NOTE!</b> Remember to set combined matrix and update lights
-	 * before using this method manually.
-	 *
-	 * <p>Don't call this inside of any begin/end statements.
-	 * Call this method after you have rendered background but before UI.
-	 * Box2d bodies can be rendered before or after depending how you want
-	 * the x-ray lights to interact with them.
-	 *
-	 * @see #updateAndRender()
-	 * @see #update()
-	 * @see #setCombinedMatrix(Matrix4)
-	 * @see #setCombinedMatrix(Matrix4, float, float, float, float)
+	 * Utility method to check if light is on the screen
+	 * @param x      - light center x-coord 
+	 * @param y      - light center y-coord 
+	 * @param radius - maximal light distance
+	 * 
+	 * @return true if camera screen intersects or contains provided
+	 * light, represented by circle/box area
 	 */
-	public void render() {
-		prepareRender();
-		lightMap.render();
+	boolean intersect(float x, float y, float radius) {
+		return (x1 < (x + radius) && x2 > (x - radius) &&
+				y1 < (y + radius) && y2 > (y - radius));
 	}
-
-	/**
-	 * Manual rendering method for all lights tha can be used inside of
-	 * begin/end statements
-	 *
-	 * <p>Use this method if you want to render lights in a frame buffer
-	 * object. You must call {@link #prepareRender()} before calling this
-	 * method. Also, {@link #prepareRender()} must not be inside of any
-	 * begin/end statements
-	 *
-	 * @see #prepareRender()
-	 */
-	public void renderOnly() {
-		lightMap.render();
-	}
-
+	
 	/**
 	 * Called before light rendering start
 	 *
@@ -844,7 +724,7 @@ public class RayHandler implements Disposable {
 		viewportWidth = width;
 		viewportHeight = height;
 	}
-	
+
 	/**
 	 * Sets rendering to default viewport
 	 * 
@@ -854,27 +734,27 @@ public class RayHandler implements Disposable {
 		customViewport = false;
 	}
 
-	/**
-	 * /!\ Experimental mode with dynamic shadowing in pseudo-3d world
-	 *
-	 * @param flag enable pseudo 3d effect
-	 */
-	public void setPseudo3dLight(boolean flag) {
-		setPseudo3dLight(flag, false);
-	}
-
-	/**
-	 * /!\ Experimental mode with dynamic shadowing in pseudo-3d world
-	 *
-	 * @param flag enable pseudo 3d effect
-	 * @param interpolateShadows interpolate shadow color
-	 */
-	public void setPseudo3dLight(boolean flag, boolean interpolateShadows) { 
-		pseudo3d = flag;
-		shadowColorInterpolation = interpolateShadows;
-
-		lightMap.createShaders();
-	}
+//	/**
+//	 * /!\ Experimental mode with dynamic shadowing in pseudo-3d world
+//	 *
+//	 * @param flag enable pseudo 3d effect
+//	 */
+//	public void setPseudo3dLight(boolean flag) {
+//		setPseudo3dLight(flag, false);
+//	}
+//
+//	/**
+//	 * /!\ Experimental mode with dynamic shadowing in pseudo-3d world
+//	 *
+//	 * @param flag enable pseudo 3d effect
+//	 * @param interpolateShadows interpolate shadow color
+//	 */
+//	public void setPseudo3dLight(boolean flag, boolean interpolateShadows) { 
+//		pseudo3d = flag;
+//		shadowColorInterpolation = interpolateShadows;
+//
+//		lightMap.createShaders();
+//	}
 
 	/**
 	 * Enables/disables lightMap automatic rendering.

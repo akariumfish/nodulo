@@ -287,6 +287,8 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 		gdx.drawer.face(x1,y1,x2,y2,x3,y3,c1,c2,c3);
 	}
 
+	public void transf(boolean b) { 
+		gdx.drawer.transf(b); } 
 	public void push() { 
 		gdx.drawer.push(); }
 	public void pop() { 

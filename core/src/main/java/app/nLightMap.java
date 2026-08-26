@@ -1,4 +1,6 @@
-package box2d;
+package app;
+
+import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -9,17 +11,27 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
 
-class LightMap {
+import box2d.BlendFunc;
+import box2d.DiffuseShader;
+import box2d.DynamicShadowShader;
+import box2d.Gaussian;
+import box2d.ShadowShader;
+import box2d.WithoutShadowShader;
+import util.Utl;
+
+class nLightMap {
 	private ShaderProgram shadowShader;
-//	private ShaderProgram pseudo3dShader;
+	private ShaderProgram pseudo3dShader;
 	VfxFrameBuffer frameBuffer;
 	private Mesh lightMapMesh;
 
 	private VfxFrameBuffer pingPongBuffer;
-
-	private RayHandler rayHandler;
+	
 	private ShaderProgram withoutShadowShader;
 	private ShaderProgram blurShader;
 	private ShaderProgram diffuseShader;
@@ -30,8 +42,98 @@ class LightMap {
 
 	private final int fboWidth, fboHeight;
 
-	public LightMap(RayHandler rayHandler, int fboWidth, int fboHeight) {
-		this.rayHandler = rayHandler;
+	public boolean isDiffuse = false;
+	/**
+	 * Blend function for lights rendering with both shadows and diffusion
+	 * <p>Default: (GL20.GL_DST_COLOR, GL20.GL_ZERO)
+	 */
+	public final BlendFunc diffuseBlendFunc =
+			new BlendFunc(GL20.GL_DST_COLOR, GL20.GL_ZERO);
+
+	/**
+	 * Blend function for lights rendering with shadows but without diffusion
+	 * <p>Default: (GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA)
+	 */
+	public final BlendFunc shadowBlendFunc =
+			new BlendFunc(GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+	/**
+	 * Blend function for lights rendering without shadows and diffusion 
+	 * <p>Default: (GL20.GL_SRC_ALPHA, GL20.GL_ONE)
+	 */
+	public final BlendFunc simpleBlendFunc =
+			new BlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+
+	final Color ambientLight = new Color();
+
+	boolean shadows = true;
+
+	boolean blur = true;
+
+	int blurNum = 1;
+
+
+	public void setBlendDef() {
+		diffuseBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_ZERO);
+		shadowBlendFunc.set(GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		simpleBlendFunc.set(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+		setDiffuseLight(true);
+		setShadows(true);
+		setAmbientLight(0.0f, 0.0f, 0.0f, 0f);
+		light_buffer_clear_color.set(def_light_buffer_clear_color);
+		setBlur(true);
+		setBlurNum(2);
+//		setPseudo3dLight(false, false);
+	}
+
+	public void setBlendLight() {
+		setBlendDef();
+		setAmbientLight(0.2f, 0.2f, 0.2f, 1f);
+
+	}
+
+	public void setBlendAura() {
+		setBlendDef();
+		setAmbientLight(0.1f, 0.1f, 0.1f, 1f);
+		shadowBlendFunc.set(GL20.GL_SRC_COLOR, GL20.GL_ONE);
+		setDiffuseLight(false);
+//		setPseudo3dLight(true, true);
+	}
+
+	public void setBlendVision() {
+		setBlendDef();
+	}
+
+	public void setBlendColor() {
+		setBlendDef();
+		setBlurNum(1);
+		setAmbientLight(0.1f, 0.1f, 0.1f, 1f);
+		setDiffuseLight(false);
+		shadowBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_ONE);
+	}
+	
+	public void setDiffuseLight(boolean useDiffuse) {
+		isDiffuse = useDiffuse;
+		createShaders();
+	}
+	
+	public void setBlur(boolean blur) {
+		this.blur = blur;
+	}
+
+	public void setBlurNum(int blurNum) {
+		this.blurNum = blurNum;
+	}
+
+	public void setShadows(boolean shadows) {
+		this.shadows = shadows;
+	}
+
+	public void setAmbientLight(float r, float g, float b, float a) {
+		this.ambientLight.set(r, g, b, a);
+	}
+	
+	public nLightMap(int fboWidth, int fboHeight) {
 
 		if (fboWidth <= 0)
 			fboWidth = 1;
@@ -51,10 +153,74 @@ class LightMap {
 		lightMapMesh = createLightMapMesh();
 
 		createShaders();
+		
+		
+		
+		
+//		setBlendDef();
+//		setBlendLight();
+//		setBlendAura();
+//		setBlendColor();
+//		setBlendVision();
+		
+		setShadows(false);
+		setAmbientLight(0.0f, 0.0f, 0.0f, 0f);
+		light_buffer_clear_color.set(def_light_buffer_clear_color);
+		setBlur(false);
+//		setBlurNum(2);
+		
+		
+	}
+	private final ArrayList<Rectangle> scissors = new ArrayList<Rectangle>();
+
+	public void removeScissors() {
+		for (Rectangle r : Utl.duplic(App.ap.gui.scissors)) {
+			scissors.add(r); ScissorStack.popScissors(); }
+		App.ap.gui.scissors.clear();
+	}
+	public void restoreScissors() {
+		for (Rectangle r : Utl.duplic(scissors)) {
+			App.ap.gui.scissors.add(r); ScissorStack.pushScissors(r); }
+		scissors.clear();
+	}
+
+	private Color light_buffer_clear_color = new Color(0f, 0f, 0f, 0f);
+	private final Color def_light_buffer_clear_color = new Color(0f, 0f, 0f, 0f);
+	public void begin() {
+
+		removeScissors();
+		
+		Gdx.gl.glDepthMask(false);
+		Gdx.gl.glEnable(GL20.GL_BLEND); 
+
+		if (shadows) {
+			
+			frameBuffer.begin();
+			
+			Gdx.gl.glClearColor(light_buffer_clear_color.r, light_buffer_clear_color.g, 
+					light_buffer_clear_color.b, light_buffer_clear_color.a);
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			
+		}
+
+		simpleBlendFunc.apply();
+		
+	}
+	public void end() {
+		if (shadows) {
+			
+			frameBuffer.end();
+			
+			if (blur) gaussianBlur(frameBuffer, blurNum);	
+			
+		}
+
+		restoreScissors();
+		
 	}
 
 	public void render() {
-		boolean needed = rayHandler.lightRenderedLastFrame > 0;
+//		boolean needed = rayHandler.lightRenderedLastFrame > 0;
 
 		if (lightMapDrawingDisabled)
 			return;
@@ -67,8 +233,8 @@ class LightMap {
 //		}
 
 		// at last lights are rendered over scene
-		if (rayHandler.shadows) {
-			final Color c = rayHandler.ambientLight;
+		if (shadows) {
+			final Color c = ambientLight;
 			ShaderProgram shader = shadowShader;
 //			if (rayHandler.pseudo3d) {
 ////				shader = pseudo3dShader;
@@ -85,21 +251,23 @@ class LightMap {
 //				shader.setUniformi("u_texture", 1);
 //				shader.setUniformi("u_shadows", 0);
 //			} else 
-			if (RayHandler.isDiffuse) {
+			if (isDiffuse) {
 				shader = diffuseShader;
 				shader.bind();
-				rayHandler.diffuseBlendFunc.apply();
+				diffuseBlendFunc.apply();
 				shader.setUniformf("ambient", c.r, c.g, c.b, c.a);
 			} else {
 				shader.bind();
-				rayHandler.shadowBlendFunc.apply();
+				shadowBlendFunc.apply();
 				shader.setUniformf("ambient", c.r * c.a, c.g * c.a,
 						c.b * c.a, 1f - c.a);
 			}
 
 			lightMapMesh.render(shader, GL20.GL_TRIANGLE_FAN);
-		} else if (needed) {
-			rayHandler.simpleBlendFunc.apply();
+		} else 
+//			if (needed) 
+			{
+			simpleBlendFunc.apply();
 			withoutShadowShader.bind();
 
 			lightMapMesh.render(withoutShadowShader, GL20.GL_TRIANGLE_FAN);
@@ -130,16 +298,16 @@ class LightMap {
 				blurShader.setUniformf("dir", 0f, 1f);
 				lightMapMesh.render(blurShader, GL20.GL_TRIANGLE_FAN, 0, 4);
 			}
-			if (rayHandler.customViewport) {
+//			if (rayHandler.customViewport) {
+//				buffer.end();
+////				buffer.end(
+////					rayHandler.viewportX,
+////					rayHandler.viewportY,
+////					rayHandler.viewportWidth,
+////					rayHandler.viewportHeight);
+//			} else {
 				buffer.end();
-//				buffer.end(
-//					rayHandler.viewportX,
-//					rayHandler.viewportY,
-//					rayHandler.viewportWidth,
-//					rayHandler.viewportHeight);
-			} else {
-				buffer.end();
-			}
+//			}
 		}
 
 		Gdx.gl20.glEnable(GL20.GL_BLEND);
@@ -166,7 +334,7 @@ class LightMap {
 //				ShadowShader.createShadowShader();
 		
 		shadowShader = ShadowShader.createShadowShader();
-//		pseudo3dShader = DynamicShadowShader.createShadowShader();
+		pseudo3dShader = DynamicShadowShader.createShadowShader();
 		
 		diffuseShader = DiffuseShader.createShadowShader();
 
@@ -178,8 +346,8 @@ class LightMap {
 	private void disposeShaders() {
 		if (shadowShader != null)
 			shadowShader.dispose();
-//		if (pseudo3dShader != null)
-//			pseudo3dShader.dispose();
+		if (pseudo3dShader != null)
+			pseudo3dShader.dispose();
 		if (diffuseShader != null)
 			diffuseShader.dispose();
 		if (withoutShadowShader != null)

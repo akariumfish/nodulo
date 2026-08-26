@@ -120,7 +120,7 @@ public class RectLight extends Light {
 			mx[i] = end[i].x = steppedX + xAxelOffSet;
 			my[i] = end[i].y = steppedY + yAxelOffSet;
 
-			if (rayHandler.world != null && !xray && !rayHandler.pseudo3d) {
+			if (rayHandler.world != null && !xray) {// && !rayHandler.pseudo3d) {
 				rayHandler.world.rayCast(ray, start[i], end[i]);
 			}
 		}
@@ -142,7 +142,7 @@ public class RectLight extends Light {
 		}
 		lightMesh.setVertices(segments, 0, size);
 
-		if (!soft || xray || rayHandler.pseudo3d) {
+		if (!soft || xray) {// || rayHandler.pseudo3d) {
 			return;
 		}
 
@@ -179,7 +179,7 @@ public class RectLight extends Light {
 		lightMesh.render(
 				rayHandler.lightShader, GL20.GL_TRIANGLE_STRIP, 0, vertexNum);
 
-		if (soft && !xray && !rayHandler.pseudo3d) {
+		if (soft && !xray) {// && !rayHandler.pseudo3d) {
 			softShadowMesh.render(
 					rayHandler.lightShader, GL20.GL_TRIANGLE_STRIP, 0, vertexNum);
 		}

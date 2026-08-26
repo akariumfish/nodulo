@@ -139,8 +139,6 @@ public class nRenderer {
 
 	public void render() {
 
-		app.gdx.drawer.pause_batch();
-		
 		rayHandler.beginRender();
 		
 		ArrayList<Layer> all = Utl.duplic(layers);
@@ -292,7 +290,7 @@ public class nRenderer {
 		this.view = app.view; 
 		this.cam = new OrthographicCamera(GdxApp.WIDTH, GdxApp.HEIGHT);
 
-		rayHandler = new RayHandler(app, cam, world);
+		rayHandler = new RayHandler(app, world);
 
 		prepareLayers();
 		

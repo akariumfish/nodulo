@@ -70,7 +70,7 @@ public class pGround extends pSystem {
 			space = app.space;
 			view = app.view;
 			//		if (!app.RELEASE) 
-			tool_setup(false);
+			tool_setup(true);
 
 		}
 		public void system_clear() {

@@ -34,12 +34,15 @@ public class nTransform {
 	ArrayList<ArrayList<Transf>> transform = new ArrayList<ArrayList<Transf>>();
 	
 	ArrayList<Transf> transf = new ArrayList<Transf>();
-	
+
+	private boolean active = true;
 	private boolean dirty = true;
 	
 	public nTransform() {
 		reset();
 	}
+	
+	public nTransform setActive(boolean b) { active = b; return this; }
 	
 	public static String toString(nTransform t) { 
 		String s = "";
@@ -153,9 +156,18 @@ public class nTransform {
 			dirty = false;
 		}
 	}
-	public Vector2 getTranslation() { clean(); return Utl.copy(tot_translat); }
-	public float getScale() { clean(); return tot_scale; }
-	public float getRotation() { clean(); return tot_rot; }
+	public Vector2 getTranslation() { 
+		if (!active) return new Vector2(); 
+		clean(); 
+		return Utl.copy(tot_translat); }
+	public float getScale() { 
+		if (!active) return 1.0f; 
+		clean(); 
+		return tot_scale; }
+	public float getRotation() { 
+		if (!active) return 0.0f; 
+		clean(); 
+		return tot_rot; }
 	
 	public Vector2 transform(float x, float y) {
 		return transform(new Vector2(x,y)); }

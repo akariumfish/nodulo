@@ -48,10 +48,10 @@ public class ConeLight extends PositionalLight {
 	
 	@Override
 	public void update () {
-		if (rayHandler.pseudo3d) {
-			prepareFixtureData();
-			updateDynamicShadowMeshes();
-		}
+//		if (rayHandler.pseudo3d) {
+//			prepareFixtureData();
+//			updateDynamicShadowMeshes();
+//		}
 
 		updateBody();
 		if (dirty) setEndPoints();

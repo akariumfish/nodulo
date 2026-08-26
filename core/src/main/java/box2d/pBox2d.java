@@ -217,7 +217,7 @@ public class pBox2d extends pSystem {
 
 			val_draw_debug = bloc.obtainBoo("val_draw_debug", false);
 			val_draw_ray_debug = bloc.obtainBoo("val_draw_ray_debug", false);
-			val_draw_vision = bloc.obtainBoo("val_draw_vision", false);
+			val_draw_vision = bloc.obtainBoo("val_draw_vision", true);
 			val_draw_tile = bloc.obtainBoo("val_draw_tile", true);
 			val_draw_light = bloc.obtainBoo("val_draw_light", true);
 			val_draw_aura = bloc.obtainBoo("val_draw_aura", true);

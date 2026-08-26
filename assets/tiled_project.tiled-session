@@ -14,11 +14,11 @@
             "scaleInDock": 1
         },
         "Map.tmx": {
-            "scale": 0.5,
-            "selectedLayer": 3,
+            "scale": 0.25,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 1024,
-                "y": 1023
+                "x": 982,
+                "y": 1126
             }
         },
         "Map.tmx#Lighting": {
@@ -78,7 +78,7 @@
         },
         "tileset.tsx": {
             "scaleInDock": 2,
-            "scaleInEditor": 4
+            "scaleInEditor": 3
         }
     },
     "last.externalTilesetPath": "C:/Users/user/Desktop/code/java/libgdx/nodulo/assets",
@@ -91,14 +91,14 @@
     "map.width": 128,
     "openFiles": [
         "Map.tmx",
-        "Map2.tmx"
+        "tileset.tsx"
     ],
     "project": "tiled_project.tiled-project",
     "property.type": "bool",
     "recentFiles": [
-        "Map2.tmx",
-        "Map.tmx",
         "tileset.tsx",
+        "Map.tmx",
+        "Map2.tmx",
         "Map4.tmx",
         "Map3.tmx"
     ],

@@ -232,7 +232,7 @@ public class Utl {
 	}
 	
 	public static Color color(int r, int g, int b, int a) {
-		return new Color(r/255.0f, g/255.0f, b/255.0f, a/255.0f); 
+		return new Color((float)r/255.0f, (float)g/255.0f, (float)b/255.0f, (float)a/255.0f); 
 	}
 	
 	public static Color color(int r, int g, int b) {

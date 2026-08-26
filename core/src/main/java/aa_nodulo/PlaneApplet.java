@@ -84,10 +84,10 @@ public class PlaneApplet extends App {
 		public String STARTUP_LOAD_FILE = "";
 		public String STARTUP_NEW_FILE = "";
 
-		public boolean VIEW_START_WALLPAPER = false;
+		public boolean VIEW_START_WALLPAPER = true;
 		public boolean VIEW_START_COLLAPSED = false;
 //		public float DEF_VIEW_ZOOM = 0.07f;
-		public float DEF_VIEW_ZOOM = 0.4f;
+		public float DEF_VIEW_ZOOM = 0.07f;
 		public Vector2 DEF_VIEW_POS = new Vector2(0f,0f);
 		// DEFAULT
 //		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
@@ -107,7 +107,7 @@ public class PlaneApplet extends App {
 //		public boolean PATCH_TOOL_AUTOCOLLAPSE = true;
 		public boolean PATCH_SHEET_COLLAPSE = true;
 		public boolean TOOLBOX_OPEN = true;
-		public boolean DRAW_GROUND = false;
+		public boolean DRAW_GROUND = true;
 		
 		public boolean POP_BODY_EDITOR = false;
 		
