@@ -158,17 +158,21 @@ public class nRenderer {
 		roomGroup = newGroupLayer(1);
 
 		auraLayer = roomGroup.newLightLayer(LightLayer.MODE.AURA,1);
-		roomGroup.newRunLayer(2).addRun(new nRun() { public void run() {
-			box.draw_drawer(); }});
-		colorLayer = roomGroup.newLightLayer(LightLayer.MODE.COLOR,4);
-		lightLayer = roomGroup.newLightLayer(LightLayer.MODE.LIGHT,5);
+		
+//		roomGroup.newRunLayer(2).addRun(new nRun() { public void run() {
+//			box.draw_drawer(); }});
 
-		visionLayer = newLightLayer(LightLayer.MODE.VISION,6);
+//		geo = new GeomLayer(this,3);
+		
+		solidLayer = roomGroup.newLightLayer(LightLayer.MODE.SOLID,4);
+		
+		colorLayer = roomGroup.newLightLayer(LightLayer.MODE.COLOR,5);
+		lightLayer = roomGroup.newLightLayer(LightLayer.MODE.LIGHT,6);
+
+		visionLayer = newLightLayer(LightLayer.MODE.VISION,7);
 
 //		roomGroup.newRunLayer(7).addRun(new nRun() { public void run() {
 //			geo.debugRender(App.ap); }});
-		
-		geo = new GeomLayer(this,3);
 		
 //		g = new Geom(geo);
 //
@@ -183,7 +187,7 @@ public class nRenderer {
 
 	}
 	
-	GeomLayer geo;
+//	GeomLayer geo;
 //	public Geom g;
 
 	Vector2 v1 = new Vector2();
@@ -246,6 +250,10 @@ public class nRenderer {
 //		ch = new ChainLight(colorLayer, 900, Utl.color(255), 500f, 
 //				-1, path);
 //		ch.setSoft(false);
+		
+
+		
+//		ch = new SwarmLight(colorLayer, 300, Utl.color(255));
 	}
 	
 	public void loadLayerObject(MapLayer layer) {
@@ -276,6 +284,7 @@ public class nRenderer {
 	public LightLayer colorLayer;
 	public LightLayer lightLayer;
 	public LightLayer auraLayer;
+	public LightLayer solidLayer;
 	public TileLayer tileLayer;
 	
 	public RayHandler rayHandler;

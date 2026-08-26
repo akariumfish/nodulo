@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -36,6 +37,44 @@ import util.nRun;
  * @author kalle_h
  */
 public class RayHandler implements Disposable {
+	
+
+	public static abstract class AbstractLight {
+
+		protected boolean active = true;
+
+		public AbstractLight() { }
+		
+		public void remove() {}		
+		public void remove(boolean doDispose) {}
+		public void dispose() {}
+		public boolean isActive() { return active; }
+		public abstract void setActive(boolean active);
+		abstract void update();
+		abstract void render();
+		public void setIgnoreAttachedBody(boolean flag) { }
+		public void attachToBody(Body body) { }
+		public void attachToBody(Body body, float x, float y) { }
+		public void attachToBody(Body body, float x, float y, float r) { }
+		public boolean contains(float x, float y) { return false; }
+	}
+	public static abstract class BaseLight extends AbstractLight {
+		static final Color DefaultColor = new Color(0.75f, 0.75f, 0.5f, 0.75f);
+		static final float zeroColorBits = Color.toFloatBits(0f, 0f, 0f, 0f);
+		static final float oneColorBits = Color.toFloatBits(1f, 1f, 1f, 1f);
+		static final int MIN_RAYS = 3;
+		
+		public BaseLight(LightLayer layer) {
+			this.layer = layer;
+			layer.lightList.add(this);
+			this.rayHandler = layer.rayHandler;
+//			rayHandler.lightList.add(this);
+		}
+		protected boolean ignoreBody = false;
+		protected RayHandler rayHandler;
+		public LightLayer layer;
+	}
+
 
 	/** Gamma correction value used if enabled
 	 * TODO: remove final modifier and provide method to change
@@ -86,7 +125,7 @@ public class RayHandler implements Disposable {
 	 * 
 	 * <p>NOTE: DO NOT MODIFY THIS LIST
 	 */
-	public final Array<Light> lightList = new Array<Light>(false, 16);
+//	public final Array<AbstractLight> lightList = new Array<AbstractLight>(false, 16);
 
 
 
@@ -97,7 +136,7 @@ public class RayHandler implements Disposable {
 	 * 
 	 * <p>NOTE: DO NOT MODIFY THIS LIST
 	 */
-	public final Array<Light> disabledLights = new Array<Light>(false, 16);
+//	public final Array<AbstractLight> disabledLights = new Array<AbstractLight>(false, 16);
 
 	LightMap lightMap;
 	final ShaderProgram lightShader;
@@ -108,7 +147,7 @@ public class RayHandler implements Disposable {
 	boolean blur = true;
 
 	/** Experimental mode */
-//	boolean pseudo3d = false;
+	boolean pseudo3d = false;
 	boolean shadowColorInterpolation = false;
 
 	int blurNum = 1;
@@ -134,7 +173,7 @@ public class RayHandler implements Disposable {
 	pView view;
 	FalseCam cam;
 
-	static int LIGHT_PIX_SIZE = 4;
+	static int LIGHT_PIX_SIZE = 2;
 	static int LIGHT_DEG_SIZE = 8;
 	static int LIGHT_AMB_DIV = 50;
 
@@ -171,12 +210,12 @@ public class RayHandler implements Disposable {
 		if (options != null) {
 			isDiffuse = options.isDiffuse;
 			gammaCorrection = options.gammaCorrection;
-//			pseudo3d = options.pseudo3d;
+			pseudo3d = options.pseudo3d;
 			shadowColorInterpolation = options.shadowColorInterpolation;
 		} else {
-			gammaCorrection = true;
-//			pseudo3d = false;
-			shadowColorInterpolation = true;
+			gammaCorrection = false;
+			pseudo3d = false;
+			shadowColorInterpolation = false;
 		}
 
 		render_buffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);
@@ -222,13 +261,14 @@ public class RayHandler implements Disposable {
 		buffer_clear_color.set(def_buffer_clear_color);
 		setBlur(true);
 		setBlurNum(2);
-//		setPseudo3dLight(false, false);
+		setPseudo3dLight(false, false);
 	}
 
 	public void setBlendLight() {
 		setBlendDef();
 		setAmbientLight(0.2f, 0.2f, 0.2f, 1f);
 
+//		setPseudo3dLight(true, false);
 	}
 
 	public void setBlendAura() {
@@ -236,11 +276,13 @@ public class RayHandler implements Disposable {
 		setAmbientLight(0.1f, 0.1f, 0.1f, 1f);
 		shadowBlendFunc.set(GL20.GL_SRC_COLOR, GL20.GL_ONE);
 		setDiffuseLight(false);
-//		setPseudo3dLight(true, true);
+//		setPseudo3dLight(true, false);
 	}
 
 	public void setBlendVision() {
 		setBlendDef();
+
+//		setPseudo3dLight(true, false);
 	}
 
 	public void setBlendColor() {
@@ -249,6 +291,19 @@ public class RayHandler implements Disposable {
 		setAmbientLight(0.1f, 0.1f, 0.1f, 1f);
 		setDiffuseLight(false);
 		shadowBlendFunc.set(GL20.GL_DST_COLOR, GL20.GL_ONE);
+		
+//		setPseudo3dLight(true, false);
+	}
+
+	public void setBlendSolid() {
+		setBlendDef();
+//		setBlur(false);
+		setDiffuseLight(false);
+		setBlurNum(0);
+//		shadowBlendFunc.set(GL20.GL_ONE, GL20.GL_ONE);
+		setShadows(false);
+//		simpleBlendFunc.set(GL20.GL_ONE, GL20.GL_ONE_MINUS_SRC_COLOR);
+		simpleBlendFunc.set(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 
@@ -261,40 +316,96 @@ public class RayHandler implements Disposable {
 	public void beginRender() { 
 
 		app.gdx.drawer.pause_batch();
-		
+
+		prepareCombinedMatrix(view);
+
+		removeScissors();
+
 		render_buffer.begin(); 
 
 		Color c = Utl.color(0,0);
 		Gdx.gl.glClearColor(c.r,c.g,c.b,c.a);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		//update all lights mesh vertices
-		for (Light light : lightList) light.update();
-		for (Light light : disabledLights) light.update();
+//		//update all lights mesh vertices
+//		for (Light light : lightList) light.update();
+//		for (Light light : disabledLights) light.update();
 		
 	}
 	
-	private ArrayList<Light> temp = new ArrayList<Light>();
+//	private ArrayList<AbstractLight> temp = new ArrayList<AbstractLight>();
 	public void renderLayer(LightLayer layer) { 
 
 		app.gdx.drawer.flush();
 		
-		temp.clear();
-		for (Light l : lightList) temp.add(l);
-		for (Light l : temp) l.setActive(false);
-		temp.clear();
+//		temp.clear();
+//		for (AbstractLight l : lightList) temp.add(l);
+//		for (AbstractLight l : temp) l.setActive(false);
+//		lightList.clear();
+//		temp.clear();
 
 		layer.prepareRender();
 		if (layer.active) {
 
-			temp.clear();
-			for (Light l : layer.lightList) temp.add(l);
-			for (Light l : temp) l.setActive(true);
-			temp.clear();
+////			temp.clear();
+//			for (AbstractLight l : layer.lightList) 
+////				temp.add(l);
+////			for (VoidLight l : temp) 
+//				{ l.setActive(true); lightList.add(l); }
+////			temp.clear();
+
+//			for (AbstractLight light : lightList) if (light.active) light.update();
+			for (AbstractLight light : layer.lightList) light.update();
 			
 			render_buffer.end();
 
-			prepareRender();
+			lightRenderedLastFrame = 0;
+
+			Gdx.gl.glDepthMask(false);
+			Gdx.gl.glEnable(GL20.GL_BLEND); 
+
+			boolean useLightMap = (shadows || blur);
+			if (useLightMap) {
+				lightMap.frameBuffer.begin();
+				Gdx.gl.glClearColor(buffer_clear_color.r, buffer_clear_color.g, 
+						buffer_clear_color.b, buffer_clear_color.a);
+				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			}
+
+			simpleBlendFunc.apply();
+
+			lightShader.bind();
+			lightShader.setUniformMatrix("u_projTrans", combined);
+//			for (AbstractLight light : lightList)
+			for (AbstractLight light : layer.lightList)
+				if (light instanceof BaseLight) 
+//					if (((BaseLight)light).active) 
+						((BaseLight)light).render();
+
+			if (useLightMap) {
+				lightMap.frameBuffer.end();
+			}
+
+			if (useLightMap && pseudo3d) {
+				lightMap.shadowBuffer.begin();
+				Gdx.gl.glClearColor(buffer_clear_color.r, buffer_clear_color.g, 
+						buffer_clear_color.b, buffer_clear_color.a);
+				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+//				for (AbstractLight light : lightList) 
+				for (AbstractLight light : layer.lightList) 
+					if (light instanceof Light) {
+						((Light)light).dynamicShadowRender(); }
+
+				lightMap.shadowBuffer.end();
+			}
+
+			boolean needed = lightRenderedLastFrame > 0;
+			// this way lot less binding
+			if (needed && blur)
+				lightMap.gaussianBlur(lightMap.frameBuffer, blurNum);
+			if (needed && blur && pseudo3d)
+				lightMap.gaussianBlur(lightMap.shadowBuffer, blurNum);
 
 			render_buffer.begin(); 
 			
@@ -306,6 +417,8 @@ public class RayHandler implements Disposable {
 	public void endLayeredRender() { 
 
 		render_buffer.end();
+
+		restoreScissors();
 
 		app.gdx.drawer.spritebatch.begin();
 
@@ -322,65 +435,7 @@ public class RayHandler implements Disposable {
 	private Color buffer_clear_color = new Color(0f, 0f, 0f, 0f);
 	private final Color def_buffer_clear_color = new Color(0f, 0f, 0f, 0f);
 	public void prepareRender() {
-
-		prepareCombinedMatrix(view);
-
-		removeScissors();
-
-		lightRenderedLastFrame = 0;
-
-		Gdx.gl.glDepthMask(false);
-		Gdx.gl.glEnable(GL20.GL_BLEND); 
-
-		boolean useLightMap = (shadows || blur);
-		if (useLightMap) {
-			lightMap.frameBuffer.begin();
-			Gdx.gl.glClearColor(buffer_clear_color.r, buffer_clear_color.g, 
-					buffer_clear_color.b, buffer_clear_color.a);
-			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		}
-
-		simpleBlendFunc.apply();
-
-		ShaderProgram shader = customLightShader != null ? customLightShader : lightShader;
-		shader.bind();
-//		{
-			lightShader.setUniformMatrix("u_projTrans", combined);
-			shader.setUniformMatrix("u_projTrans", combined);
-//			if (customLightShader != null) updateLightShader();
-
-			for (Light light : lightList) if (light.active) {
-//				if (customLightShader != null) updateLightShaderPerLight(light);
-				light.render();
-			}
-//		}
-
-		if (useLightMap) {
-			lightMap.frameBuffer.end();
-		}
-
-//		if (useLightMap && pseudo3d) {
-//			lightMap.shadowBuffer.begin();
-//			Gdx.gl.glClearColor(buffer_clear_color.r, buffer_clear_color.g, 
-//					buffer_clear_color.b, buffer_clear_color.a);
-//			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-//
-//			for (Light light : lightList) {
-//				light.dynamicShadowRender();
-//			}
-//
-//			lightMap.shadowBuffer.end();
-//		}
-
-		boolean needed = lightRenderedLastFrame > 0;
-		// this way lot less binding
-		if (needed && blur)
-			lightMap.gaussianBlur(lightMap.frameBuffer, blurNum);
-//		if (needed && blur && pseudo3d)
-//			lightMap.gaussianBlur(lightMap.shadowBuffer, blurNum);
-
-		restoreScissors();
-
+		
 	}
 
 	
@@ -492,29 +547,29 @@ public class RayHandler implements Disposable {
 
 	}
 
-	/**
-	 * Checks whether the given point is inside of any light volume
-	 * 
-	 * @return true if point is inside of any light volume
-	 */
-	public boolean pointAtLight(float x, float y) {
-		for (Light light : lightList) {
-			if (light.contains(x, y)) return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Checks whether the given point is outside of all light volumes
-	 * 
-	 * @return true if point is NOT inside of any light volume
-	 */
-	public boolean pointAtShadow(float x, float y) {
-		for (Light light : lightList) {
-			if (light.contains(x, y)) return false;
-		}
-		return true;
-	}
+//	/**
+//	 * Checks whether the given point is inside of any light volume
+//	 * 
+//	 * @return true if point is inside of any light volume
+//	 */
+//	public boolean pointAtLight(float x, float y) {
+//		for (AbstractLight light : lightList) {
+//			if (light.contains(x, y)) return true;
+//		}
+//		return false;
+//	}
+//
+//	/**
+//	 * Checks whether the given point is outside of all light volumes
+//	 * 
+//	 * @return true if point is NOT inside of any light volume
+//	 */
+//	public boolean pointAtShadow(float x, float y) {
+//		for (AbstractLight light : lightList) {
+//			if (light.contains(x, y)) return false;
+//		}
+//		return true;
+//	}
 
 	/**
 	 * Disposes all this rayHandler lights and resources
@@ -529,15 +584,19 @@ public class RayHandler implements Disposable {
 	 * Removes and disposes both all active and disabled lights
 	 */
 	public void removeAll() {
-		for (Light light : lightList) {
-			light.dispose();
+		for (LightLayer l : layerList) {
+			l.dispose();
 		}
-		lightList.clear();
-
-		for (Light light : disabledLights) {
-			light.dispose();
-		}
-		disabledLights.clear();
+		layerList.clear();
+//		for (AbstractLight light : lightList) {
+//			light.dispose();
+//		}
+//		lightList.clear();
+//
+//		for (AbstractLight light : disabledLights) {
+//			light.dispose();
+//		}
+//		disabledLights.clear();
 	}
 
 	/**
@@ -734,27 +793,27 @@ public class RayHandler implements Disposable {
 		customViewport = false;
 	}
 
-//	/**
-//	 * /!\ Experimental mode with dynamic shadowing in pseudo-3d world
-//	 *
-//	 * @param flag enable pseudo 3d effect
-//	 */
-//	public void setPseudo3dLight(boolean flag) {
-//		setPseudo3dLight(flag, false);
-//	}
-//
-//	/**
-//	 * /!\ Experimental mode with dynamic shadowing in pseudo-3d world
-//	 *
-//	 * @param flag enable pseudo 3d effect
-//	 * @param interpolateShadows interpolate shadow color
-//	 */
-//	public void setPseudo3dLight(boolean flag, boolean interpolateShadows) { 
-//		pseudo3d = flag;
-//		shadowColorInterpolation = interpolateShadows;
-//
-//		lightMap.createShaders();
-//	}
+	/**
+	 * /!\ Experimental mode with dynamic shadowing in pseudo-3d world
+	 *
+	 * @param flag enable pseudo 3d effect
+	 */
+	public void setPseudo3dLight(boolean flag) {
+		setPseudo3dLight(flag, false);
+	}
+
+	/**
+	 * /!\ Experimental mode with dynamic shadowing in pseudo-3d world
+	 *
+	 * @param flag enable pseudo 3d effect
+	 * @param interpolateShadows interpolate shadow color
+	 */
+	public void setPseudo3dLight(boolean flag, boolean interpolateShadows) { 
+		pseudo3d = flag;
+		shadowColorInterpolation = interpolateShadows;
+
+		lightMap.createShaders();
+	}
 
 	/**
 	 * Enables/disables lightMap automatic rendering.

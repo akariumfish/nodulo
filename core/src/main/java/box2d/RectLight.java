@@ -79,11 +79,11 @@ public class RectLight extends Light {
 	public void update () {
 		
 		updateBody();
+		
+		if (cull()) return;
+		if (staticLight && !dirty) return;
+
 		setMesh();
-		
-//		if (cull()) return;
-//		if (staticLight && !dirty) return;
-		
 		dirty = false;
 	}
 	
@@ -120,7 +120,7 @@ public class RectLight extends Light {
 			mx[i] = end[i].x = steppedX + xAxelOffSet;
 			my[i] = end[i].y = steppedY + yAxelOffSet;
 
-			if (rayHandler.world != null && !xray) {// && !rayHandler.pseudo3d) {
+			if (rayHandler.world != null && !xray && !rayHandler.pseudo3d) {
 				rayHandler.world.rayCast(ray, start[i], end[i]);
 			}
 		}
@@ -142,7 +142,7 @@ public class RectLight extends Light {
 		}
 		lightMesh.setVertices(segments, 0, size);
 
-		if (!soft || xray) {// || rayHandler.pseudo3d) {
+		if (!soft || xray || rayHandler.pseudo3d) {
 			return;
 		}
 
@@ -179,7 +179,7 @@ public class RectLight extends Light {
 		lightMesh.render(
 				rayHandler.lightShader, GL20.GL_TRIANGLE_STRIP, 0, vertexNum);
 
-		if (soft && !xray) {// && !rayHandler.pseudo3d) {
+		if (soft && !xray && !rayHandler.pseudo3d) {
 			softShadowMesh.render(
 					rayHandler.lightShader, GL20.GL_TRIANGLE_STRIP, 0, vertexNum);
 		}
@@ -259,11 +259,11 @@ public class RectLight extends Light {
 
 	@Override
 	public void debugRender(nDrawer.Drawer draw) {
-		draw.stroke(0,255,255,255,8f); draw.fill(0,0);
-		draw.push(); draw.rotate(direction * MathUtils.degreesToRadians);
-		draw.translate(getPosition().x, getPosition().y);
-		draw.rect(0, 0, size.x, size.y);
-		draw.pop();
+//		draw.stroke(0,255,255,255,8f); draw.fill(0,0);
+//		draw.push(); draw.rotate(direction * MathUtils.degreesToRadians);
+//		draw.translate(getPosition().x, getPosition().y);
+//		draw.rect(0, 0, size.x, size.y);
+//		draw.pop();
 	}
 	
 	@Override
@@ -337,15 +337,17 @@ public class RectLight extends Light {
 	
 	protected boolean cull() {
 		culled = rayHandler.culling && !rayHandler.intersect(
-					start_pos.x, start_pos.y, distance + softShadowLength);
+					start_pos.x, start_pos.y, Math.max(size.x,size.y) + distance + softShadowLength);
 		return culled;
 	}
 	
 	protected void updateBody() {
 		if (body == null || staticLight) {
+			if (start_pos.x != bodyOffsetX) this.dirty = true;
+			if (start_pos.y != bodyOffsetY) this.dirty = true;
 			start_pos.x = bodyOffsetX;
 			start_pos.y = bodyOffsetY;
-			setDirection(bodyAngleOffset);
+			if (this.direction != bodyAngleOffset) setDirection(bodyAngleOffset); 
 			return;
 		}
 		

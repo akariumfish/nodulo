@@ -13,7 +13,7 @@ import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
 
 class LightMap {
 	private ShaderProgram shadowShader;
-//	private ShaderProgram pseudo3dShader;
+	private ShaderProgram pseudo3dShader;
 	VfxFrameBuffer frameBuffer;
 	private Mesh lightMapMesh;
 
@@ -59,32 +59,32 @@ class LightMap {
 		if (lightMapDrawingDisabled)
 			return;
 
-//		if (rayHandler.pseudo3d) {
-//			frameBuffer.getTexture().bind(1);
-//			shadowBuffer.getTexture().bind(0);
-//		} else {
+		if (rayHandler.pseudo3d) {
+			frameBuffer.getTexture().bind(1);
+			shadowBuffer.getTexture().bind(0);
+		} else {
 			frameBuffer.getTexture().bind(0);
-//		}
+		}
 
 		// at last lights are rendered over scene
 		if (rayHandler.shadows) {
 			final Color c = rayHandler.ambientLight;
 			ShaderProgram shader = shadowShader;
-//			if (rayHandler.pseudo3d) {
-////				shader = pseudo3dShader;
-//				shader.bind();
-//				if (RayHandler.isDiffuse) {
-//					rayHandler.diffuseBlendFunc.apply();
-//					shader.setUniformf("ambient", c.r, c.g, c.b, c.a);
-//				} else {
-//					rayHandler.shadowBlendFunc.apply();
-//					shader.setUniformf("ambient", c.r * c.a, c.g * c.a,
-//							c.b * c.a, 1f - c.a);
-//				}
-//				shader.setUniformi("isDiffuse", RayHandler.isDiffuse ? 1 : 0);
-//				shader.setUniformi("u_texture", 1);
-//				shader.setUniformi("u_shadows", 0);
-//			} else 
+			if (rayHandler.pseudo3d) {
+				shader = pseudo3dShader;
+				shader.bind();
+				if (RayHandler.isDiffuse) {
+					rayHandler.diffuseBlendFunc.apply();
+					shader.setUniformf("ambient", c.r, c.g, c.b, c.a);
+				} else {
+					rayHandler.shadowBlendFunc.apply();
+					shader.setUniformf("ambient", c.r * c.a, c.g * c.a,
+							c.b * c.a, 1f - c.a);
+				}
+				shader.setUniformi("isDiffuse", RayHandler.isDiffuse ? 1 : 0);
+				shader.setUniformi("u_texture", 1);
+				shader.setUniformi("u_shadows", 0);
+			} else 
 			if (RayHandler.isDiffuse) {
 				shader = diffuseShader;
 				shader.bind();
@@ -160,13 +160,13 @@ class LightMap {
 		if (shader_setup) return;
 		shader_setup = true;
 		
-		disposeShaders();
+//		disposeShaders();
 
 //		shadowShader = rayHandler.pseudo3d ? DynamicShadowShader.createShadowShader() : 
 //				ShadowShader.createShadowShader();
 		
 		shadowShader = ShadowShader.createShadowShader();
-//		pseudo3dShader = DynamicShadowShader.createShadowShader();
+		pseudo3dShader = DynamicShadowShader.createShadowShader();
 		
 		diffuseShader = DiffuseShader.createShadowShader();
 
@@ -178,8 +178,8 @@ class LightMap {
 	private void disposeShaders() {
 		if (shadowShader != null)
 			shadowShader.dispose();
-//		if (pseudo3dShader != null)
-//			pseudo3dShader.dispose();
+		if (pseudo3dShader != null)
+			pseudo3dShader.dispose();
 		if (diffuseShader != null)
 			diffuseShader.dispose();
 		if (withoutShadowShader != null)

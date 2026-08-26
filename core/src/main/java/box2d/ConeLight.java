@@ -38,6 +38,15 @@ public class ConeLight extends PositionalLight {
 	 * @param coneDegree
 	 *            half-size of cone light, centered over direction
 	 */
+	public ConeLight(LightLayer layer, Color color,
+			float distance, float x, float y, float directionDegree,
+			float coneDegree) {
+
+		super(layer, 
+				(int)(Math.PI * 2f * distance * (coneDegree / 360f) * RayHandler.LIGHT_DEG_SIZE / 360f)
+				, color, distance, x, y, directionDegree);
+		setConeDegree(coneDegree);
+	}
 	public ConeLight(LightLayer layer, int rays, Color color,
 			float distance, float x, float y, float directionDegree,
 			float coneDegree) {
@@ -48,10 +57,10 @@ public class ConeLight extends PositionalLight {
 	
 	@Override
 	public void update () {
-//		if (rayHandler.pseudo3d) {
-//			prepareFixtureData();
-//			updateDynamicShadowMeshes();
-//		}
+		if (rayHandler.pseudo3d) {
+			prepareFixtureData();
+			updateDynamicShadowMeshes();
+		}
 
 		updateBody();
 		if (dirty) setEndPoints();

@@ -6,9 +6,9 @@ public class LightData {
 
 	public Object userData = null;
 
-	public float height;
+	public float height = 0f;
 
-	public boolean shadow;
+	public boolean shadow = true;
 
 	int shadowsDropped = 0;
 

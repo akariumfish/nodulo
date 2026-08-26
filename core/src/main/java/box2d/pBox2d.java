@@ -195,7 +195,7 @@ public class pBox2d extends pSystem {
 		public pSpace space;
 
 		public sBoo val_draw_debug, val_draw_ray_debug, 
-			val_draw_vision, val_draw_tile, 
+			val_draw_vision, val_draw_tile, val_draw_solid, 
 			val_draw_light, val_draw_color, val_draw_aura, 
 			val_do_calc, val_edit_tile;
 		
@@ -219,6 +219,7 @@ public class pBox2d extends pSystem {
 			val_draw_ray_debug = bloc.obtainBoo("val_draw_ray_debug", false);
 			val_draw_vision = bloc.obtainBoo("val_draw_vision", true);
 			val_draw_tile = bloc.obtainBoo("val_draw_tile", true);
+			val_draw_solid = bloc.obtainBoo("val_draw_solid", true);
 			val_draw_light = bloc.obtainBoo("val_draw_light", true);
 			val_draw_aura = bloc.obtainBoo("val_draw_aura", true);
 			val_draw_color = bloc.obtainBoo("val_draw_color", true);
@@ -280,9 +281,9 @@ public class pBox2d extends pSystem {
 //			interf.add_row();
 //			interf.add_row_label(10, "");
 			interf.add_row();
+			interf.add_row_switch_boo(4, "simu", "val_do_calc");
 			interf.add_row_label(2, "");
-			interf.add_row_switch_boo(6, "simulation", "val_do_calc");
-			interf.add_row_label(2, "");
+			interf.add_row_switch_boo(4, "solid", "val_draw_solid");
 //			interf.add_row();
 //			interf.add_row_label(10, "");
 			interf.add_row();
@@ -306,8 +307,11 @@ public class pBox2d extends pSystem {
 
 		public void frame(float delta) { 
 			val_body_nb.set(bodys.size());
-			val_light_nb.set(renderer.rayHandler.lightList.size + 
-					renderer.rayHandler.disabledLights.size);
+			int c = 0;
+			for (LightLayer l : renderer.rayHandler.layerList) {
+				c += l.lightList.size;
+			}
+			val_light_nb.set(c);
 		}
 
 		private float accumulator = 0;
@@ -341,7 +345,7 @@ public class pBox2d extends pSystem {
 
 		}
 
-//		public boolean drawtile() { return val_do_mask.get(); }
+		public boolean drawsolid() { return val_draw_solid.get(); }
 		public boolean drawlight() { 
 			return val_draw_light.get() && app.gdx.drawer.USE_FX; }
 		public boolean drawaura() { 
@@ -439,16 +443,17 @@ public class pBox2d extends pSystem {
 		public nMap<Joint> joints = new nMap<Joint>();
 		//		private int joint_nb = 0;
 		
-		public HashMap<Body,ArrayList<Light>> lights = new HashMap<Body,ArrayList<Light>>();
-		public void attachToBody(PositionalLight l , Body b) { attachToBody(l,b,0f,0f); }
-		public void attachToBody(PositionalLight l , Body b, float x, float y) {
-			if (lights.get(b) == null) lights.put(b, new ArrayList<Light>());
+		public HashMap<Body,ArrayList<RayHandler.AbstractLight>> lights = 
+				new HashMap<Body,ArrayList<RayHandler.AbstractLight>>();
+		public void attachToBody(RayHandler.AbstractLight l , Body b) { attachToBody(l,b,0f,0f); }
+		public void attachToBody(RayHandler.AbstractLight l , Body b, float x, float y) {
+			if (lights.get(b) == null) lights.put(b, new ArrayList<RayHandler.AbstractLight>());
 			lights.get(b).add(l);
 			l.setIgnoreAttachedBody(true);
 			l.attachToBody(b, x, y);
 		}
-		public void attachToBody(RectLight l , Body b, float x, float y, float d) {
-			if (lights.get(b) == null) lights.put(b, new ArrayList<Light>());
+		public void attachToBody(RayHandler.AbstractLight l , Body b, float x, float y, float d) {
+			if (lights.get(b) == null) lights.put(b, new ArrayList<RayHandler.AbstractLight>());
 			lights.get(b).add(l);
 			l.setIgnoreAttachedBody(true);
 			l.attachToBody(b, x, y, d);
@@ -504,26 +509,29 @@ public class pBox2d extends pSystem {
 					
 					
 					
-//					attachToBody(renderer.colorLayer.newRectLight(
-//							10, new Color(1f,0f,0f,1f), 0f, 0f, 200f, 40f), 
-//							body, 80f, -20f, 0f);
+					attachToBody(renderer.colorLayer.newRectLight(
+							10, new Color(1f,0f,0f,1f), 0f, 0f, 200f, 40f), 
+							body, 80f, -20f, 0f);
 					
 //					RectLight rl = renderer.auraLayer.newRectLight(
 //							30, new Color(1f,0.5f,0.5f,1f), 0f, 0f, 100f, 100f);
 //					rl.setSoftnessLength(50f);
 //					attachToBody(rl, body, -40f, 50f, 180f);
 					
+
 				}
 
 				if (b.getBoo("physic", "light")) {
-					Vector2 pos = b.getVec("physic", "light_pos");
+//					Vector2 pos = b.getVec("physic", "light_pos");
 					float dist = b.getFlt("physic", "light_dist");
 					Color col = Utl.color(b.getInt("physic", "r"), b.getInt("physic", "g"), 
 							b.getInt("physic", "b"), b.getInt("physic", "a"));
-					PointLight l = renderer.newAuraLight(col, dist, 0, 0);
-					l.setColor(col.r,col.g,col.b,col.a);
-					attachToBody(l, body, pos.x, pos.y);
+					
 					renderer.rayHandler.transparent.add(body);
+					
+					SwarmLight.Unit su = renderer.auraLayer.newSwarmLightUnit(
+							new Color(col.r,col.g,col.b,col.a), dist);
+					attachToBody(su, body);
 				}
 
 				if (!b.getBoo("physic", "copy_geom") || !b.hasParam("geom")) {
@@ -535,7 +543,8 @@ public class pBox2d extends pSystem {
 					fixtureDef2.friction = friction;
 					fixtureDef2.restitution = restitution;
 					if (b.getBoo("physic", "sensor")) fixtureDef2.isSensor = true;
-					body.createFixture(fixtureDef2);
+					Fixture fixture = body.createFixture(fixtureDef2);
+//					fixture.setUserData(new LightData(10f));
 				} else if (b.hasParam("geom")) {
 					for (pParam p : b.params.all()) if (p.prop.ref.equals("geom")) {
 						pParam geom = p;
@@ -546,6 +555,10 @@ public class pBox2d extends pSystem {
 						if (faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
 								faceC.size() != faceB.size()) return;
 
+						SolidLight.Unit su = renderer.solidLayer.newSolidLightUnit(
+								new Color(0.6f,0.6f,0.6f,1f));
+						attachToBody(su, body);
+						
 						for (int i = 0 ; i < faceA.size() ; i++) {
 							int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
 							if (p1 < 0 || p1 >= point.size() || 
@@ -557,6 +570,7 @@ public class pBox2d extends pSystem {
 							pl[1] = Utl.copy(point.get(p2)); 
 							pl[2] = Utl.copy(point.get(p3));
 							pl[0].scl(s); pl[1].scl(s); pl[2].scl(s);
+							su.trig(pl[0].x, pl[0].y, pl[1].x, pl[1].y, pl[2].x, pl[2].y);
 							PolygonShape polygonshape = new PolygonShape();
 							polygonshape.set(pl);
 							FixtureDef fixtureDef2 = new FixtureDef();
@@ -565,7 +579,8 @@ public class pBox2d extends pSystem {
 							fixtureDef2.friction = friction;
 							fixtureDef2.restitution = restitution;
 							if (b.getBoo("physic", "sensor")) fixtureDef2.isSensor = true;
-							body.createFixture(fixtureDef2);
+							Fixture fixture = body.createFixture(fixtureDef2);
+//							fixture.setUserData(new LightData(1f));
 						}
 					}
 				}
@@ -583,7 +598,7 @@ public class pBox2d extends pSystem {
 			bodys.remove(b.getStr("box_body", "body_ref"), body);
 			world.destroyBody(body);
 			if (lights.get(body) != null) {
-				for (Light l : lights.get(body)) l.remove();
+				for (RayHandler.AbstractLight l : lights.get(body)) l.remove();
 				lights.get(body).clear();
 			}
 			renderer.rayHandler.transparent.remove(body);

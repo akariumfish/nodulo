@@ -54,9 +54,7 @@ public abstract class PositionalLight extends Light {
 	 * @param directionDegree
 	 *            direction in degrees (if applicable) 
 	 */
-//	public PositionalLight(RayHandler rayHandler, int rays, Color color, float distance, float x, float y, float directionDegree) {
 	public PositionalLight(LightLayer layer, int rays, Color color, float distance, float x, float y, float directionDegree) {
-//		super(rayHandler, rays, color, distance, directionDegree);
 		super(layer, rays, color, distance, directionDegree);
 		start.x = x;
 		start.y = y;
@@ -92,7 +90,7 @@ public abstract class PositionalLight extends Light {
 		rayHandler.lightRenderedLastFrame++;
 		lightMesh.render(rayHandler.lightShader, GL20.GL_TRIANGLE_FAN, 0, vertexNum);
 
-		if (soft && !xray) {// && !rayHandler.pseudo3d) {
+		if (soft && !xray && !rayHandler.pseudo3d) {
 			softShadowMesh.render(
 				rayHandler.lightShader,
 				GL20.GL_TRIANGLE_STRIP,
@@ -247,7 +245,7 @@ public abstract class PositionalLight extends Light {
 			mx[i] = tmpEnd.x;
 			tmpEnd.y = endY[i] + start.y;
 			my[i] = tmpEnd.y;
-			if (rayHandler.world != null && !xray) {// && !rayHandler.pseudo3d) {
+			if (rayHandler.world != null && !xray && !rayHandler.pseudo3d && !layer.no_raycast) {
 				rayHandler.world.rayCast(ray, start, tmpEnd);
 			}
 		}
@@ -278,7 +276,7 @@ public abstract class PositionalLight extends Light {
 		}
 		lightMesh.setVertices(segments, 0, size);
 
-		if (!soft || xray) return;// || rayHandler.pseudo3d) return;
+		if (!soft || xray || rayHandler.pseudo3d) return;
 
 		size = 0;
 		// rays ending points.

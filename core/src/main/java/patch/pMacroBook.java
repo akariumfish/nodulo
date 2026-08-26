@@ -201,7 +201,7 @@ public class pMacroBook {
 			.addSetVar("exac_actor", "print_name", "mob_print")
 		.addMacro("exec", pMacro.getMacro("executor"), 		300f,	300f)
 			.addSetVar("exec_exec", "target_ref", "auto_shoot")
-			.addSetVar("exec_time", "delay", (int)25)
+			.addSetVar("exec_time", "delay", (int)30)
 			.addLink("exac_actor", "co_register", "exec_exec", "co_reg")
 		;
 		

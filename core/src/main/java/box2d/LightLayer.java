@@ -10,27 +10,32 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
 
+import box2d.RayHandler.AbstractLight;
 import util.Utl;
 
 public class LightLayer extends nRenderer.Layer {
 
 	RayHandler rayHandler;
 
-	public final Array<Light> lightList = new Array<Light>(false, 16);
+	public final Array<RayHandler.AbstractLight> lightList = 
+			new Array<RayHandler.AbstractLight>(false, 16);
 	
 	public ArrayList<Body> transparent = new ArrayList<Body>();
 
 	public ArrayList<Body> light_blocker = new ArrayList<Body>();
 	public boolean use_blocker = false;
 	
-	public enum MODE { DEFAULT, LIGHT, AURA, VISION, COLOR }
+	public enum MODE { DEFAULT, LIGHT, AURA, VISION, COLOR, SOLID }
 	
 	public MODE mode = MODE.DEFAULT;
-	
+
 	public boolean active = true;
-	
+
+	public boolean no_raycast = false;
+
 	public void prepareRender() {
 		use_blocker = false;
+		no_raycast = false;
 		if (mode == MODE.DEFAULT) {
 //			rayHandler.setBlendDef();
 			active = false;
@@ -39,6 +44,7 @@ public class LightLayer extends nRenderer.Layer {
 			active = rend.box.drawlight();
 		} else if (mode == MODE.AURA) {
 			rayHandler.setBlendAura(); 
+//			no_raycast = true;
 			active = rend.box.drawaura();
 		} else if (mode == MODE.VISION) {
 			use_blocker = true;
@@ -47,6 +53,9 @@ public class LightLayer extends nRenderer.Layer {
 		} else if (mode == MODE.COLOR) {
 			rayHandler.setBlendColor(); 
 			active = rend.box.drawcolor();
+		} else if (mode == MODE.SOLID) {
+			rayHandler.setBlendSolid(); 
+			active = rend.box.drawsolid();
 		} 
 	}
 
@@ -62,6 +71,13 @@ public class LightLayer extends nRenderer.Layer {
 		this(tm,p);
 		mode = m;
 	}
+	
+	public void dispose() {
+		for (AbstractLight light : lightList) {
+			light.dispose();
+		}
+		lightList.clear();
+	}
 
 	public void loadMapObject(MapProperties prop) {
 		if (Utl.getBoo(prop,"pointlight")) {
@@ -70,6 +86,8 @@ public class LightLayer extends nRenderer.Layer {
 			Vector2 pos = rend.tileLayer.mapToSpace(prop.get("x", Float.class), 
 					prop.get("y", Float.class));
 			PointLight pl = newPointLight(col, dist, pos.x, pos.y);
+//			pl.setHeight(1f);
+			if (mode == MODE.LIGHT) pl.setStaticLight(true);
 		}
 		if (Utl.getBoo(prop,"conelight")) {
 			float dir = prop.get("dir", Float.class); // 0 = 0deg, 0.5 = 180deg
@@ -81,6 +99,8 @@ public class LightLayer extends nRenderer.Layer {
 			ConeLight cl = newConeLight(col, dist, pos.x, pos.y, 
 					dir * 360f, cone * 360f);
 			cl.setSoft(false);
+//			cl.setHeight(1f);
+			if (mode == MODE.LIGHT) cl.setStaticLight(true);
 		}
 	}
 	public void loadMapLayer(MapLayer ml) {
@@ -94,6 +114,28 @@ public class LightLayer extends nRenderer.Layer {
 		rayHandler.renderLayer(this);
 	}
 
+	public ArrayList<SwarmLight> swarms = new ArrayList<SwarmLight>();
+
+	public SwarmLight.Unit newSwarmLightUnit(Color col, float dist) {
+		if (swarms.size() == 0) swarms.add(new SwarmLight(this));
+		SwarmLight.Unit unit = null;
+		for (SwarmLight s : swarms) {
+			unit = s.newUnit(col, dist);
+			if (unit != null) return unit; }
+		SwarmLight swrm = new SwarmLight(this);
+		return swrm.newUnit(col, dist); }
+
+	public ArrayList<SolidLight> solids = new ArrayList<SolidLight>();
+
+	public SolidLight.Unit newSolidLightUnit(Color col) {
+		if (solids.size() == 0) solids.add(new SolidLight(this));
+		SolidLight.Unit unit = null;
+		for (SolidLight s : solids) {
+			unit = s.newUnit(col);
+			if (unit != null) return unit; }
+		SolidLight swrm = new SolidLight(this);
+		return swrm.newUnit(col); }
+
 	public PointLight newPointLight(Color col, float dist, float x, float y) {
 		return new PointLight(this, 
 				(int)(Math.PI * 2f * dist * RayHandler.LIGHT_DEG_SIZE / 360f), 
@@ -102,9 +144,7 @@ public class LightLayer extends nRenderer.Layer {
 		return new PointLight(this, ray, col, dist, x, y); }
 
 	public ConeLight newConeLight(Color col, float dist, float x, float y, float dir, float cone) {
-		return new ConeLight(this, 
-				(int)(Math.PI * 2f * dist * (cone / 360f) * RayHandler.LIGHT_DEG_SIZE / 360f), 
-				col, dist, x, y, dir, cone); }
+		return new ConeLight(this, col, dist, x, y, dir, cone); }
 	public ConeLight newConeLight(int ray, Color col, float dist, float x, float y, float dir, float cone) {
 		return new ConeLight(this, ray, col, dist, x, y, dir, cone); }
 
@@ -139,18 +179,22 @@ public class LightLayer extends nRenderer.Layer {
 		Vector2 vp = new Vector2(mapwidth, mapheight);
 		RectLight rl = newRectLight(rayh, new Color(1f,1f,1f,1f), 
 				-vp.x / 2f, -vp.y / 2f, mapwidth, mapheight, dr);
+		rl.setStaticLight(true);
 		rl.setSoftnessLength(soft);
 		dr += 90f; vp.rotateRad((float)Math.PI / 2f);
 		rl = newRectLight(rayw, new Color(1f,1f,1f,1f), 
 				-vp.x / 2f, -vp.y / 2f, mapwidth, mapheight, dr);
+		rl.setStaticLight(true);
 		rl.setSoftnessLength(soft);
 		dr += 90f; vp.rotateRad((float)Math.PI / 2f);
 		rl = newRectLight(rayh, new Color(1f,1f,1f,1f), 
 				-vp.x / 2f, -vp.y / 2f, mapwidth, mapheight, dr);
+		rl.setStaticLight(true);
 		rl.setSoftnessLength(soft);
 		dr += 90f; vp.rotateRad((float)Math.PI / 2f);
 		rl = newRectLight(rayw, new Color(1f,1f,1f,1f), 
 				-vp.x / 2f, -vp.y / 2f, mapwidth, mapheight, dr);
+		rl.setStaticLight(true);
 		rl.setSoftnessLength(soft);
 
 	} 

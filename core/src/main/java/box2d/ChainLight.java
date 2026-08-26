@@ -608,7 +608,7 @@ public class ChainLight extends Light {
 			my[i] = tmpEnd.y;
 			tmpStart.x = startX[i];
 			tmpStart.y = startY[i];
-			if (rayHandler.world != null && !xray) {
+			if (rayHandler.world != null && !xray && !layer.no_raycast) {
 				rayHandler.world.rayCast(ray, tmpStart, tmpEnd);
 			}
 		}

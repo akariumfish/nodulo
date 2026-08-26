@@ -28,25 +28,17 @@ import util.Utl;
  * 
  * @author kalle_h
  */
-public abstract class Light implements Disposable {
-
-	static final Color DefaultColor = new Color(0.75f, 0.75f, 0.5f, 0.75f);
-	static final float zeroColorBits = Color.toFloatBits(0f, 0f, 0f, 0f);
-	static final float oneColorBits = Color.toFloatBits(1f, 1f, 1f, 1f);
-	static final int MIN_RAYS = 3;
+public abstract class Light extends RayHandler.BaseLight implements Disposable {
 	
 	protected final Color color = new Color();
 	protected final Vector2 tmpPosition = new Vector2();
 	
-	protected RayHandler rayHandler;
-	
-	protected boolean active = true;
 	protected boolean soft = true;
 	protected boolean xray = false;
 	protected boolean staticLight = false;
 	protected boolean culled = false;
 	protected boolean dirty = true;
-	protected boolean ignoreBody = false;
+//	protected boolean ignoreBody = false;
 
 	protected int rayNum;
 	protected int vertexNum;
@@ -70,7 +62,7 @@ public abstract class Light implements Disposable {
 	 */
 	protected static final LightData tmpData = new LightData(0f);
 
-	protected float pseudo3dHeight = 0f;
+	protected float pseudo3dHeight = 1f;
 
 	protected final Array<Mesh> dynamicShadowMeshes = new Array<Mesh>();
 	//Should never be cleared except when the light changes position (not direction). Prevents shadows from disappearing when fixture is out of sight.
@@ -84,14 +76,13 @@ public abstract class Light implements Disposable {
 	protected final Vector2 tmpVec = new Vector2();
 	public final Vector2 center = new Vector2();
 	
-	public LightLayer layer;
+	public Light(LightLayer layer) {
+		super(layer);
+	}
 
 	public Light(LightLayer layer, int rays, Color color,
 				 float distance, float directionDegree) {
-		this.layer = layer;
-		layer.lightList.add(this);
-		this.rayHandler = layer.rayHandler;
-		rayHandler.lightList.add(this);
+		super(layer);
 		setRayNum(rays);
 		setColor(color);
 		setDistance(distance);
@@ -254,16 +245,17 @@ public abstract class Light implements Disposable {
 	 */
 	public void add(RayHandler rayHandler) {
 		this.rayHandler = rayHandler;
-		if (active) {
-			rayHandler.lightList.add(this);
-		} else {
-			rayHandler.disabledLights.add(this);
-		}
+//		if (active) {
+//			rayHandler.lightList.add(this);
+//		} else {
+//			rayHandler.disabledLights.add(this);
+//		}
 	}
 
 	/**
 	 * Removes light from specified RayHandler and disposes it
 	 */
+	@Override
 	public void remove() {
 		remove(true);
 	}
@@ -272,11 +264,11 @@ public abstract class Light implements Disposable {
 	 * Removes light from specified RayHandler and disposes it if requested
 	 */
 	public void remove(boolean doDispose) {
-		if (active) {
-			rayHandler.lightList.removeValue(this, false);
-		} else {
-			rayHandler.disabledLights.removeValue(this, false);
-		}
+//		if (active) {
+//			rayHandler.lightList.removeValue(this, false);
+//		} else {
+//			rayHandler.disabledLights.removeValue(this, false);
+//		}
 		layer.lightList.removeValue(this, false);
 		layer = null;
 		rayHandler = null;
@@ -311,16 +303,16 @@ public abstract class Light implements Disposable {
 			return;
 
 		this.active = active;
-		if (rayHandler == null)
-			return;
-		
-		if (active) {
-			rayHandler.lightList.add(this);
-			rayHandler.disabledLights.removeValue(this, true);
-		} else {
-			rayHandler.disabledLights.add(this);
-			rayHandler.lightList.removeValue(this, true);
-		}
+//		if (rayHandler == null)
+//			return;
+//		
+//		if (active) {
+//			rayHandler.lightList.add(this);
+//			rayHandler.disabledLights.removeValue(this, true);
+//		} else {
+//			rayHandler.disabledLights.add(this);
+//			rayHandler.lightList.removeValue(this, true);
+//		}
 	}
 
 	/**
@@ -631,7 +623,14 @@ public abstract class Light implements Disposable {
 			if (fixture.getUserData() instanceof LightData) {
 				LightData data = (LightData) fixture.getUserData();
 				data.shadowsDropped++;
-			}
+			} 
+//			if (fixture.getUserData() instanceof LightData) {
+//				LightData data = (LightData) fixture.getUserData();
+//				if (data.shadow) {
+//					affectedFixtures.add(fixture);
+//					data.shadowsDropped++;
+//				}
+//			} else affectedFixtures.add(fixture);
 			return true;
 		}
 

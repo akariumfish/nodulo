@@ -27,6 +27,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -37,7 +38,9 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.noodle.nodulo.GdxApp;
 
 import aa_nodulo.pView;
 import gui.nGUI;
@@ -95,13 +98,7 @@ public class TileLayer extends nRenderer.Layer {
 		tile_height = ml.getTileHeight();
 		
 		
-//		float wi = getWidth();
-//		float he = getHeight();
-//
-//		rend.lightLayer.newRectLight((int)(he / 4f), new Color(1f,1f,1f,1f), 
-//				-wi / 2f, -he / 2f, wi, he);
-		
-		renderer = new RendererOrtho(1f / tile_width);
+		renderer = new RendererOrtho(1f / tile_width, GdxApp.app.drawer.spritebatch);
 		
 		mapLayer.getProperties().put("tilelayer", this);
 		
@@ -159,7 +156,9 @@ public class TileLayer extends nRenderer.Layer {
 		
 		PolygonShape groundBox = new PolygonShape();  
 		groundBox.setAsBox(w*rend.tile_scale/2f,h*rend.tile_scale/2f);
-		groundBody.createFixture(groundBox, 0.0f);
+		Fixture fixture = groundBody.createFixture(groundBox, 0.0f);
+//		fixture.setUserData(new LightData(1f, true));
+		
 		groundBox.dispose();
 		for (int i = x ; i < x + w ; i++)
 			for (int j = y ; j < y + h ; j++) 
@@ -312,14 +311,15 @@ public class TileLayer extends nRenderer.Layer {
 	
 
 	public class RendererOrtho extends BatchTiledMapRenderer {
-
-		public RendererOrtho (float unitScale) {
-			super(null, unitScale);
+		
+		public RendererOrtho (float unitScale, Batch b) {
+			super(null, unitScale, b);
 		}
 
 		public void render(TileLayer layer) { 
 
 			tmp_transf.set(batch.getTransformMatrix());
+			tmp_proj.set(batch.getProjectionMatrix());
 			batch.setTransformMatrix(transform);
 			batch.setProjectionMatrix(projection);
 			
@@ -341,9 +341,7 @@ public class TileLayer extends nRenderer.Layer {
 		public Matrix4 tmp_transf = new Matrix4().setToTranslation(0f,0f,0f);
 		@Override
 		public void setView (Matrix4 proj, float x, float y, float width, float height) {
-			tmp_proj.set(batch.getProjectionMatrix());
 			projection.set(proj);
-			batch.setProjectionMatrix(proj);
 			viewBounds.set(x, y, width, height);
 		}
 		

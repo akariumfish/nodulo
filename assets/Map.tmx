@@ -265,7 +265,7 @@
 40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40
 </data>
  </layer>
- <objectgroup color="#ffff00" id="14" name="Object" locked="1">
+ <objectgroup color="#ffff00" id="14" name="Object">
   <object id="365" template="dir_light.tx" x="944" y="1202">
    <properties>
     <property name="cone" type="float" value="0.07"/>
@@ -283,8 +283,8 @@
     <property name="dir" type="float" value="0.25"/>
    </properties>
   </object>
-  <object id="371" template="dir_light.tx" x="888" y="834"/>
-  <object id="373" template="dir_light.tx" x="1016" y="834"/>
+  <object id="371" template="dir_light.tx" x="888" y="840"/>
+  <object id="373" template="dir_light.tx" x="1016" y="840"/>
   <object id="374" template="dir_light.tx" x="896" y="578"/>
   <object id="375" template="dir_light.tx" x="1120" y="578"/>
   <object id="376" template="dir_light.tx" x="1008" y="578"/>
