@@ -834,7 +834,7 @@ public class pFunc {
 		
 		START, RTRN, 
 		IF, CLS, 
-		FUNC, SMM, 
+		FUNC, SMM, TERM, 
 		
 		// iteration code
 		NEXT, STOP, JUMP

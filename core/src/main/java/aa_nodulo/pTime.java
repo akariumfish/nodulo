@@ -13,6 +13,8 @@ import com.badlogic.gdx.math.Vector2;
 import aa_term.CommandExecutor;
 import aa_term.ConsoleDoc;
 import aa_term.LogLevel;
+import aa_term.SystemExecutor;
+import aa_term.pTerm;
 import app.App;
 import data.*;
 import gui.*;
@@ -224,15 +226,8 @@ public class pTime {
 				app.net.net.addSyncVal(val_tick_cnt);	 }
 		}});
 		
-		app.term.addExecutor(new CommandExecutor("time") {
-
-			@ConsoleDoc(description = "Pause ticks", 
-					paramDescriptions = {"pause state"}) 
-			public void pause(boolean r) {
-				val_pause.set(r);
-				console.log("pause = "+r, LogLevel.SUCCESS);
-			}
-
+		app.term.addExecutor(new SystemExecutor("time", bloc) {
+			
 		});
 	}
 	public void clear() {

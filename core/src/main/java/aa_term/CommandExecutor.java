@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Method;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.noodle.nodulo.GdxApp;
 
 /**
@@ -25,9 +28,18 @@ import com.noodle.nodulo.GdxApp;
 public class CommandExecutor {
 	
 	public String ref;
+
+	protected Console console;
+
 	public CommandExecutor(String r) {
 		ref = r;
 	}
+
+	protected void setConsole (Console c) {
+		console = c;
+	}
+
+	
 	
 	Method[] methods = null;
 	ArrayList<Method> methods_arr = null;
@@ -51,6 +63,126 @@ public class CommandExecutor {
 		return methods_arr;
 	}
 	
+	
+	
+	
+	
+	
+	public void execCommand (String command) {
+		if (console.isDisabled())
+			return;
+
+		console.log(command, LogLevel.COMMAND);
+
+		String[] parts = command.split(" ");
+		String methodName = parts[0];
+		String[] mParts = methodName.split("/");
+		
+		if (mParts.length == 2 && console.getSysMap().hasKey(mParts[0])) {
+			String back = "";
+			if (!ref.equals(mParts[0])) {
+				back = ref;
+				console.execCommand("sys "+mParts[0]);
+			}
+			methodName = mParts[1];
+			for (int i = 1 ; i < parts.length ; i++) methodName += " " + parts[i];
+			console.execCommand(methodName);
+			if (back.length() > 0) console.execCommand("sys "+back);
+			return;
+		}
+		
+		String[] sArgs = null;
+		if (parts.length > 1) {
+			sArgs = new String[parts.length - 1];
+			for (int i = 1; i < parts.length; i++) {
+				sArgs[i - 1] = parts[i];
+			}
+		}
+
+		Array<Integer> possible = new Array<Integer>();
+		for (int i = 0; i < methods.length; i++) {
+			Method method = methods[i];
+			if (method.getName().equalsIgnoreCase(methodName) && ConsoleUtils.canExecuteCommand(console, method)) {
+				possible.add(i);
+			}
+		}
+
+		if (possible.size <= 0) {
+			console.log("No such method found.", LogLevel.ERROR);
+			return;
+		}
+
+		int size = possible.size;
+		int numArgs = sArgs == null ? 0 : sArgs.length;
+		for (int i = 0; i < size; i++) {
+			Method m = methods[possible.get(i)];
+			Class<?>[] params = m.getParameterTypes();
+			if (numArgs == params.length) {
+				try {
+					Object[] args = null;
+
+					try {
+						if (sArgs != null) {
+							args = new Object[numArgs];
+
+							for (int j = 0; j < params.length; j++) {
+								Class<?> param = params[j];
+								final String value = sArgs[j];
+
+								if (param.equals(String.class)) {
+									args[j] = value;
+								} else if (param.equals(Boolean.class) || param.equals(boolean.class)) {
+									args[j] = Boolean.parseBoolean(value);
+								} else if (param.equals(Byte.class) || param.equals(byte.class)) {
+									args[j] = Byte.parseByte(value);
+								} else if (param.equals(Short.class) || param.equals(short.class)) {
+									args[j] = Short.parseShort(value);
+								} else if (param.equals(Integer.class) || param.equals(int.class)) {
+									args[j] = Integer.parseInt(value);
+								} else if (param.equals(Long.class) || param.equals(long.class)) {
+									args[j] = Long.parseLong(value);
+								} else if (param.equals(Float.class) || param.equals(float.class)) {
+									args[j] = Float.parseFloat(value);
+								} else if (param.equals(Double.class) || param.equals(double.class)) {
+									args[j] = Double.parseDouble(value);
+								} else if (param.equals(Vector2.class)) {
+									args[j] = new Vector2().fromString(value);
+								}
+							}
+						}
+					} catch (Exception e) {
+						// Error occurred trying to parse parameter, continue
+						// to next function
+						continue;
+					}
+
+					m.setAccessible(true);
+					console.setTmpStore();
+					m.invoke(this, args);
+					console.validCode(command);
+					return;
+				} catch (ReflectionException e) {
+					String msg = e.getMessage();
+					if (msg == null || msg.length() <= 0) {
+						msg = "Unknown Error";
+						e.printStackTrace();
+					}
+					console.log(msg, LogLevel.ERROR);
+					if (console.getConsoleTrace()) {
+						console.log(e, LogLevel.ERROR);
+					}
+					return;
+				}
+			}
+		}
+
+		console.log("Bad parameters. Check your code.", LogLevel.ERROR);
+	}
+	
+	
+	
+	
+	
 	void printCommands () {
 		for (Method m : getAllMethods()) {
 			if (m.isPublic() && ConsoleUtils.canDisplayCommand(console, m)) {
@@ -72,12 +204,6 @@ public class CommandExecutor {
 	}
 	
 	
-	protected Console console;
-
-	protected void setConsole (Console c) {
-		console = c;
-	}
-
 	/**
 	 * Prints the log to a local file.
 	 *
@@ -110,6 +236,12 @@ public class CommandExecutor {
 	@HiddenCommand
 	public final void store (boolean t) {
 		console.store(t);
+	}
+
+	@HiddenCommand
+	@ConsoleDoc(description = "List all stored codes") 
+	public final void allStore () {
+		console.allStore();
 	}
 
 	@HiddenCommand
@@ -183,7 +315,7 @@ public class CommandExecutor {
 	public void sys(String r) {
 		if (console.getSysMap().hasKey(r)) {
 			console.log("using system: "+r, LogLevel.SUCCESS);
-			console.setTitle("Terminal - T to hide - "+r);
+			console.setTitle("Terminal - small 2 to hide - "+r);
 			console.setCommandExecutor(console.getSysMap().get(r));
 		} else {
 			console.log("didnt found system "+r, LogLevel.ERROR);

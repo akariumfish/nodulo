@@ -27,6 +27,14 @@ public class pTerm {
 		Gdx.input.setInputProcessor(console.getMultiplexer());
 	}
 
+	public CommandExecutor addExecutor(CommandExecutor ce) {
+		console.addExecutor(ce); return ce;
+	}
+
+	public CommandHistory newStoredCode(String code_ref) {
+		return console.newStoredCode(code_ref);
+	}
+	
 	
 	public PlaneApplet app;
 
@@ -38,7 +46,7 @@ public class pTerm {
 	public boolean use_net_frame = false;
 	
 	GUIConsole console;
-	CommandExecutor exec;
+//	CommandExecutor exec;
 	
 	public void init() {
 		bloc = app.data.root_bloc.obtainBloc("term_bloc");
@@ -51,13 +59,13 @@ public class pTerm {
 		
 		Skin skin = new Skin(Gdx.files.classpath("console_ui/uiskin.json"));
 		console = new GUIConsole(skin, true, Keys.GRAVE);
-		exec = addExecutor(new CommandExecutor("term"));
-		console.setCommandExecutor(exec);
+//		exec = addExecutor(new CommandExecutor("term"));
+//		console.setCommandExecutor(exec);
 		
 		console.setVisible(app.config.POP_TERMINAL);
 		console.setConsoleStackTrace(true);
-		console.enablePrintButton(true);
-		console.setTitle("Terminal - T to hide - term");
+//		console.enablePrintButton(true);
+		console.setTitle("Terminal - small 2 to hide");
 //		console.setMaxEntries(16);
 		console.setHoverColor(Color.BLACK);
 		console.setNoHoverColor(Color.BLUE);
@@ -89,6 +97,14 @@ public class pTerm {
 //			.exec("sys term")
 //			;
 //		}});
+		
+
+		app.outputs.put("trm", new nRun() { public void run() {
+			if (args.length < 1) return;
+			String r = arg(0,String.class); 
+			console.exec(r);
+		}});
+		
 	}
 	
 	public void clear() {
@@ -158,11 +174,7 @@ public class pTerm {
 		
 	}
 	
-	public CommandExecutor addExecutor(CommandExecutor ce) {
-		console.addExecutor(ce); return ce;
-	}
 	
-
 	
 	
 }

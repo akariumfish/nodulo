@@ -44,6 +44,10 @@ public abstract class AbstractConsole implements Console, Disposable {
 		system_execs.putOne(ce.ref,ce);
 		ce.getMethods();
 		ce.setConsole(this);
+		if (exec == null) {
+			exec = ce;
+			setTitle("Terminal - small 2 to hide - "+ce.ref);
+		}
 	}
 	
 	public AbstractConsole () {
@@ -51,6 +55,10 @@ public abstract class AbstractConsole implements Console, Disposable {
 		execHistory = new CommandHistory();
 	}
 
+	@Override public boolean getConsoleTrace() {
+		return consoleTrace;
+	}
+	
 	@Override public boolean isDisabled () {
 		return disabled;
 	}
@@ -132,6 +140,12 @@ public abstract class AbstractConsole implements Console, Disposable {
 		execHistory.reset();
 	}
 
+	@Override public void allStore() {
+		blockStore();
+		for (String s : historys.allKey())
+			log(s);
+	}
+
 	@Override public void storeCode(String ref) {
 		blockStore();
 		if (historys.hasKey(ref)) {
@@ -139,6 +153,13 @@ public abstract class AbstractConsole implements Console, Disposable {
 		CommandHistory ch = new CommandHistory();
 		ch.copy(execHistory);
 		historys.put(ref,ch);
+	}
+	public CommandHistory newStoredCode(String ref) {
+		if (historys.hasKey(ref)) {
+			historys.remove(ref); }
+		CommandHistory ch = new CommandHistory();
+		historys.put(ref,ch);
+		return ch;
 	}
 
 	@Override public void runCode(String ref) {
@@ -166,7 +187,10 @@ public abstract class AbstractConsole implements Console, Disposable {
 	public void blockStore() {
 		storeCode = false;
 	}
-	private void validCode(String c) {
+	public void setTmpStore() {
+		tmpStoreCode = storeCode;
+	}
+	public void validCode(String c) {
 		if (execHistory.getSize() > getMaxHistory()) {
 			if (storeCode) 
 				log("ERROR : execution history is full, cant store command", LogLevel.ERROR);
@@ -185,121 +209,122 @@ public abstract class AbstractConsole implements Console, Disposable {
 	}
 
 	@Override public void execCommand (String command) {
-		if (disabled)
-			return;
-
-		log(command, LogLevel.COMMAND);
-
-		String[] parts = command.split(" ");
-		String methodName = parts[0];
-		String[] mParts = methodName.split("/");
-		
-//		Utl.logn(methodName);
+		exec.execCommand(command);
+//		if (disabled)
+//			return;
+//
+//		log(command, LogLevel.COMMAND);
+//
+//		String[] parts = command.split(" ");
+//		String methodName = parts[0];
+//		String[] mParts = methodName.split("/");
 //		
-//		for (int i = 0 ; i < mParts.length ; i++) Utl.logn(mParts[i]);
-		
-		if (mParts.length == 2 && system_execs.hasKey(mParts[0])) {
-			String back = "";
-			if (!exec.ref.equals(mParts[0])) {
-				back = exec.ref;
-				execCommand("sys "+mParts[0]);
-			}
-			methodName = mParts[1];
-			for (int i = 1 ; i < parts.length ; i++) methodName += " " + parts[i];
-			execCommand(methodName);
-			if (back.length() > 0) execCommand("sys "+back);
-			return;
-		}
-		
-		String[] sArgs = null;
-		if (parts.length > 1) {
-			sArgs = new String[parts.length - 1];
-			for (int i = 1; i < parts.length; i++) {
-				sArgs[i - 1] = parts[i];
-			}
-		}
-
-//		Class<? extends CommandExecutor> clazz = exec.getClass();
-//		Method[] methods = ClassReflection.getMethods(clazz);
-		Method[] methods = exec.methods;
-		Array<Integer> possible = new Array<Integer>();
-		for (int i = 0; i < methods.length; i++) {
-			Method method = methods[i];
-			if (method.getName().equalsIgnoreCase(methodName) && ConsoleUtils.canExecuteCommand(this, method)) {
-				possible.add(i);
-			}
-		}
-
-		if (possible.size <= 0) {
-			log("No such method found.", LogLevel.ERROR);
-			return;
-		}
-
-		int size = possible.size;
-		int numArgs = sArgs == null ? 0 : sArgs.length;
-		for (int i = 0; i < size; i++) {
-			Method m = methods[possible.get(i)];
-			Class<?>[] params = m.getParameterTypes();
-			if (numArgs == params.length) {
-				try {
-					Object[] args = null;
-
-					try {
-						if (sArgs != null) {
-							args = new Object[numArgs];
-
-							for (int j = 0; j < params.length; j++) {
-								Class<?> param = params[j];
-								final String value = sArgs[j];
-
-								if (param.equals(String.class)) {
-									args[j] = value;
-								} else if (param.equals(Boolean.class) || param.equals(boolean.class)) {
-									args[j] = Boolean.parseBoolean(value);
-								} else if (param.equals(Byte.class) || param.equals(byte.class)) {
-									args[j] = Byte.parseByte(value);
-								} else if (param.equals(Short.class) || param.equals(short.class)) {
-									args[j] = Short.parseShort(value);
-								} else if (param.equals(Integer.class) || param.equals(int.class)) {
-									args[j] = Integer.parseInt(value);
-								} else if (param.equals(Long.class) || param.equals(long.class)) {
-									args[j] = Long.parseLong(value);
-								} else if (param.equals(Float.class) || param.equals(float.class)) {
-									args[j] = Float.parseFloat(value);
-								} else if (param.equals(Double.class) || param.equals(double.class)) {
-									args[j] = Double.parseDouble(value);
-								} else if (param.equals(Vector2.class)) {
-									args[j] = new Vector2().fromString(value);
-								}
-							}
-						}
-					} catch (Exception e) {
-						// Error occurred trying to parse parameter, continue
-						// to next function
-						continue;
-					}
-
-					m.setAccessible(true);
-					tmpStoreCode = storeCode;
-					m.invoke(exec, args);
-					validCode(command);
-					return;
-				} catch (ReflectionException e) {
-					String msg = e.getMessage();
-					if (msg == null || msg.length() <= 0) {
-						msg = "Unknown Error";
-						e.printStackTrace();
-					}
-					log(msg, LogLevel.ERROR);
-					if (consoleTrace) {
-						log(e, LogLevel.ERROR);
-					}
-					return;
-				}
-			}
-		}
-
-		log("Bad parameters. Check your code.", LogLevel.ERROR);
+////		Utl.logn(methodName);
+////		
+////		for (int i = 0 ; i < mParts.length ; i++) Utl.logn(mParts[i]);
+//		
+//		if (mParts.length == 2 && system_execs.hasKey(mParts[0])) {
+//			String back = "";
+//			if (!exec.ref.equals(mParts[0])) {
+//				back = exec.ref;
+//				execCommand("sys "+mParts[0]);
+//			}
+//			methodName = mParts[1];
+//			for (int i = 1 ; i < parts.length ; i++) methodName += " " + parts[i];
+//			execCommand(methodName);
+//			if (back.length() > 0) execCommand("sys "+back);
+//			return;
+//		}
+//		
+//		String[] sArgs = null;
+//		if (parts.length > 1) {
+//			sArgs = new String[parts.length - 1];
+//			for (int i = 1; i < parts.length; i++) {
+//				sArgs[i - 1] = parts[i];
+//			}
+//		}
+//
+////		Class<? extends CommandExecutor> clazz = exec.getClass();
+////		Method[] methods = ClassReflection.getMethods(clazz);
+//		Method[] methods = exec.methods;
+//		Array<Integer> possible = new Array<Integer>();
+//		for (int i = 0; i < methods.length; i++) {
+//			Method method = methods[i];
+//			if (method.getName().equalsIgnoreCase(methodName) && ConsoleUtils.canExecuteCommand(this, method)) {
+//				possible.add(i);
+//			}
+//		}
+//
+//		if (possible.size <= 0) {
+//			log("No such method found.", LogLevel.ERROR);
+//			return;
+//		}
+//
+//		int size = possible.size;
+//		int numArgs = sArgs == null ? 0 : sArgs.length;
+//		for (int i = 0; i < size; i++) {
+//			Method m = methods[possible.get(i)];
+//			Class<?>[] params = m.getParameterTypes();
+//			if (numArgs == params.length) {
+//				try {
+//					Object[] args = null;
+//
+//					try {
+//						if (sArgs != null) {
+//							args = new Object[numArgs];
+//
+//							for (int j = 0; j < params.length; j++) {
+//								Class<?> param = params[j];
+//								final String value = sArgs[j];
+//
+//								if (param.equals(String.class)) {
+//									args[j] = value;
+//								} else if (param.equals(Boolean.class) || param.equals(boolean.class)) {
+//									args[j] = Boolean.parseBoolean(value);
+//								} else if (param.equals(Byte.class) || param.equals(byte.class)) {
+//									args[j] = Byte.parseByte(value);
+//								} else if (param.equals(Short.class) || param.equals(short.class)) {
+//									args[j] = Short.parseShort(value);
+//								} else if (param.equals(Integer.class) || param.equals(int.class)) {
+//									args[j] = Integer.parseInt(value);
+//								} else if (param.equals(Long.class) || param.equals(long.class)) {
+//									args[j] = Long.parseLong(value);
+//								} else if (param.equals(Float.class) || param.equals(float.class)) {
+//									args[j] = Float.parseFloat(value);
+//								} else if (param.equals(Double.class) || param.equals(double.class)) {
+//									args[j] = Double.parseDouble(value);
+//								} else if (param.equals(Vector2.class)) {
+//									args[j] = new Vector2().fromString(value);
+//								}
+//							}
+//						}
+//					} catch (Exception e) {
+//						// Error occurred trying to parse parameter, continue
+//						// to next function
+//						continue;
+//					}
+//
+//					m.setAccessible(true);
+//					tmpStoreCode = storeCode;
+//					m.invoke(exec, args);
+//					validCode(command);
+//					return;
+//				} catch (ReflectionException e) {
+//					String msg = e.getMessage();
+//					if (msg == null || msg.length() <= 0) {
+//						msg = "Unknown Error";
+//						e.printStackTrace();
+//					}
+//					log(msg, LogLevel.ERROR);
+//					if (consoleTrace) {
+//						log(e, LogLevel.ERROR);
+//					}
+//					return;
+//				}
+//			}
+//		}
+//
+//		log("Bad parameters. Check your code.", LogLevel.ERROR);
 	}
 
 	private ArrayList<Method> getAllMethods () {

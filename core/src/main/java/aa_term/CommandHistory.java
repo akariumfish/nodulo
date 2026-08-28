@@ -26,11 +26,9 @@ public class CommandHistory {
 			return false;
 		}
 
-		String toWrite = "console\n";
-		for (int i = commands.size - 1 ; i >= 0 ; i--) {
-			toWrite += ".exec(\""+commands.get(i)+ "\")\n";
-		}
-		toWrite += ";\n";
+		String toWrite = "";
+		String[] c = get(true);
+		for (String s : c) toWrite += s + "\n";
 		
 		try {
 			out.write(toWrite);
@@ -43,24 +41,17 @@ public class CommandHistory {
 	}
 
 	public void print (boolean code) {
-		if (code) {
-			Utl.printn("console");
-			for (int i = commands.size - 1 ; i >= 0 ; i--) 
-				Utl.printn(".exec(\""+commands.get(i)+"\")");
-			Utl.printn(";");
-		} else {
-			for (int i = commands.size - 1 ; i >= 0 ; i--) 
-				Utl.printn(commands.get(i));
-		}
+		String[] c = get(code);
+		for (String s : c) Utl.printn(s);
 	}
 
 	public String[] get (boolean code) {
 		if (code) {
 			String[] ret = new String[commands.size + 2];
 			int c = 0;
-			ret[c++] = "console";
+			ret[c++] = "newStoredCode(\"code_ref\")";
 			for (int i = commands.size - 1 ; i >= 0 ; i--) 
-				ret[c++] = ".exec(\""+commands.get(i)+"\")";
+				ret[c++] = ".c(\""+commands.get(i)+"\")";
 			ret[c++] = ";";
 			return ret;
 		} else {
@@ -92,7 +83,11 @@ public class CommandHistory {
 		for (String s : ch.commands) commands.insert(0, s);
 		indexAtBeginning();
 	}
-	
+
+	public void c (String c) {
+		store(c);
+	}
+
 	public void store (String command) {
 		if (commands.size > 0 && isLastCommand(command)) {
 			return;

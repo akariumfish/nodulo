@@ -363,7 +363,7 @@ public class Utl {
 	public static String log_pref1 = "", log_pref2 = "";
 	public static void log(String t) { log_stack += t; }
 	private static String log_stack = "", print_stack = "";
-	public static void printn(String t) { Gdx.app.log("", print_stack+t); print_stack = ""; }
+	public static void printn(String t) { Gdx.app.log(null, print_stack+t); print_stack = ""; }
 	public static void print(String t) { print_stack += t; }
 	
 	

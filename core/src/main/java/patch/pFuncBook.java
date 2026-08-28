@@ -630,6 +630,38 @@ public class pFuncBook {
 		
 		
 		
+
+		new Instruction("term", "TRM", C.TERM, new nRun() {public Object get() {
+			Boolean active = ask("active", Boolean.class);
+			if (active == null || !active) return pFunc.C.NEXT;
+			String com = ask("com", String.class);
+			Object[] arg = ask("arg", Object[].class);
+			for (Object o : arg) { com += " " + Utl.to_string(o); }
+			nRun out = PlaneApplet.app.outputs.get("trm");
+			out.do_run(com);
+			return pFunc.C.NEXT;
+		}})
+		.addVar("com").addArg("arg", Object[].class)
+		.setActivated()
+		.setStandRun(new nRun() {public void run() {
+			pStandard stand = arg(0,pStandard.class);
+			stand.process()
+			.run(pTile.getRun(CT.OBTAIN_VAR), "com", "")
+			.openSec()
+			.param("var_link_ref", "com", 
+					"var_link_class", String.class.getName())
+			.param("width", (int)8)
+			.commande(pTile.getCom(CT.ADD_FIELD))
+			.closeSec()
+			;
+		}})
+		;
+		
+		
+		
+		
+		
+		
 		new Instruction("func", "F", C.FUNC, new nRun() {public Object get() {
 			Boolean active = ask("active", Boolean.class);
 			if (active == null || !active) return pFunc.C.NEXT;

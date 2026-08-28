@@ -14,6 +14,8 @@ import com.noodle.nodulo.GdxApp;
 import aa_term.CommandExecutor;
 import aa_term.ConsoleDoc;
 import aa_term.LogLevel;
+import aa_term.SystemExecutor;
+import aa_term.pTerm;
 import app.App;
 import data.*;
 import gui.*;
@@ -415,8 +417,7 @@ public class pView {
 //					.addSyncVal(view.object("val_cam_scale", sFlt.class));				
 //			}
 		}});
-		
-		app.term.addExecutor(new CommandExecutor("view") {
+		app.term.addExecutor(new SystemExecutor("view", bloc) {
 
 			@ConsoleDoc(description = "Cam scale", 
 					paramDescriptions = {"scale"}) 
@@ -425,7 +426,7 @@ public class pView {
 				got_cam_scale_target = true;
 				console.log("cam scale = "+r, LogLevel.SUCCESS);
 			}
-
+			
 		});
 	}
 

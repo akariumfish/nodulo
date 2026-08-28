@@ -158,6 +158,11 @@ public interface Console {
 	void printLogToFile (FileHandle fh);
 
 	/**
+	 * Prints all stored
+	 */
+	void allStore ();
+
+	/**
 	 * Prints all commands
 	 */
 	void printCommands ();
@@ -224,10 +229,14 @@ public interface Console {
 	public void runCode(String ref);
 
 	public void blockStore();
+	public void setTmpStore();
+	public void validCode(String command);
 
 	public int getMaxHistory();
 	public void setMaxHistory(int i);
 
+	public boolean getConsoleTrace();
+	
 	/**
 	 * Returns if the given screen coordinates hit the console.
 	 *
