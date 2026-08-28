@@ -17,6 +17,9 @@ import aa_nodulo.pProperty;
 import aa_nodulo.pSpace;
 import aa_nodulo.pSystem;
 import aa_nodulo.pView;
+import aa_term.CommandExecutor;
+import aa_term.ConsoleDoc;
+import aa_term.LogLevel;
 import data.*;
 import gui.*;
 import util.Utl;
@@ -264,6 +267,17 @@ public class pBox2d extends pSystem {
 			
 			//		if (!app.RELEASE) 
 			tool_setup(true);
+			
+			app.term.addExecutor(new CommandExecutor("sim") {
+
+				@ConsoleDoc(description = "Pause sim calc", 
+						paramDescriptions = {"pause state"}) 
+				public void pause(boolean r) {
+					val_do_calc.set(r);
+					console.log("sim calc = "+r, LogLevel.SUCCESS);
+				}
+
+			});
 
 		}
 		public void system_clear() {

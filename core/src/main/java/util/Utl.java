@@ -362,8 +362,10 @@ public class Utl {
 	public static void logn(String t) { Gdx.app.log(log_pref1+log_pref2, log_stack+t); log_stack = ""; }
 	public static String log_pref1 = "", log_pref2 = "";
 	public static void log(String t) { log_stack += t; }
-	private static String log_stack = "";
-
+	private static String log_stack = "", print_stack = "";
+	public static void printn(String t) { Gdx.app.log("", print_stack+t); print_stack = ""; }
+	public static void print(String t) { print_stack += t; }
+	
 	
 	public static boolean file_exist(String path) {
 		FileHandle handle = Gdx.files.local(path);

@@ -68,7 +68,8 @@ public class pMacroBook {
 
 		Macro mob_blueprint = new Macro("mob_blueprint")
 		.addNode("blueprint", "blueprint", 	0f, 		0f).getMacro()
-		.addNode("coordinate", "coordinate", -600f, 	600f).addSetVar("use_ctrl_mob", true).getMacro()
+		.addNode("coordinate", "coordinate", -600f, 	600f)
+		.addSetVar("use_ctrl_mob", true).getMacro()
 		.addNode("interactif", "interactif", -600f, 	300f).getMacro()
 		.addNode("geom", "geom", 			-600f, 	-900f).getMacro()
 		.addNode("physic", "physic", 		-600f, 	900f)

@@ -11,6 +11,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.noodle.nodulo.GdxApp;
 
+import aa_term.CommandExecutor;
+import aa_term.ConsoleDoc;
+import aa_term.LogLevel;
 import app.App;
 import data.*;
 import gui.*;
@@ -412,6 +415,18 @@ public class pView {
 //					.addSyncVal(view.object("val_cam_scale", sFlt.class));				
 //			}
 		}});
+		
+		app.term.addExecutor(new CommandExecutor("view") {
+
+			@ConsoleDoc(description = "Cam scale", 
+					paramDescriptions = {"scale"}) 
+			public void scale(float r) {
+				val_cam_scale_target.set(r);
+				got_cam_scale_target = true;
+				console.log("cam scale = "+r, LogLevel.SUCCESS);
+			}
+
+		});
 	}
 
 	public void clear() {

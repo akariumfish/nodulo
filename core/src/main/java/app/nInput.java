@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector3;
 import data.sBoo;
 import data.sInt;
 import data.sVec;
+import util.Utl;
 import util.nRun;
 
 public class nInput implements InputProcessor {
@@ -252,7 +253,7 @@ public class nInput implements InputProcessor {
 	public boolean keyDown (int keycode) {
 		keycode_temp = Input.Keys.toString(keycode);
 		
-//		Utl.logn("<"+keycode_temp+">");
+//		Utl.logn(keycode + " <"+keycode_temp+">");
 		
 		char keychar = 0;
 		if (keycode_temp != null && keycode_temp.length() == 1) keychar = keycode_temp.charAt(0);

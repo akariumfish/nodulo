@@ -15,6 +15,9 @@ import aa_nodulo.pProperty;
 import aa_nodulo.pSpace;
 import aa_nodulo.pTime;
 import aa_nodulo.pView;
+import aa_term.CommandExecutor;
+import aa_term.ConsoleDoc;
+import aa_term.LogLevel;
 import app.App;
 import box2d.pBox2d;
 import data.*;
@@ -540,6 +543,17 @@ public class pPatch {
 	public void system_load() {
 //		load_contents();
 		if (!app.config.RELEASE) tool_setup(false);
+		
+		app.term.addExecutor(new CommandExecutor("patch") {
+
+//			@ConsoleDoc(description = "Pause sim calc", 
+//					paramDescriptions = {"pause state"}) 
+//			public void pause(boolean r) {
+//				val_do_calc.set(r);
+//				console.log("sim calc = "+r, LogLevel.SUCCESS);
+//			}
+
+		});
 		
 		app.addDelayEvent(1, new nRun() { public void run() {	
 			if (!app.config.STARTUP_LOAD && app.config.PATCH_START_WALLPAPER) 

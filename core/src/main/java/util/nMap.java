@@ -21,6 +21,9 @@ public class nMap <T> {
 //			Applet.logg("WARNING : nMap.put : the key <"+s+"> is already used"); 
 		}
 		map.put(s, r); all.add(r); }
+	public void putOne(String s, T r) { 
+		if (map.get(s) != null) return;
+		map.put(s, r); all.add(r); }
 	public void replace(String s, T r) { map.remove(s); all.remove(r); map.put(s, r); all.add(r); }
 	int add_cnt = 0;
 	public void add(T r) { String s = "__no_name_"+add_cnt; add_cnt++; put(s, r); }
