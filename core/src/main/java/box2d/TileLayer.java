@@ -153,6 +153,9 @@ public class TileLayer extends nRenderer.Layer {
 		
 		if (!transp) ground_bod.add(groundBody);
 		if (transp) rend.lightLayer.transparent.add(groundBody);
+		if (transp) rend.visionLayer.transparent.add(groundBody);
+		if (transp) rend.colorLayer.transparent.add(groundBody);
+		if (transp) rend.auraLayer.transparent.add(groundBody);
 		
 		PolygonShape groundBox = new PolygonShape();  
 		groundBox.setAsBox(w*rend.tile_scale/2f,h*rend.tile_scale/2f);
@@ -381,13 +384,14 @@ public class TileLayer extends nRenderer.Layer {
 				float x = xStart;
 				for (int col = col1; col < col2; col++) {
 					final TiledMapTileLayer.Cell cell = layer.getCell(col, row);
+					
 					if (cell == null) {
 						x += layerTileWidth;
 						continue;
 					}
 					final TiledMapTile tile = cell.getTile();
 
-					if (tile != null) {
+					if (tile != null && !cells[col][row].empty) {
 						final boolean flipX = cell.getFlipHorizontally();
 						final boolean flipY = cell.getFlipVertically();
 						final int rotations = cell.getRotation();

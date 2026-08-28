@@ -197,6 +197,7 @@ public class pBox2d extends pSystem {
 		public sBoo val_draw_debug, val_draw_ray_debug, 
 			val_draw_vision, val_draw_tile, val_draw_solid, 
 			val_draw_light, val_draw_color, val_draw_aura, 
+			val_draw_ground, val_draw_fog, 
 			val_do_calc, val_edit_tile;
 		
 		public sInt val_body_nb, val_light_nb;
@@ -223,6 +224,8 @@ public class pBox2d extends pSystem {
 			val_draw_light = bloc.obtainBoo("val_draw_light", true);
 			val_draw_aura = bloc.obtainBoo("val_draw_aura", true);
 			val_draw_color = bloc.obtainBoo("val_draw_color", true);
+			val_draw_ground = bloc.obtainBoo("val_draw_ground", app.config.DRAW_GROUND);
+			val_draw_fog = bloc.obtainBoo("val_draw_fog", app.config.DRAW_FOG);
 			val_do_calc = bloc.obtainBoo("val_do_calc", true);
 			val_edit_tile = bloc.obtainBoo("val_edit_tile", false);
 			val_body_nb = bloc.obtainInt("val_body_nb", 0);
@@ -287,6 +290,10 @@ public class pBox2d extends pSystem {
 //			interf.add_row();
 //			interf.add_row_label(10, "");
 			interf.add_row();
+			interf.add_row_switch_boo(4, "ground", "val_draw_ground");
+			interf.add_row_label(2, "");
+			interf.add_row_switch_boo(4, "fog", "val_draw_fog");
+			interf.add_row();
 			interf.add_row_switch_boo(4, "vision", "val_draw_vision");
 			interf.add_row_label(2, "");
 			interf.add_row_switch_boo(4, "light", "val_draw_light");
@@ -345,6 +352,8 @@ public class pBox2d extends pSystem {
 
 		}
 
+		public boolean drawground() { return val_draw_ground.get(); }
+		public boolean drawfog() { return val_draw_fog.get(); }
 		public boolean drawsolid() { return val_draw_solid.get(); }
 		public boolean drawlight() { 
 			return val_draw_light.get() && app.gdx.drawer.USE_FX; }

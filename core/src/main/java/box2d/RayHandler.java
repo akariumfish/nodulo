@@ -22,7 +22,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
+//import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
 import com.noodle.nodulo.GdxApp;
 
 import aa_nodulo.PlaneApplet;
@@ -310,7 +310,7 @@ public class RayHandler implements Disposable {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 //		//update all lights mesh vertices
-		for (AbstractLight light : lightList) light.update();
+//		for (AbstractLight light : lightList) light.update();
 //		for (Light light : disabledLights) light.update();
 		
 	}
@@ -337,7 +337,7 @@ public class RayHandler implements Disposable {
 ////			temp.clear();
 
 //			for (AbstractLight light : lightList) if (light.active) light.update();
-//			for (AbstractLight light : layer.lightList) light.update();
+			for (AbstractLight light : layer.lightList) light.update();
 			
 			render_buffer.end();
 

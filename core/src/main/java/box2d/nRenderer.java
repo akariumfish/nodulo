@@ -50,9 +50,9 @@ public class nRenderer {
 			
 			for (int prio = 0 ; prio <= max_prio ; prio++)
 				for (nRun d : runs) 
-					if (prios.get(d) == prio) { d.do_run(); all.remove(d); }
+					if (prios.get(d) == prio) { d.run(); all.remove(d); }
 			
-			for (nRun d : all) d.do_run(); 
+			for (nRun d : all) d.run(); 
 			
 		}
 	}
@@ -155,19 +155,41 @@ public class nRenderer {
 	
 	GroupLayer roomGroup;
 	public void prepareLayers() {
-		roomGroup = newGroupLayer(1);
-
-		auraLayer = roomGroup.newLightLayer(LightLayer.MODE.AURA,1);
 		
-//		roomGroup.newRunLayer(2).addRun(new nRun() { public void run() {
+
+		RunLayer updateLayer = newRunLayer(0);
+		LightLayer groundLayer = newLightLayer(LightLayer.MODE.SOLID,1);
+		roomGroup = newGroupLayer(2);
+		LightLayer fogLayer = newLightLayer(LightLayer.MODE.SOLID,3);
+		
+		GroundLight grnd = new GroundLight(groundLayer, false);
+		GroundLight fog = new GroundLight(fogLayer, true);
+		
+		updateLayer.addRun(new nRun(grnd,fog) { public void run() {
+			GroundLight g = arg(0, GroundLight.class);
+			GroundLight f = arg(1, GroundLight.class);
+			Vector2 p = new Vector2(view.val_cam_pos.get());
+			p.scl(1f/8f); g.setPos(p);
+			p.scl(-4f); f.setPos(p);
+			g.setActive(box.drawground());
+			f.setActive(box.drawfog());
+		}});
+		
+		
+		
+		// TileLayer prio = 2
+		
+		auraLayer = roomGroup.newLightLayer(LightLayer.MODE.AURA,3);
+		
+//		roomGroup.newRunLayer(4).addRun(new nRun() { public void run() {
 //			box.draw_drawer(); }});
 		
-		solidLayer = roomGroup.newLightLayer(LightLayer.MODE.SOLID,4);
+		solidLayer = roomGroup.newLightLayer(LightLayer.MODE.SOLID,5);
 		
-		colorLayer = roomGroup.newLightLayer(LightLayer.MODE.COLOR,5);
-		lightLayer = roomGroup.newLightLayer(LightLayer.MODE.LIGHT,6);
+		colorLayer = roomGroup.newLightLayer(LightLayer.MODE.COLOR,6);
+		lightLayer = roomGroup.newLightLayer(LightLayer.MODE.LIGHT,7);
 
-		visionLayer = newLightLayer(LightLayer.MODE.VISION,7);
+		visionLayer = roomGroup.newLightLayer(LightLayer.MODE.VISION,8);
 
 	}
 	
@@ -183,7 +205,7 @@ public class nRenderer {
 			MapProperties prop = layer.getProperties();
 			if (layer instanceof TiledMapTileLayer) {
 				TiledMapTileLayer tl = (TiledMapTileLayer) layer;
-				TileLayer ll = roomGroup.newTileLayer(tl,0);
+				TileLayer ll = roomGroup.newTileLayer(tl,2);
 				if (tileLayer == null) tileLayer = ll;
 			} else {
 				loadLayerObject(layer);

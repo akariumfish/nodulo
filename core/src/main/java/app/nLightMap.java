@@ -14,8 +14,9 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
-import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
+//import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
 
+import box2d.VfxFrameBuffer;
 import shaders.BlendFunc;
 import shaders.DiffuseShader;
 import shaders.DynamicShadowShader;

@@ -176,7 +176,7 @@ public class LightLayer extends nRenderer.Layer {
 		float soft = wallsize / 2f;
 		
 		float dr = 0f;
-		Vector2 vp = new Vector2(mapwidth, mapheight);
+		Vector2 vp = new Vector2(mapwidth, mapheight).scl(1.5f);
 		RectLight rl = newRectLight(rayh, new Color(1f,1f,1f,1f), 
 				-vp.x / 2f, -vp.y / 2f, mapwidth, mapheight, dr);
 		rl.setStaticLight(true);

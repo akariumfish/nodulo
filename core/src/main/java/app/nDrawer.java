@@ -29,12 +29,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
+//import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
 import com.noodle.nodulo.GdxApp;
 
 import aa_nodulo.PlaneApplet;
 import aa_nodulo.pView;
 import box2d.LightLayer.MODE;
+import box2d.VfxFrameBuffer;
 import gui.nAlign;
 import gui.nGUI;
 import shaders.BlendFunc;

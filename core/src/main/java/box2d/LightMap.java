@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
+//import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
 
 import shaders.DiffuseShader;
 import shaders.DynamicShadowShader;

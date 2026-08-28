@@ -11,7 +11,6 @@ import com.noodle.nodulo.GdxApp;
 
 import aa_nodulo.PlaneApplet;
 import aa_nodulo.pGeom;
-import aa_nodulo.pGround;
 import aa_nodulo.pProperty;
 import aa_nodulo.pSpace;
 import aa_nodulo.pTime;
@@ -42,7 +41,7 @@ public class pPatch {
 //		}});
 
 		if (!has_build_statics) pSpace.build();
-		pGround.build(data); 
+//		pGround.build(data); 
 		pGeom.build(data); 
 		pBox2d.build(data); 
 		

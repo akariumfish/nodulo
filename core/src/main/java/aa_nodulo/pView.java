@@ -248,6 +248,8 @@ public class pView {
 	public sVec val_limit_pos, val_mouse_in_view;
 	public sFlt val_cam_scale, val_cam_rot, val_zoom_min, val_zoom_max;
 	public sBoo val_do_limit, val_wallp;
+
+	public sVec val_corner_LB, val_corner_RB, val_corner_LT, val_corner_RT;
 	
 	public void set_limit_pos(float lx, float ly) {
 		val_limit_pos.set(lx,ly); val_do_limit.set(true); }
@@ -284,7 +286,13 @@ public class pView {
 		val_cam_scale = view.object("val_cam_scale", sFlt.class);
 		val_cam_rot = view.object("val_cam_rot", sFlt.class);
 		val_wallp = view.object("val_wallp", sBoo.class);
+		
 		val_mouse_in_view = bloc.obtainVec("val_mouse_in_view");
+		
+		val_corner_LB = bloc.obtainVec("val_corner_LB");
+		val_corner_RB = bloc.obtainVec("val_corner_RB");
+		val_corner_LT = bloc.obtainVec("val_corner_LT");
+		val_corner_RT = bloc.obtainVec("val_corner_RT");
 		
 		if (!app.config.STARTUP_LOAD) {
 			if (app.config.RELEASE) {
@@ -307,7 +315,7 @@ public class pView {
 		}
 		
 		sBoo val_grid = view.object("val_grid", sBoo.class);
-		val_grid.set(true);
+		val_grid.set(app.config.VIEW_START_GRID);
 		
 
 		
@@ -414,10 +422,23 @@ public class pView {
 		
 	}
 
+	private final Vector2 tmp1 = new Vector2();
+	private final Vector2 tmp2 = new Vector2();
 	public void frame(float d) {
 		if (mouse_is_hover_view()) 
 			val_mouse_in_view.set(mouse_in_view());
 		else val_mouse_in_view.set(0,0);
+
+		tmp1.set(val_view_size.x(),0)
+			.scl(val_cam_scale.get() / 2f)
+			.rotateRad(val_cam_rot.get());
+		tmp2.set(0,val_view_size.y())
+			.scl(val_cam_scale.get() / 2f)
+			.rotateRad(val_cam_rot.get());
+		val_corner_LB.set(-tmp1.x-tmp2.x,-tmp1.y-tmp2.y);
+		val_corner_RB.set(tmp1.x-tmp2.x,tmp1.y-tmp2.y);
+		val_corner_LT.set(-tmp1.x+tmp2.x,-tmp1.y+tmp2.y);
+		val_corner_RT.set(tmp1.x+tmp2.x,tmp1.y+tmp2.y);
 		
 		if (got_center_ratio_target) {
 			view.metode("set_center_ratio", val_center_ratio_target.get());
