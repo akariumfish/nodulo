@@ -169,8 +169,8 @@ public class nRenderer {
 			GroundLight g = arg(0, GroundLight.class);
 			GroundLight f = arg(1, GroundLight.class);
 			Vector2 p = new Vector2(view.val_cam_pos.get());
-			p.scl(1f/8f); g.setPos(p);
-			p.scl(-4f); f.setPos(p);
+			p.scl(1f/4f); g.setPos(p);
+			p.scl(-2f); f.setPos(p);
 			g.setActive(box.drawground());
 			f.setActive(box.drawfog());
 		}});

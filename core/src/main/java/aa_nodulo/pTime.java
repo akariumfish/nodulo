@@ -11,9 +11,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import aa_term.CommandExecutor;
-import aa_term.ConsoleDoc;
+import aa_term.HelpCommand;
 import aa_term.LogLevel;
-import aa_term.SystemExecutor;
 import aa_term.pTerm;
 import app.App;
 import data.*;
@@ -226,7 +225,7 @@ public class pTime {
 				app.net.net.addSyncVal(val_tick_cnt);	 }
 		}});
 		
-		app.term.addExecutor(new SystemExecutor("time", bloc) {
+		app.term.addExecutor(new CommandExecutor("time", bloc, this) {
 			
 		});
 	}

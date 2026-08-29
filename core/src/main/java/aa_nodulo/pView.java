@@ -12,10 +12,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.noodle.nodulo.GdxApp;
 
 import aa_term.CommandExecutor;
-import aa_term.ConsoleDoc;
+import aa_term.CommandExecutor.ScriptableConstructor;
+import aa_term.HelpCommand;
 import aa_term.LogLevel;
-import aa_term.SystemExecutor;
 import aa_term.pTerm;
+import aa_term.ScriptedField;
 import app.App;
 import data.*;
 import gui.*;
@@ -168,6 +169,36 @@ public class pView {
 //		.param("def", 0.5f, "min", 0f, "max", 1f, "granulo", 0.025f)
 //		.run(pBric.getRun(Code.RUN_VAR_FLT_LAB_FLD_SLD), "cr_y", "center_ratio_y", (int)8).closeSec()
 //		;
+	}
+	
+	
+	class Par extends CommandExecutor.Scriptable<Par> {
+		
+		@ScriptedField(description = "an integer value", 
+				settings = {"def", "0", "min", "0", "max", "10", "granulo", "2"}) 
+		int val = 0;
+		
+	}
+	
+	
+	private void setupExecutor() {
+		
+
+		CommandExecutor exec = app.term.addExecutor(new CommandExecutor("view", bloc, this) {
+
+			@HelpCommand(description = "Cam scale", 
+					paramDescriptions = {"scale"}) 
+			public void scale(float r) {
+				val_cam_scale_target.set(r);
+				got_cam_scale_target = true;
+				console.log("cam scale = "+r, LogLevel.SUCCESS);
+			}
+			
+		});
+		
+		exec.registerScriptable(Par.class);
+		
+		
 	}
 	
 	
@@ -417,17 +448,9 @@ public class pView {
 //					.addSyncVal(view.object("val_cam_scale", sFlt.class));				
 //			}
 		}});
-		app.term.addExecutor(new SystemExecutor("view", bloc) {
-
-			@ConsoleDoc(description = "Cam scale", 
-					paramDescriptions = {"scale"}) 
-			public void scale(float r) {
-				val_cam_scale_target.set(r);
-				got_cam_scale_target = true;
-				console.log("cam scale = "+r, LogLevel.SUCCESS);
-			}
-			
-		});
+		
+		setupExecutor();
+		
 	}
 
 	public void clear() {

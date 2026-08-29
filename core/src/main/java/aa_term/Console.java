@@ -168,6 +168,11 @@ public interface Console {
 	void printCommands ();
 
 	/**
+	 * Prints all commands hidden or not
+	 */
+	void printAllCommands ();
+
+	/**
 	 * Prints ConsoleDoc for the given command.
 	 *
 	 * @param command The command to get help for.
@@ -228,9 +233,7 @@ public interface Console {
 	public void storeCode(String ref);
 	public void runCode(String ref);
 
-	public void blockStore();
-	public void setTmpStore();
-	public void validCode(String command);
+	public void storeCommand(String command);
 
 	public int getMaxHistory();
 	public void setMaxHistory(int i);
@@ -357,4 +360,8 @@ public interface Console {
 	 * @return The window.
 	 */
 	Window getWindow ();
+	
+	
+	void setRecordLog(boolean b);
+	boolean isLogRecorded();
 }

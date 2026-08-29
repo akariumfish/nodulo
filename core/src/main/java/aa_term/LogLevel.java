@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Color;
  * @author StrongJoshua
  */
 public enum LogLevel {
+	TITLE(new Color(0, 1, 1, 1), ""), 
 	/**
 	 * The default log level. Prints in white to the console and has no special indicator in the log file.<br>
 	 * <b>Intentional Use:</b> debugging.

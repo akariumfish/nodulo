@@ -1,5 +1,6 @@
 package util;
 
+import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -363,7 +364,8 @@ public class Utl {
 	public static String log_pref1 = "", log_pref2 = "";
 	public static void log(String t) { log_stack += t; }
 	private static String log_stack = "", print_stack = "";
-	public static void printn(String t) { Gdx.app.log(null, print_stack+t); print_stack = ""; }
+	public static void printn() { printn(""); }
+	public static void printn(String t) { System.out.println(print_stack+t); print_stack = ""; }
 	public static void print(String t) { print_stack += t; }
 	
 	
@@ -1103,5 +1105,48 @@ public class Utl {
 		else if (ct == Byte.class) 		{ return (T[][][])new Byte[len][][]; }
 		return null;
 	}
+	
+	
+	
+	
+
+	public static final int BYTE_SIZE_INT = 4;
+	public static final int BYTE_SIZE_FLOAT = 4;
+
+	public static byte[] getBytes(Object d) { 
+		if (d instanceof String) return getBytes((String)d); 
+		else if (d instanceof Float) return getBytes((float)d);
+		else if (d instanceof Integer) return getBytes((int)d);
+		else if (d instanceof Boolean) return getBytes((boolean)d);
+		else if (d instanceof Vector2) return getBytes((Vector2)d); 
+		else return null; }
+	
+	public static byte[] getBytes(String s) { return s.getBytes(); }
+	public static byte[] getBytes(int s) { return ByteBuffer.allocate(BYTE_SIZE_INT).putInt(s).array(); }
+	public static byte[] getBytes(float s) { return ByteBuffer.allocate(BYTE_SIZE_FLOAT).putFloat(s).array(); }
+	public static byte[] getBytes(boolean s) { byte[] arr = {(byte) ((s) ? 1 : 0)}; return arr; }
+	public static byte[] getBytes(Vector2 s) { return getBytes(s.toString()); }
+
+	public static <T> T getValue(byte[] data, Class<T> ct) { 
+		if (ct == String.class) return (T)getStr(data); 
+		else if (ct == Float.class) return (T)(Object)getFlt(data);
+		else if (ct == Integer.class) return (T)(Object)getInt(data);
+		else if (ct == Boolean.class) return (T)(Object)getBoo(data);
+		else if (ct == Vector2.class) return (T)getVec(data);
+		else return null;
+	}
+
+	public static String getStr(byte[] data) { return new String(data); }
+	public static int getInt(byte[] data) { return ByteBuffer.wrap(data).getInt(); }
+	public static float getFlt(byte[] data) { return ByteBuffer.wrap(data).getFloat(); }
+	public static boolean getBoo(byte[] data) { return data[0] != 0; }
+	public static Vector2 getVec(byte[] data) { return new Vector2().fromString(getStr(data)); }
+
+	public static String getStr(byte[] data, int offset, int length) { return new String(data, offset, length); }
+	public static int getInt(byte[] data, int offset) { return ByteBuffer.wrap(data, offset, BYTE_SIZE_INT).getInt(); }
+	public static float getFlt(byte[] data, int offset) { return ByteBuffer.wrap(data, offset, BYTE_SIZE_FLOAT).getFloat(); }
+	public static boolean getBoo(byte[] data, int offset) { return data[offset] != 0; }
+	public static Vector2 getVec(byte[] data, int offset) { return new Vector2().fromString(getStr(data, offset, 1+2*BYTE_SIZE_FLOAT)); }
+	
 	
 }

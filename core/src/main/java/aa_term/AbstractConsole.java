@@ -31,7 +31,7 @@ public abstract class AbstractConsole implements Console, Disposable {
 
 	protected boolean executeHiddenCommands = true;
 	protected boolean displayHiddenCommands = false;
-	protected boolean consoleTrace = false;
+	protected boolean consoleTrace = false, recordLog = true;
 
 	private CommandHistory execHistory;
 	
@@ -41,19 +41,21 @@ public abstract class AbstractConsole implements Console, Disposable {
 	public nMap<CommandExecutor> getSysMap() { return system_execs; }
 	
 	public void addExecutor(CommandExecutor ce) {
+		if (system_execs.hasKey(ce.ref)) {
+			Utl.logn("ERROR : AbstractConsole.addExecutor : the executor ref <"+ce.ref+"> is allready used.");
+			return; } 
 		system_execs.putOne(ce.ref,ce);
-		ce.getMethods();
 		ce.setConsole(this);
-		if (exec == null) {
-			exec = ce;
-			setTitle("Terminal - small 2 to hide - "+ce.ref);
-		}
+		if (exec == null) { exec = ce; }
 	}
 	
 	public AbstractConsole () {
 		log = new Log();
 		execHistory = new CommandHistory();
 	}
+
+	@Override public void setRecordLog(boolean b) { recordLog = b; }
+	@Override public boolean isLogRecorded() { return recordLog; }
 
 	@Override public boolean getConsoleTrace() {
 		return consoleTrace;
@@ -69,7 +71,6 @@ public abstract class AbstractConsole implements Console, Disposable {
 
 	@Override public void setCommandExecutor (CommandExecutor commandExec) {
 		exec = commandExec;
-		exec.setConsole(this);
 	}
 
 	@Override public void setLoggingToSystem (Boolean log) {
@@ -77,15 +78,18 @@ public abstract class AbstractConsole implements Console, Disposable {
 	}
 
 	@Override public void log (String msg, LogLevel level) {
-		log.addEntry(msg, level);
+		if (level == LogLevel.COMMAND)
+			log.addEntry(exec.ref, msg, level);
+		else if (isLogRecorded() || level == LogLevel.ERROR) 
+			log.addEntry(msg, level);
 
 		if (logToSystem) {
 			switch (level) {
 			case ERROR:
-				System.err.println("> " + msg);
+				System.err.println(exec.ref+"> " + msg);
 				break;
 			default:
-				System.out.println("> " + msg);
+				System.out.println(exec.ref+"> " + msg);
 				break;
 			}
 		}
@@ -104,7 +108,6 @@ public abstract class AbstractConsole implements Console, Disposable {
 	}
 
 	@Override public void printLogToFile (String file) {
-		blockStore();
 		this.printLogToFile(Gdx.files.local(file));
 	}
 
@@ -117,37 +120,30 @@ public abstract class AbstractConsole implements Console, Disposable {
 	}
 
 	@Override public void printLog () {
-		blockStore();
 		log.printLog();
 	}
 
 	@Override public void printToFile(String file) {
-		blockStore();
 		execHistory.printToFile(Gdx.files.local(file));
 	}
 	@Override public void printCode(boolean code) {
-		blockStore();
 		execHistory.print(code);
 	}
 
 	@Override public void store(boolean t) {
-		blockStore();
 		storeCode = t;
 	}
 
 	@Override public void clearCode() {
-		blockStore();
 		execHistory.reset();
 	}
 
 	@Override public void allStore() {
-		blockStore();
 		for (String s : historys.allKey())
 			log(s);
 	}
 
 	@Override public void storeCode(String ref) {
-		blockStore();
 		if (historys.hasKey(ref)) {
 			historys.remove(ref); }
 		CommandHistory ch = new CommandHistory();
@@ -163,14 +159,11 @@ public abstract class AbstractConsole implements Console, Disposable {
 	}
 
 	@Override public void runCode(String ref) {
-		boolean tmp = tmpStoreCode;
 		if (historys.hasKey(ref)) {
 //			execHistory.reset();
 			String[] cd = historys.get(ref).get(false);
 			for (String s : cd) exec(s);
 		}
-		tmpStoreCode = tmp;
-		blockStore();
 	}
 
 	public int getMaxHistory() {
@@ -181,225 +174,36 @@ public abstract class AbstractConsole implements Console, Disposable {
 	}
 	
 	private int maxHistory = 2000;
-	private boolean tmpStoreCode = false;
-	private boolean storeCode = false;
-
-	public void blockStore() {
-		storeCode = false;
-	}
-	public void setTmpStore() {
-		tmpStoreCode = storeCode;
-	}
-	public void validCode(String c) {
+	private boolean storeCode = true;
+	public void storeCommand(String c) {
+		if (!storeCode) return;
 		if (execHistory.getSize() > getMaxHistory()) {
-			if (storeCode) 
 				log("ERROR : execution history is full, cant store command", LogLevel.ERROR);
-			storeCode = false; }
-		if (storeCode) execHistory.store(c);
-		storeCode = tmpStoreCode;
+			return; }
+		execHistory.store(c);
 		if (execHistory.getSize() > getMaxHistory()) {
-			storeCode = false; 
 			log("WARNING : execution history is full");
 		}
 	}
 	
 	@Override public Console exec (String command) {
-		execCommand(command);
-		return this;
-	}
+		if (isDisabled()) return this;
+		exec.execCommand(command); return this; }
 
 	@Override public void execCommand (String command) {
-		exec.execCommand(command);
-//		if (disabled)
-//			return;
-//
-//		log(command, LogLevel.COMMAND);
-//
-//		String[] parts = command.split(" ");
-//		String methodName = parts[0];
-//		String[] mParts = methodName.split("/");
-//		
-////		Utl.logn(methodName);
-////		
-////		for (int i = 0 ; i < mParts.length ; i++) Utl.logn(mParts[i]);
-//		
-//		if (mParts.length == 2 && system_execs.hasKey(mParts[0])) {
-//			String back = "";
-//			if (!exec.ref.equals(mParts[0])) {
-//				back = exec.ref;
-//				execCommand("sys "+mParts[0]);
-//			}
-//			methodName = mParts[1];
-//			for (int i = 1 ; i < parts.length ; i++) methodName += " " + parts[i];
-//			execCommand(methodName);
-//			if (back.length() > 0) execCommand("sys "+back);
-//			return;
-//		}
-//		
-//		String[] sArgs = null;
-//		if (parts.length > 1) {
-//			sArgs = new String[parts.length - 1];
-//			for (int i = 1; i < parts.length; i++) {
-//				sArgs[i - 1] = parts[i];
-//			}
-//		}
-//
-////		Class<? extends CommandExecutor> clazz = exec.getClass();
-////		Method[] methods = ClassReflection.getMethods(clazz);
-//		Method[] methods = exec.methods;
-//		Array<Integer> possible = new Array<Integer>();
-//		for (int i = 0; i < methods.length; i++) {
-//			Method method = methods[i];
-//			if (method.getName().equalsIgnoreCase(methodName) && ConsoleUtils.canExecuteCommand(this, method)) {
-//				possible.add(i);
-//			}
-//		}
-//
-//		if (possible.size <= 0) {
-//			log("No such method found.", LogLevel.ERROR);
-//			return;
-//		}
-//
-//		int size = possible.size;
-//		int numArgs = sArgs == null ? 0 : sArgs.length;
-//		for (int i = 0; i < size; i++) {
-//			Method m = methods[possible.get(i)];
-//			Class<?>[] params = m.getParameterTypes();
-//			if (numArgs == params.length) {
-//				try {
-//					Object[] args = null;
-//
-//					try {
-//						if (sArgs != null) {
-//							args = new Object[numArgs];
-//
-//							for (int j = 0; j < params.length; j++) {
-//								Class<?> param = params[j];
-//								final String value = sArgs[j];
-//
-//								if (param.equals(String.class)) {
-//									args[j] = value;
-//								} else if (param.equals(Boolean.class) || param.equals(boolean.class)) {
-//									args[j] = Boolean.parseBoolean(value);
-//								} else if (param.equals(Byte.class) || param.equals(byte.class)) {
-//									args[j] = Byte.parseByte(value);
-//								} else if (param.equals(Short.class) || param.equals(short.class)) {
-//									args[j] = Short.parseShort(value);
-//								} else if (param.equals(Integer.class) || param.equals(int.class)) {
-//									args[j] = Integer.parseInt(value);
-//								} else if (param.equals(Long.class) || param.equals(long.class)) {
-//									args[j] = Long.parseLong(value);
-//								} else if (param.equals(Float.class) || param.equals(float.class)) {
-//									args[j] = Float.parseFloat(value);
-//								} else if (param.equals(Double.class) || param.equals(double.class)) {
-//									args[j] = Double.parseDouble(value);
-//								} else if (param.equals(Vector2.class)) {
-//									args[j] = new Vector2().fromString(value);
-//								}
-//							}
-//						}
-//					} catch (Exception e) {
-//						// Error occurred trying to parse parameter, continue
-//						// to next function
-//						continue;
-//					}
-//
-//					m.setAccessible(true);
-//					tmpStoreCode = storeCode;
-//					m.invoke(exec, args);
-//					validCode(command);
-//					return;
-//				} catch (ReflectionException e) {
-//					String msg = e.getMessage();
-//					if (msg == null || msg.length() <= 0) {
-//						msg = "Unknown Error";
-//						e.printStackTrace();
-//					}
-//					log(msg, LogLevel.ERROR);
-//					if (consoleTrace) {
-//						log(e, LogLevel.ERROR);
-//					}
-//					return;
-//				}
-//			}
-//		}
-//
-//		log("Bad parameters. Check your code.", LogLevel.ERROR);
-	}
-
-	private ArrayList<Method> getAllMethods () {
-		
-		return exec.getAllMethods();
-		
-//		ArrayList<Method> methods = new ArrayList<Method>();
-//		Class c = exec.getClass();
-//		while (c != Object.class) {
-//			Collections.addAll(methods, ClassReflection.getDeclaredMethods(c));
-//			c = c.getSuperclass();
-//		}
-//		return methods;
-	}
+		if (isDisabled()) return;
+		exec.execCommand(command); }
 
 	@Override public void printCommands () {
-		for (Method m : getAllMethods()) {
-			if (m.isPublic() && ConsoleUtils.canDisplayCommand(this, m)) {
-				String s = "";
-				s += m.getName();
-				s += " : ";
+		exec.printCommands();
+	}
 
-				Class<?>[] params = m.getParameterTypes();
-				for (int i = 0; i < params.length; i++) {
-					s += params[i].getSimpleName();
-					if (i < params.length - 1) {
-						s += ", ";
-					}
-				}
-
-				log(s);
-			}
-		}
-		blockStore();
+	@Override public void printAllCommands () {
+		exec.printAllCommands();
 	}
 
 	@Override public void printHelp (String command) {
-		boolean found = false;
-		for (Method m : getAllMethods()) {
-			if (m.getName().equals(command)) {
-				found = true;
-				StringBuilder sb = new StringBuilder();
-				sb.append(m.getName()).append(": ");
-				Annotation annotation = m.getDeclaredAnnotation(ConsoleDoc.class);
-				if (annotation != null) {
-					ConsoleDoc doc = annotation.getAnnotation(ConsoleDoc.class);
-					sb.append(doc.description());
-					Class<?>[] params = m.getParameterTypes();
-					for (int i = 0; i < params.length; i++) {
-						sb.append("\n");
-						for (int j = 0; j < m.getName().length() + 2; j++)
-							// using spaces this way works with monotype fonts
-							sb.append(" ");
-						sb.append(params[i].getSimpleName()).append(": ");
-						if (i < doc.paramDescriptions().length)
-							sb.append(doc.paramDescriptions()[i]);
-					}
-				} else {
-					Class<?>[] params = m.getParameterTypes();
-					for (int i = 0; i < params.length; i++) {
-						sb.append(params[i].getSimpleName());
-						if (i < params.length - 1) {
-							sb.append(", ");
-						}
-					}
-				}
-
-				log(sb.toString());
-			}
-		}
-
-		if (!found)
-			log("Command does not exist.");
-
-		blockStore();
+		exec.printHelp(command);
 	}
 
 	@Override public void setExecuteHiddenCommands (boolean enabled) {
@@ -469,6 +273,7 @@ public abstract class AbstractConsole implements Console, Disposable {
 	}
 
 	@Override public void dispose () {
+		CommandExecutor.dispose();
 	}
 
 	@Override public boolean isVisible () {

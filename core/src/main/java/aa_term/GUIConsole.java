@@ -352,6 +352,7 @@ public class GUIConsole extends AbstractConsole {
 	}
 
 	@Override public void dispose () {
+		super.dispose();
 		if (usesMultiplexer && appInput != null) {
 			Gdx.input.setInputProcessor(appInput);
 		}
@@ -430,6 +431,7 @@ public class GUIConsole extends AbstractConsole {
 		private Array<Label> labels;
 		private String fontName;
 		private boolean selected = true;
+		private boolean hovered = false;
 		private ConsoleContext context;
 		private Cell<TextButton> submitCell, printCell;
 
@@ -591,12 +593,30 @@ public class GUIConsole extends AbstractConsole {
 				stage.setKeyboardFocus(input);
 				stage.setScrollFocus(scroll);
 			}
+//			refreshWindowColor();
 		}
 
 		void deselect () {
 			selected = false;
 			stage.setKeyboardFocus(null);
 			stage.setScrollFocus(null);
+//			refreshWindowColor();
+		}
+
+		void hover () {
+//			if (!hidden) {
+//				select();
+//			}
+//			hovered = true;
+//			refreshWindowColor();
+		}
+
+		void noHover () {
+//			if (hovered && !hidden && selected) {
+//				deselect();
+//			}
+//			hovered = false;
+//			refreshWindowColor();
 		}
 
 		void openContext (Label label, float x, float y) {
@@ -727,14 +747,16 @@ public class GUIConsole extends AbstractConsole {
 		@Override public void enter (InputEvent event, float x, float y, int pointer, Actor fromActor) {
 			if (pointer != -1)
 				return;
-			hasHover = true;
+			hasHover = true; 
+			display.hover();
 			refreshWindowColor();
 		}
 
 		@Override public void exit (InputEvent event, float x, float y, int pointer, Actor toActor) {
 			if (pointer != -1)
 				return;
-			hasHover = false;
+			hasHover = false; 
+			display.noHover();
 			refreshWindowColor();
 		}
 	}

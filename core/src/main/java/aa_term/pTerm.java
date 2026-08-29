@@ -68,9 +68,9 @@ public class pTerm {
 		console.setTitle("Terminal - small 2 to hide");
 //		console.setMaxEntries(16);
 		console.setHoverColor(Color.BLACK);
-		console.setNoHoverColor(Color.BLUE);
+		console.setNoHoverColor(Color.BLACK);
 		console.setHoverAlpha(.9f);
-		console.setNoHoverAlpha(.2f);
+		console.setNoHoverAlpha(.9f);
 		
 		console.setSizePercent(100, 20);
 		console.setPositionPercent(0, 0);
@@ -118,36 +118,36 @@ public class pTerm {
 		bloc.clear();
 	}
 	
-	public void tool_init(nInterface interf) {
-		interf.setContext(bloc);
-
-//		interf.add_row();
-//		interf.add_row_watch(5, "Body : ", "val_body_nb");
-//		interf.add_row_watch(5, " / ", "val_body_pool");
-//		interf.add_row();
-//		interf.add_row_label(10, "");
-//		interf.add_row();
-//		interf.add_row_label(1, "");
-//		interf.add_row_trigg(8, "", new nRun() { public void run() {
-//			 
+//	public void tool_init(nInterface interf) {
+//		interf.setContext(bloc);
+//
+////		interf.add_row();
+////		interf.add_row_watch(5, "Body : ", "val_body_nb");
+////		interf.add_row_watch(5, " / ", "val_body_pool");
+////		interf.add_row();
+////		interf.add_row_label(10, "");
+////		interf.add_row();
+////		interf.add_row_label(1, "");
+////		interf.add_row_trigg(8, "", new nRun() { public void run() {
+////			 
+////		}});
+////		interf.add_row_label(1, "");
+//		
+//		
+//		
+//	}
+//	public void tool_setup(boolean open) {
+//		
+//		app.addDelayEvent(1, new nRun(this) { public void run() {
+//			nWidgetGroup sec = app.gui.toolbox
+//					.addSection("Terminal", open);
+//			nInterface interf = app.gui.addInterface();
+//			interf.pop(sec);
+//			interf.setContext(bloc);
+//			tool_init(interf);
 //		}});
-//		interf.add_row_label(1, "");
-		
-		
-		
-	}
-	public void tool_setup(boolean open) {
-		
-		app.addDelayEvent(1, new nRun(this) { public void run() {
-			nWidgetGroup sec = app.gui.toolbox
-					.addSection("Terminal", open);
-			nInterface interf = app.gui.addInterface();
-			interf.pop(sec);
-			interf.setContext(bloc);
-			tool_init(interf);
-		}});
-		
-	}
+//		
+//	}
 	
 
 	public void do_frame(float delta) {
@@ -155,8 +155,6 @@ public class pTerm {
 	}
 	
 	public void frame(float delta) {
-
-		console.actOnly();
 		
 	}
 	
@@ -170,6 +168,8 @@ public class pTerm {
 
 	public void draw() {
 
+		console.actOnly();
+		
 		console.drawOnly();
 		
 	}

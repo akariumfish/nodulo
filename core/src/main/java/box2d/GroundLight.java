@@ -24,7 +24,7 @@ public class GroundLight extends GridLight {
 	int size;
 	float cell_size;
 	
-	public GroundLight(LightLayer layer, boolean fog) { this(layer, 64, 900, fog); }
+	public GroundLight(LightLayer layer, boolean fog) { this(layer, 128, 500, fog); }
 	public GroundLight(LightLayer layer, int w, float scl, boolean fog) {
 		super(layer, w, scl);
 		size = w; cell_size = scl;

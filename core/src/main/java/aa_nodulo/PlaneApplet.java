@@ -112,7 +112,7 @@ public class PlaneApplet extends App {
 		public boolean DRAW_GROUND = true;
 		public boolean DRAW_FOG = true;
 		
-		public boolean POP_TERMINAL = true;
+		public boolean POP_TERMINAL = false;
 		public boolean POP_BODY_EDITOR = false;
 		
 		public float DEF_TICK_BY_SEC = 60f;

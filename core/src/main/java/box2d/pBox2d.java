@@ -18,9 +18,9 @@ import aa_nodulo.pSpace;
 import aa_nodulo.pSystem;
 import aa_nodulo.pView;
 import aa_term.CommandExecutor;
-import aa_term.ConsoleDoc;
+import aa_term.HelpCommand;
 import aa_term.LogLevel;
-import aa_term.SystemExecutor;
+import aa_term.CommandExecutor;
 import aa_term.pTerm;
 import data.*;
 import gui.*;
@@ -270,7 +270,7 @@ public class pBox2d extends pSystem {
 			//		if (!app.RELEASE) 
 			tool_setup(true);
 			
-			app.term.addExecutor(new SystemExecutor("sim", bloc) {
+			app.term.addExecutor(new CommandExecutor("sim", bloc, this) {
 				
 			});
 
