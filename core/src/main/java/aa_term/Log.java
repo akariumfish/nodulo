@@ -16,6 +16,10 @@ public class Log {
 		logEntries = new Array<LogEntry>();
 	}
 
+	public void clear () {
+		logEntries.clear();
+	}
+
 	public void setMaxEntries (int numEntries) {
 		this.numEntries = numEntries;
 	}

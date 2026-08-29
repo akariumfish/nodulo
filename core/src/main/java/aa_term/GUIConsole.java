@@ -636,7 +636,7 @@ public class GUIConsole extends AbstractConsole {
 			}
 			if (exec != null) {
 				commandHistory.store(s);
-				execCommand(s);
+				exec(s);
 			} else {
 				log("No command executor has been set. "
 					+ "Please call setCommandExecutor for this console in your code and restart.", LogLevel.ERROR);

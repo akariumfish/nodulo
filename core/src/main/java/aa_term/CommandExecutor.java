@@ -143,11 +143,79 @@ public class CommandExecutor {
 		
 	}
 	
+	private nMap<nMap<Scriptable>> scriptable_map = 
+			new nMap<nMap<Scriptable>>();
+	
+	private Scriptable scripting_target = null;
 
-	@HelpCommand(description = "New instance of a scripted class", 
-			paramDescriptions = {"class name"}) 
-	public void newObject(String class_name) {
+	@HelpCommand(description = "Make a new instance of a scripted class "
+			+ "and set it as the scripting target. "
+			+ "Can set a reference for the object to access it later. "
+			+ "If the reference is empty the object will not be mapped "
+			+ "and inaccessible after endObj.", 
+			paramDescriptions = {"class name","reference of the object"}) 
+	public void newObj(String class_name, String obj_ref) {
+		if (scripting_target != null) return;
+		ScriptableClass<?,?> scriptClass = scriptables.get(class_name);
 		
+	}
+	
+	@HelpCommand(description = "Get an instance of a scripted class mapped with"
+			+ "the given reference and set it as the scripting target. ", 
+			paramDescriptions = {"class name","reference of the object"}) 
+	public void accessObj(String class_name, String obj_ref) {
+		if (scripting_target != null) return;
+		scripting_target = scriptable_map.get(class_name).get(obj_ref);
+	}
+
+	@HelpCommand(description = "Release current scripting target") 
+	public void endObj() {
+		if (scripting_target == null) return;
+		//TODO
+		scripting_target = null;
+	}
+
+	
+	@HelpCommand(description = "Set a string in the current scripting target", 
+			paramDescriptions = {"field name","value to apply"}) 
+	public void setObjStr(String field_ref, String val) {
+		if (scripting_target == null) return;
+		//TODO
+	}
+
+	@HelpCommand(description = "Set an integer in the current scripting target", 
+			paramDescriptions = {"field name","value to apply"}) 
+	public void setObjInt(String field_ref, int val) {
+		if (scripting_target == null) return;
+		//TODO
+	}
+
+	@HelpCommand(description = "Set a float in the current scripting target", 
+			paramDescriptions = {"field name","value to apply"}) 
+	public void setObjFlt(String field_ref, float val) {
+		if (scripting_target == null) return;
+		//TODO
+	}
+
+	@HelpCommand(description = "Set a bool in the current scripting target", 
+			paramDescriptions = {"field name","value to apply"}) 
+	public void setObjBoo(String field_ref, boolean val) {
+		if (scripting_target == null) return;
+		//TODO
+	}
+
+	@HelpCommand(description = "Set a vector2 in the current scripting target", 
+			paramDescriptions = {"field name","value to apply"}) 
+	public void setObjVec(String field_ref, Vector2 val) {
+		if (scripting_target == null) return;
+		//TODO
+	}
+
+	@HelpCommand(description = "Set a byte in the current scripting target", 
+			paramDescriptions = {"field name","value to apply"}) 
+	public void setObjByt(String field_ref, byte val) {
+		if (scripting_target == null) return;
+		//TODO
 	}
 
 	
@@ -318,10 +386,6 @@ public class CommandExecutor {
 			Object[] args = args(sArgs);
 			if (args == null) return false;
 			boolean e = exec(args);
-			if (e && isStored) 
-				console.storeCommand(command);
-			if (e && isLogged) 
-				console.log(command, LogLevel.COMMAND);
 			return e;
 		}
 
@@ -345,8 +409,8 @@ public class CommandExecutor {
 		}
 		Object[] args(String[] sArgs) {
 			Object[] args = null;
-			if (sArgs != null) {
-				int numArgs = sArgs.length;
+			if (sArgs != null || params.length == 0) {
+				int numArgs = (sArgs != null ? sArgs.length : (int)0);
 				if (numArgs == params.length) {
 					try {
 						args = new Object[numArgs];
@@ -427,62 +491,49 @@ public class CommandExecutor {
 		String[] mParts = methodName.split("/");
 		
 		if (mParts.length == 2 && console.getSysMap().hasKey(mParts[0])) {
-			String back = "";
-			if (!ref.equals(mParts[0])) {
-				back = ref;
-				console.execCommand("sys "+mParts[0]);
-			}
-			methodName = mParts[1];
-			for (int i = 1 ; i < parts.length ; i++) methodName += " " + parts[i];
-			console.execCommand(methodName);
-			if (back.length() > 0) console.execCommand("sys "+back);
+			String com = mParts[1];
+			for (int i = 1 ; i < parts.length ; i++) com += " " + parts[i];
+			console.exec(console.getSysMap().get(mParts[0]),com);
+//			console.getSysMap().get(mParts[0]).execCommand(com);
 			return;
 		}
 		
 		String[] sArgs = null;
 		if (parts.length > 1) {
 			sArgs = new String[parts.length - 1];
-			for (int i = 1; i < parts.length; i++) {
-				sArgs[i - 1] = parts[i];
-			}
+			for (int i = 1; i < parts.length; i++) { sArgs[i - 1] = parts[i]; }
 		}
 		
-		Commande com = commands.get(methodName+"_"+sArgs.length);
+		Commande com = commands.get(
+				methodName + "_" + (sArgs != null ? sArgs.length : (int)0) );
 		
-		if (com == null) {
-			console.log("No such method found.", LogLevel.ERROR);
+		if (com == null) { console.log("No such method found.", LogLevel.ERROR); return; }
+		
+		if (console.isScripting()) {
+			if (com.args(sArgs) == null) {
+				console.log("Bad parameters.", LogLevel.ERROR); return; }
+			console.storeCommand(command);
 			return;
 		}
 		
-		if (!com.exec(command,sArgs))
-			console.log("Bad parameters.", LogLevel.ERROR);
+		if (!com.exec(command,sArgs)) console.log("Bad parameters.", LogLevel.ERROR);
+		else {
+			if (com.isStored) console.storeCommand(command);
+			if (com.isLogged) console.log(ref, command, LogLevel.COMMAND);
+		}
 		
 		return;
 	}
-	void printCommands () {
-		for (Commande c : commands.all()) if (!c.baseMethod) c.print();
-	}
-	void printAllCommands () {
-		for (Commande c : commands.all()) if (!c.baseMethod) c.printAll();
-	}
-	void printHelps () {
-		for (Commande c: commands.all()) if (!c.baseMethod) c.printHelp();
-	}
-	void printBaseCommands () {
-		for (Commande c : commands.all()) if (c.baseMethod) c.print();
-	}
-	void printAllBaseCommands () {
-		for (Commande c : commands.all()) if (c.baseMethod) c.printAll();
-	}
-	void printBaseHelps () {
-		for (Commande c: commands.all()) if (c.baseMethod) c.printHelp();
-	}
+	
+	void printCommands () { for (Commande c : commands.all()) if (!c.baseMethod) c.print(); }
+	void printAllCommands () { for (Commande c : commands.all()) if (!c.baseMethod) c.printAll(); }
+	void printHelps () { for (Commande c: commands.all()) if (!c.baseMethod) c.printHelp(); }
+	void printBaseCommands () { for (Commande c : commands.all()) if (c.baseMethod) c.print(); }
+	void printAllBaseCommands () { for (Commande c : commands.all()) if (c.baseMethod) c.printAll(); }
+	void printBaseHelps () { for (Commande c: commands.all()) if (c.baseMethod) c.printHelp(); }
 	void printHelp (String command) {
-		if (!commands.hasKey(command)) {
-			console.log("Commande <"+command+"> does not exist.");
-			return; }
-		commands.get(command).printHelp();
-	}
+		if (!commands.hasKey(command)) { console.log("Commande <"+command+"> does not exist."); return; }
+		commands.get(command).printHelp(); }
 
 	
 	
@@ -551,6 +602,21 @@ public class CommandExecutor {
 			console.log("ERROR : cant find sVec "+r+" in "+bloc.ref, LogLevel.ERROR);
 		}
 	}
+	
+
+	@NoStoreCommand
+	public final void beginScript(String ref) {
+		console.beginScript(ref);
+	}
+	@NoStoreCommand
+	public final void endScript() {
+		console.endScript();
+	}
+	@NoStoreCommand
+	public final void runScript(String ref) {
+		console.runScript(ref);
+	}
+	
 
 	
 	/**
@@ -595,22 +661,9 @@ public class CommandExecutor {
 	@HiddenCommand
 	@NoLogCommand
 	@NoStoreCommand
-	@HelpCommand(description = "List all stored codes") 
-	public final void allStore () {
-		console.allStore();
-	}
-
-	@HiddenCommand
-	@NoStoreCommand
-	@HelpCommand(description = "Store the current code") 
-	public final void storeCode (String ref) {
-		console.storeCode(ref);
-	}
-
-	@HiddenCommand
-	@HelpCommand(description = "Run a stored code") 
-	public final void runCode (String ref) {
-		console.runCode(ref);
+	@HelpCommand(description = "List all stored scripts") 
+	public final void allScript () {
+		console.allScript();
 	}
 
 	/**
@@ -663,8 +716,8 @@ public class CommandExecutor {
 				console.log("  - sys "+s+" :");
 				console.getSysMap().get(s).printHelps();
 			} 
-			console.log("Stored code:  (execute with runCode)", LogLevel.TITLE);
-			allStore();
+			console.log("Stored script:  (execute with runScript)", LogLevel.TITLE);
+			allScript();
 		} else if (command.equals("all")) {
 			console.log("Basic commands:", LogLevel.TITLE);
 			printAllBaseCommands();

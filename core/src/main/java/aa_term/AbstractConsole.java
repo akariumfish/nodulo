@@ -34,9 +34,10 @@ public abstract class AbstractConsole implements Console, Disposable {
 	protected boolean consoleTrace = false, recordLog = true;
 
 	private CommandHistory execHistory;
+	private CommandHistory scriptStack;
+	protected boolean scripting = false;
 	
 	private final nMap<CommandExecutor> system_execs = new nMap<CommandExecutor>();
-	private final nMap<CommandHistory> historys = new nMap<CommandHistory>();
 	
 	public nMap<CommandExecutor> getSysMap() { return system_execs; }
 	
@@ -52,6 +53,7 @@ public abstract class AbstractConsole implements Console, Disposable {
 	public AbstractConsole () {
 		log = new Log();
 		execHistory = new CommandHistory();
+		scriptStack = new CommandHistory();
 	}
 
 	@Override public void setRecordLog(boolean b) { recordLog = b; }
@@ -78,10 +80,13 @@ public abstract class AbstractConsole implements Console, Disposable {
 	}
 
 	@Override public void log (String msg, LogLevel level) {
-		if (level == LogLevel.COMMAND)
-			log.addEntry(exec.ref, msg, level);
-		else if (isLogRecorded() || level == LogLevel.ERROR) 
-			log.addEntry(msg, level);
+		log(null,msg,level);
+	}
+
+	@Override public void log (String tag, String msg, LogLevel level) {
+		if (isLogRecorded()) {
+			if (tag != null) log.addEntry(tag, msg, level);
+			else log.addEntry(exec.ref, msg, level); }
 
 		if (logToSystem) {
 			switch (level) {
@@ -138,33 +143,39 @@ public abstract class AbstractConsole implements Console, Disposable {
 		execHistory.reset();
 	}
 
-	@Override public void allStore() {
-		for (String s : historys.allKey())
+	@Override public void allScript() {
+		for (String s : scripts.allKey())
 			log(s);
 	}
+	
 
-	@Override public void storeCode(String ref) {
-		if (historys.hasKey(ref)) {
-			historys.remove(ref); }
-		CommandHistory ch = new CommandHistory();
-		ch.copy(execHistory);
-		historys.put(ref,ch);
+	@Override public boolean isScripting() { return scripting; }
+	private String scripting_ref = "";
+	private nMap<String[]> scripts = new nMap<String[]>();
+	@Override public void beginScript(String ref) {
+		if (scripting || scripts.hasKey(ref)) return;
+		scripting = true;
+		scripting_ref = Utl.copy(ref);
+		scriptStack.reset();
+		log.clear();
+		refresh();
 	}
-	public CommandHistory newStoredCode(String ref) {
-		if (historys.hasKey(ref)) {
-			historys.remove(ref); }
-		CommandHistory ch = new CommandHistory();
-		historys.put(ref,ch);
-		return ch;
+	@Override public void endScript() {
+		if (!scripting) return;
+		scripting = false;
+		scripts.put(scripting_ref,scriptStack.get(false));
+		scriptStack.reset();
+		log.clear();
+		for (String s : execHistory.get(false)) 
+			log(s,LogLevel.COMMAND);
+		refresh();
 	}
-
-	@Override public void runCode(String ref) {
-		if (historys.hasKey(ref)) {
-//			execHistory.reset();
-			String[] cd = historys.get(ref).get(false);
-			for (String s : cd) exec(s);
-		}
+	@Override public void runScript(String ref) {
+		if (!scripts.hasKey(ref)) return;
+		for (String s : scripts.get(ref)) exec(s);
 	}
+	
+	
 
 	public int getMaxHistory() {
 		return maxHistory;
@@ -176,6 +187,14 @@ public abstract class AbstractConsole implements Console, Disposable {
 	private int maxHistory = 2000;
 	private boolean storeCode = true;
 	public void storeCommand(String c) {
+		if (scripting) {
+			scriptStack.store(c);
+			log.clear();
+			for (String s : scriptStack.get(false)) 
+				log(s,LogLevel.COMMAND);
+			refresh();
+			return;
+		}
 		if (!storeCode) return;
 		if (execHistory.getSize() > getMaxHistory()) {
 				log("ERROR : execution history is full, cant store command", LogLevel.ERROR);
@@ -185,14 +204,12 @@ public abstract class AbstractConsole implements Console, Disposable {
 			log("WARNING : execution history is full");
 		}
 	}
-	
-	@Override public Console exec (String command) {
-		if (isDisabled()) return this;
-		exec.execCommand(command); return this; }
 
-	@Override public void execCommand (String command) {
-		if (isDisabled()) return;
-		exec.execCommand(command); }
+	@Override public Console exec (String command) { exec(null,command); return this; }
+	@Override public Console exec (CommandExecutor ce, String command) {
+		if (isDisabled()) return this;
+		if (ce == null) exec.execCommand(command);
+		else ce.execCommand(command); return this; }
 
 	@Override public void printCommands () {
 		exec.printCommands();

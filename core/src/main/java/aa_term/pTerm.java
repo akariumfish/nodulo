@@ -31,9 +31,9 @@ public class pTerm {
 		console.addExecutor(ce); return ce;
 	}
 
-	public CommandHistory newStoredCode(String code_ref) {
-		return console.newStoredCode(code_ref);
-	}
+//	public CommandHistory newStoredCode(String code_ref) {
+//		return console.newStoredCode(code_ref);
+//	}
 	
 	
 	public PlaneApplet app;

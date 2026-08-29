@@ -110,6 +110,8 @@ public interface Console {
 	 */
 	void log (String msg, LogLevel level);
 
+	void log (String tag, String msg, LogLevel level);
+
 	/**
 	 * Logs a new entry to the console using {@link LogLevel#DEFAULT}.
 	 *
@@ -160,7 +162,7 @@ public interface Console {
 	/**
 	 * Prints all stored
 	 */
-	void allStore ();
+	void allScript ();
 
 	/**
 	 * Prints all commands
@@ -217,9 +219,9 @@ public interface Console {
 	 *
 	 * @param command The command to execute.
 	 */
-	void execCommand (String command);
-
 	Console exec (String command);
+
+	Console exec (CommandExecutor ce, String command);
 	
 
 	public void store(boolean code);
@@ -230,14 +232,19 @@ public interface Console {
 
 	public void clearCode();
 
-	public void storeCode(String ref);
-	public void runCode(String ref);
-
 	public void storeCommand(String command);
 
 	public int getMaxHistory();
 	public void setMaxHistory(int i);
 
+
+	public boolean isScripting();
+	public void beginScript(String ref);
+	public void endScript();
+	public void runScript(String ref);
+
+	
+	
 	public boolean getConsoleTrace();
 	
 	/**
