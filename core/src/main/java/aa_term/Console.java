@@ -220,7 +220,7 @@ public interface Console {
 //	Console exec (CommandExecutor ce, String command);
 	
 
-	public void store(boolean code);
+//	public void store(boolean code);
 	
 	public void printToFile(String path);
 	public void printCode(boolean code);
@@ -228,7 +228,7 @@ public interface Console {
 
 	public void clearCode();
 
-	public void storeCommand(String command);
+//	public void storeCommand(String command);
 
 	public int getMaxHistory();
 	public void setMaxHistory(int i);

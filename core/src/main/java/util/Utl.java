@@ -1056,18 +1056,18 @@ public class Utl {
 		if (ct == Vector2.class) {
 			Vector2 v = new Vector2();
 			return (T)v; }
-		else if (ct == Float.class) {
+		else if (ct == Float.class || ct == float.class) {
 			Object v = 0.0f;
 			return (T)v; }
-		else if (ct == Integer.class) {
+		else if (ct == Integer.class || ct == int.class) {
 			Object v = (int)0;
 			return (T)v; }
-		else if (ct == Boolean.class) {
-			Object v = false;
+		else if (ct == Boolean.class || ct == boolean.class) {
+			Boolean v = false;
 			return (T)v; }
 		else if (ct == String.class) {
 			return (T)""; }
-		else if (ct == Byte.class) {
+		else if (ct == Byte.class || ct == byte.class) {
 			Object v = (byte)0;
 			return (T)v; }
 		return null;

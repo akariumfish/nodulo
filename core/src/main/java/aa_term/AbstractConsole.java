@@ -124,12 +124,12 @@ public abstract class AbstractConsole implements Console, Disposable {
 		execHistory.print(code);
 	}
 
-	@Override public void store(boolean t) {
-		storeCode = t;
-	}
+//	@Override public void store(boolean t) {
+//		storeCode = t;
+//	}
 
 	@Override public void clearCode() {
-		execHistory.reset();
+		execHistory.reset(); log.clear(); refresh();
 	}
 
 	@Override public void allScript() {
@@ -145,21 +145,25 @@ public abstract class AbstractConsole implements Console, Disposable {
 		scripting = true;
 		scripting_ref = Utl.copy(ref);
 		scriptStack.reset();
-		log.clear();
-		refresh();
+		log.clear(); refresh();
+		log("writing script "+scripting_ref,LogLevel.SUCCESS);
 	}
 	@Override public void endScript() {
 		if (!scripting) return;
 		scripting = false;
 		scripts.put(scripting_ref,scriptStack.get(false));
-		scriptStack.reset();
-		log.clear();
+		log.clear(); refresh();
 		for (String s : execHistory.get(false)) 
 			log(s,LogLevel.COMMAND);
-		refresh();
+		log("writing script "+scripting_ref,LogLevel.SUCCESS);
+		for (String s : scriptStack.get(false)) 
+			log(s,LogLevel.SUCCESS);
+		log("saved script "+scripting_ref,LogLevel.SUCCESS);
+		scriptStack.reset();
 	}
 	@Override public void runScript(String ref) {
 		if (!scripts.hasKey(ref)) return;
+		log("running script "+ref,LogLevel.SUCCESS);
 		for (String s : scripts.get(ref)) submitCommand(s);
 	}
 	
@@ -172,31 +176,35 @@ public abstract class AbstractConsole implements Console, Disposable {
 		maxHistory = i;
 	}
 	
-	private int maxHistory = 2000;
-	private boolean storeCode = true;
-	public void storeCommand(String c) {
-		if (scripting) {
-			scriptStack.store(c);
-			log.clear();
-			for (String s : scriptStack.get(false)) 
-				log(s,LogLevel.COMMAND);
-			refresh();
-			return;
-		}
-		if (!storeCode) return;
+	private int maxHistory = 20000;
+	
+	private void storeCommand(String command) {
 		if (execHistory.getSize() > getMaxHistory()) {
-				log("ERROR : execution history is full, cant store command", LogLevel.ERROR);
-			return; }
-		execHistory.store(c);
-		if (execHistory.getSize() > getMaxHistory()) {
-			log("WARNING : execution history is full");
-		}
+			log("ERROR : execution history is full, cant store command", LogLevel.ERROR); 
+		} else { execHistory.store(command); }
+		if (execHistory.getSize() > getMaxHistory()) { 
+			log("WARNING : execution history is full"); }
 	}
 
 	@Override public Console submitCommand (String command) { 
-		exec.executeCommands(command); 
+		if (!isScripting()) {
+			storeCommand(command);
+			exec.executeCommands(command);
+		} else {
+			if (command.equals("endScript")) {
+				endScript();
+				storeCommand(command);
+				log(command,LogLevel.COMMAND);
+			} else {
+				scriptStack.store(command);
+				log.clear(); refresh();
+				for (String s : scriptStack.get(false)) log(s,LogLevel.COMMAND);
+			}
+		}
 		return this; 
 	}
+	public AbstractConsole run(String command) { return (AbstractConsole)submitCommand(command); }
+
 
 	@Override public void printCommands () {
 		exec.printCommands();

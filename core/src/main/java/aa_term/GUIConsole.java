@@ -204,7 +204,7 @@ public class GUIConsole extends AbstractConsole {
 	@Override public void clear () {
 		super.clear();
 		log.getLogEntries().clear();
-		display.refresh();
+		refresh();
 	}
 
 	@Override public void setSize (int width, int height) {
@@ -319,6 +319,7 @@ public class GUIConsole extends AbstractConsole {
 			this.setSizePercent(oldWPct, oldHPct);
 			this.setPositionPercent(oldXPosPct, oldYPosPct);
 		}
+		display.refresh();
 	}
 
 	@Override public void log (String msg, LogLevel level) {

@@ -107,16 +107,36 @@ public class pTerm {
 		
 
 		app.addDelayEvent(80, new nRun(this) { public void run() {
-			console.submitCommand("setboo time val_pause (not (getboo time val_pause))");
+			console.run("setboo time val_pause (not (getboo time val_pause))");
+			console.run("setboo time val_pause (not (getboo time val_pause))");
+			
+			console.run("beginScript test")
+			.run("setboo time val_pause (not (getboo time val_pause))")
+			.run("endScript")
+			;
+			console.run("runScript test");
+			app.addDelayEvent(50, new nRun(this) { public void run() {
+				console.run("setboo time val_pause (not (getboo time val_pause))");
+//				console.run("runScript test");
+				app.addDelayEvent(50, new nRun(this) { public void run() {
+//					console.run("setboo time val_pause (not (getboo time val_pause))");
+					console.run("runScript test");
+					app.addDelayEvent(50, new nRun(this) { public void run() {
+						console.run("setboo time val_pause (not (getboo time val_pause))");
+//						console.run("runScript test");
+						app.addDelayEvent(50, new nRun(this) { public void run() {
+//							console.run("setboo time val_pause (not (getboo time val_pause))");
+							console.run("runScript test");
+							app.addDelayEvent(50, new nRun(this) { public void run() {
+								console.run("setboo time val_pause (not (getboo time val_pause))");
+//								console.run("runScript test");
+							}});
+						}});
+					}});
+				}});
+			}});
 		}});
 
-		app.addDelayEvent(120, new nRun(this) { public void run() {
-			console.submitCommand("setboo time val_pause (not (getboo time val_pause))");
-		}});
-
-		app.addDelayEvent(160, new nRun(this) { public void run() {
-			console.submitCommand("setboo time val_pause (not (getboo time val_pause))");
-		}});
 		
 		
 	}

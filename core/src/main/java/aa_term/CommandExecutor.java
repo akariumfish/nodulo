@@ -334,6 +334,7 @@ public class CommandExecutor {
 	}
 
 	private class ExecutionFail {}
+//	private class ExecutionSuccess {}
 	
 	private class Commande {
 
@@ -369,7 +370,11 @@ public class CommandExecutor {
 			Class<?>[] params = m.getParameterTypes();
 			for (int i = 0; i < params.length; i++) 
 				description += params[i].getSimpleName() + ((i < params.length - 1) ? ", " : ""); 
-
+			for (int i = 0; i < params.length; i++) {
+				if (params[i] == boolean.class) params[i] = Boolean.class;
+			}
+			if (return_type == boolean.class) return_type = Boolean.class;
+			
 			StringBuilder sb = new StringBuilder();
 			sb.append(m.getName()).append(": ");
 			Annotation annotation = m.getDeclaredAnnotation(HelpCommand.class);
@@ -412,6 +417,13 @@ public class CommandExecutor {
 		}
 
 		Object executeCommande(Object[] args) {
+//			if (isLogged
+//					|| true
+//					) {
+//				String s = "-> "+name;
+//				for (Object o : args) s += " " + (o != null ? Utl.to_string(o) : "null");
+//				console.log(s,LogLevel.COMMAND);
+//			}
 			try {
 				method.setAccessible(true);
 				return method.invoke(context, args);
@@ -491,7 +503,7 @@ public class CommandExecutor {
 	private static final char SPACE = 		' ';
 	private static final char OPEN = 		'(';
 	private static final char CLOSE = 		')';
-	private static final char IGNORE = 		'_';
+//	private static final char IGNORE = 		'_';
 	
 	private static class Virtual {
 		private String commandName = null;
@@ -516,6 +528,11 @@ public class CommandExecutor {
 			if (inBuff != null) inBuff.position(0);
 			if (commandBuff != null) commandBuff.delete(0,buffSize);
 			if (subComBuff != null) subComBuff.delete(0,buffSize);
+			inBuff = null;
+			commandBuff = null;
+			subComBuff = null;
+			buffSize = 0;
+			
 			comSize = 0;
 			current = 0; last = 0; next = 0;
 			finish = false;
@@ -528,10 +545,11 @@ public class CommandExecutor {
 		}
 		
 		Object error() { free(this); return exec.new ExecutionFail(); }
+//		Object success() { free(this); return exec.new ExecutionSuccess(); }
 		
 		Object execute(String command, boolean head) {
 			
-//			console.log("exec "+command);
+//			console.log("execute "+command);
 			
 			comSize = command.length();
 			if (comSize == 0) return error();
@@ -565,70 +583,65 @@ public class CommandExecutor {
 					} else {
 						blocNest++;
 					}
-				} else if (current == CLOSE && last != IGNORE) {
+				} else if (current == CLOSE
+//						&& last != IGNORE
+						) {
 					if (blocRecording) {
 						if (blocNest == 0) {
 							blocRecording = false;
 							subComBuff.deleteCharAt(blocSize - 1);
-							blocSize = 0;
-							
+							String subCom = subComBuff.substring(0,blocSize-1);
 							Virtual virt = obtain(); virt.reset();
-							Object cm = virt.execute(subComBuff.toString(), false);
+							Object cm = virt.execute(subCom, false);
 							free(virt);
 							if (cm instanceof ExecutionFail) {
-								console.log("Cant execute <"+subComBuff.toString()+">", 
+								console.log("Cant execute <"+subCom+">", 
 										LogLevel.ERROR); return error(); }
-							comParts.add(Utl.to_string(cm));
-							
+//							else if (cm instanceof ExecutionSuccess) {
+//								comParts.add(""); }
+//							else 
+								comParts.add(Utl.to_string(cm));
+
+							blocSize = 0;
 							subComBuff.delete(0,buffSize);
 						} else {
 							blocNest--;
 						}
 					} 
 				} else if (current != SPACE 
-						&& !(current == IGNORE && (next == OPEN || next == CLOSE))
+//						&& !(current == IGNORE && (next == OPEN || next == CLOSE))
 						) {
 					if (!blocRecording) {
 						commandBuff.append(current); wordSize++;
 					}
 				} else if (!blocRecording && current == SPACE && wordSize > 0) {
-					comParts.add(commandBuff.toString());
+					comParts.add(commandBuff.substring(0,wordSize));
 					commandBuff.delete(0,buffSize);
 					wordSize = 0;
 				} 
 				if (finish && !blocRecording && wordSize > 0) {
-					comParts.add(commandBuff.toString());
+					comParts.add(commandBuff.substring(0,wordSize));
 					commandBuff.delete(0,buffSize);
 					wordSize = 0;
 				}
 				last = current;
 			}
 			partNb = comParts.size();
-			if (partNb == 0) return error();
+			if (partNb == 0) { console.log("No command part found "+command, LogLevel.ERROR); return error(); }
 			
 			commandName = comParts.get(0) + "_" + (partNb - 1);
 			com = exec.commands.get(commandName);
-			if (com == null) { console.log("No such method found.", LogLevel.ERROR); return error(); }
+			if (com == null) { console.log("No such method found "+commandName, LogLevel.ERROR); return error(); }
 			if (com.paramNb != partNb - 1) { console.log("Bad number of parameter.", LogLevel.ERROR); return error(); }
 			
 			Commande.Arg carg = com.obtainArg();
 			if (!carg.validate()) 
 				for (int i = 1 ; i < partNb ; i++) 
 					if (!carg.parseArg(comParts.get(i))) { 
-				console.log("Bad parameter "+i, LogLevel.ERROR); return error(); }
+				console.log("Bad parameter "+i+" : "+comParts.get(i), LogLevel.ERROR); return error(); }
 			if (!carg.validate()) { 
-				console.log("Bad parameters.", LogLevel.ERROR); return error(); }
-			
-			if (head && com.isLogged) console.log(command, LogLevel.COMMAND);
-			if (head && com.isStored) console.storeCommand(command);
-			
-			if (console.isScripting()) {
-				if (head && com.endFlag) console.endScript();
-				if (com.return_type == null) return null; 
-				try { return com.return_type.newInstance(); } 
-				catch (InstantiationException e) { e.printStackTrace(); } 
-				catch (IllegalAccessException e) { e.printStackTrace(); } 
-			}
+				console.log("Parameters not valid.", LogLevel.ERROR); return error(); }
+			if (head && com.isLogged) console.log(command, LogLevel.COMMAND); 
 			
 			return carg.exec();
 		}
@@ -647,14 +660,15 @@ public class CommandExecutor {
 			if (free.size() == 0) return new Virtual();
 			Virtual v = free.get(free.size()-1); free.remove(v); v.isfree = false; return v; }
 		private static void free(Virtual v) { 
-			if (!v.isfree) { v.reset(); free.add(v); } v.isfree = true; }
+			v.reset(); if (!v.isfree) { free.add(v); } v.isfree = true; }
 	}
 	
 	
 	void executeCommands(String commands) {
-		String[] parts = commands.split("\n");
-		if (parts.length > 1) { for (String s : parts) Virtual.executeLine(s); }
-		else Virtual.executeLine(commands);
+//		String[] parts = commands.split("\n");
+//		if (parts.length > 1) { for (String s : parts) Virtual.executeLine(s); }
+//		else 
+			Virtual.executeLine(commands);
 	}
 	
 	
@@ -784,19 +798,21 @@ public class CommandExecutor {
 //	}
 	
 
-	@NoStoreCommand
-	public final void beginScript(String ref) {
-		console.beginScript(ref);
-	}
-	@NoStoreCommand
-	@EndCommand
-	public final void endScript() {
-		console.endScript();
-	}
-	@NoStoreCommand
-	public final void runScript(String ref) {
-		console.runScript(ref);
-	}
+//	@NoLogCommand 
+//	@NoStoreCommand 
+	@HelpCommand(description = "begin script declaration", paramDescriptions = {"script ref"}) 
+	public final void beginScript(String ref) { console.beginScript(ref); }
+	
+//	@NoLogCommand 
+//	@NoStoreCommand 
+	@EndCommand 
+	@HelpCommand(description = "end script declaration") 
+	public final void endScript() { console.endScript(); }
+	
+//	@NoLogCommand 
+//	@NoStoreCommand 
+	@HelpCommand(description = "run a script", paramDescriptions = {"script ref"}) 
+	public final void runScript(String ref) { console.runScript(ref); }
 	
 
 	
@@ -833,11 +849,11 @@ public class CommandExecutor {
 	public final void saveCode (String path) {
 		console.printToFile(path);
 	}
-	@HiddenCommand
-	@NoStoreCommand
-	public final void store (boolean t) {
-		console.store(t);
-	}
+//	@HiddenCommand
+//	@NoStoreCommand
+//	public final void store (boolean t) {
+//		console.store(t);
+//	}
 
 	@HiddenCommand
 	@NoLogCommand
