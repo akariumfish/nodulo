@@ -525,8 +525,8 @@ public class pSpace {
 //			if (bloc2 == null) bloc.buildBloc("bodyview", "bodyview"); 
 //		}	
 
-		app.term.addExecutor(new CommandExecutor("space", bloc, this) {});
-
+		app.term.register("space", bloc, this);
+		
 	}
 	
 	public void clear() {

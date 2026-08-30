@@ -224,10 +224,12 @@ public class pTime {
 			if (!app.config.start_solo) {
 				app.net.net.addSyncVal(val_tick_cnt);	 }
 		}});
+
+		app.term.register("time", bloc, this);
 		
-		app.term.addExecutor(new CommandExecutor("time", bloc, this) {
-			
-		});
+//		app.term.addExecutor(new CommandExecutor("time", bloc, this) {
+//			
+//		});
 	}
 	public void clear() {
 

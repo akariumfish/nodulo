@@ -546,9 +546,12 @@ public class pPatch {
 //		load_contents();
 		if (!app.config.RELEASE) tool_setup(false);
 		
-		app.term.addExecutor(new CommandExecutor("patch", bloc, this) {
-			
-		});
+
+//		app.term.register("view", bloc, this);
+//		
+//		app.term.addExecutor(new CommandExecutor("patch", bloc, this) {
+//			
+//		});
 		
 		app.addDelayEvent(1, new nRun() { public void run() {	
 			if (!app.config.STARTUP_LOAD && app.config.PATCH_START_WALLPAPER) 

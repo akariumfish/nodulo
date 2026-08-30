@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Method;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 
+import data.sValueBloc;
 import util.Utl;
 import util.nMap;
 
@@ -37,23 +38,16 @@ public abstract class AbstractConsole implements Console, Disposable {
 	private CommandHistory scriptStack;
 	protected boolean scripting = false;
 	
-	private final nMap<CommandExecutor> system_execs = new nMap<CommandExecutor>();
-	
-	public nMap<CommandExecutor> getSysMap() { return system_execs; }
-	
-	public void addExecutor(CommandExecutor ce) {
-		if (system_execs.hasKey(ce.ref)) {
-			Utl.logn("ERROR : AbstractConsole.addExecutor : the executor ref <"+ce.ref+"> is allready used.");
-			return; } 
-		system_execs.putOne(ce.ref,ce);
-		ce.setConsole(this);
-		if (exec == null) { exec = ce; }
+	public void register(String r, sValueBloc b, Object o) {
+		exec.register(r,b);
+		exec.register(o);
 	}
 	
 	public AbstractConsole () {
 		log = new Log();
 		execHistory = new CommandHistory();
 		scriptStack = new CommandHistory();
+		exec = new CommandExecutor(this);
 	}
 
 	@Override public void setRecordLog(boolean b) { recordLog = b; }
@@ -80,21 +74,16 @@ public abstract class AbstractConsole implements Console, Disposable {
 	}
 
 	@Override public void log (String msg, LogLevel level) {
-		log(null,msg,level);
-	}
-
-	@Override public void log (String tag, String msg, LogLevel level) {
 		if (isLogRecorded()) {
-			if (tag != null) log.addEntry(tag, msg, level);
-			else log.addEntry(exec.ref, msg, level); }
+			log.addEntry(msg, level); }
 
 		if (logToSystem) {
 			switch (level) {
 			case ERROR:
-				System.err.println(exec.ref+"> " + msg);
+				System.err.println("> " + msg);
 				break;
 			default:
-				System.out.println(exec.ref+"> " + msg);
+				System.out.println("> " + msg);
 				break;
 			}
 		}
@@ -144,8 +133,7 @@ public abstract class AbstractConsole implements Console, Disposable {
 	}
 
 	@Override public void allScript() {
-		for (String s : scripts.allKey())
-			log(s);
+		for (String s : scripts.allKey()) log(s);
 	}
 	
 
@@ -172,7 +160,7 @@ public abstract class AbstractConsole implements Console, Disposable {
 	}
 	@Override public void runScript(String ref) {
 		if (!scripts.hasKey(ref)) return;
-		for (String s : scripts.get(ref)) exec(s);
+		for (String s : scripts.get(ref)) submitCommand(s);
 	}
 	
 	
@@ -205,11 +193,10 @@ public abstract class AbstractConsole implements Console, Disposable {
 		}
 	}
 
-	@Override public Console exec (String command) { exec(null,command); return this; }
-	@Override public Console exec (CommandExecutor ce, String command) {
-		if (isDisabled()) return this;
-		if (ce == null) exec.execCommand(command);
-		else ce.execCommand(command); return this; }
+	@Override public Console submitCommand (String command) { 
+		exec.executeCommands(command); 
+		return this; 
+	}
 
 	@Override public void printCommands () {
 		exec.printCommands();

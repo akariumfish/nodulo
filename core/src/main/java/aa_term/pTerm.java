@@ -27,8 +27,8 @@ public class pTerm {
 		Gdx.input.setInputProcessor(console.getMultiplexer());
 	}
 
-	public CommandExecutor addExecutor(CommandExecutor ce) {
-		console.addExecutor(ce); return ce;
+	public void register(String r, sValueBloc b, Object o) {
+		console.register(r,b,o); 
 	}
 
 //	public CommandHistory newStoredCode(String code_ref) {
@@ -72,7 +72,7 @@ public class pTerm {
 		console.setHoverAlpha(.9f);
 		console.setNoHoverAlpha(.9f);
 		
-		console.setSizePercent(100, 20);
+		console.setSizePercent(100, 50);
 		console.setPositionPercent(0, 0);
 
 //		console.enableSubmitButton(true);
@@ -102,8 +102,22 @@ public class pTerm {
 		app.outputs.put("trm", new nRun() { public void run() {
 			if (args.length < 1) return;
 			String r = arg(0,String.class); 
-			console.exec(r);
+			console.submitCommand(r);
 		}});
+		
+
+		app.addDelayEvent(80, new nRun(this) { public void run() {
+			console.submitCommand("setboo time val_pause (not (getboo time val_pause))");
+		}});
+
+		app.addDelayEvent(120, new nRun(this) { public void run() {
+			console.submitCommand("setboo time val_pause (not (getboo time val_pause))");
+		}});
+
+		app.addDelayEvent(160, new nRun(this) { public void run() {
+			console.submitCommand("setboo time val_pause (not (getboo time val_pause))");
+		}});
+		
 		
 	}
 	

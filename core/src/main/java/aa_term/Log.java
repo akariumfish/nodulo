@@ -24,13 +24,6 @@ public class Log {
 		this.numEntries = numEntries;
 	}
 
-	protected void addEntry (String tag, String msg, LogLevel level) {
-		logEntries.add(new LogEntry(tag, msg, level));
-		if (logEntries.size > numEntries && numEntries != Console.UNLIMITED_ENTRIES) {
-			logEntries.removeIndex(0);
-		}
-	}
-
 	protected void addEntry (String msg, LogLevel level) {
 		logEntries.add(new LogEntry(msg, level));
 		if (logEntries.size > numEntries && numEntries != Console.UNLIMITED_ENTRIES) {

@@ -1119,9 +1119,11 @@ public class Utl {
 		else if (d instanceof Integer) return getBytes((int)d);
 		else if (d instanceof Boolean) return getBytes((boolean)d);
 		else if (d instanceof Vector2) return getBytes((Vector2)d); 
+		else if (d instanceof Byte) return getBytes((byte)d); 
 		else return null; }
 	
 	public static byte[] getBytes(String s) { return s.getBytes(); }
+	public static byte[] getBytes(byte s) { return ByteBuffer.allocate(1).put(s).array(); }
 	public static byte[] getBytes(int s) { return ByteBuffer.allocate(BYTE_SIZE_INT).putInt(s).array(); }
 	public static byte[] getBytes(float s) { return ByteBuffer.allocate(BYTE_SIZE_FLOAT).putFloat(s).array(); }
 	public static byte[] getBytes(boolean s) { byte[] arr = {(byte) ((s) ? 1 : 0)}; return arr; }

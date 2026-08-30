@@ -270,9 +270,12 @@ public class pBox2d extends pSystem {
 			//		if (!app.RELEASE) 
 			tool_setup(true);
 			
-			app.term.addExecutor(new CommandExecutor("sim", bloc, this) {
-				
-			});
+
+//			app.term.register("sim", bloc, this);
+//			
+//			app.term.addExecutor(new CommandExecutor("sim", bloc, this) {
+//				
+//			});
 
 		}
 		public void system_clear() {

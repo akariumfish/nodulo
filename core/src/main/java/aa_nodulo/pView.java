@@ -7,6 +7,7 @@ import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.noodle.nodulo.GdxApp;
@@ -177,26 +178,27 @@ public class pView {
 		@ScriptedField(description = "an integer value", 
 				settings = {"def", "0", "min", "0", "max", "10", "granulo", "2"}) 
 		int val = 0;
-		
+
 	}
 	
 	
 	private void setupExecutor() {
 		
-
-		CommandExecutor exec = app.term.addExecutor(new CommandExecutor("view", bloc, this) {
-
-			@HelpCommand(description = "Cam scale", 
-					paramDescriptions = {"scale"}) 
-			public void scale(float r) {
-				val_cam_scale_target.set(r);
-				got_cam_scale_target = true;
-				console.log("cam scale = "+r, LogLevel.SUCCESS);
-			}
-			
-		});
+		app.term.register("view", bloc, this);
 		
-		exec.registerScriptable(Par.class);
+//		CommandExecutor exec = app.term.addExecutor(new CommandExecutor("view", bloc, this) {
+//
+//			@HelpCommand(description = "Cam scale", 
+//					paramDescriptions = {"scale"}) 
+//			public void scale(float r) {
+//				val_cam_scale_target.set(r);
+//				got_cam_scale_target = true;
+//				console.log("cam scale = "+r, LogLevel.SUCCESS);
+//			}
+//			
+//		});
+//		
+//		exec.registerScriptable(Par.class);
 		
 		
 	}

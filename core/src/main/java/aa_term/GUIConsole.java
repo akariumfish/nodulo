@@ -147,7 +147,8 @@ public class GUIConsole extends AbstractConsole {
 		display = new ConsoleDisplay(skin);
 		commandHistory = new CommandHistory();
 		commandCompleter = new CommandCompleter();
-		logToSystem = false;
+		
+		logToSystem = true;
 
 		usesMultiplexer = useMultiplexer;
 		if (useMultiplexer) {
@@ -500,7 +501,9 @@ public class GUIConsole extends AbstractConsole {
 			}
 			print.addListener(new ClickListener() {
 				@Override public void clicked (InputEvent event, float x, float y) {
-					printCode(true);
+					input.setText("setboo time val_pause (not (getboo time val_pause))");
+					input.setCursorPosition(input.getText().length());
+//					printCode(true);
 				}
 			});
 
@@ -636,7 +639,7 @@ public class GUIConsole extends AbstractConsole {
 			}
 			if (exec != null) {
 				commandHistory.store(s);
-				exec(s);
+				submitCommand(s);
 			} else {
 				log("No command executor has been set. "
 					+ "Please call setCommandExecutor for this console in your code and restart.", LogLevel.ERROR);

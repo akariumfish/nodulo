@@ -17,13 +17,11 @@ import util.nMap;
  * @author StrongJoshua
  */
 public interface Console {
-
+	
 	/**
 	 * Use to set the amount of entries to be stored to unlimited.
 	 */
 	int UNLIMITED_ENTRIES = -1;
-
-	nMap<CommandExecutor> getSysMap();
 	
 	/**
 	 * @param numEntries maximum number of entries the console will hold.
@@ -109,8 +107,6 @@ public interface Console {
 	 * @see LogLevel
 	 */
 	void log (String msg, LogLevel level);
-
-	void log (String tag, String msg, LogLevel level);
 
 	/**
 	 * Logs a new entry to the console using {@link LogLevel#DEFAULT}.
@@ -219,9 +215,9 @@ public interface Console {
 	 *
 	 * @param command The command to execute.
 	 */
-	Console exec (String command);
+	Console submitCommand (String command);
 
-	Console exec (CommandExecutor ce, String command);
+//	Console exec (CommandExecutor ce, String command);
 	
 
 	public void store(boolean code);

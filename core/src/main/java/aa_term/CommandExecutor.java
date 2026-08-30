@@ -1,5 +1,7 @@
 package aa_term;
 
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,50 +41,92 @@ import util.nMap;
  */
 public class CommandExecutor {
 	
-
-	public interface ScriptableConstructor <T extends Scriptable<T>> {
-		public int identity(T t);
+	
+	public interface Pooling <T extends Pooled<T>> {
+		public T obtain();
 		public T get(int i);
-		public boolean remove(T target);
-		public boolean remove(int target_identity);
-		public int scriptLength(T target);
-		public int scriptLength(int target_identity);
-		public int compile(T target, byte[] stack, int offset); // write state to stack
-		public int compile(int target_identity, byte[] stack, int offset);
-		public int build(); // > new instance indentity
-		public int build(byte[] stack, int offset, int length); // > new instance indentity
-		public boolean compute(T target, byte[] stack, int offset, int length); // copy state from stack
-		public boolean compute(int target_identity, byte[] stack, int offset, int length); 
+		public void free(T t);
 	}
-
-	class Builder <K extends Scriptable<K>> implements CommandExecutor.ScriptableConstructor<K> {
-
-		@Override public K get(int i) { return null; }
-		@Override public int build() { return 0; } 
-		@Override public int build(byte[] stack, int offset, int length) { return 0; } 
-		@Override public boolean remove(int i) { return false; }
-		@Override public int identity(K t) { return 0; }
-		@Override public boolean remove(K target) { return false; }
-		@Override public int scriptLength(K target) { return 0; }
-		@Override public int scriptLength(int target_identity) { return 0; }
-		@Override public int compile(K target, byte[] stack, int offset) { return 0; }
-		@Override public int compile(int target_identity, byte[] stack, int offset) { return 0; }
-		@Override public boolean compute(K target, byte[] stack, int offset, int length) { return false; }
-		@Override public boolean compute(int target_identity, byte[] stack, int offset, int length) { return false; }
+	
+	public interface Pooled <T extends Pooled<T>> {
+		public int id();
+		public void create();
+		public void load();
+		public void init();
+		public void finish();
+		public void save();
+		public void clear();
+	}
+	
+	
+	
+	public interface ScriptableConstructor <T extends Scriptable<T> & Pooled<T>> {
 		
 	}
 	
-	public static abstract class Scriptable <T extends Scriptable<T>> {
+	class Builder <K extends Scriptable<K> & Pooled<K>> 
+	implements CommandExecutor.ScriptableConstructor<K>, CommandExecutor.Pooling<K> 
+	{
 
-		public ScriptableConstructor<T> constructor() {
+		@Override
+		public K obtain() {
 			return null;
+		}
+
+		@Override
+		public K get(int i) {
+			return null;
+		}
+
+		@Override
+		public void free(K t) {
+			
+		}
+	}
+	
+	public static abstract class Scriptable 
+	<T extends Scriptable<T> & Pooled<T>> implements Pooled<T> {
+
+		@Override
+		public int id() {
+			return 0;
+		}
+
+		@Override
+		public void create() {
+			
+		}
+
+		@Override
+		public void load() {
+			
+		}
+
+		@Override
+		public void init() {
+			
+		}
+
+		@Override
+		public void finish() {
+			
+		}
+
+		@Override
+		public void save() {
+			
+		}
+
+		@Override
+		public void clear() {
+			
 		}
 		
 	}
 
 	nMap<ScriptableClass<?,?>> scriptables = new nMap<ScriptableClass<?,?>>();
 	
-	private class ScriptableClass <T extends Scriptable<T>, K extends ScriptableConstructor<T>> {
+	private class ScriptableClass <T extends Scriptable<T> & Pooled<T>, K extends ScriptableConstructor<T>> {
 		final String name;
 		final Class<T> clazz;
 		final K constructor;
@@ -104,7 +148,7 @@ public class CommandExecutor {
 		}
 	}
 
-	private class ScriptField <V, T extends Scriptable<T>, K extends ScriptableConstructor<T>> {
+	private class ScriptField <V, T extends Scriptable<T> & Pooled<T>, K extends ScriptableConstructor<T>> {
 		final String name;
 		final Class<V> type;
 		final String type_name;
@@ -136,7 +180,7 @@ public class CommandExecutor {
 	}
 
 	@NotCommand
-	public <T extends Scriptable<T>> 
+	public <T extends Scriptable<T> & Pooled<T>> 
 	void registerScriptable(Class<T> cl) {
 
 		new ScriptableClass<T,Builder<T>>(cl,new Builder<T>());
@@ -227,42 +271,30 @@ public class CommandExecutor {
 	
 	
 	
-	public String ref;
-
 	protected Console console;
 
-	private final sValueBloc bloc;
+	private final nMap<sValueBloc> blocs = new nMap<sValueBloc>();
 
-	private static final HashMap<Byte,CommandExecutor> all_execs = 
-			new HashMap<Byte,CommandExecutor>();
 	private static final HashMap<Integer,Commande> all_commands = 
 			new HashMap<Integer,Commande>();
 
 	private static int commande_counter = 0;
-	private static byte executor_counter = 0;
-	
-	private final byte executor_id;
-
 	private nMap<Commande> commands = new nMap<Commande>();
-	
-	public CommandExecutor(String r, sValueBloc b, Object o) {
-		ref = r; 
-		if (o != null) register(o);
-		this.bloc = b;
-		executor_id = executor_counter; executor_counter++;
-		all_execs.put(executor_id, this);
+
+	public CommandExecutor(Console c) {
+		console = c;
+		register();
+		Virtual.setConsole(console);
+		Virtual.setExec(this);
+	}
+
+	void register(String r, sValueBloc b) {
+		blocs.put(r,b);
 	}
 
 	static void dispose() {
 		commande_counter = 0;
-		executor_counter = 0;
 		all_commands.clear();
-		all_execs.clear();
-	}
-	
-	protected void setConsole (Console c) {
-		console = c;
-		register();
 	}
 
 	private void register() {
@@ -274,7 +306,6 @@ public class CommandExecutor {
 				Annotation annotation = m.getDeclaredAnnotation(NotCommand.class);
 				if (m.isPublic() && annotation == null) {
 					Commande cm = new Commande(m,this);
-					if (c == CommandExecutor.class) cm.baseMethod = true;
 				}
 			}
 			arr.clear();
@@ -302,6 +333,8 @@ public class CommandExecutor {
 				annotation != null)) new Commande(m,o);
 	}
 
+	private class ExecutionFail {}
+	
 	private class Commande {
 
 		private final int commande_id;
@@ -310,33 +343,32 @@ public class CommandExecutor {
 		String name, description, help;
 		Object context;
 		Class<?>[] params;
-		boolean isHidden = false, isLogged = true, isStored = true, baseMethod = false;
+		Class<?> return_type;
+		boolean isHidden = false, isLogged = true, isStored = true, endFlag = false;
+		final int paramNb;
+		
 		Commande(Method m, Object o) {
 			method = m; context = o;
 			name = method.getName();
 			params = m.getParameterTypes();
+			paramNb = params.length;
+			return_type = m.getReturnType();
 			isHidden = m.isAnnotationPresent(HiddenCommand.class);
+			endFlag = m.isAnnotationPresent(EndCommand.class);
 			isLogged = !m.isAnnotationPresent(NoLogCommand.class);
 			isStored = !m.isAnnotationPresent(NoStoreCommand.class);
 			if (commands.hasKey(name+"_"+params.length)) {
 				Utl.logn("ERROR : CommandExecutor.new Commande "
 						+ name + " (" + params.length + " args) :"
-						+ " a commande with the same name and the same number of parameters allready exist");
-			}
+						+ " a commande with the same name and the same number of parameters allready exist"); }
 			commands.put(name+"_"+params.length,this);
 			commande_id = commande_counter; commande_counter++;
 			all_commands.put(commande_id, this);
 			
-			description = "";
-			description += m.getName();
-			description += " : ";
+			description = m.getName() + " : ";
 			Class<?>[] params = m.getParameterTypes();
-			for (int i = 0; i < params.length; i++) {
-				description += params[i].getSimpleName();
-				if (i < params.length - 1) {
-					description += ", ";
-				}
-			}
+			for (int i = 0; i < params.length; i++) 
+				description += params[i].getSimpleName() + ((i < params.length - 1) ? ", " : ""); 
 
 			StringBuilder sb = new StringBuilder();
 			sb.append(m.getName()).append(": ");
@@ -344,7 +376,6 @@ public class CommandExecutor {
 			if (annotation != null) {
 				HelpCommand doc = annotation.getAnnotation(HelpCommand.class);
 				sb.append(doc.description());
-//				Class<?>[] params = m.getParameterTypes();
 				for (int i = 0; i < params.length; i++) {
 					sb.append("\n");
 					for (int j = 0; j < m.getName().length() + 2; j++)
@@ -355,7 +386,6 @@ public class CommandExecutor {
 						sb.append(doc.paramDescriptions()[i]);
 				}
 			} else {
-//				Class<?>[] params = m.getParameterTypes();
 				for (int i = 0; i < params.length; i++) {
 					sb.append(params[i].getSimpleName());
 					if (i < params.length - 1) {
@@ -380,20 +410,11 @@ public class CommandExecutor {
 		void printHelp() {
 			console.log(help);
 		}
-		
-		boolean exec(String command, String[] sArgs) {
-			if (sArgs.length != params.length) return false;
-			Object[] args = args(sArgs);
-			if (args == null) return false;
-			boolean e = exec(args);
-			return e;
-		}
 
-		boolean exec(Object[] args) {
+		Object executeCommande(Object[] args) {
 			try {
 				method.setAccessible(true);
-				method.invoke(context, args);
-				return true;
+				return method.invoke(context, args);
 			} catch (ReflectionException e) {
 				String msg = e.getMessage();
 				if (msg == null || msg.length() <= 0) {
@@ -404,133 +425,277 @@ public class CommandExecutor {
 				if (console.getConsoleTrace()) {
 					console.log(e, LogLevel.ERROR);
 				}
-				return false;
+				return new ExecutionFail();
 			}
 		}
-		Object[] args(String[] sArgs) {
-			Object[] args = null;
-			if (sArgs != null || params.length == 0) {
-				int numArgs = (sArgs != null ? sArgs.length : (int)0);
-				if (numArgs == params.length) {
-					try {
-						args = new Object[numArgs];
-	
-						for (int j = 0; j < params.length; j++) {
-							Class<?> param = params[j];
-							final String value = sArgs[j];
-	
-							if (param.equals(String.class)) {
-								args[j] = value;
-							} else if (param.equals(Boolean.class) || param.equals(boolean.class)) {
-								args[j] = Boolean.parseBoolean(value);
-							} else if (param.equals(Byte.class) || param.equals(byte.class)) {
-								args[j] = Byte.parseByte(value);
-							} else if (param.equals(Short.class) || param.equals(short.class)) {
-								args[j] = Short.parseShort(value);
-							} else if (param.equals(Integer.class) || param.equals(int.class)) {
-								args[j] = Integer.parseInt(value);
-							} else if (param.equals(Long.class) || param.equals(long.class)) {
-								args[j] = Long.parseLong(value);
-							} else if (param.equals(Float.class) || param.equals(float.class)) {
-								args[j] = Float.parseFloat(value);
-							} else if (param.equals(Double.class) || param.equals(double.class)) {
-								args[j] = Double.parseDouble(value);
-							} else if (param.equals(Vector2.class)) {
-								args[j] = new Vector2().fromString(value);
-							}
-						}
-					} catch (Exception e) {
-						// Error occurred trying to parse parameter, continue
-						// to next function
-						return null;
-					}
-				}
+		
+		class Arg { 
+			Arg init() { 
+				for (int i = 0 ; i < paramNb ; i++) { args[i] = null; } 
+				arCnt = 0; if (paramNb == arCnt) { valid = true; } else { valid = false; }
+				err = false; return this; }
+			private Object[] args = new Object[paramNb]; 
+			private int arCnt = 0; private boolean valid = false, err = false; 
+			private void increment() { arCnt++; if (paramNb == arCnt) valid = true; else valid = false; }
+			private void error() { err = true; }
+			boolean validate() { return !err && valid; }
+			Object exec() {
+				if (!validate()) return null;
+				return executeCommande(args);
 			}
-			return args;
+//			boolean put(Object[] ar) {
+//				if (ar.length != paramNb) return false;
+//				boolean success = true;
+//				for (int i = 0 ; i < paramNb ; i++) success = success && putArg(ar[i]);
+//				return success;
+//			}
+			boolean putArg(Object value) { 
+				if (params[arCnt] != value.getClass()) { error(); return false; }
+				args[arCnt] = value; increment(); return true; }
+			boolean parseArg(String s) { 
+				try { args[arCnt] = parseArg(s,params[arCnt]); } 
+				catch (Exception e) { error(); return false; } // Error occurred trying to parse parameter
+				if (args[arCnt] == null) { error(); return false; }
+				increment(); return true; }
+			Object parseArg(String value, Class<?> param) {
+				if (param.equals(String.class)) {
+					return value;
+				} else if (param.equals(Boolean.class) || param.equals(boolean.class)) {
+					return Boolean.parseBoolean(value);
+				} else if (param.equals(Byte.class) || param.equals(byte.class)) {
+					return Byte.parseByte(value);
+				} else if (param.equals(Short.class) || param.equals(short.class)) {
+					return Short.parseShort(value);
+				} else if (param.equals(Integer.class) || param.equals(int.class)) {
+					return Integer.parseInt(value);
+				} else if (param.equals(Long.class) || param.equals(long.class)) {
+					return Long.parseLong(value);
+				} else if (param.equals(Float.class) || param.equals(float.class)) {
+					return Float.parseFloat(value);
+				} else if (param.equals(Double.class) || param.equals(double.class)) {
+					return Double.parseDouble(value);
+				} else if (param.equals(Vector2.class)) {
+					return new Vector2().fromString(value);
+				} else return null;
+			}
+		}
+		private final ArrayList<Commande.Arg> free_args = new ArrayList<Commande.Arg>();
+		Arg obtainArg() { return (free_args.size() > 0 ? free_args.remove(0) : new Arg()).init(); }
+		
+	}
+	
+	
+	
+	
+
+	private static final char SPACE = 		' ';
+	private static final char OPEN = 		'(';
+	private static final char CLOSE = 		')';
+	private static final char IGNORE = 		'_';
+	
+	private static class Virtual {
+		private String commandName = null;
+		private final ArrayList<Object> args = new ArrayList<Object>();
+		private CharBuffer inBuff;
+		private StringBuffer commandBuff;
+		private StringBuffer subComBuff;
+		private int buffSize = 0;
+		private int comSize = 0;
+		private char current = 0, last = 0, next = 0;
+		private boolean finish = false;
+		private int wordSize = 0;
+		private final ArrayList<String> comParts = new ArrayList<String>();
+		private int partNb = 0;
+		private boolean blocRecording = false;
+		private int blocNest = 0, blocSize = 0;
+		private Commande com = null;
+		
+		private void reset() {
+			args.clear(); 
+			commandName = null;
+			if (inBuff != null) inBuff.position(0);
+			if (commandBuff != null) commandBuff.delete(0,buffSize);
+			if (subComBuff != null) subComBuff.delete(0,buffSize);
+			comSize = 0;
+			current = 0; last = 0; next = 0;
+			finish = false;
+			wordSize = 0;
+			comParts.clear();
+			partNb = 0;
+			blocRecording = false;
+			blocNest = 0; blocSize = 0;
+			com = null;
+		}
+		
+		Object error() { free(this); return exec.new ExecutionFail(); }
+		
+		Object execute(String command, boolean head) {
+			
+//			console.log("exec "+command);
+			
+			comSize = command.length();
+			if (comSize == 0) return error();
+			
+			if (buffSize == 0 || buffSize < comSize) { 
+				inBuff = CharBuffer.allocate(comSize); 
+				commandBuff = new StringBuffer(comSize); 
+				subComBuff = new StringBuffer(comSize); 
+				buffSize = comSize; }
+			comParts.clear();
+			inBuff.position(0);
+			inBuff.put(command);
+			inBuff.position(0);
+			commandBuff.delete(0,buffSize);
+			subComBuff.delete(0,buffSize);
+			blocRecording = false;
+			finish = false;
+			last = 0; current = 0; next = inBuff.get(); wordSize = 0; 
+			blocNest = 0; blocSize = 0;
+			while (!finish) {
+				current = next;
+				if (inBuff.hasRemaining()) next = inBuff.get(); else finish = true;
+				
+				if (blocRecording) { subComBuff.append(current); blocSize++; }
+				
+				if (current == OPEN && last == SPACE) {
+					if (!blocRecording) {
+						blocRecording = true;
+						blocNest = 0;
+						blocSize = 0;
+					} else {
+						blocNest++;
+					}
+				} else if (current == CLOSE && last != IGNORE) {
+					if (blocRecording) {
+						if (blocNest == 0) {
+							blocRecording = false;
+							subComBuff.deleteCharAt(blocSize - 1);
+							blocSize = 0;
+							
+							Virtual virt = obtain(); virt.reset();
+							Object cm = virt.execute(subComBuff.toString(), false);
+							free(virt);
+							if (cm instanceof ExecutionFail) {
+								console.log("Cant execute <"+subComBuff.toString()+">", 
+										LogLevel.ERROR); return error(); }
+							comParts.add(Utl.to_string(cm));
+							
+							subComBuff.delete(0,buffSize);
+						} else {
+							blocNest--;
+						}
+					} 
+				} else if (current != SPACE 
+						&& !(current == IGNORE && (next == OPEN || next == CLOSE))
+						) {
+					if (!blocRecording) {
+						commandBuff.append(current); wordSize++;
+					}
+				} else if (!blocRecording && current == SPACE && wordSize > 0) {
+					comParts.add(commandBuff.toString());
+					commandBuff.delete(0,buffSize);
+					wordSize = 0;
+				} 
+				if (finish && !blocRecording && wordSize > 0) {
+					comParts.add(commandBuff.toString());
+					commandBuff.delete(0,buffSize);
+					wordSize = 0;
+				}
+				last = current;
+			}
+			partNb = comParts.size();
+			if (partNb == 0) return error();
+			
+			commandName = comParts.get(0) + "_" + (partNb - 1);
+			com = exec.commands.get(commandName);
+			if (com == null) { console.log("No such method found.", LogLevel.ERROR); return error(); }
+			if (com.paramNb != partNb - 1) { console.log("Bad number of parameter.", LogLevel.ERROR); return error(); }
+			
+			Commande.Arg carg = com.obtainArg();
+			if (!carg.validate()) 
+				for (int i = 1 ; i < partNb ; i++) 
+					if (!carg.parseArg(comParts.get(i))) { 
+				console.log("Bad parameter "+i, LogLevel.ERROR); return error(); }
+			if (!carg.validate()) { 
+				console.log("Bad parameters.", LogLevel.ERROR); return error(); }
+			
+			if (head && com.isLogged) console.log(command, LogLevel.COMMAND);
+			if (head && com.isStored) console.storeCommand(command);
+			
+			if (console.isScripting()) {
+				if (head && com.endFlag) console.endScript();
+				if (com.return_type == null) return null; 
+				try { return com.return_type.newInstance(); } 
+				catch (InstantiationException e) { e.printStackTrace(); } 
+				catch (IllegalAccessException e) { e.printStackTrace(); } 
+			}
+			
+			return carg.exec();
 		}
 
-		//TODO
-		int compile(byte[] stack, int offset, Object[] args) {
-			int step = offset, i = 0; 
-			stack[step++] = executor_id;
-			byte[] bytes = Utl.getBytes(commande_id);
-			for (i = 0 ; i < bytes.length ; i++) stack[step++] = bytes[i];
-			for (int a = 0 ; a < args.length ; a++) {
-				bytes = Utl.getBytes(Utl.type_class_id.get(args[a].getClass()));
-				for (i = 0 ; i < bytes.length ; i++) stack[step++] = bytes[i];
-				bytes = Utl.getBytes(args[a]);
-				for (i = 0 ; i < bytes.length ; i++) stack[step++] = bytes[i];
-			}
-			return step;
-		}
+		static void executeLine(String command) { 
+			Virtual virt = obtain(); virt.reset(); virt.execute(command, true); free(virt); } 
 		
+		private static Console console;
+		private static CommandExecutor exec;
+		static void setConsole(Console c) { console = c; }
+		static void setExec(CommandExecutor c) { exec = c; }
 		
+		private static final ArrayList<Virtual> free = new ArrayList<Virtual>();
+		private boolean isfree = false;
+		private static Virtual obtain() {
+			if (free.size() == 0) return new Virtual();
+			Virtual v = free.get(free.size()-1); free.remove(v); v.isfree = false; return v; }
+		private static void free(Virtual v) { 
+			if (!v.isfree) { v.reset(); free.add(v); } v.isfree = true; }
 	}
 	
-	//TODO
-	int compute(final byte[] stack, final int offset) {
-		int step = offset, i = 0; 
-		byte exec_id = stack[step++];
-		if (exec_id != executor_id) return all_execs.get(exec_id).compute(stack,offset);
-		int com_id = Utl.getInt(stack,step);
-		step += Utl.BYTE_SIZE_INT;
-		Commande com = all_commands.get(com_id);
-		
-		// com.compute
-		
-		return step;
+	
+	void executeCommands(String commands) {
+		String[] parts = commands.split("\n");
+		if (parts.length > 1) { for (String s : parts) Virtual.executeLine(s); }
+		else Virtual.executeLine(commands);
 	}
 	
 	
 	
 	
-	void execCommand (String command) {
-		
-		String[] parts = command.split(" ");
-		String methodName = parts[0];
-		String[] mParts = methodName.split("/");
-		
-		if (mParts.length == 2 && console.getSysMap().hasKey(mParts[0])) {
-			String com = mParts[1];
-			for (int i = 1 ; i < parts.length ; i++) com += " " + parts[i];
-			console.exec(console.getSysMap().get(mParts[0]),com);
-//			console.getSysMap().get(mParts[0]).execCommand(com);
-			return;
-		}
-		
-		String[] sArgs = null;
-		if (parts.length > 1) {
-			sArgs = new String[parts.length - 1];
-			for (int i = 1; i < parts.length; i++) { sArgs[i - 1] = parts[i]; }
-		}
-		
-		Commande com = commands.get(
-				methodName + "_" + (sArgs != null ? sArgs.length : (int)0) );
-		
-		if (com == null) { console.log("No such method found.", LogLevel.ERROR); return; }
-		
-		if (console.isScripting()) {
-			if (com.args(sArgs) == null) {
-				console.log("Bad parameters.", LogLevel.ERROR); return; }
-			console.storeCommand(command);
-			return;
-		}
-		
-		if (!com.exec(command,sArgs)) console.log("Bad parameters.", LogLevel.ERROR);
-		else {
-			if (com.isStored) console.storeCommand(command);
-			if (com.isLogged) console.log(ref, command, LogLevel.COMMAND);
-		}
-		
-		return;
-	}
+//	Object execCommand (String command) {
+//		
+//		String[] parts = command.split(" ");
+//		String methodName = parts[0];
+//		
+//		String[] sArgs = null;
+//		if (parts.length > 1) {
+//			sArgs = new String[parts.length - 1];
+//			for (int i = 1; i < parts.length; i++) { sArgs[i - 1] = parts[i]; }
+//		}
+//		
+//		Commande com = commands.get(
+//				methodName + "_" + (sArgs != null ? sArgs.length : (int)0) );
+//		
+//		if (com == null) { console.log("No such method found.", LogLevel.ERROR); return null; }
+//		
+//		if (console.isScripting()) {
+//			if (com.args(sArgs) == null) {
+//				console.log("Bad parameters.", LogLevel.ERROR); return null; }
+//			if (com.isStored) console.storeCommand(command);
+//			if (com.endFlag) console.endScript();
+//			return null;
+//		}
+//		Object[] args = com.args(sArgs);
+//		if (args == null) {
+//			console.log("Bad parameters.", LogLevel.ERROR);
+//			return null; }
+//		if (com.isStored) console.storeCommand(command);
+//		if (com.isLogged) console.log(command, LogLevel.COMMAND);
+//		
+//		return com.exec(args);
+//	}
 	
-	void printCommands () { for (Commande c : commands.all()) if (!c.baseMethod) c.print(); }
-	void printAllCommands () { for (Commande c : commands.all()) if (!c.baseMethod) c.printAll(); }
-	void printHelps () { for (Commande c: commands.all()) if (!c.baseMethod) c.printHelp(); }
-	void printBaseCommands () { for (Commande c : commands.all()) if (c.baseMethod) c.print(); }
-	void printAllBaseCommands () { for (Commande c : commands.all()) if (c.baseMethod) c.printAll(); }
-	void printBaseHelps () { for (Commande c: commands.all()) if (c.baseMethod) c.printHelp(); }
+	void printCommands () { for (Commande c : commands.all()) c.print(); }
+	void printAllCommands () { for (Commande c : commands.all()) c.printAll(); }
+	void printHelps () { for (Commande c: commands.all()) c.printHelp(); }
 	void printHelp (String command) {
 		if (!commands.hasKey(command)) { console.log("Commande <"+command+"> does not exist."); return; }
 		commands.get(command).printHelp(); }
@@ -544,64 +709,79 @@ public class CommandExecutor {
 	@NoStoreCommand
 	@HelpCommand(description = "List all values") 
 	public void allval() {
-		for (String v : this.bloc.values.allKey()) 
-			console.log(this.bloc.values.get(v).type+" "+v);
+		for (String r : blocs.allKey())
+		for (String v : blocs.get(r).values.allKey()) 
+			console.log(blocs.get(r).values.get(v).type+" "+r+"/"+v+" = "+blocs.get(r).values.get(v).getString());
 	}
 
 	@HelpCommand(description = "set a Boolean sValue", 
-			paramDescriptions = {"value ref","value"}) 
-	public void setboo(String r, boolean v) {
-		if (this.bloc.getValue(r,sBoo.class) != null) {
-			this.bloc.getValue(r,sBoo.class).set(v);
+			paramDescriptions = {"system ref","value ref","value"}) 
+	public void setboo(String b, String r, boolean v) {
+		if (blocs.hasKey(b) && blocs.get(b).getValue(r,sBoo.class) != null) {
+			blocs.get(b).getValue(r,sBoo.class).set(v);
 			console.log(r+" = "+v, LogLevel.SUCCESS);
 		} else {
-			console.log("ERROR : cant find sBoo "+r+" in "+bloc.ref, LogLevel.ERROR);
+			console.log("ERROR : cant find sBoo "+r+" in "+b, LogLevel.ERROR);
 		}
 	}
 
-	@HelpCommand(description = "set a Float sValue", 
-			paramDescriptions = {"value ref","value"}) 
-	public void setflt(String r, float v) {
-		if (this.bloc.getValue(r,sFlt.class) != null) {
-			this.bloc.getValue(r,sFlt.class).set(v);
-			console.log(r+" = "+v, LogLevel.SUCCESS);
+	@HelpCommand(description = "get a Boolean sValue", 
+			paramDescriptions = {"system ref","value ref"}) 
+	public boolean getboo(String b, String r) {
+		if (blocs.hasKey(b) && blocs.get(b).getValue(r,sBoo.class) != null) {
+			return blocs.get(b).getValue(r,sBoo.class).get();
 		} else {
-			console.log("ERROR : cant find sFlt "+r+" in "+bloc.ref, LogLevel.ERROR);
+			console.log("ERROR : cant find sBoo "+r+" in "+b, LogLevel.ERROR);
+			return false;
 		}
 	}
 
-	@HelpCommand(description = "set an Integer sValue", 
-			paramDescriptions = {"value ref","value"}) 
-	public void setint(String r, int v) {
-		if (this.bloc.getValue(r,sInt.class) != null) {
-			this.bloc.getValue(r,sInt.class).set(v);
-			console.log(r+" = "+v, LogLevel.SUCCESS);
-		} else {
-			console.log("ERROR : cant find sInt "+r+" in "+bloc.ref, LogLevel.ERROR);
-		}
-	}
+	@HelpCommand(description = "NOT operator", paramDescriptions = {"input bool"}) 
+	public boolean not(boolean b) { return !b; }
 
-	@HelpCommand(description = "set a String sValue", 
-			paramDescriptions = {"value ref","value"}) 
-	public void setstr(String r, String v) {
-		if (this.bloc.getValue(r,sStr.class) != null) {
-			this.bloc.getValue(r,sStr.class).set(v);
-			console.log(r+" = "+v, LogLevel.SUCCESS);
-		} else {
-			console.log("ERROR : cant find sStr "+r+" in "+bloc.ref, LogLevel.ERROR);
-		}
-	}
-
-	@HelpCommand(description = "set a Vector2 sValue", 
-			paramDescriptions = {"value ref","x","y"}) 
-	public void setvec(String r, float x, float y) {
-		if (this.bloc.getValue(r,sVec.class) != null) {
-			this.bloc.getValue(r,sVec.class).set(x,y);
-			console.log(r+" = "+x+","+y, LogLevel.SUCCESS);
-		} else {
-			console.log("ERROR : cant find sVec "+r+" in "+bloc.ref, LogLevel.ERROR);
-		}
-	}
+//	@HelpCommand(description = "set a Float sValue", 
+//			paramDescriptions = {"value ref","value"}) 
+//	public void setflt(String r, float v) {
+//		if (this.bloc.getValue(r,sFlt.class) != null) {
+//			this.bloc.getValue(r,sFlt.class).set(v);
+//			console.log(r+" = "+v, LogLevel.SUCCESS);
+//		} else {
+//			console.log("ERROR : cant find sFlt "+r+" in "+bloc.ref, LogLevel.ERROR);
+//		}
+//	}
+//
+//	@HelpCommand(description = "set an Integer sValue", 
+//			paramDescriptions = {"value ref","value"}) 
+//	public void setint(String r, int v) {
+//		if (this.bloc.getValue(r,sInt.class) != null) {
+//			this.bloc.getValue(r,sInt.class).set(v);
+//			console.log(r+" = "+v, LogLevel.SUCCESS);
+//		} else {
+//			console.log("ERROR : cant find sInt "+r+" in "+bloc.ref, LogLevel.ERROR);
+//		}
+//	}
+//
+//	@HelpCommand(description = "set a String sValue", 
+//			paramDescriptions = {"value ref","value"}) 
+//	public void setstr(String r, String v) {
+//		if (this.bloc.getValue(r,sStr.class) != null) {
+//			this.bloc.getValue(r,sStr.class).set(v);
+//			console.log(r+" = "+v, LogLevel.SUCCESS);
+//		} else {
+//			console.log("ERROR : cant find sStr "+r+" in "+bloc.ref, LogLevel.ERROR);
+//		}
+//	}
+//
+//	@HelpCommand(description = "set a Vector2 sValue", 
+//			paramDescriptions = {"value ref","x","y"}) 
+//	public void setvec(String r, float x, float y) {
+//		if (this.bloc.getValue(r,sVec.class) != null) {
+//			this.bloc.getValue(r,sVec.class).set(x,y);
+//			console.log(r+" = "+x+","+y, LogLevel.SUCCESS);
+//		} else {
+//			console.log("ERROR : cant find sVec "+r+" in "+bloc.ref, LogLevel.ERROR);
+//		}
+//	}
 	
 
 	@NoStoreCommand
@@ -609,6 +789,7 @@ public class CommandExecutor {
 		console.beginScript(ref);
 	}
 	@NoStoreCommand
+	@EndCommand
 	public final void endScript() {
 		console.endScript();
 	}
@@ -689,11 +870,7 @@ public class CommandExecutor {
 	@NoStoreCommand
 	@HelpCommand(description = "Shows all available methods.") 
 	public final void help () {
-		printBaseCommands();
-		console.printCommands();
-		for (String s : console.getSysMap().allKey()) {
-			console.log("sys "+s);
-		} 
+		printCommands();
 	}
 
 	/**
@@ -709,27 +886,11 @@ public class CommandExecutor {
 					+ "enter <full> for a complete overview of the commands."}) 
 	public final void help (String command) {
 		if (command.equals("full")) {
-			console.log("Basic commands:", LogLevel.TITLE);
-			printBaseHelps();
-			console.log("Systems commands:", LogLevel.TITLE);
-			for (String s : console.getSysMap().allKey()) {
-				console.log("  - sys "+s+" :");
-				console.getSysMap().get(s).printHelps();
-			} 
-			console.log("Stored script:  (execute with runScript)", LogLevel.TITLE);
-			allScript();
+			console.log("Commands:", LogLevel.TITLE);
+			printHelps();
 		} else if (command.equals("all")) {
-			console.log("Basic commands:", LogLevel.TITLE);
-			printAllBaseCommands();
-			console.log("System commands:", LogLevel.TITLE);
-			console.printAllCommands();
-			console.log("All systems:", LogLevel.TITLE);
-			for (String s : console.getSysMap().allKey()) {
-				console.log("sys "+s);
-			} 
-		} else if (console.getSysMap().hasKey(command)) {
-			console.log(command+" commands: ", LogLevel.TITLE);
-			console.getSysMap().get(command).printCommands();
+			console.log("Commands:", LogLevel.TITLE);
+			printAllCommands(); 
 		} else {
 			console.printHelp(command);
 		}
@@ -746,29 +907,6 @@ public class CommandExecutor {
 		console.deselect();
 	}
 	
-
-	@HiddenCommand
-	@HelpCommand(description = "Change the current system", 
-			paramDescriptions = {"The system ref"}) 
-	public void sys(String r) {
-		if (console.getSysMap().hasKey(r)) {
-			console.log("using system: "+r, LogLevel.SUCCESS);
-//			console.setTitle("Terminal - small 2 to hide - "+r);
-			console.setCommandExecutor(console.getSysMap().get(r));
-		} else {
-			console.log("didnt found system "+r, LogLevel.ERROR);
-		}
-	}
-
-	@HiddenCommand
-	@NoLogCommand
-	@NoStoreCommand
-	@HelpCommand(description = "List all system") 
-	public void allsys() {
-		for (String s : console.getSysMap().allKey())
-			console.log("  - "+s, LogLevel.SUCCESS);
-	}
-
 	@HiddenCommand
 	@NoLogCommand
 	@NoStoreCommand
@@ -813,4 +951,133 @@ public class CommandExecutor {
 	public void clear () {
 		console.clear();
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+//	private static class C {
+//		public static final byte VOID = 		00;
+//		
+//		public static final byte NULL = 		01;
+//		public static final byte ERROR = 	02;
+//		public static final byte VALID = 	03;
+//		
+//		public static final byte LINE = 		10;
+//		public static final byte OPEN = 		11;
+//		public static final byte CLOSE = 	12;
+//
+//		public static final byte VALUE = 	20;
+//		public static final byte ARRAY = 	21;
+//		public static final byte METHOD = 	22;
+//		public static final byte ARG = 		23;
+//		
+//		public static final byte INT = 		100;
+//		public static final byte FLT = 		101;
+//		public static final byte BOO = 		102;
+//		public static final byte STR = 		103;
+//		public static final byte VEC = 		104;
+//		public static final byte BYT = 		105;
+//
+//		public static final byte FALSE = 	126;
+//		public static final byte TRUE = 		127;
+//		
+//	}
+//
+//	private class ByteBuff {
+//		byte[] data; 
+//		int step, last_step, size;
+//		void set(final byte[] d) { if (d == null) return; 
+//			data = d; step = 0; last_step = data.length - 1; size = data.length; }
+//		byte get() { return data[step]; }
+//		boolean is(byte code) { return data[step] == code; }
+//		byte get_next() { if (step > 0 && step <= last_step) return data[step++]; else return C.VOID; }
+//		boolean is_next(byte code) { if (step > 0 && step <= last_step) return data[step++] == code; else return false; }
+//		int find_after(byte code) {
+//			int tmp = step; 
+//			while (!is_next(code) && !isLast()) {} 
+//			int result = step; step = tmp; 
+//			if (result > last_step) return -1; else return result; 
+//		}
+//		int find_after(byte code, int stp) { 
+//			int tmp = step; 
+//			if (!go(stp)) return -1; 
+//			while (!is_next(code) && !isLast()) {} 
+//			int result = step; step = tmp; 
+//			if (result > last_step) return -1; else return result; }
+//		boolean next() { if (step < last_step) { step++; return true; } else return false; }
+//		boolean prev() { if (step > 0) { step--; return true; } else return false; }
+//		void first() { step = 0; }
+//		void last() { step = last_step; }
+//		boolean isFirst() { return step == 0; }
+//		boolean isLast() { return step == last_step; }
+//		boolean go(int i) { if (i < 0 || i > last_step) return false; step = i; return true; }
+//		int size() { return size; }
+//		void dispose() {
+//			data = null;
+//		}
+//	}
+////	private static Object getValue(ByteBuff data, int offset) { 
+////		if (data[offset] == C.STR) return getStr(data); 
+////		else if (data[offset] == C.FLT) return getFlt(data);
+////		else if (data[offset] == C.INT) return getInt(data);
+////		else if (data[offset] == C.BOO) return getBoo(data);
+////		else if (data[offset] == C.VEC) return getVec(data);
+////		else if (data[offset] == C.BYT) return getVec(data);
+////		else return null;
+////	}
+////
+////	private static String getStr(byte[] data, int offset, int length) { return new String(data, offset, length); }
+////	private static int getInt(byte[] data, int offset) { return ByteBuffer.wrap(data, offset, BYTE_SIZE_INT).getInt(); }
+////	private static float getFlt(byte[] data, int offset) { return ByteBuffer.wrap(data, offset, BYTE_SIZE_FLOAT).getFloat(); }
+////	private static boolean getBoo(byte[] data, int offset) { return data[offset] != 0; }
+////	private static Vector2 getVec(byte[] data, int offset) { return new Vector2().fromString(getStr(data, offset, 1+2*BYTE_SIZE_FLOAT)); }
+//	
+//
+//	private static final int BYTE_SIZE_INT = 4;
+//	private static final int BYTE_SIZE_FLOAT = 4;
+//
+//	private static byte[] getBytes(Object d) { 
+//		if (d instanceof String) return getBytes((String)d); 
+//		else if (d instanceof Float) return getBytes((float)d);
+//		else if (d instanceof Integer) return getBytes((int)d);
+//		else if (d instanceof Boolean) return getBytes((boolean)d);
+//		else if (d instanceof Vector2) return getBytes((Vector2)d); 
+//		else if (d instanceof Byte) return getBytes((byte)d); 
+//		else return null; }
+//	
+//	private static byte[] getBytes(String s) { return s.getBytes(); }
+//	private static byte[] getBytes(byte s) { return ByteBuffer.allocate(1).put(s).array(); }
+//	private static byte[] getBytes(int s) { return ByteBuffer.allocate(BYTE_SIZE_INT).putInt(s).array(); }
+//	private static byte[] getBytes(float s) { return ByteBuffer.allocate(BYTE_SIZE_FLOAT).putFloat(s).array(); }
+//	private static byte[] getBytes(boolean s) { byte[] arr = {(byte) ((s) ? 1 : 0)}; return arr; }
+//	private static byte[] getBytes(Vector2 s) { return getBytes(s.toString()); }
+//
+//	private static <T> T getValue(byte[] data, Class<T> ct) { 
+//		if (ct == String.class) return (T)getStr(data); 
+//		else if (ct == Float.class) return (T)(Object)getFlt(data);
+//		else if (ct == Integer.class) return (T)(Object)getInt(data);
+//		else if (ct == Boolean.class) return (T)(Object)getBoo(data);
+//		else if (ct == Vector2.class) return (T)getVec(data);
+//		else return null;
+//	}
+//
+//	private static String getStr(byte[] data) { return new String(data); }
+//	private static int getInt(byte[] data) { return ByteBuffer.wrap(data).getInt(); }
+//	private static float getFlt(byte[] data) { return ByteBuffer.wrap(data).getFloat(); }
+//	private static boolean getBoo(byte[] data) { return data[0] != 0; }
+//	private static Vector2 getVec(byte[] data) { return new Vector2().fromString(getStr(data)); }
+
+	
+	
+	
+	
+	
+	
+	
 }
