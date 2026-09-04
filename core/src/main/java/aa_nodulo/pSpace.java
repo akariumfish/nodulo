@@ -7,8 +7,6 @@ import java.util.Random;
 
 import com.badlogic.gdx.math.Vector2;
 
-import aa_term.Executor;
-import aa_term.TerminalCommand;
 import data.*;
 import gui.nDrawable;
 import gui.nGUI;
@@ -125,7 +123,6 @@ public class pSpace {
 
 	private boolean space_starting = false; 
 
-	@TerminalCommand
 	public void start_space() {
 		if (!space_starting) {
 			space_starting = true;
@@ -322,7 +319,6 @@ public class pSpace {
 		}
 	}
 
-	@TerminalCommand
 	public void clear_all_body() {
 		body_pool.freeAll(); 
 		for (sPool<pParam> p : param_pools.all()) test_param_use(p);
@@ -332,7 +328,6 @@ public class pSpace {
 		update_families();
 	}
 
-	@TerminalCommand
 	public void clear_all_obj() {
 		body_pool.freeAll(); 
 		for (sPool<pParam> p : param_pools.all()) p.freeAll(); 
@@ -401,7 +396,6 @@ public class pSpace {
 	public sInt val_seed;
 	public Random rng;
 
-	@TerminalCommand
 	public void reset_rng() { rng.setSeed(val_seed.get()); }
 
 	public void rngSeed() {

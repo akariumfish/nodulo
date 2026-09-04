@@ -10,10 +10,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import aa_term.Executor;
-import aa_term.HelpCommand;
-import aa_term.LogLevel;
-import aa_term.pTerm;
 import app.App;
 import data.*;
 import gui.*;

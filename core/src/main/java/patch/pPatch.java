@@ -15,11 +15,6 @@ import aa_nodulo.pProperty;
 import aa_nodulo.pSpace;
 import aa_nodulo.pTime;
 import aa_nodulo.pView;
-import aa_term.Executor;
-import aa_term.HelpCommand;
-import aa_term.LogLevel;
-import aa_term.Executor;
-import aa_term.pTerm;
 import app.App;
 import box2d.pBox2d;
 import data.*;
@@ -106,7 +101,7 @@ public class pPatch {
 			pSheet.setDefMacro("function", "func_exemple");
 			pSheet.setDefMacro("blueprint", "PARAM_SETUP");
 			pSheet.setDefCollapse("main", false);
-			pSheet.setDefCollapse("function", false);
+			pSheet.setDefCollapse("function", true);
 			pSheet.setDefCollapse("blueprint", false);
 			
 		}})
@@ -485,7 +480,7 @@ public class pPatch {
 			if (app.config.PATCH_START_COLLAPSED) view.metode("run_collapse");
 		}
 		sBoo val_grid = view.object("val_grid", sBoo.class);
-		val_grid.set(true);
+		val_grid.set(app.config.PATCH_START_GRID);
 		
 		
 		app.gui.add_info_text("patch zoom: ", view.object("val_cam_scale", sFlt.class));

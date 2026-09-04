@@ -439,7 +439,7 @@ public class pTileHead {
 					head_tile.run("all_flag_recursion"); 
 //					for (pInstance s : Utl.duplic(all_tile)) s.setObject("recursion_flag", true);
 					Rectangle stack_bb = head_tile.get("get_bounding_box", Rectangle.class);
-					Rectangle this_rect = group.get("selline")
+					Rectangle this_rect = group.get("back")
 							.getRectRelativeToParent(inst.sheet.sheet_ref);
 					ArrayList<Rectangle> arr = new ArrayList<Rectangle>();
 					arr.add(this_rect); arr.add(stack_bb);

@@ -125,17 +125,27 @@ public class pMacroBook {
 		.addLink("physic", "param", "blueprint", "param_in")
 		.addLink("hitpoint", "param", "blueprint", "param_in")
 		.addLink("logic", "param", "blueprint", "param_in")
-		
+
 		.addNode("ui", "UI", 								-1800f,		-300f)
 			.addRunPop("ui_switch", "pop_plug_node", 
 					"UI_widg_out", "UI_switch", "UI_widg_in").getMacro()
 			.addSetVar("ui_ui_switch", "state", false)
-			.addSetVar("ui_ui_switch", "widg_text", "mode")
+			.addSetVar("ui_ui_switch", "widg_text", "view")
+		.addNode("ui2", "UI", 								-1800f,		300f)
+			.addRunPop("ui_switch", "pop_plug_node", 
+					"UI_widg_out", "UI_switch", "UI_widg_in").getMacro()
+			.addSetVar("ui2_ui_switch", "state", true)
+			.addSetVar("ui2_ui_switch", "widg_text", "cam")
+			.addSetVar("ui2", "view_pos", new Vector2(100,60))
 		.addNode("reg_in_mode", "reg_in", 					-1200f,	-300f)
 			.addSetVar("reg_ref", "mode").getMacro()
+		.addNode("reg_in_cam", "reg_in", 					-1200f,	300f)
+			.addSetVar("reg_ref", "cam").getMacro()
 		.addLink("reg_in_mode", "co_reg", "logic", "co_reg")
 		.addLink("ui_ui_switch", "out", "reg_in_mode", "co_in")
-		
+		.addLink("reg_in_cam", "co_reg", "logic", "co_reg")
+		.addLink("ui2_ui_switch", "out", "reg_in_cam", "co_in")
+			
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
 			pInstance geom = list.get("geom");
@@ -175,20 +185,14 @@ public class pMacroBook {
 		
 		Macro func_exemple = addMacroScript(new Macro("func_exemple"))
 			.addNode("avatar", "function", 						0f, 		0f)
-			.addSetVar("func_ref", "func_avatar")
-			.addTileScript("avatar").getMacro()
+			.addSetVar("func_ref", "func_avatar").addTileScript("avatar").getMacro()
 			.addNode("startup", "function", 						-1200f, 		0f)
-			.addSetVar("func_ref", "func_start")
-			.addTileScript("startup").getMacro()
+			.addSetVar("func_ref", "func_start").addTileScript("startup").getMacro()
 			.addRun(new nRun() { public void run() {
 				nMap<pInstance> list = arg(0, nMap.class);
-				
-//				list.get("set_body_param").setVar("script", true);
-//				list.get("get_body_param").setVar("script", true);
-//				list.get("startup").setVar("script", true);
-//				list.get("pop_mob").setVar("script", true);
-//				list.get("avatar").setVar("script", true);
-				
+				list.get("startup").setVar("script", true);
+				list.get("avatar").setVar("script", true);
+				for (String r : funcs) { list.get(r).setVar("script", true); }
 			}})
 			;
 
@@ -378,14 +382,20 @@ public class pMacroBook {
 			.com("add_get_pass_at", "body", (int)0)
 			.com("add_boo_at", "data", true)
 	
-			.com("add_set_output", "cam_pos")
-			.com("add_get_param_at", "data", "ref", "pos")
-			.com("add_get_pass_at", "body", (int)0).com("get_last")
-			
-			.com("add_set_output", "cam_rot")
-			.com("add_flt_at", "data", 0f)
+			.com("add_if")
+				.com("add_get_reg_in_at", "test", "cam")
+				
+				.com("add_set_output", "cam_pos")
+				.com("add_get_param_at", "data", "ref", "pos")
+				.com("add_get_pass_at", "body", (int)0).com("get_last")
+				
+				.com("add_set_output", "cam_rot")
+				.com("add_flt_at", "data", 0f)
+				
+			.com("add_close")
 			
 		.com("add_close")
+		
 		.com("add_if")
 			.com("add_get_reg_in_at", "test", "mode")
 
@@ -406,33 +416,38 @@ public class pMacroBook {
 			.com("add_set_param", "ctrl_box", "global_ref")
 			.com("add_get_pass_at", "body", (int)0)
 			.com("add_boo_at", "data", false)
-			
-			.com("add_set_output", "cam_pos")
-				.com("add_add_vec_at", "data")
-					.com("add_rot_at", "fact")
-						.com("add_axe_vec_at", "in")
-						.com("add_flt_at", "y", 0f)
-							.com("add_mult_at", "x")
-								.com("add_mult_at", "in")
-									.com("add_get_input_at", "in", "cam_height")
-									.com("add_flt_at", "fact", 1f/3f)
+
+			.com("add_if")
+				.com("add_get_reg_in_at", "test", "cam")
+				
+				.com("add_set_output", "cam_pos")
+					.com("add_add_vec_at", "data")
+						.com("add_rot_at", "fact")
+							.com("add_axe_vec_at", "in")
+							.com("add_flt_at", "y", 0f)
+								.com("add_mult_at", "x")
+									.com("add_mult_at", "in")
+										.com("add_get_input_at", "in", "cam_height")
+										.com("add_flt_at", "fact", 1f/3f)
+										.com("get_last")
+									.com("add_get_input_at", "fact", "cam_scale_inv")
 									.com("get_last")
-								.com("add_get_input_at", "fact", "cam_scale_inv")
 								.com("get_last")
+							.com("add_get_param_at", "rot", "ref", "rot")
+							.com("add_get_pass_at", "body", (int)0).com("get_last")
 							.com("get_last")
-						.com("add_get_param_at", "rot", "ref", "rot")
+						.com("add_get_param_at", "in", "ref", "pos")
 						.com("add_get_pass_at", "body", (int)0).com("get_last")
-						.com("get_last")
-					.com("add_get_param_at", "in", "ref", "pos")
-					.com("add_get_pass_at", "body", (int)0).com("get_last")
-				.com("get_last")
-			
-			.com("add_set_output", "cam_rot")
-				.com("add_add_at", "data")
-					.com("add_flt_at", "fact", -((float)Math.PI) / 2f)
-					.com("add_get_param_at", "in", "ref", "rot")
-					.com("add_get_pass_at", "body", (int)0).com("get_last")
-				.com("get_last")
+					.com("get_last")
+				
+				.com("add_set_output", "cam_rot")
+					.com("add_add_at", "data")
+						.com("add_flt_at", "fact", -((float)Math.PI) / 2f)
+						.com("add_get_param_at", "in", "ref", "rot")
+						.com("add_get_pass_at", "body", (int)0).com("get_last")
+					.com("get_last")
+				
+			.com("add_close")
 			
 		.com("add_close")
 

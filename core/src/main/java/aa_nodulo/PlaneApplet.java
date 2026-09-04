@@ -14,8 +14,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.noodle.nodulo.GdxApp;
 import com.noodle.nodulo.Main;
 
-import aa_new.Plane;
-import aa_term.pTerm;
 import app.App;
 import app.AppConfig;
 import data.sValueBloc;
@@ -103,18 +101,16 @@ public class PlaneApplet extends App {
 		public Vector2 DEF_VIEW_WIN_SZ = new Vector2(910f,770f);
 		public boolean PATCH_START_WALLPAPER = false;
 		public boolean PATCH_START_COLLAPSED = true;
+		public boolean PATCH_START_GRID = false;
 		public float DEF_PATCH_ZOOM = 0.1f;
 		public Vector2 DEF_PATCH_POS = new Vector2(0f,0f);
 		public Vector2 DEF_PATCH_WIN_POS = new Vector2(370f,915f);
 		public Vector2 DEF_PATCH_WIN_SZ = new Vector2(910f,450f);
 //		public boolean PATCH_TOOL_AUTOCOLLAPSE = true;
-		public boolean PATCH_SHEET_COLLAPSE = true;
+		public boolean PATCH_SHEET_COLLAPSE = false;
 		public boolean TOOLBOX_OPEN = true;
 		public boolean DRAW_GROUND = true;
 		public boolean DRAW_FOG = true;
-
-		public boolean POP_TERMINAL = false;
-		public boolean TEST_TERMINAL = false;
 		
 		public boolean POP_BODY_EDITOR = false;
 		
@@ -187,8 +183,6 @@ public class PlaneApplet extends App {
 	
 	public static void build_setup() {
 		pPatch.build_setup();
-
-		Plane.build_statics();
 
 	}
 	

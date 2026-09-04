@@ -12,12 +12,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.noodle.nodulo.GdxApp;
 
-import aa_term.Executor;
-//import aa_term.CommandExecutor.ScriptableConstructor;
-import aa_term.HelpCommand;
-import aa_term.LogLevel;
-import aa_term.pTerm;
-import aa_term.ScriptedField;
 import app.App;
 import data.*;
 import gui.*;

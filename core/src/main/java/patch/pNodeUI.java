@@ -40,7 +40,7 @@ public class pNodeUI {
 					bar.metode("set_px", pos.x);
 					bar.metode("set_py", pos.y);
 				}})
-				.param("text", "pos", "width", (int)6, "def", new Vector2(100,100)) 
+				.param("text", "pos", "width", (int)6, "def", new Vector2(100,20)) 
 				.run(pNode.getRun(CT.RUNP_VAR_VEC_LAB_FIELD), "view_pos")  
 				.commande(pNode.getCom(CT.COM_ADD_ROW))
 			.closeSec()
@@ -347,20 +347,20 @@ public class pNodeUI {
 		.closeSec()
 		;
 		
-		pNode.newNodeModel("paint")
-		.process()
-		.useLoad().commande(new nRun() {public void run() { 
-//			nWidgetGroup group = instance.object("group", nWidgetGroup.class);
-//			group.get("back").set_color_background(Utl.color(0,0)).setText("");
-			
-		}})
-		.useClear().commande(new nRun() {public void run() { 
-			
-		}}).useInit()
-		.openSec()
-			.run(pNode.getRun(pNode.CT.RUNP_ADD_LABEL), "", (int)10)
-		.closeSec()
-		;
+//		pNode.newNodeModel("paint")
+//		.process()
+//		.useLoad().commande(new nRun() {public void run() { 
+////			nWidgetGroup group = instance.object("group", nWidgetGroup.class);
+////			group.get("back").set_color_background(Utl.color(0,0)).setText("");
+//			
+//		}})
+//		.useClear().commande(new nRun() {public void run() { 
+//			
+//		}}).useInit()
+//		.openSec()
+//			.run(pNode.getRun(pNode.CT.RUNP_ADD_LABEL), "", (int)10)
+//		.closeSec()
+//		;
 		
 	}
 	
