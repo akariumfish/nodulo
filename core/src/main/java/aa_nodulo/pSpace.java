@@ -131,14 +131,20 @@ public class pSpace {
 			space_starting = true;
 			pTime time = app.time;
 			clear_all_body();
-			app.addDelayEvent(2, new nRun() { public void run() {
+			app.addDelayEvent(1, new nRun() { public void run() {
 				time.set_pause(true);
 				reset_rng();
-				nRun.runEvents(eventSpaceStart);
+				time.val_tick_cnt.set(0);
 				app.addDelayEvent(1, new nRun() { public void run() {
-					time.val_tick_cnt.set(0);
-					time.set_pause(false);
-					space_starting = false; }}); 
+	//				time.set_pause(true);
+//					reset_rng();
+//					time.val_tick_cnt.set(0);
+					nRun.runEvents(eventSpaceStart);
+					app.addDelayEvent(2, new nRun() { public void run() {
+						time.set_pause(false);
+						space_starting = false; 
+					}}); 
+				}}); 
 			}}); 
 		}
 	}
@@ -431,6 +437,10 @@ public class pSpace {
 		app.time.addEventNetTick(net_tick_run);
 		app.view.addDrawable(draw_run);
 
+		app.addDelayEvent(50, new nRun() { public void run() {
+			start_space(); 
+		}}); 
+
 //		plane.addEventSave(new nRun() { public void run() {
 //			save_contents(); 
 //		}});
@@ -517,18 +527,6 @@ public class pSpace {
 	
 	public void system_load() {
 		
-		space_starting = true;
-		pTime time = app.time;
-		app.addDelayEvent(40, new nRun() { public void run() {
-			time.val_pause.set(true);
-			reset_rng();
-			nRun.runEvents(eventSpaceStart);
-			app.addDelayEvent(1, new nRun() { public void run() {
-				time.val_tick_cnt.set(0);
-				time.val_pause.set(false);
-				space_starting = false; }}); 
-		}}); 
-
 //		plane.getSystem(pView.class).add_toolbar_trigg("ClrBod", new nRun() { public void run() {
 //			clear_all_body(); }});
 

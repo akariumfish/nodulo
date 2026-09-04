@@ -30,6 +30,7 @@ public class pMacroBook {
 		}
 		return m;
 	}
+	
 	public static void build() {
 		
 		build_tile_scripts();
@@ -128,7 +129,7 @@ public class pMacroBook {
 		.addNode("ui", "UI", 								-1800f,		-300f)
 			.addRunPop("ui_switch", "pop_plug_node", 
 					"UI_widg_out", "UI_switch", "UI_widg_in").getMacro()
-			.addSetVar("ui_ui_switch", "state", true)
+			.addSetVar("ui_ui_switch", "state", false)
 			.addSetVar("ui_ui_switch", "widg_text", "mode")
 		.addNode("reg_in_mode", "reg_in", 					-1200f,	-300f)
 			.addSetVar("reg_ref", "mode").getMacro()
@@ -234,39 +235,10 @@ public class pMacroBook {
 	
 	private static void build_tile_scripts() {
 
-
-		new MacroScript("startup")
-
-		.com("add_func","func_pop_body")
-			.com("add_arr_at", "arg")
-				.com("add_new_at","entry","body_print")
-			.com("get_last")
-
-		.com("add_func","func_pop_mob")
-			.com("add_arr_at", "arg")
-				.com("add_new_at","entry","mob_print")
-				.com("add_arr_at", "array")
-					.com("add_vec_at", "entry", new Vector2(800,-900))
-					.com("add_arr_at", "array")
-						.com("add_vec_at", "entry", new Vector2(800,900))
-					.com("get_last")
-				.com("get_last")
-			.com("get_last")
-
-		.com("add_func","func_pop_mob")
-			.com("add_arr_at", "arg")
-				.com("add_new_at","entry","mob_print")
-				.com("add_arr_at", "array")
-					.com("add_vec_at", "entry", new Vector2(1800,-900))
-					.com("add_arr_at", "array")
-						.com("add_vec_at", "entry", new Vector2(1800,900))
-					.com("get_last")
-				.com("get_last")
-			.com("get_last")
-			
-		;
-
 		newMacroScript("pop_body")
+		.com("add_set_param", "ref", "pos")
+		.com("add_get_pass_at", "body", (int)0)
+		.com("add_get_pass_at", "data", (int)1)
 		;
 
 		newMacroScript("pop_mob")
@@ -278,6 +250,92 @@ public class pMacroBook {
 			.com("add_get_pass_at", "data", (int)2)
 		;
 
+		newMacroScript("test_mob")
+		.com("add_if")
+			.com("add_get_input_at", "test", "has_mob_spawn")
+			.com("add_func","func_pop_mob")
+				.com("add_arr_at", "arg")
+					.com("add_new_at","entry","mob_print")
+					.com("add_arr_at", "array")
+						.com("add_get_input_at", "entry", "get_mob_spawn_p1")
+						.com("add_arr_at", "array")
+							.com("add_get_input_at", "entry", "get_mob_spawn_p2")
+						.com("get_last")
+					.com("get_last")
+				.com("get_last")
+			.com("add_set_output", "next_mob_spawn")
+				.com("add_boo_at", "data", true)
+			.com("add_if")
+				.com("add_get_input_at", "test", "has_mob_spawn")
+				.com("add_func","func_test_mob")
+			.com("add_close")
+		.com("add_close")
+		;
+
+
+		new MacroScript("startup")
+
+		.com("add_func","func_pop_body")
+			.com("add_arr_at", "arg")
+				.com("add_new_at","entry","body_print")
+				.com("add_arr_at", "array")
+					.com("add_get_input_at", "entry", "avatar_spawn")
+				.com("get_last")
+			.com("get_last")
+		
+		.com("add_set_output", "reset_mob_spawn")
+			.com("add_boo_at", "data", true)
+		.com("add_func","func_test_mob")
+
+		.com("add_func","func_pop_mob")
+			.com("add_arr_at", "arg")
+				.com("add_new_at","entry","mob_print")
+				.com("add_arr_at", "array")
+					.com("add_vec_at", "entry", new Vector2(500,-900))
+					.com("add_arr_at", "array")
+						.com("add_vec_at", "entry", new Vector2(500,900))
+					.com("get_last")
+				.com("get_last")
+			.com("get_last")
+
+		.com("add_func","func_pop_mob")
+			.com("add_arr_at", "arg")
+				.com("add_new_at","entry","mob_print")
+				.com("add_arr_at", "array")
+					.com("add_vec_at", "entry", new Vector2(1000,900))
+					.com("add_arr_at", "array")
+						.com("add_vec_at", "entry", new Vector2(1000,-900))
+					.com("get_last")
+				.com("get_last")
+			.com("get_last")
+
+		.com("add_func","func_pop_mob")
+			.com("add_arr_at", "arg")
+				.com("add_new_at","entry","mob_print")
+				.com("add_arr_at", "array")
+					.com("add_vec_at", "entry", new Vector2(1500,-900))
+					.com("add_arr_at", "array")
+						.com("add_vec_at", "entry", new Vector2(1500,900))
+					.com("get_last")
+				.com("get_last")
+			.com("get_last")
+
+		.com("add_func","func_pop_mob")
+			.com("add_arr_at", "arg")
+				.com("add_new_at","entry","mob_print")
+				.com("add_arr_at", "array")
+					.com("add_vec_at", "entry", new Vector2(2000,900))
+					.com("add_arr_at", "array")
+						.com("add_vec_at", "entry", new Vector2(2000,-900))
+					.com("get_last")
+				.com("get_last")
+			.com("get_last")
+				
+		;
+
+		
+		
+		
 		new MacroScript("avatar")
 
 		.com("add_set_param", "ctrl_box", "accel_move")

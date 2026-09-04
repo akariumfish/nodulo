@@ -182,6 +182,18 @@ public class pBox2d extends pSystem {
 
 		
 		
+		Vector2 avatarSpawn = new Vector2();
+		public void setAvatarSpawn(Vector2 p) { avatarSpawn.set(p); }
+		
+		private class MobSpawn { 
+			Vector2 p1,p2; 
+			MobSpawn(Vector2 v1, Vector2 v2) { 
+				p1 = new Vector2(v1); p2 = new Vector2(v2); } }
+		int mobCnt = 0;
+		ArrayList<MobSpawn> mobspawn = new ArrayList<MobSpawn>();
+		public void addMobSpawn(Vector2 p1, Vector2 p2) { mobspawn.add(new MobSpawn(p1,p2)); }
+
+		
 		
 		
 
@@ -236,6 +248,23 @@ public class pBox2d extends pSystem {
 			val_body_nb = bloc.obtainInt("val_body_nb", 0);
 			val_light_nb = bloc.obtainInt("val_light_nb", 0);
 			
+
+			app.outputs.put("reset_mob_spawn", new nRun() { public void run() {
+				mobCnt = 0; }});
+			app.outputs.put("next_mob_spawn", new nRun() { public void run() {
+				mobCnt++; }});
+			
+			app.inputs.put("get_mob_spawn_p1", new nRun() { public Object get() {
+				return mobspawn.get(mobCnt).p1; }});
+			app.inputs.put("get_mob_spawn_p2", new nRun() { public Object get() {
+				return mobspawn.get(mobCnt).p2; }});
+			
+			app.inputs.put("has_mob_spawn", new nRun() { public Object get() {
+				return mobCnt < mobspawn.size(); }});
+			
+			app.inputs.put("avatar_spawn", new nRun() { public Object get() {
+				return avatarSpawn; }});
+			
 			
 			world = new World(new Vector2(0, 0), true);
 
@@ -258,6 +287,7 @@ public class pBox2d extends pSystem {
 			
 		}
 		public void system_load() {
+
 
 			space = app.space;
 			view = app.view;
@@ -421,10 +451,10 @@ public class pBox2d extends pSystem {
 			Body ba = fa.getBody();
 			Body bb = fb.getBody();
 			
-			if (break_bodys.contains(ba)) {
+			if (break_bodys.contains(ba) && body_breaker.contains(bb)) {
 				if (!clearing_bodys.contains(ba)) clearing_bodys.add(ba);
 			}
-			if (break_bodys.contains(bb)) {
+			if (break_bodys.contains(bb) && body_breaker.contains(ba)) {
 				if (!clearing_bodys.contains(bb)) clearing_bodys.add(bb);
 			}
 			if (ba.getUserData() != null && 
@@ -454,6 +484,7 @@ public class pBox2d extends pSystem {
 		}
 		
 		public ArrayList<Body> break_bodys = new ArrayList<Body>();
+		public ArrayList<Body> body_breaker = new ArrayList<Body>();
 
 		public ArrayList<Body> clearing_bodys = new ArrayList<Body>();
 		
@@ -512,6 +543,8 @@ public class pBox2d extends pSystem {
 				
 				if (b.getBoo("physic", "contact_break")) {
 					break_bodys.add(body);
+				} else {
+					body_breaker.add(body);
 				}
 
 				if (b.getBoo("physic", "aura")) {

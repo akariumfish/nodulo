@@ -827,7 +827,8 @@ public class pFunc {
 		EQ, ESUP, EINF, SUP, INF, 
 		
 		GETI, GETR, GETP, //SLOW, 
-		BRC, ARR, IND, PASS, MEM, 
+		BRC, 
+		ARR, IND, PASS, //MEM, 
 		
 		//Instruction
 		SETO, SETR, SETP, 
@@ -836,7 +837,7 @@ public class pFunc {
 		
 		START, RTRN, 
 		IF, CLS, 
-		FUNC, SMM, //TERM, 
+		FUNC, //SMM, //TERM, 
 		
 		// iteration code
 		NEXT, STOP, JUMP
@@ -961,33 +962,33 @@ public class pFunc {
 	
 	
 	
-	public static final HashMap<Class<?>, nRun> mem_containers = new HashMap<Class<?>, nRun>();
-	
-	public static void defineMemberContenant(Class<?> cont_class, nRun run_get_mem) {
-		mem_containers.put(cont_class, run_get_mem);
-	}
-	
-	public static void setMember(Object mem_cont, Object... arg) {
-		nRun cont = mem_containers.get(mem_cont.getClass());
-		if (cont == null) return;
-		if (arg == null || arg.length == 0) {
-			Object[] a = new Object[1]; a[0] = mem_cont;
-			cont.do_run(a); }
-		Object[] a = new Object[arg.length + 1]; a[0] = mem_cont;
-		for (int i = 0 ; i < arg.length ; i++) a[i+1] = arg[i];
-		cont.do_run(a);
-	}
-
-	public static Object obtainMember(Object mem_cont, Object... arg) {
-		nRun cont = mem_containers.get(mem_cont.getClass());
-		if (cont == null) return null;
-		if (arg == null || arg.length == 0) {
-			Object[] a = new Object[1]; a[0] = mem_cont;
-			return cont.do_get(a); }
-		Object[] a = new Object[arg.length + 1]; a[0] = mem_cont;
-		for (int i = 0 ; i < arg.length ; i++) a[i+1] = arg[i];
-		return cont.do_get(a);
-	}
+//	public static final HashMap<Class<?>, nRun> mem_containers = new HashMap<Class<?>, nRun>();
+//	
+//	public static void defineMemberContenant(Class<?> cont_class, nRun run_get_mem) {
+//		mem_containers.put(cont_class, run_get_mem);
+//	}
+//	
+//	public static void setMember(Object mem_cont, Object... arg) {
+//		nRun cont = mem_containers.get(mem_cont.getClass());
+//		if (cont == null) return;
+//		if (arg == null || arg.length == 0) {
+//			Object[] a = new Object[1]; a[0] = mem_cont;
+//			cont.do_run(a); }
+//		Object[] a = new Object[arg.length + 1]; a[0] = mem_cont;
+//		for (int i = 0 ; i < arg.length ; i++) a[i+1] = arg[i];
+//		cont.do_run(a);
+//	}
+//
+//	public static Object obtainMember(Object mem_cont, Object... arg) {
+//		nRun cont = mem_containers.get(mem_cont.getClass());
+//		if (cont == null) return null;
+//		if (arg == null || arg.length == 0) {
+//			Object[] a = new Object[1]; a[0] = mem_cont;
+//			return cont.do_get(a); }
+//		Object[] a = new Object[arg.length + 1]; a[0] = mem_cont;
+//		for (int i = 0 ; i < arg.length ; i++) a[i+1] = arg[i];
+//		return cont.do_get(a);
+//	}
 	
 	
 	

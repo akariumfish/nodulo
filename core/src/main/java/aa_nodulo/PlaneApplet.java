@@ -90,7 +90,7 @@ public class PlaneApplet extends App {
 		public boolean VIEW_START_COLLAPSED = false;
 		public boolean VIEW_START_GRID = false;
 //		public float DEF_VIEW_ZOOM = 0.07f;
-		public float DEF_VIEW_ZOOM = 0.15f;
+		public float DEF_VIEW_ZOOM = 0.1f;
 		public Vector2 DEF_VIEW_POS = new Vector2(0f,0f);
 		// DEFAULT
 //		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);

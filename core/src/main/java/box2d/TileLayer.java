@@ -152,6 +152,7 @@ public class TileLayer extends nRenderer.Layer {
 		Body groundBody = rend.world.createBody(groundBodyDef);  
 		
 		if (!transp) ground_bod.add(groundBody);
+		if (!transp) rend.box.body_breaker.add(groundBody);
 		if (transp) rend.lightLayer.transparent.add(groundBody);
 		if (transp) rend.visionLayer.transparent.add(groundBody);
 		if (transp) rend.colorLayer.transparent.add(groundBody);

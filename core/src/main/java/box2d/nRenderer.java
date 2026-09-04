@@ -208,11 +208,14 @@ public class nRenderer {
 				TiledMapTileLayer tl = (TiledMapTileLayer) layer;
 				TileLayer ll = roomGroup.newTileLayer(tl,2);
 				if (tileLayer == null) tileLayer = ll;
-			} else {
-				loadLayerObject(layer);
-			}
+			} 
 		}
-
+		for (int id = 0 ; id < layer_cnt ; id++) {
+			MapLayer layer = map.getLayers().get(id);
+			if (!layer.isVisible()) continue;
+			if (!(layer instanceof TiledMapTileLayer)) {
+				loadLayerObject(layer); }
+		}
 		for (Body body : tileLayer.ground_bod) {
 			visionLayer.light_blocker.add(body); }
 		
@@ -254,16 +257,22 @@ public class nRenderer {
 			if (Utl.getBoo(prop,"lightLayer")) {
 				lightLayer.loadMapObject(prop);
 			}
-			if (prop.get("spawn",Integer.class) != null) {
-//				Utl.logn(prop.get("spawn",Integer.class)+" "+prop.get("x",Float.class)+" "+prop.get("y",Float.class));
+			if (Utl.getBoo(prop,"spawn")) {
+				box.setAvatarSpawn(tileLayer.mapToSpace(
+						prop.get("x", Float.class), prop.get("y", Float.class)));
 			}
 			if (Utl.getBoo(prop,"mob")) {
-//				Iterator<String> iter = prop.getKeys();
-//				while (iter.hasNext()) Utl.logn(""+iter.next());
-//				Utl.logn(""+prop.get("x",Float.class)
-//				+" "+prop.get("y",Float.class)
-//				+" "+prop.get("width",Float.class)
-//				+" "+prop.get("height",Float.class));
+				box.addMobSpawn(
+					tileLayer.mapToSpace(
+						prop.get("x", Float.class), prop.get("y", Float.class))
+//					.scl(1f,-1f)
+//					.add(0,tileLayer.getHeight())
+					, 
+					tileLayer.mapToSpace(
+						prop.get("x2", Float.class), prop.get("y2", Float.class))
+//					.scl(1f,-1f)
+//					.add(0,tileLayer.getHeight())
+					);
 			}
 		}
 	}

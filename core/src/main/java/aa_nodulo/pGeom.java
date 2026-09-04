@@ -565,10 +565,10 @@ public class pGeom extends pSystem {
 		
 
 		pProperty coordinate = pProperty.newGeneralProperty("coordinate");
-		coordinate
-		.addData("limit", true)
-		.addData("limit_dist", 20000f)
-		;
+//		coordinate
+//		.addData("limit", true)
+//		.addData("limit_dist", 20000f)
+//		;
 		
 		coordinate.newLocalProperty("ref")
 		.addData("pos", new Vector2())
@@ -774,7 +774,7 @@ public class pGeom extends pSystem {
 		.addData("activate", true)
 		.addData("direction", true)
 		.addData("speed", 20f)
-		.addData("spawning", (int)1)
+		.addData("spawning", (int)2)
 		.addData("spawn", new Vector2(400,900))
 		.addData("target", new Vector2(1000,-900))
 		.addData("shoot", true)
@@ -1125,8 +1125,8 @@ public class pGeom extends pSystem {
 	
 	public sBoo val_do_draw, val_do_aabb_draw, val_do_click_draw, val_do_hover_draw, 
 		val_do_calc, val_do_ctrl; 
-	public sBoo val_do_limit;
-	public sFlt val_limit_dist;
+//	public sBoo val_do_limit;
+//	public sFlt val_limit_dist;
 
 	nRun clear_run, empty_clic_run, clic_run;
 	public pBody sel_body = null;
@@ -1146,8 +1146,8 @@ public class pGeom extends pSystem {
 		val_do_calc = bloc.obtainBoo("val_do_calc", true);
 		val_do_ctrl = bloc.obtainBoo("val_do_ctrl", true);
 
-		val_do_limit = bloc.obtainBoo("val_do_limit", true);
-		val_limit_dist = bloc.obtainFlt("val_limit_dist", 10000f);
+//		val_do_limit = bloc.obtainBoo("val_do_limit", true);
+//		val_limit_dist = bloc.obtainFlt("val_limit_dist", 10000f);
 
 //		plane.addEventToolInit(new nRun() { public void run(Object o) {
 //			nInterface interf = (nInterface)o;
@@ -1228,7 +1228,12 @@ public class pGeom extends pSystem {
 
 		app.outputs.put("start_game", new nRun() { public void run() {
 			start_game(); }});
-			
+		
+
+//		app.addDelayEvent(62, new nRun() { public void run() {			
+//			restart_game();
+//		}});
+
 	}
 	public void select_body(pBody b) {
 		if (b == null || b == sel_body) return;
@@ -1262,12 +1267,12 @@ public class pGeom extends pSystem {
 		interf.add_row();
 		interf.add_row_switch_boo(4, "do_collision", "val_do_collision");
 		interf.add_row_label(6, "");
-		interf.add_row();
-		interf.add_row_switch_boo(4, "do_limit", "val_do_limit");
-		interf.add_row_label(6, "");
-		interf.add_row();
-		interf.add_row_label(4, "limit_dist");
-		interf.add_row_slide_flt(6, 1000f, 20000f, "val_limit_dist");
+//		interf.add_row();
+//		interf.add_row_switch_boo(4, "do_limit", "val_do_limit");
+//		interf.add_row_label(6, "");
+//		interf.add_row();
+//		interf.add_row_label(4, "limit_dist");
+//		interf.add_row_slide_flt(6, 1000f, 20000f, "val_limit_dist");
 		
 	}
 
@@ -1311,12 +1316,12 @@ public class pGeom extends pSystem {
 				}
 			}
 		}
-		if (val_do_limit.get()) {
-			float l = val_limit_dist.get(); 
-			for (pBody b : space.body_pool.temp_all()) {
-				if (b.hasParam("ref") && b.getVec("ref","pos").len() > l) b.clear();
-			}
-		}
+//		if (val_do_limit.get()) {
+//			float l = val_limit_dist.get(); 
+//			for (pBody b : space.body_pool.temp_all()) {
+//				if (b.hasParam("ref") && b.getVec("ref","pos").len() > l) b.clear();
+//			}
+//		}
 	}
 
 	public void net_frame(float delta) { 
@@ -1611,7 +1616,7 @@ public class pGeom extends pSystem {
 	
 
 	public void start_game() {
-		app.space.start_space();
+		space.start_space();
 	}
 	
 	

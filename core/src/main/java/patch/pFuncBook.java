@@ -243,16 +243,10 @@ public class pFuncBook {
 				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
 						"in_ref_watch");
 				if (triggP_w == null) return;
-				//////instance.patch.patch_dropmenu.metode("open", triggP_w); 
 				for (String par : PlaneApplet.app.inputs.allKey()) {
 					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
 						((pInstance)builder).setVar("in_ref", par); }});
-//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-//							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-//					w1.addEventTrigger(new nRun(instance) { public void run() {
-//						((pInstance)builder).setVar("in_ref", par); }}); 
 				}
-				//instance.patch.patch_dropmenu.metode("open", triggP_w); 
 				nGUI.open_dropmenu(triggP_w);
 			}})
 			.param("ref", "in_ref_watch", "var_link_ref", "in_ref", 
@@ -267,13 +261,6 @@ public class pFuncBook {
 			String reg_ref = ask("reg_ref", String.class);
 			return ask("tile_node", pInstance.class)
 					.get("obtain_from_reg", Object.class, reg_ref);
-			
-//			pInstance reg_in = ask("tile_node", pInstance.class)
-//					.get("obtain_reg", pInstance.class, reg_ref);
-//			if (reg_in == null) return null;
-//			pInstance reg_in_co = reg_in.get("get_co", pInstance.class, "co_in");
-//			if (reg_in_co != null) return reg_in_co.get("obtain");
-//			return null;
 		}})
 		.addVar("reg_ref")
 		.setStandRun(new nRun() {public void run() {
@@ -286,19 +273,13 @@ public class pFuncBook {
 			.param("run_right", new nRun() {public void run() {
 				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
 						"reg_ref_watch");
-				if (triggP_w == null) return;
-				//////instance.patch.patch_dropmenu.metode("open", triggP_w);  
+				if (triggP_w == null) return; 
 				ArrayList<String> arr = instance.getInst("tile_node")
 						.get("obtain_all_reg_of_model", ArrayList.class, "reg_in");
 				if (arr != null) for (String par : arr) {
 					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
 						((pInstance)builder).setVar("reg_ref", par); }});
-//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-//							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-//					w1.addEventTrigger(new nRun(instance) { public void run() {
-//						((pInstance)builder).setVar("reg_ref", par); }}); 
 				}
-				//instance.patch.patch_dropmenu.metode("open", triggP_w); 
 				nGUI.open_dropmenu(triggP_w);
 			}})
 			.commande(pTile.getCom(CT.ADD_WATCH))
@@ -333,19 +314,16 @@ public class pFuncBook {
 				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
 						"param_ref_watch");
 				if (triggP_w == null) return;
+				
+				//TODO list all existing prop ref
+				
 				Object o1 = instance.get("plug_obtain", Object.class, "body");
 				if (o1 != null && (o1 instanceof pBody)) {
-					pBody bod = (pBody)o1;
-					//////instance.patch.patch_dropmenu.metode("open", triggP_w); 
+					pBody bod = (pBody)o1; 
 					for (String par : bod.params.allKey()) {
 						nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
 							((pInstance)builder).setVar("param_ref", par); }});
-//						nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-//								.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-//						w1.addEventTrigger(new nRun(instance) { public void run() {
-//							((pInstance)builder).setVar("param_ref", par); }}); 
 					}
-					//instance.patch.patch_dropmenu.metode("open", triggP_w); 
 					nGUI.open_dropmenu(triggP_w);
 				}
 			}})
@@ -363,17 +341,11 @@ public class pFuncBook {
 				pInstance pl_param = instance.get("get_plug", pInstance.class, "param");
 				Object o1 = pl_param.get("obtain");
 				if (o1 != null && (o1 instanceof pParam)) {
-					pParam param = (pParam)o1;
-					//////instance.patch.patch_dropmenu.metode("open", triggP_w); 
+					pParam param = (pParam)o1; 
 					for (String par : param.prop.data_class.allKey()) {
 						nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
 							((pInstance)builder).setVar("data_ref", par); }});
-//						nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-//								.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-//						w1.addEventTrigger(new nRun(instance) { public void run() {
-//							((pInstance)builder).setVar("data_ref", par); }}); 
 					}
-					//instance.patch.patch_dropmenu.metode("open", triggP_w); 
 					nGUI.open_dropmenu(triggP_w);
 				}
 			}})
@@ -405,16 +377,10 @@ public class pFuncBook {
 				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
 						"index_watch");
 				if (triggP_w == null) return;
-				//////instance.patch.patch_dropmenu.metode("open", triggP_w); 
 				for (String par : index_list) {
 					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
 						((pInstance)builder).setVar("index", Utl.toint(par)); }});
-//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-//							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-//					w1.addEventTrigger(new nRun(instance) { public void run() {
-//						((pInstance)builder).setVar("index", Utl.toint(par)); }}); 
 				}
-				//instance.patch.patch_dropmenu.metode("open", triggP_w); 
 				nGUI.open_dropmenu(triggP_w);
 			}})
 			.param("ref", "index_watch", "var_link_ref", "index", 
@@ -433,12 +399,6 @@ public class pFuncBook {
 			Object o_arr = ask("array", Object.class);
 			Object[] arr = null;
 			if (o_arr != null && (o_arr instanceof Object[])) arr = (Object[])o_arr;
-			
-//			app.log("arr input : entry "+entry+" arr ");
-//			if (arr != null) for (int i = 0 ; i < arr.length ; i++) 
-//				app.log(" "+i+" "+arr[i]);
-//			Utl.logn("");
-			
 			if (arr == null && entry == null) { return null; 
 			} else if (arr != null && entry == null) { return arr; 
 			} else if (arr == null && entry != null) {
@@ -461,9 +421,6 @@ public class pFuncBook {
 			Integer ind = ask("ind", Integer.class);
 			Object[] passed_arg = ask("passed_arg", Object[].class);
 			if (passed_arg == null || ind >= passed_arg.length) return null;
-			
-//			Utl.logn(""+ind+" "+passed_arg[ind]);
-			
 			return passed_arg[ind];
 			}}).addVar("ind")
 		.setStandRun(new nRun() {public void run() {
@@ -475,16 +432,10 @@ public class pFuncBook {
 				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
 						"index_watch");
 				if (triggP_w == null) return;
-				//////instance.patch.patch_dropmenu.metode("open", triggP_w); 
 				for (String par : index_list) {
 					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
 						((pInstance)builder).setVar("ind", Utl.toint(par)); }});
-//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-//							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-//					w1.addEventTrigger(new nRun(instance) { public void run() {
-//						((pInstance)builder).setVar("ind", Utl.toint(par)); }}); 
 				}
-				//instance.patch.patch_dropmenu.metode("open", triggP_w); 
 				nGUI.open_dropmenu(triggP_w);
 			}})
 			.param("ref", "index_watch", "var_link_ref", "ind", 
@@ -504,12 +455,6 @@ public class pFuncBook {
 			String branch_ref = ask("branch_ref", String.class);
 			Object[] arg = ask("arg", Object[].class);
 			pInstance tile_node = ask("tile_node", pInstance.class);
-			
-//			app.log("branch input arg:");
-//			if (arg != null) for (int i = 0 ; i < arg.length ; i++) 
-//				app.log(" "+i+" "+arg[i]);
-//			Utl.logn("");
-			
 			pInstance branch = instance.patch.common_branchs.get(branch_ref);
 			if (branch == null) return null;
 			Object[] script = branch.get("get_instruction_script", Object[].class);
@@ -520,8 +465,6 @@ public class pFuncBook {
 			ArrayList<Object> as = new ArrayList<Object>();
 			pFunc.pop(scr, tot_size - 2, as);
 			return pFunc.branch_script_obtain(tile_node, as, Utl.duplic(arg)); 
-			
-//			return null;
 		}})
 		.addVar("branch_ref").addArg("arg", Object[].class)
 		.setStandRun(new nRun() {public void run() {
@@ -533,16 +476,10 @@ public class pFuncBook {
 				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
 						"branch_ref_watch");
 				if (triggP_w == null) return;
-				//////instance.patch.patch_dropmenu.metode("open", triggP_w); 
 				for (String par : instance.patch.common_branchs.allKey()) {
 					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
 						((pInstance)builder).setVar("branch_ref", par); }});
-//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-//							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-//					w1.addEventTrigger(new nRun(instance) { public void run() {
-//						((pInstance)builder).setVar("branch_ref", par); }}); 
 				}
-				//instance.patch.patch_dropmenu.metode("open", triggP_w); 
 				nGUI.open_dropmenu(triggP_w);
 			}})
 			.param("ref", "branch_ref_watch", "var_link_ref", "branch_ref", 
@@ -557,49 +494,49 @@ public class pFuncBook {
 		
 		
 
-		pFunc.defineMemberContenant(pBody.class, new nRun() {
-			public Object get() {
-				if (args.length < 2) return null;
-				Object mem_cont = arg(0, Object.class);
-				String param_ref = arg(1, String.class);
-				if (mem_cont == null || param_ref == null || 
-						!(mem_cont instanceof pBody)) return null;
-				pBody bod = (pBody)mem_cont;
-				if (!bod.hasParam(param_ref)) return null;
-				return bod.param(param_ref);
-			}
-		});
-		pFunc.defineMemberContenant(pParam.class, new nRun() {
-			public void run() {
-				if (args.length < 3) return;
-				Object mem_cont = arg(0, Object.class);
-				String data_ref = arg(1, String.class);
-				Object data = arg(2, Object.class);
-				if (mem_cont == null || data_ref == null || data == null || 
-						!(mem_cont instanceof pParam)) return;
-				pParam par = (pParam)mem_cont;
-				par.set(data_ref, data);
-			}
-			public Object get() {
-				if (args.length < 2) return null;
-				Object mem_cont = arg(0, Object.class);
-				String data_ref = arg(1, String.class);
-				if (mem_cont == null || data_ref == null || 
-						!(mem_cont instanceof pParam)) return null;
-				pParam par = (pParam)mem_cont;
-				return par.get(data_ref);
-			}
-		});
-
-		new Operator("mem", "MEM", C.MEM, new nRun() {public Object get() {
-//			Utl.logn("mem");
-			String mem = ask("mem", String.class);
-			Object obj = ask("obj", Object.class);
-			if (obj == null || mem == null) return null;
-//			Utl.logn("obj:"+obj+" mem:"+mem);
-			return pFunc.obtainMember(obj, mem);
-		}})
-		.addArg("mem", String.class).addArg("obj", null);
+//		pFunc.defineMemberContenant(pBody.class, new nRun() {
+//			public Object get() {
+//				if (args.length < 2) return null;
+//				Object mem_cont = arg(0, Object.class);
+//				String param_ref = arg(1, String.class);
+//				if (mem_cont == null || param_ref == null || 
+//						!(mem_cont instanceof pBody)) return null;
+//				pBody bod = (pBody)mem_cont;
+//				if (!bod.hasParam(param_ref)) return null;
+//				return bod.param(param_ref);
+//			}
+//		});
+//		pFunc.defineMemberContenant(pParam.class, new nRun() {
+//			public void run() {
+//				if (args.length < 3) return;
+//				Object mem_cont = arg(0, Object.class);
+//				String data_ref = arg(1, String.class);
+//				Object data = arg(2, Object.class);
+//				if (mem_cont == null || data_ref == null || data == null || 
+//						!(mem_cont instanceof pParam)) return;
+//				pParam par = (pParam)mem_cont;
+//				par.set(data_ref, data);
+//			}
+//			public Object get() {
+//				if (args.length < 2) return null;
+//				Object mem_cont = arg(0, Object.class);
+//				String data_ref = arg(1, String.class);
+//				if (mem_cont == null || data_ref == null || 
+//						!(mem_cont instanceof pParam)) return null;
+//				pParam par = (pParam)mem_cont;
+//				return par.get(data_ref);
+//			}
+//		});
+//
+//		new Operator("mem", "MEM", C.MEM, new nRun() {public Object get() {
+////			Utl.logn("mem");
+//			String mem = ask("mem", String.class);
+//			Object obj = ask("obj", Object.class);
+//			if (obj == null || mem == null) return null;
+////			Utl.logn("obj:"+obj+" mem:"+mem);
+//			return pFunc.obtainMember(obj, mem);
+//		}})
+//		.addArg("mem", String.class).addArg("obj", null);
 
 		
 		
@@ -622,7 +559,8 @@ public class pFuncBook {
 				}
 			}
 			pBody pop = pNodeSpace.new_body(bluep);
-			pNodeSpace.init_body(pop);
+			App.ap.addDelayEvent(1,new nRun(pop) { public void run() {
+				pNodeSpace.init_body((pBody)builder); }});
 			return pop;
 		}})
 		.addVar("print")
@@ -663,19 +601,20 @@ public class pFuncBook {
 	public static void build_instructions() {	
 
 		float RS = nGUI.book.RS;
-		new Instruction("set_mem", "SMM", C.SMM, new nRun() {public Object get() {
-			Boolean active = ask("active", Boolean.class);
-			if (active == null || !active) return pFunc.C.NEXT;
-			String mem = ask("mem", String.class);
-			Object obj = ask("obj", Object.class);
-			Object data = ask("data", Object.class);
-			if (obj == null || mem == null || data == null) return pFunc.C.NEXT;
-			pFunc.setMember(obj, mem, data);
-			return pFunc.C.NEXT;
-		}})
-		.addArg("mem", String.class).addArg("obj", null).addArg("data", null)
-		.setWatched().setActivated()
-		;
+		
+//		new Instruction("set_mem", "SMM", C.SMM, new nRun() {public Object get() {
+//			Boolean active = ask("active", Boolean.class);
+//			if (active == null || !active) return pFunc.C.NEXT;
+//			String mem = ask("mem", String.class);
+//			Object obj = ask("obj", Object.class);
+//			Object data = ask("data", Object.class);
+//			if (obj == null || mem == null || data == null) return pFunc.C.NEXT;
+//			pFunc.setMember(obj, mem, data);
+//			return pFunc.C.NEXT;
+//		}})
+//		.addArg("mem", String.class).addArg("obj", null).addArg("data", null)
+//		.setWatched().setActivated()
+//		;
 		
 		
 		
@@ -736,17 +675,11 @@ public class pFuncBook {
 			.param("run_right", new nRun() {public void run() {
 				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
 						"func_ref_watch");
-				if (triggP_w == null) return;
-				//////instance.patch.patch_dropmenu.metode("open", triggP_w); 
+				if (triggP_w == null) return; 
 				for (String par : instance.patch.common_functions.allKey()) {
 					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
 						((pInstance)builder).setVar("func_ref", par); }});
-//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-//							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-//					w1.addEventTrigger(new nRun(instance) { public void run() {
-//						((pInstance)builder).setVar("func_ref", par); }}); 
 				}
-				//instance.patch.patch_dropmenu.metode("open", triggP_w); 
 				nGUI.open_dropmenu(triggP_w);
 			}})
 			.param("ref", "func_ref_watch", "var_link_ref", "func_ref", 
@@ -789,16 +722,10 @@ public class pFuncBook {
 				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
 						"out_ref_watcher");
 				if (triggP_w == null) return;
-				//////instance.patch.patch_dropmenu.metode("open", triggP_w); 
 				for (String par : PlaneApplet.app.outputs.allKey()) {
 					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
 						((pInstance)builder).setVar("out_ref", par); }});
-//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-//							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-//					w1.addEventTrigger(new nRun(instance) { public void run() {
-//						((pInstance)builder).setVar("out_ref", par); }}); 
 				}
-				//instance.patch.patch_dropmenu.metode("open", triggP_w); 
 				nGUI.open_dropmenu(triggP_w);
 			}})
 			.commande(pTile.getCom(CT.ADD_WATCH))
@@ -817,17 +744,6 @@ public class pFuncBook {
 			if (ask("exec_in_instance", Boolean.class)) 
 				instance.setVar("watch", Utl.to_string(r));
 			ask("tile_node", pInstance.class).run("send_to_reg", reg_ref, r);
-			
-//			pInstance reg_out = ask("tile_node", pInstance.class)
-//					.get("obtain_reg", pInstance.class, reg_ref);
-//			if (reg_out == null) return pFunc.C.NEXT;
-//			pInstance reg_out_co = reg_out.get("get_co", pInstance.class, "co_out");
-//			if (reg_out_co == null) return pFunc.C.NEXT;
-//			Object r = ask("data");
-//			if (r == null) return pFunc.C.NEXT;
-//			if (ask("exec_in_instance", Boolean.class)) 
-//				instance.setVar("watch", Utl.to_string(r));
-//			reg_out_co.run("send", r);
 			return pFunc.C.NEXT;
 		}})
 		.addVar("reg_ref")
@@ -844,18 +760,12 @@ public class pFuncBook {
 				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
 						"reg_ref_watch");
 				if (triggP_w == null) return;
-				//////instance.patch.patch_dropmenu.metode("open", triggP_w);  
 				ArrayList<String> arr = instance.getInst("tile_node")
 						.get("obtain_all_reg_of_model", ArrayList.class, "reg_out");
 				if (arr != null) for (String par : arr) {
 					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
 						((pInstance)builder).setVar("reg_ref", par); }});
-//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-//							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-//					w1.addEventTrigger(new nRun(instance) { public void run() {
-//						((pInstance)builder).setVar("reg_ref", par); }}); 
 				}
-				//instance.patch.patch_dropmenu.metode("open", triggP_w); 
 				nGUI.open_dropmenu(triggP_w);
 			}})
 			.commande(pTile.getCom(CT.ADD_WATCH))
@@ -945,19 +855,16 @@ public class pFuncBook {
 				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
 						"param_ref_watch");
 				if (triggP_w == null) return;
+				
+				//TODO list all existing prop ref
+				
 				Object o1 = instance.get("plug_obtain", Object.class, "body");
 				if (o1 != null && (o1 instanceof pBody)) {
-					pBody bod = (pBody)o1;
-					//////instance.patch.patch_dropmenu.metode("open", triggP_w); 
+					pBody bod = (pBody)o1; 
 					for (String par : bod.params.allKey()) {
 						nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
 							((pInstance)builder).setVar("param_ref", par); }});
-//						nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-//								.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-//						w1.addEventTrigger(new nRun(instance) { public void run() {
-//							((pInstance)builder).setVar("param_ref", par); }}); 
 					}
-					//instance.patch.patch_dropmenu.metode("open", triggP_w); 
 					nGUI.open_dropmenu(triggP_w);
 				}
 			}})
@@ -979,16 +886,10 @@ public class pFuncBook {
 					pBody bod = (pBody)o1;
 					pParam param = bod.param(param_ref);
 					if (param == null) return;
-					//////instance.patch.patch_dropmenu.metode("open", triggP_w); 
 					for (String par : param.prop.data_class.allKey()) {
 						nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
 							((pInstance)builder).setVar("data_ref", par); }});
-//						nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-//								.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-//						w1.addEventTrigger(new nRun(instance) { public void run() {
-//							((pInstance)builder).setVar("data_ref", par); }}); 
 					}
-					//instance.patch.patch_dropmenu.metode("open", triggP_w); 
 					nGUI.open_dropmenu(triggP_w);
 				}
 			}})

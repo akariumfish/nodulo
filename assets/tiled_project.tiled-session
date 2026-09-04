@@ -94,7 +94,7 @@
         "tileset.tsx"
     ],
     "project": "tiled_project.tiled-project",
-    "property.type": "bool",
+    "property.type": "float",
     "recentFiles": [
         "tileset.tsx",
         "Map.tmx",
