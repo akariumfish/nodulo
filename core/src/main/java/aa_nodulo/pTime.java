@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import aa_term.CommandExecutor;
+import aa_term.Executor;
 import aa_term.HelpCommand;
 import aa_term.LogLevel;
 import aa_term.pTerm;
@@ -225,7 +225,7 @@ public class pTime {
 				app.net.net.addSyncVal(val_tick_cnt);	 }
 		}});
 
-		app.term.register("time", bloc, this);
+//		app.term.register("time", bloc, this);
 		
 //		app.term.addExecutor(new CommandExecutor("time", bloc, this) {
 //			

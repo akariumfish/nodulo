@@ -685,196 +685,196 @@ public class Utl {
 	
 	
 	
-
-	// ------------------EXPERIMENTAL---------------------- // TODO
-	// ----------------------------------------------------
-
-//	public static class sPrim extends sValue {
-////		public String asStr() { return Utl.copy(val); }
-//		public String getString() { return Utl.to_string(val); }
-//		public void clear() { 
-//			super.clear(); 
-////			data.str_pool.free(this);
-//		}
-//		
-//		Object val = null;
-//		
-//		public sPrim() { super(); }
-//		
-//		//called when obtained from pool
-//		public sPrim init(sValueBloc b, String n, String s) {
-//			super.init(b, "prm", n, s); return this; }
-//			
-//		//called when freed by pool
-//		@Override
-//		public void reset() {
-//			super.reset();
-//			val = null; 
-//		}
-//	
-////		public String get() { return Utl.copy(val); }
-////		public boolean equals(String v) { return val.equals(v); }
-////		public void set(String v) { 
-////			run_events_allset(); 
-////			if (!v.equals(val)) { 
-////				
-////				doChange(); 
-////			} 
+//
+//	// ------------------EXPERIMENTAL----------------------
+//	// ----------------------------------------------------
+//
+////	public static class sPrim extends sValue {
+//////		public String asStr() { return Utl.copy(val); }
+////		public String getString() { return Utl.to_string(val); }
+////		public void clear() { 
+////			super.clear(); 
+//////			data.str_pool.free(this);
 ////		}
-//		protected void save_to_bloc(File_Bloc svb) { super.save_to_bloc(svb);
-////			svb.newData("val", val);
-//		}
-//		protected void load_from_bloc(File_Bloc svb) { super.load_from_bloc(svb);
-////			set(svb.getString("val"));
-//		}
-//		public void toNetMsg(nNetwork.UpdateValue uv) {
-////			uv.put("val", val);
-//		}
-//		public void fromNetMsg(nNetwork.UpdateValue uv) {
-////			set(uv.getStr("val"));
-//		}
+////		
+////		Object val = null;
+////		
+////		public sPrim() { super(); }
+////		
+////		//called when obtained from pool
+////		public sPrim init(sValueBloc b, String n, String s) {
+////			super.init(b, "prm", n, s); return this; }
+////			
+////		//called when freed by pool
+////		@Override
+////		public void reset() {
+////			super.reset();
+////			val = null; 
+////		}
+////	
+//////		public String get() { return Utl.copy(val); }
+//////		public boolean equals(String v) { return val.equals(v); }
+//////		public void set(String v) { 
+//////			run_events_allset(); 
+//////			if (!v.equals(val)) { 
+//////				
+//////				doChange(); 
+//////			} 
+//////		}
+////		protected void save_to_bloc(File_Bloc svb) { super.save_to_bloc(svb);
+//////			svb.newData("val", val);
+////		}
+////		protected void load_from_bloc(File_Bloc svb) { super.load_from_bloc(svb);
+//////			set(svb.getString("val"));
+////		}
+////		public void toNetMsg(nNetwork.UpdateValue uv) {
+//////			uv.put("val", val);
+////		}
+////		public void fromNetMsg(nNetwork.UpdateValue uv) {
+//////			set(uv.getStr("val"));
+////		}
+////	
+////		public Object get_val() { return val; }
+////	
+////	}
 //	
-//		public Object get_val() { return val; }
-//	
+//
+//	// can be any primitive but garenty its a primitive
+//	public static class Prim { 
+//		public Prim() { if (value != null) Utl.free(value); value = null; }
+//		public Prim(Object o) { if (value != null) Utl.free(value); value = o; }
+//		public void reset() { if (value != null) Utl.free(value); value = null; }
+//		public Object value;
+//		public Object get() { return value; }
+//		public <T> T get(Class<?> ct) { return (T)value; }
+//		public <T> T set(T v) { value = v; return v; }
+//		public <T> Prim edit(T v) { value = v; return this; }
+//		public String to_string() { return Utl.to_string(value); }
+//		public String to_code() { return Utl.to_code(value); }
+//		public static Prim from_string(String o, Class<?> ct) { return Utl.obtain(Prim.class).edit(Utl.from_string(o,ct)); }
+//		public static Prim from_obj(Object o) { return Utl.obtain(Prim.class).edit(o); }
+//		public static Prim new_obj(Class<?> ct) { return Utl.obtain(Prim.class).edit(Utl.new_object(ct)); }
+//		public static Prim obtain(Class<?> ct) { return Utl.obtain(Prim.class).edit(Utl.obtain(ct)); }
+//		public void free() { Utl.free(this); }
+//		
 //	}
-	
-
-	// can be any primitive but garenty its a primitive
-	public static class Prim { 
-		public Prim() { if (value != null) Utl.free(value); value = null; }
-		public Prim(Object o) { if (value != null) Utl.free(value); value = o; }
-		public void reset() { if (value != null) Utl.free(value); value = null; }
-		public Object value;
-		public Object get() { return value; }
-		public <T> T get(Class<?> ct) { return (T)value; }
-		public <T> T set(T v) { value = v; return v; }
-		public <T> Prim edit(T v) { value = v; return this; }
-		public String to_string() { return Utl.to_string(value); }
-		public String to_code() { return Utl.to_code(value); }
-		public static Prim from_string(String o, Class<?> ct) { return Utl.obtain(Prim.class).edit(Utl.from_string(o,ct)); }
-		public static Prim from_obj(Object o) { return Utl.obtain(Prim.class).edit(o); }
-		public static Prim new_obj(Class<?> ct) { return Utl.obtain(Prim.class).edit(Utl.new_object(ct)); }
-		public static Prim obtain(Class<?> ct) { return Utl.obtain(Prim.class).edit(Utl.obtain(ct)); }
-		public void free() { Utl.free(this); }
-		
-	}
-	
-
-	public static <T> T obtain(Class<T> ct) { if (ct == null) return null; 
-		return (T)prim_pool_map.get(ct).obtain(); }
-	public static <T> void free(T t) { 
-		if (t == null) return; ((PrimitivePool<T>)prim_pool_map.get(t.getClass())).free(t); }
-
-	private static HashMap<Class<?>,PrimitivePool<?>> prim_pool_map = 
-			new HashMap<Class<?>,PrimitivePool<?>>();
-
-	private static HashMap<Class<?>,PrimitivePool<?>> prim_array_pool_map = 
-			new HashMap<Class<?>,PrimitivePool<?>>();
-
-	public static final Class<?>[] prim = new Class<?>[] {
-		Byte.class, Integer.class, Float.class, Boolean.class, String.class, Vector2.class
-		, Prim.class 
-		};
-
-	private static final nRun common_run_new_obj = new nRun() {
-		public Object get(Object o) { return Utl.new_object((Class<?>)o); } };
-	private static final nRun common_run_new_array = new nRun() {
-		public Object get(Object o1, Object o2) { return Utl.new_array((Class<?>)o1, (int)o2); } };
-		
-//	public static final nRun[] run_new_object = new nRun[] { 
-//			common_run_new_obj, common_run_new_obj, common_run_new_obj, 
-//			common_run_new_obj, common_run_new_obj, common_run_new_obj
-//			, common_run_new_obj 
-//			};
-	
-	private static void build_prim() {
-		
-		for (Class<?> c : prim) prim_pool_map.put(c, 	newPrimitivePool(c));
-		
-	}
-
-	private static <T> PrimitivePool<T> newPrimitivePool(Class<T> ct) {
-		return new PrimitivePool<T>() {
-			protected T newObject() { return (T)common_run_new_obj.get(ct); } };
-	}
-
-	private static <T> PrimitivePool<T> newPrimitiveArrayPool(Class<T> ct) {
-		return new PrimitivePool<T>() {
-			protected T newObject() { return (T)common_run_new_obj.get(ct); } };
-	}
-
-	public static abstract class PrimitivePool<T> {
-
-		private final Array<T> freeObjects;
-		private final ArrayList<T> allObjects;
-
-		public PrimitivePool() {
-			freeObjects = new Array<T>(false, 0);
-			allObjects = new ArrayList<T>();
-		}
-		public PrimitivePool(boolean isArray) { this(); this.isArray = isArray; }
-		
-		abstract protected T newObject();
-		protected T newArray(int i) { return null; }
-		private boolean isArray = false;
-		private T getNew(int...i) { if (isArray) return newArray(i[0]); else return newObject(); }
-
-		public ArrayList<T> all() { return allObjects; }
-		public ArrayList<T> tmp_all() { return Utl.copy(allObjects); }
-
-		public int size() { return allObjects.size(); }
-
-		public T get(int i) { return allObjects.get(i); }
-		
-		public T obtain(int...i) {
-			T t = freeObjects.size == 0 ? getNew(i) : freeObjects.pop();
-			allObjects.add(t);
-			if (t instanceof Poolable) ((Poolable)t).pool_init();
-			return t;
-		}
-		
-		protected void reset (T object) {
-			if (object instanceof Poolable) ((Poolable)object).reset();
-		}
-		
-		protected void discard (T object) {
-			reset(object);
-		}
-		
-		public void free (T object) {
-			if (object == null) throw new IllegalArgumentException("object cannot be null.");
-			if (freeObjects.contains(object, true)) return; 
-			
-			if (allObjects.contains(object)) {
-				while (allObjects.contains(object)) allObjects.remove(object);
-				reset(object); }
-		}
-		
-		public void freeAll() {
-			for (T t : Utl.duplic(allObjects)) free(t);
-			allObjects.clear();
-		}
-		
-		/** Removes and discards all free objects from this pool. */
-		public void clearFreeObjs () {
-			Array<T> freeObjects = this.freeObjects;
-			for (int i = 0, n = freeObjects.size; i < n; i++)
-				discard(freeObjects.get(i));
-			freeObjects.clear();
-		}
-
-		public void dispose() {
-			freeAll();
-			clearFreeObjs(); // reset then clear free objects
-		}
-		
-	}
-	
-	
-	
-	
-	// ----------------------------------------------------
-	// ----------------------------------------------------
+//	
+//
+//	public static <T> T obtain(Class<T> ct) { if (ct == null) return null; 
+//		return (T)prim_pool_map.get(ct).obtain(); }
+//	public static <T> void free(T t) { 
+//		if (t == null) return; ((PrimitivePool<T>)prim_pool_map.get(t.getClass())).free(t); }
+//
+//	private static HashMap<Class<?>,PrimitivePool<?>> prim_pool_map = 
+//			new HashMap<Class<?>,PrimitivePool<?>>();
+//
+//	private static HashMap<Class<?>,PrimitivePool<?>> prim_array_pool_map = 
+//			new HashMap<Class<?>,PrimitivePool<?>>();
+//
+//	public static final Class<?>[] prim = new Class<?>[] {
+//		Byte.class, Integer.class, Float.class, Boolean.class, String.class, Vector2.class
+//		, Prim.class 
+//		};
+//
+//	private static final nRun common_run_new_obj = new nRun() {
+//		public Object get(Object o) { return Utl.new_object((Class<?>)o); } };
+//	private static final nRun common_run_new_array = new nRun() {
+//		public Object get(Object o1, Object o2) { return Utl.new_array((Class<?>)o1, (int)o2); } };
+//		
+////	public static final nRun[] run_new_object = new nRun[] { 
+////			common_run_new_obj, common_run_new_obj, common_run_new_obj, 
+////			common_run_new_obj, common_run_new_obj, common_run_new_obj
+////			, common_run_new_obj 
+////			};
+//	
+//	private static void build_prim() {
+//		
+//		for (Class<?> c : prim) prim_pool_map.put(c, 	newPrimitivePool(c));
+//		
+//	}
+//
+//	private static <T> PrimitivePool<T> newPrimitivePool(Class<T> ct) {
+//		return new PrimitivePool<T>() {
+//			protected T newObject() { return (T)common_run_new_obj.get(ct); } };
+//	}
+//
+//	private static <T> PrimitivePool<T> newPrimitiveArrayPool(Class<T> ct) {
+//		return new PrimitivePool<T>() {
+//			protected T newObject() { return (T)common_run_new_obj.get(ct); } };
+//	}
+//
+//	public static abstract class PrimitivePool<T> {
+//
+//		private final Array<T> freeObjects;
+//		private final ArrayList<T> allObjects;
+//
+//		public PrimitivePool() {
+//			freeObjects = new Array<T>(false, 0);
+//			allObjects = new ArrayList<T>();
+//		}
+//		public PrimitivePool(boolean isArray) { this(); this.isArray = isArray; }
+//		
+//		abstract protected T newObject();
+//		protected T newArray(int i) { return null; }
+//		private boolean isArray = false;
+//		private T getNew(int...i) { if (isArray) return newArray(i[0]); else return newObject(); }
+//
+//		public ArrayList<T> all() { return allObjects; }
+//		public ArrayList<T> tmp_all() { return Utl.copy(allObjects); }
+//
+//		public int size() { return allObjects.size(); }
+//
+//		public T get(int i) { return allObjects.get(i); }
+//		
+//		public T obtain(int...i) {
+//			T t = freeObjects.size == 0 ? getNew(i) : freeObjects.pop();
+//			allObjects.add(t);
+//			if (t instanceof Poolable) ((Poolable)t).pool_init();
+//			return t;
+//		}
+//		
+//		protected void reset (T object) {
+//			if (object instanceof Poolable) ((Poolable)object).reset();
+//		}
+//		
+//		protected void discard (T object) {
+//			reset(object);
+//		}
+//		
+//		public void free (T object) {
+//			if (object == null) throw new IllegalArgumentException("object cannot be null.");
+//			if (freeObjects.contains(object, true)) return; 
+//			
+//			if (allObjects.contains(object)) {
+//				while (allObjects.contains(object)) allObjects.remove(object);
+//				reset(object); }
+//		}
+//		
+//		public void freeAll() {
+//			for (T t : Utl.duplic(allObjects)) free(t);
+//			allObjects.clear();
+//		}
+//		
+//		/** Removes and discards all free objects from this pool. */
+//		public void clearFreeObjs () {
+//			Array<T> freeObjects = this.freeObjects;
+//			for (int i = 0, n = freeObjects.size; i < n; i++)
+//				discard(freeObjects.get(i));
+//			freeObjects.clear();
+//		}
+//
+//		public void dispose() {
+//			freeAll();
+//			clearFreeObjs(); // reset then clear free objects
+//		}
+//		
+//	}
+//	
+//	
+//	
+//	
+//	// ----------------------------------------------------
+//	// ----------------------------------------------------
 	
 	
 	
@@ -891,7 +891,7 @@ public class Utl {
 	
 	public static void build() {
 		
-		build_prim();
+//		build_prim();
 
 		new_type(Float.class, "flt", "FLT", sFlt.class, 1);
 		new_type(Integer.class, "int", "INT", sInt.class, 1);
@@ -903,7 +903,68 @@ public class Utl {
 
 		nPainting.register();
 		
+		
+		// RESULT : Constructor 25ms Reflexion.newInstance 76ms
+//		int lng = 1000000;
+//		TT[] arr = new TT[lng];
+//		TT[] arr2 = new TT[lng];
+//
+//		long start = System.currentTimeMillis();
+//		for (int i=0; i<lng; i++)
+//		{
+//			TT a = new TT();
+//			a.doSomeThing();
+//			arr[i] = a;
+//		}
+//		Utl.logn("Constructor "+(System.currentTimeMillis() - start));
+//
+//		Class<TT> ct = TT.class;
+//
+//		start = System.currentTimeMillis();
+//		for (int i=0; i<lng; i++)
+//		{
+//			try {
+//				TT a = ct.newInstance();
+//				a.doSomeThing();
+//				arr2[i] = a;
+//			} catch (InstantiationException | IllegalAccessException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		Utl.logn("newInstance "+(System.currentTimeMillis() - start));
+
+
+//		int lng = 1000000;
+//		TT[] arr = new TT[lng];
+//		TT[] arr2 = new TT[lng];
+//
+//		long start = System.currentTimeMillis();
+//		for (int i=0; i<lng; i++)
+//		{
+//			
+//		}
+//		Utl.logn("Constructor "+(System.currentTimeMillis() - start));
+//
+//		Class<TT> ct = TT.class;
+//
+//		start = System.currentTimeMillis();
+//		for (int i=0; i<lng; i++)
+//		{
+//			
+//		}
+//		Utl.logn("newInstance "+(System.currentTimeMillis() - start));
+
+
 	}
+	
+//	class TT {
+//		int i = 0;
+//		void add() { i++; }
+//	}
+	
+//	static class TT {
+//		int i = 0; void doSomeThing() { int a = i; i = a + i; i = a + i; i = a + i; }
+//	}
 
 	
 	static class vType {

@@ -7,7 +7,7 @@ import java.util.Random;
 
 import com.badlogic.gdx.math.Vector2;
 
-import aa_term.CommandExecutor;
+import aa_term.Executor;
 import aa_term.TerminalCommand;
 import data.*;
 import gui.nDrawable;
@@ -23,6 +23,7 @@ import net.nNetwork;
 import util.*;
 import app.App;
 import patch.pAnk;
+import patch.pInstance;
 import patch.pNodeSpace;
 import patch.pStandard;
 
@@ -34,23 +35,35 @@ public class pSpace {
 	public static void build() {
 		
 		float RS = nGUI.book.RS;
+
+		// put in a map
+		pProperty.newProperty("registered")
+		.addData("name", "")
+		.addInitRun(new nRun() {public void run() {
+			pParam par = arg(0, pParam.class);
+			
+			
+			
+		}})
+		.addClearRun(new nRun() {public void run() {
+			pParam par = arg(0, pParam.class);
+			
+			
+			
+		}})
+		;
 		
 		// model for storing and recalling the state of space elements :
 		
-		// a value
-		pProperty.newProperty("value")
-		.addData("class", (int)0)
-		.addData("val", "");
-
 		// model to apply to a param data
 		pProperty.newProperty("data_value")
 		.addData("data_ref", "")
-		.addData("data_class", (int)0)
+		.addData("data_class", "")
 		.addData("data_val", "");
 		
 		// model to apply to a param
 		pProperty archetype = pProperty.newProperty("archetype");
-		archetype.addData("name", "")
+		archetype.copy("registered")
 		.addData("prop_ref", "") // ref of prop of params this can be applied to
 		.addCollecRef("vals", "data_value") // value to set at application
 		.addCollec("args", String.class) // data to ask as arg at application
@@ -58,7 +71,12 @@ public class pSpace {
 		
 		
 		// model for creating space elements :
-		
+
+		// a value
+		pProperty.newProperty("value")
+		.addData("class", (int)0)
+		.addData("val", "");
+
 		// model to build a param from an arch
 		pProperty.newProperty("arch_print")
 		.addData("arch_name", "")
@@ -70,7 +88,7 @@ public class pSpace {
 
 		// model for building a body
 		pProperty.newProperty("bodyprint")
-		.addData("name", "")
+		.copy("registered")
 		.addCollecRef("prints", "arch_print") // each pop a param for the body
 		//at build it will ask args for arch_prints
 		;
@@ -79,12 +97,13 @@ public class pSpace {
 		// model for building a bodyprint
 		pProperty.newProperty("print_builder")
 		.addData("print_name", "")
+		.addRef("print", "bodyprint")
 		.addCollecRef("args", "value") // args for the print
 		;
 
 		// model to build a group of body
 		pProperty.newProperty("builder")
-		.addData("name", "")
+		.copy("registered")
 		.addCollecRef("builds", "print_builder")
 		;
 		
@@ -525,7 +544,7 @@ public class pSpace {
 //			if (bloc2 == null) bloc.buildBloc("bodyview", "bodyview"); 
 //		}	
 
-		app.term.register("space", bloc, this);
+//		app.term.register("space", bloc, this);
 		
 	}
 	
@@ -603,6 +622,8 @@ public class pSpace {
 	
 	public void frame(float delta) {
 		
+		pProperty.run_frame(this);
+		
 //		for(pProperty p : pProperty.general_propertys.all()) {
 //			
 //		}
@@ -627,6 +648,9 @@ public class pSpace {
 		update_families();
 	}
 	public void tick(float delta) {
+
+		pProperty.run_tick(this);
+		
 		update_families();
 		
 		check_change();
@@ -661,6 +685,8 @@ public class pSpace {
 	
 
 	public void draw() {
+
+		pProperty.run_draw(this);
 		
 	}
 	

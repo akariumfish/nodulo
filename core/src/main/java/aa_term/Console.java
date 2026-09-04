@@ -203,15 +203,15 @@ public interface Console {
 	void setDisplayKeyID (int code);
 
 	/**
-	 * Sets this console's {@link CommandExecutor}. Its methods are the methods that are referenced within the console. Can be set
+	 * Sets this console's {@link Executor}. Its methods are the methods that are referenced within the console. Can be set
 	 * to null, but this will result in no commands being fired.
 	 *
-	 * @param commandExec The {@link CommandExecutor} to use.
+	 * @param commandExec The {@link Executor} to use.
 	 */
-	void setCommandExecutor (CommandExecutor commandExec);
+	void setCommandExecutor (Executor commandExec);
 
 	/**
-	 * Executes the specified command via the set {@link CommandExecutor}.
+	 * Executes the specified command via the set {@link Executor}.
 	 *
 	 * @param command The command to execute.
 	 */

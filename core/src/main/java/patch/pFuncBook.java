@@ -602,9 +602,60 @@ public class pFuncBook {
 		.addArg("mem", String.class).addArg("obj", null);
 
 		
+		
+		
+		
+
+		new Operator("new", "NEW", C.NEW, new nRun() {public Object get() {
+			String print_name = ask("print", String.class);
+			pSpace space = PlaneApplet.app.space;
+			pParam bluep = null;
+			if (print_name != null) {
+				for (String br : space.param_pools.get("blueprint").allKey()) {
+					String nm = space.param_pools.get("blueprint")
+							.get(br).get("name", String.class);
+					if (nm != null && nm.equals(print_name)) {
+						bluep = space.param_pools.get("blueprint")
+								.get(br);
+						break;
+					}
+				}
+			}
+			pBody pop = pNodeSpace.new_body(bluep);
+			pNodeSpace.init_body(pop);
+			return pop;
+		}})
+		.addVar("print")
+		.setStandRun(new nRun() {public void run() {
+			pStandard stand = arg(0,pStandard.class);
+			stand.process()
+			.run(pTile.getRun(CT.OBTAIN_VAR), "print", "")
+			.openSec()
+			.param("run_right", new nRun() {public void run() {
+				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
+						"print_watch");
+				if (triggP_w == null) return; 
+				pSpace space = PlaneApplet.app.space;
+				for (String par : space.param_pools.get("blueprint").allKey()) {
+					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
+						((pInstance)builder).setVar("print", par); }});
+				}
+				nGUI.open_dropmenu(triggP_w);
+			}})
+			.param("ref", "print_watch", "var_link_ref", "print", 
+					"var_link_class", String.class.getName())
+			.param("width", (int)8)
+			.commande(pTile.getCom(CT.ADD_WATCH))
+			.closeSec();
+		}});
+		
+		
+		
+		
+		
 	}
-		
-		
+	
+	
 		
 		
 		
@@ -631,31 +682,31 @@ public class pFuncBook {
 		
 		
 
-		new Instruction("term", "TRM", C.TERM, new nRun() {public Object get() {
-			Boolean active = ask("active", Boolean.class);
-			if (active == null || !active) return pFunc.C.NEXT;
-			String com = ask("com", String.class);
-			Object[] arg = ask("arg", Object[].class);
-			for (Object o : arg) { com += " " + Utl.to_string(o); }
-			nRun out = PlaneApplet.app.outputs.get("trm");
-			out.do_run(com);
-			return pFunc.C.NEXT;
-		}})
-		.addVar("com").addArg("arg", Object[].class)
-		.setActivated()
-		.setStandRun(new nRun() {public void run() {
-			pStandard stand = arg(0,pStandard.class);
-			stand.process()
-			.run(pTile.getRun(CT.OBTAIN_VAR), "com", "")
-			.openSec()
-			.param("var_link_ref", "com", 
-					"var_link_class", String.class.getName())
-			.param("width", (int)8)
-			.commande(pTile.getCom(CT.ADD_FIELD))
-			.closeSec()
-			;
-		}})
-		;
+//		new Instruction("term", "TRM", C.TERM, new nRun() {public Object get() {
+//			Boolean active = ask("active", Boolean.class);
+//			if (active == null || !active) return pFunc.C.NEXT;
+//			String com = ask("com", String.class);
+//			Object[] arg = ask("arg", Object[].class);
+//			for (Object o : arg) { com += " " + Utl.to_string(o); }
+//			nRun out = PlaneApplet.app.outputs.get("trm");
+//			out.do_run(com);
+//			return pFunc.C.NEXT;
+//		}})
+//		.addVar("com").addArg("arg", Object[].class)
+//		.setActivated()
+//		.setStandRun(new nRun() {public void run() {
+//			pStandard stand = arg(0,pStandard.class);
+//			stand.process()
+//			.run(pTile.getRun(CT.OBTAIN_VAR), "com", "")
+//			.openSec()
+//			.param("var_link_ref", "com", 
+//					"var_link_class", String.class.getName())
+//			.param("width", (int)8)
+//			.commande(pTile.getCom(CT.ADD_FIELD))
+//			.closeSec()
+//			;
+//		}})
+//		;
 		
 		
 		

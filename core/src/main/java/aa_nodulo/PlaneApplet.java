@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.noodle.nodulo.GdxApp;
 import com.noodle.nodulo.Main;
 
+import aa_new.Plane;
 import aa_term.pTerm;
 import app.App;
 import app.AppConfig;
@@ -111,8 +112,10 @@ public class PlaneApplet extends App {
 		public boolean TOOLBOX_OPEN = true;
 		public boolean DRAW_GROUND = true;
 		public boolean DRAW_FOG = true;
+
+		public boolean POP_TERMINAL = false;
+		public boolean TEST_TERMINAL = false;
 		
-		public boolean POP_TERMINAL = true;
 		public boolean POP_BODY_EDITOR = false;
 		
 		public float DEF_TICK_BY_SEC = 60f;
@@ -158,7 +161,9 @@ public class PlaneApplet extends App {
 	public pPatch patch;
 	public pSpace space;
 	public pNet net;
-	public pTerm term;
+//	public pTerm term;
+//	
+//	public Plane plane;
 
 	public boolean NET_CTRL = false;
 	
@@ -168,8 +173,9 @@ public class PlaneApplet extends App {
 	
 	@Override
 	public void setInputProcessor() {
-		if (term != null) term.setInputProcessor();
-		else Gdx.input.setInputProcessor(input);
+//		if (term != null) term.setInputProcessor();
+//		else 
+			Gdx.input.setInputProcessor(input);
 	}
 	
 	/* static construct :
@@ -181,6 +187,9 @@ public class PlaneApplet extends App {
 	
 	public static void build_setup() {
 		pPatch.build_setup();
+
+		Plane.build_statics();
+
 	}
 	
 
@@ -255,14 +264,18 @@ public class PlaneApplet extends App {
 		patch = new pPatch(this);
 		net = new pNet(this);
 		space = new pSpace(this);
-		term = new pTerm(this);
+//		term = new pTerm(this);
+//		
+//		plane = new Plane(this);
 
 		view.system_load();
 		time.system_load();
 		net.system_load();
 		space.system_load();
 		patch.system_load();
-		term.system_load();
+//		term.system_load();
+//		
+//		plane.finish();
 
 //		paint = new nPainting();
 //		
@@ -290,7 +303,9 @@ public class PlaneApplet extends App {
 	@Override
 	public void closing() {
 		super.closing();
-		
+
+//		plane.dispose();
+
 		app = null; 
 	}
 	
@@ -300,6 +315,8 @@ public class PlaneApplet extends App {
 		
 		frame_inputs();
 
+//		plane.frame_start(delta);
+		
 		net.frame(delta);
 		time.do_frame(delta);
 //		view.frame(delta);
@@ -313,6 +330,9 @@ public class PlaneApplet extends App {
 		nRun.runEvents(eventFrameRun, delta);
 
 		space.do_frame(delta);
+
+//		plane.frame_end();
+		
 		view.frame(delta);
 		
 	}
@@ -326,12 +346,12 @@ public class PlaneApplet extends App {
 
 	@Override 
 	public void draw_start() {
-		term.do_frame(1);
+//		term.do_frame(1);
 		super.draw_start();
 	}
 	@Override 
 	public void draw_end() {
-		term.draw();
+//		term.draw();
 	}
 	
 	

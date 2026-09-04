@@ -832,9 +832,11 @@ public class pFunc {
 		//Instruction
 		SETO, SETR, SETP, 
 		
+		NEW, 
+		
 		START, RTRN, 
 		IF, CLS, 
-		FUNC, SMM, TERM, 
+		FUNC, SMM, //TERM, 
 		
 		// iteration code
 		NEXT, STOP, JUMP

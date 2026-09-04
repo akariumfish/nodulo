@@ -35,31 +35,31 @@ public class pParam extends sPoolable {
 	
 	
 	
-	public void N_init() {
-		
-	}
-	
-	public void N_clear_action() {
-		
-	}
-
-	public boolean N_has(String r, Class<?> ct) { 
-		return false; }
-	
-	public pParam N_set(String r, Object o) {
-		
-		return this; 
-	}
-	
-	public Object N_get(String r) {
-		
-		return null; 
-	}
-	
-	public <T> T N_get(String r, Class<T> ct) { 
-		
-		return null; 
-	}
+//	public void N_init() {
+//		
+//	}
+//	
+//	public void N_clear_action() {
+//		
+//	}
+//
+//	public boolean N_has(String r, Class<?> ct) { 
+//		return false; }
+//	
+//	public pParam N_set(String r, Object o) {
+//		
+//		return this; 
+//	}
+//	
+//	public Object N_get(String r) {
+//		
+//		return null; 
+//	}
+//	
+//	public <T> T N_get(String r, Class<T> ct) { 
+//		
+//		return null; 
+//	}
 	
 	
 //	public String getStr(String r) { return get(r, String.class); }
@@ -374,6 +374,8 @@ public class pParam extends sPoolable {
 		cnt += body_used;
 		
 	}
+	
+	@Override
 	public void from_tab(sTab t, int c) {
 		
 		Object[] arr = new Object[data_size()];
@@ -381,6 +383,8 @@ public class pParam extends sPoolable {
 		init_from_array(arr);
 		
 	}
+	
+	@Override
 	public void to_tab(sTab t, int c) {
 		
 		Object[] arr = new Object[data_size()];
@@ -388,6 +392,8 @@ public class pParam extends sPoolable {
 		for (int i = 0 ; i < data_size() ; i++) { t.set(c, i, arr[i]); }
 		
 	}
+	
+	@Override
 	public int data_size() {
 		int cnt = start_data_nb;
 		for (int i = 0 ; i < Utl.data_type_nb ; i++) 
@@ -491,7 +497,7 @@ public class pParam extends sPoolable {
 	public pParam obtain() {
 		obtain_collecs();
 		setAllDef();
-		
+		do_init();
 		return this;
 	}
 	
@@ -501,9 +507,35 @@ public class pParam extends sPoolable {
 		setAllDef();
 		
 	}
+
+	@Override
+	public void init_run() {
+		if (prop != null) {
+			prop.run_init(this);
+		}
+	}
+	
+	@Override
+	public void load_run() {
+//		if (prop != null) {
+//			prop.run_clear(this);
+//		}
+	}
+	
+	@Override
+	public void save_run() {
+//		if (prop != null) {
+//			prop.run_clear(this);
+//		}
+	}
 	
 	private ArrayList<pBody> tmp = new ArrayList<pBody>();
+	@Override
 	public void clear_action() {
+		if (prop != null) {
+			prop.run_clear(this);
+		}
+		
 		for (pCollec c : collec_list) c.clear();
 		
 		tmp.clear();

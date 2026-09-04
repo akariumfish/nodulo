@@ -15,10 +15,10 @@ import aa_nodulo.pProperty;
 import aa_nodulo.pSpace;
 import aa_nodulo.pTime;
 import aa_nodulo.pView;
-import aa_term.CommandExecutor;
+import aa_term.Executor;
 import aa_term.HelpCommand;
 import aa_term.LogLevel;
-import aa_term.CommandExecutor;
+import aa_term.Executor;
 import aa_term.pTerm;
 import app.App;
 import box2d.pBox2d;
@@ -47,6 +47,11 @@ public class pPatch {
 
 		if (!has_build_statics) pSpace.build();
 //		pGround.build(data); 
+		if (!has_build_statics) {
+			pNode.build();
+			pTile.build();
+			pTileHead.build_nodes();
+		}
 		pGeom.build(data); 
 		pBox2d.build(data); 
 		
@@ -63,12 +68,12 @@ public class pPatch {
 		pNodeSpace.build_sheet(data, has_build_statics);
 		
 		if (!has_build_statics) {
-			pNode.build();
+//			pNode.build();
 			pNodeUI.build();
 			pNodeSpace.build_nodes();
 			pNodeAction.build();
-			pTile.build();
-			pTileHead.build_nodes();
+//			pTile.build();
+//			pTileHead.build_nodes();
 			pTileHead.build_tiles();
 			pFunc.build();
 			pAnk.build();
@@ -325,6 +330,7 @@ public class pPatch {
 		Vector2 m = new Vector2(app.input.mouse);
 		m.set(patch_ref.revertWarp(m)); return m; }
 
+	public nMap<pInstance> function_props = new nMap<pInstance>();
 	public nMap<pInstance> common_functions = new nMap<pInstance>();
 	public nMap<pInstance> common_branchs = new nMap<pInstance>();
 	

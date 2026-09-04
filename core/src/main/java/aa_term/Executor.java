@@ -1,5 +1,9 @@
 package aa_term;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
@@ -27,7 +31,7 @@ import util.nMap;
 
 /**
  * Extend this class and fill it with methods (also <code>public</code>) that you wish to have work with the {@link Console}. Then
- * call {@link Console#setCommandExecutor(CommandExecutor)}.<br>
+ * call {@link Console#setCommandExecutor(Executor)}.<br>
  * <br>
  * <b>Notes</b><br>
  * <ul>
@@ -39,7 +43,18 @@ import util.nMap;
  *
  * @author StrongJoshua
  */
-public class CommandExecutor {
+public class Executor {
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*
 	
 	
 	public interface Pooling <T extends Pooled<T>> {
@@ -262,6 +277,7 @@ public class CommandExecutor {
 		//TODO
 	}
 
+	*/
 	
 	
 	
@@ -281,11 +297,11 @@ public class CommandExecutor {
 	private static int commande_counter = 0;
 	private nMap<Commande> commands = new nMap<Commande>();
 
-	public CommandExecutor(Console c) {
+	public Executor(Console c) {
 		console = c;
 		register();
-		Virtual.setConsole(console);
-		Virtual.setExec(this);
+		VirtualScript.setConsole(console);
+		VirtualScript.setExec(this);
 	}
 
 	void register(String r, sValueBloc b) {
@@ -329,7 +345,7 @@ public class CommandExecutor {
 	void register(Method m, Object o) {
 		if (m == null || o == null) return;
 		Annotation annotation = m.getDeclaredAnnotation(TerminalCommand.class);
-		if (m.isPublic() && ((o instanceof CommandExecutor) || 
+		if (m.isPublic() && ((o instanceof Executor) || 
 				annotation != null)) new Commande(m,o);
 	}
 
@@ -498,6 +514,14 @@ public class CommandExecutor {
 	
 	
 	
+	public static class Script {
+
+		public static class Instruction {
+			
+		}
+		
+	}
+	
 	
 
 	private static final char SPACE = 		' ';
@@ -505,7 +529,8 @@ public class CommandExecutor {
 	private static final char CLOSE = 		')';
 //	private static final char IGNORE = 		'_';
 	
-	private static class Virtual {
+
+	private static class VirtualCommande {
 		private String commandName = null;
 		private final ArrayList<Object> args = new ArrayList<Object>();
 		private CharBuffer inBuff;
@@ -591,7 +616,7 @@ public class CommandExecutor {
 							blocRecording = false;
 							subComBuff.deleteCharAt(blocSize - 1);
 							String subCom = subComBuff.substring(0,blocSize-1);
-							Virtual virt = obtain(); virt.reset();
+							VirtualCommande virt = obtain(); virt.reset();
 							Object cm = virt.execute(subCom, false);
 							free(virt);
 							if (cm instanceof ExecutionFail) {
@@ -647,65 +672,62 @@ public class CommandExecutor {
 		}
 
 		static void executeLine(String command) { 
-			Virtual virt = obtain(); virt.reset(); virt.execute(command, true); free(virt); } 
+			VirtualCommande virt = obtain(); virt.reset(); virt.execute(command, true); free(virt); } 
 		
 		private static Console console;
-		private static CommandExecutor exec;
+		private static Executor exec;
 		static void setConsole(Console c) { console = c; }
-		static void setExec(CommandExecutor c) { exec = c; }
+		static void setExec(Executor c) { exec = c; }
 		
-		private static final ArrayList<Virtual> free = new ArrayList<Virtual>();
+		private static final ArrayList<VirtualCommande> free = new ArrayList<VirtualCommande>();
 		private boolean isfree = false;
-		private static Virtual obtain() {
-			if (free.size() == 0) return new Virtual();
-			Virtual v = free.get(free.size()-1); free.remove(v); v.isfree = false; return v; }
-		private static void free(Virtual v) { 
+		private static VirtualCommande obtain() {
+			if (free.size() == 0) return new VirtualCommande();
+			VirtualCommande v = free.get(free.size()-1); free.remove(v); v.isfree = false; return v; }
+		private static void free(VirtualCommande v) { 
 			v.reset(); if (!v.isfree) { free.add(v); } v.isfree = true; }
 	}
+
+	void executeCommands(String commands) { 
+		VirtualCommande.executeLine(commands); }
 	
 	
-	void executeCommands(String commands) {
-//		String[] parts = commands.split("\n");
-//		if (parts.length > 1) { for (String s : parts) Virtual.executeLine(s); }
-//		else 
-			Virtual.executeLine(commands);
+	private static class VirtualScript {
+
+		
+		private void reset() {
+			
+		}
+		
+		Object error() { free(this); return exec.new ExecutionFail(); }
+		
+		Object execute(String[] script) {
+			for (String s : script) exec.executeCommands(s);
+			return null;
+		}
+
+		static void executeScript(String[] script) { 
+			VirtualScript virt = obtain(); virt.reset(); virt.execute(script); free(virt); } 
+		
+		private static Console console;
+		private static Executor exec;
+		static void setConsole(Console c) { console = c; VirtualCommande.setConsole(console); }
+		static void setExec(Executor c) { exec = c; VirtualCommande.setExec(exec); }
+		
+		private static final ArrayList<VirtualScript> free = new ArrayList<VirtualScript>();
+		private boolean isfree = false;
+		private static VirtualScript obtain() {
+			if (free.size() == 0) return new VirtualScript();
+			VirtualScript v = free.get(free.size()-1); free.remove(v); v.isfree = false; return v; }
+		private static void free(VirtualScript v) { 
+			v.reset(); if (!v.isfree) { free.add(v); } v.isfree = true; }
 	}
+
+
+	void executeScript(String[] script) { 
+		VirtualScript.executeScript(script); }
 	
 	
-	
-	
-//	Object execCommand (String command) {
-//		
-//		String[] parts = command.split(" ");
-//		String methodName = parts[0];
-//		
-//		String[] sArgs = null;
-//		if (parts.length > 1) {
-//			sArgs = new String[parts.length - 1];
-//			for (int i = 1; i < parts.length; i++) { sArgs[i - 1] = parts[i]; }
-//		}
-//		
-//		Commande com = commands.get(
-//				methodName + "_" + (sArgs != null ? sArgs.length : (int)0) );
-//		
-//		if (com == null) { console.log("No such method found.", LogLevel.ERROR); return null; }
-//		
-//		if (console.isScripting()) {
-//			if (com.args(sArgs) == null) {
-//				console.log("Bad parameters.", LogLevel.ERROR); return null; }
-//			if (com.isStored) console.storeCommand(command);
-//			if (com.endFlag) console.endScript();
-//			return null;
-//		}
-//		Object[] args = com.args(sArgs);
-//		if (args == null) {
-//			console.log("Bad parameters.", LogLevel.ERROR);
-//			return null; }
-//		if (com.isStored) console.storeCommand(command);
-//		if (com.isLogged) console.log(command, LogLevel.COMMAND);
-//		
-//		return com.exec(args);
-//	}
 	
 	void printCommands () { for (Commande c : commands.all()) c.print(); }
 	void printAllCommands () { for (Commande c : commands.all()) c.printAll(); }

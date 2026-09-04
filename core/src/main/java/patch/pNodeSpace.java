@@ -208,15 +208,15 @@ public class pNodeSpace {
 				while (pop.hasParam(new_ref)) { 
 					new_ref = need.ref + "_" + cnt2; cnt2++; }
 				pParam np = pop.newParam(need, new_ref);
-				new_ref = pop.getRef(np);
-				for (Map.Entry<Class<?>, nMap<Integer>> me : need.data_vals.entrySet()) {
-					if (me.getValue() != null) {
-						for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) {
-							String rf = "def_"+need.ref+"_"+map_me.getKey();
-							pop.param(new_ref).set(rf, gene_par.get(rf));
-						}		
-					}
-				}
+//				new_ref = pop.getRef(np);
+//				for (Map.Entry<Class<?>, nMap<Integer>> me : need.data_vals.entrySet()) {
+//					if (me.getValue() != null) {
+//						for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) {
+//							String rf = "def_"+need.ref+"_"+map_me.getKey();
+//							pop.param(new_ref).set(rf, gene_par.get(rf));
+//						}		
+//					}
+//				}
 			}
 			for (pProperty opt : gene_prop.option_props) 
 					if (gene_par.get("use_"+opt.ref, Boolean.class)) {
@@ -225,15 +225,15 @@ public class pNodeSpace {
 				while (pop.hasParam(new_ref)) { 
 					new_ref = opt.ref + "_" + cnt2; cnt2++; }
 				pParam np = pop.newParam(opt, new_ref);
-				new_ref = pop.getRef(np);
-				for (Map.Entry<Class<?>, nMap<Integer>> me : opt.data_vals.entrySet()) {
-					if (me.getValue() != null) {
-						for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) {
-							String rf = "def_"+opt.ref+"_"+map_me.getKey();
-							pop.param(new_ref).set(rf, gene_par.get(rf));
-						}		
-					}
-				}
+//				new_ref = pop.getRef(np);
+//				for (Map.Entry<Class<?>, nMap<Integer>> me : opt.data_vals.entrySet()) {
+//					if (me.getValue() != null) {
+//						for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) {
+//							String rf = "def_"+opt.ref+"_"+map_me.getKey();
+//							pop.param(new_ref).set(rf, gene_par.get(rf));
+//						}		
+//					}
+//				}
 				
 			}
 		}
@@ -271,15 +271,7 @@ public class pNodeSpace {
 		pSpace space = pop.space;
 		if (space == null) return null;
 		
-//		ArrayList<String> prop_refs = 
-//				;
-//		ArrayList<String> param_refs = 
-//				bluep.getCollecData("param_ref", String.class);
-//		if (prop_refs.size() != param_refs.size()) {
-//			pop.clear(); return null; }
-		
 		for (String prop_ref : pop.params.allKey()) {
-//			String prop_ref = prop_refs.get(i);
 			pProperty gene_prop = pProperty.get(prop_ref);
 			if (gene_prop == null || !gene_prop.is_general) continue;
 			for (nRun n : gene_prop.body_init_runs) n.do_run(pop);

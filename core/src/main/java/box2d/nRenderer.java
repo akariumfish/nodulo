@@ -19,6 +19,7 @@ import app.App;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class nRenderer {
 	
@@ -252,6 +253,17 @@ public class nRenderer {
 			}
 			if (Utl.getBoo(prop,"lightLayer")) {
 				lightLayer.loadMapObject(prop);
+			}
+			if (prop.get("spawn",Integer.class) != null) {
+//				Utl.logn(prop.get("spawn",Integer.class)+" "+prop.get("x",Float.class)+" "+prop.get("y",Float.class));
+			}
+			if (Utl.getBoo(prop,"mob")) {
+//				Iterator<String> iter = prop.getKeys();
+//				while (iter.hasNext()) Utl.logn(""+iter.next());
+//				Utl.logn(""+prop.get("x",Float.class)
+//				+" "+prop.get("y",Float.class)
+//				+" "+prop.get("width",Float.class)
+//				+" "+prop.get("height",Float.class));
 			}
 		}
 	}

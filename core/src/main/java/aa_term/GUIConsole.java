@@ -188,7 +188,7 @@ public class GUIConsole extends AbstractConsole {
 		setPositionPercent(50, 50);
 	}
 
-	@Override public void setCommandExecutor (CommandExecutor commandExec) {
+	@Override public void setCommandExecutor (Executor commandExec) {
 		super.setCommandExecutor(commandExec);
 		commandCompleter.reset();
 	}

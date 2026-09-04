@@ -25,7 +25,7 @@ import util.nMap;
  */
 public abstract class AbstractConsole implements Console, Disposable {
 	protected final Log log;
-	protected CommandExecutor exec;
+	protected Executor exec;
 	protected boolean logToSystem;
 
 	protected boolean disabled;
@@ -47,7 +47,7 @@ public abstract class AbstractConsole implements Console, Disposable {
 		log = new Log();
 		execHistory = new CommandHistory();
 		scriptStack = new CommandHistory();
-		exec = new CommandExecutor(this);
+		exec = new Executor(this);
 	}
 
 	@Override public void setRecordLog(boolean b) { recordLog = b; }
@@ -65,7 +65,7 @@ public abstract class AbstractConsole implements Console, Disposable {
 		this.disabled = disabled;
 	}
 
-	@Override public void setCommandExecutor (CommandExecutor commandExec) {
+	@Override public void setCommandExecutor (Executor commandExec) {
 		exec = commandExec;
 	}
 
@@ -164,7 +164,8 @@ public abstract class AbstractConsole implements Console, Disposable {
 	@Override public void runScript(String ref) {
 		if (!scripts.hasKey(ref)) return;
 		log("running script "+ref,LogLevel.SUCCESS);
-		for (String s : scripts.get(ref)) submitCommand(s);
+		exec.executeScript(scripts.get(ref));
+//		for (String s : scripts.get(ref)) submitCommand(s);
 	}
 	
 	
@@ -285,7 +286,7 @@ public abstract class AbstractConsole implements Console, Disposable {
 	}
 
 	@Override public void dispose () {
-		CommandExecutor.dispose();
+		Executor.dispose();
 	}
 
 	@Override public boolean isVisible () {

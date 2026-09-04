@@ -16,7 +16,6 @@ public abstract class sPoolable {
 		is_clearing = false; pool = p; pool_index = i; 
 		pool_ref = pool.name+"_"+i; state = State.FREE; is_new = false;
 	}
-	public abstract void clear_action();
 	protected boolean is_clearing = false;
 	public boolean is_clearing() { return is_clearing; }
 	
@@ -60,6 +59,7 @@ public abstract class sPoolable {
 	public void init_run() {}
 	public void load_run() {}
 	public void save_run() {}
+	public abstract void clear_action();
 	public int data_size() { return 0; }
 	public sPoolable() {}
 }

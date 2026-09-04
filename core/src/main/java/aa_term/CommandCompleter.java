@@ -16,7 +16,7 @@ public class CommandCompleter {
 		setString = "";
 	}
 
-	public void set (CommandExecutor ce, String s) {
+	public void set (Executor ce, String s) {
 		reset();
 		setString = s.toLowerCase();
 		Array<Method> methods = getAllMethods(ce);
@@ -51,7 +51,7 @@ public class CommandCompleter {
 		return iterator.next();
 	}
 
-	private Array<Method> getAllMethods (CommandExecutor ce) {
+	private Array<Method> getAllMethods (Executor ce) {
 		Array<Method> methods = new Array<>();
 		Method[] ms = ClassReflection.getDeclaredMethods(ce.getClass());
 		for (Method m : ms) {

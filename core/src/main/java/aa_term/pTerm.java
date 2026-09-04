@@ -31,6 +31,9 @@ public class pTerm {
 		console.register(r,b,o); 
 	}
 
+	public pTerm exe(String r) {
+		console.run(r); return this; }
+
 //	public CommandHistory newStoredCode(String code_ref) {
 //		return console.newStoredCode(code_ref);
 //	}
@@ -72,7 +75,7 @@ public class pTerm {
 		console.setHoverAlpha(.9f);
 		console.setNoHoverAlpha(.9f);
 		
-		console.setSizePercent(100, 50);
+		console.setSizePercent(100, 30);
 		console.setPositionPercent(0, 0);
 
 //		console.enableSubmitButton(true);
@@ -90,14 +93,6 @@ public class pTerm {
 		
 //		if (!app.config.RELEASE) tool_setup(true);
 		
-//		app.addDelayEvent(100, new nRun(this) { public void run() {
-//			console
-//			.exec("sys time")
-//			.exec("pause true")
-//			.exec("sys term")
-//			;
-//		}});
-		
 
 		app.outputs.put("trm", new nRun() { public void run() {
 			if (args.length < 1) return;
@@ -105,31 +100,25 @@ public class pTerm {
 			console.submitCommand(r);
 		}});
 		
-
-		app.addDelayEvent(80, new nRun(this) { public void run() {
-			console.run("setboo time val_pause (not (getboo time val_pause))");
-			console.run("setboo time val_pause (not (getboo time val_pause))");
+		if (app.config.TEST_TERMINAL) app.addDelayEvent(80, new nRun(this) { public void run() {
+			exe("setboo time val_pause (not (getboo time val_pause))");
+			exe("setboo time val_pause (not (getboo time val_pause))");
 			
-			console.run("beginScript test")
-			.run("setboo time val_pause (not (getboo time val_pause))")
-			.run("endScript")
-			;
-			console.run("runScript test");
+			exe("beginScript test");
+			exe("setboo time val_pause (not (getboo time val_pause))");
+			exe("endScript");
+			
+			exe("runScript test");
 			app.addDelayEvent(50, new nRun(this) { public void run() {
-				console.run("setboo time val_pause (not (getboo time val_pause))");
-//				console.run("runScript test");
+				exe("setboo time val_pause (not (getboo time val_pause))");
 				app.addDelayEvent(50, new nRun(this) { public void run() {
-//					console.run("setboo time val_pause (not (getboo time val_pause))");
-					console.run("runScript test");
+					exe("runScript test");
 					app.addDelayEvent(50, new nRun(this) { public void run() {
-						console.run("setboo time val_pause (not (getboo time val_pause))");
-//						console.run("runScript test");
+						exe("setboo time val_pause (not (getboo time val_pause))");
 						app.addDelayEvent(50, new nRun(this) { public void run() {
-//							console.run("setboo time val_pause (not (getboo time val_pause))");
-							console.run("runScript test");
+							exe("runScript test");
 							app.addDelayEvent(50, new nRun(this) { public void run() {
-								console.run("setboo time val_pause (not (getboo time val_pause))");
-//								console.run("runScript test");
+								exe("setboo time val_pause (not (getboo time val_pause))");
 							}});
 						}});
 					}});

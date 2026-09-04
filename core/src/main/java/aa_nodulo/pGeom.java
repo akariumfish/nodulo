@@ -31,12 +31,14 @@ import util.Utl;
 import util.nMap;
 import util.nPool;
 import util.nRun;
+import patch.pFunc;
 import patch.pInstance;
 import patch.pNode;
 import patch.pNodeSpace;
 import patch.pPar;
 import patch.pProcess;
 import patch.pStandard;
+import patch.pTileHead;
 import patch.pNode.CT;
 
 public class pGeom extends pSystem {
@@ -699,8 +701,20 @@ public class pGeom extends pSystem {
 			pBody bod = (pBody)o; if (bod == null) return;
 			pGeom geo = PlaneApplet.app.getSystem(pGeom.class);
 			pBox2d box = PlaneApplet.app.getSystem(pBox2d.class);
-			if (box != null && bod.hasParam("box_body") && bod.hasParam("ref") && 
-					bod.hasParam("ctrl_mob") && bod.getBoo("ctrl_mob","activate")) {
+			if (box == null || !bod.hasParam("box_body") || !bod.hasParam("ref") || 
+					!bod.hasParam("ctrl_mob") || geo == null) return;
+			int spawning = bod.getInt("ctrl_mob","spawning");
+			if (spawning > 0) {
+				bod.setInt("ctrl_mob","spawning",(int)(spawning-1));
+				return;
+			} else if (spawning == 0) {
+				bod.setInt("ctrl_mob","spawning",(int)(spawning-1));
+				Vector2 spawn = bod.getVec("ctrl_mob","spawn");
+				box.move_body(bod,spawn.x,spawn.y); 
+				return;
+			} 
+			
+			if (bod.getBoo("ctrl_mob","activate")) {
 				Vector2 spawn = bod.getVec("ctrl_mob","spawn");
 				Vector2 target = bod.getVec("ctrl_mob","target");
 				Vector2 pos = bod.getVec("ref","pos");
@@ -717,42 +731,40 @@ public class pGeom extends pSystem {
 				box.accel_body(bod,true,m.x,m.y,speed*2f); 
 				box.rot_body_toward(bod,m.angleRad(),speed/40f,speed/30f); 
 			}
-			if (geo != null && bod.hasParam("ref") && bod.hasParam("ctrl_mob")) {
-				if (bod.getBoo("ctrl_mob","shoot")) {
-					if (bod.getInt("ctrl_mob","shoot_counter") < 
-							bod.getInt("ctrl_mob","shoot_delay")) {
-						bod.setInt("ctrl_mob","shoot_counter", 
-								bod.getInt("ctrl_mob","shoot_counter") + (int)1);
-					} else {
-						bod.setInt("ctrl_mob","shoot_counter", 0);
-						String bluep_par = bod.getStr("ctrl_mob","bullet_blueprint");
-						pParam bluep = null;
-						for (pParam p : bod.space.param_pools.get("blueprint").all()) 
-							if (p.getStr("name").equals(bluep_par)) { bluep = p; break; }
-						
-						if (bluep != null) { 
-							pBody pop = pNodeSpace.new_body(bluep);
-							if (pop == null) return;
+			if (bod.getBoo("ctrl_mob","shoot")) {
+				if (bod.getInt("ctrl_mob","shoot_counter") < 
+						bod.getInt("ctrl_mob","shoot_delay")) {
+					bod.setInt("ctrl_mob","shoot_counter", 
+							bod.getInt("ctrl_mob","shoot_counter") + (int)1);
+				} else {
+					bod.setInt("ctrl_mob","shoot_counter", 0);
+					String bluep_par = bod.getStr("ctrl_mob","bullet_blueprint");
+					pParam bluep = null;
+					for (pParam p : bod.space.param_pools.get("blueprint").all()) 
+						if (p.getStr("name").equals(bluep_par)) { bluep = p; break; }
+					
+					if (bluep != null) { 
+						pBody pop = pNodeSpace.new_body(bluep);
+						if (pop == null) return;
 
-							Vector2 shoot_pop = bod.getVec("ctrl_mob","shoot_pop");
-							Vector2 shoot_dir = bod.getVec("ctrl_mob","shoot_dir");
-							
-							Vector2 bp = bod.getVec("ref", "pos");
-							Vector2 p = new Vector2(shoot_pop.x,shoot_pop.y);
-							p.add(bp);
-							pop.setVec("ref", "pos", new Vector2(p.x,p.y));
-							pop.setFlt("ref", "rot", shoot_dir.angleRad());
-							
-							pNodeSpace.init_body(pop, bluep);
-							
-							if (box != null) {
-								if (pop.hasParam("ctrl_box")) {
-									pop.setBoo("ctrl_box","accel_move", true);
-									pop.setVec("ctrl_box","accel_dir", shoot_dir.x,shoot_dir.y);
-								}
+						Vector2 shoot_pop = bod.getVec("ctrl_mob","shoot_pop");
+						Vector2 shoot_dir = bod.getVec("ctrl_mob","shoot_dir");
+						
+						Vector2 bp = bod.getVec("ref", "pos");
+						Vector2 p = new Vector2(shoot_pop.x,shoot_pop.y);
+						p.add(bp);
+						pop.setVec("ref", "pos", new Vector2(p.x,p.y));
+						pop.setFlt("ref", "rot", shoot_dir.angleRad());
+						
+						pNodeSpace.init_body(pop, bluep);
+						
+						if (box != null) {
+							if (pop.hasParam("ctrl_box")) {
+								pop.setBoo("ctrl_box","accel_move", true);
+								pop.setVec("ctrl_box","accel_dir", shoot_dir.x,shoot_dir.y);
 							}
-						} 
-					}
+						}
+					} 
 				}
 			}
 		}};
@@ -762,6 +774,7 @@ public class pGeom extends pSystem {
 		.addData("activate", true)
 		.addData("direction", true)
 		.addData("speed", 20f)
+		.addData("spawning", (int)1)
 		.addData("spawn", new Vector2(400,900))
 		.addData("target", new Vector2(1000,-900))
 		.addData("shoot", true)
@@ -929,6 +942,61 @@ public class pGeom extends pSystem {
 		.addData("keep_pos", 20f, "min", 0f, "max", 20f)
 		.addData("keep_rot", 0.1f, "min", 0f, "max", 0.1f)
 		;
+		
+		
+
+		nRun func_prop_run = new nRun() { public void run() {
+			pStandard stand = arg(0,pStandard.class);
+			if (stand == null) return;
+			stand.addInitRun(new nRun() {public void run() {
+				int i = 0;
+				String r = ""+i;
+				while (instance.patch.function_props.hasKey(r)) {
+					i++; r = ""+i; }
+				instance.patch.function_props.put(r,instance);
+				instance.setVar("inst_ref",r);
+			}});
+			stand.addClearRun(new nRun() {public void run() {
+				instance.patch.function_props.remove(
+						instance.getVar("inst_ref", String.class),instance);
+			}});
+			stand.append(pTileHead.exec_context);
+			stand.openSec()
+				.param("keys", new String[]{"reg", "register", "in"}, 
+						"filters", new String[]{"out"}) 
+				.run(pNode.getRun(pNode.CT.RUNS_ADD_CO_IN), "co_reg")
+			.closeSec();
+		}};
+
+
+		pProperty logic = pProperty.newGeneralProperty("logic")
+//		.addData("init_func_ref", "")
+		.addData("tick_func_ref", "")
+		.addData("inst_ref", "")
+		.addNodeRun(func_prop_run)
+		;
+
+		nRun run_ctrl_func = new nRun() { public void run(Object o) { 
+			pBody bod = (pBody)o; if (bod == null) return;
+			if (bod.hasParam("logic") && bod.hasParam("ctrl_func")) {
+				String func_ref = bod.getStr("logic","tick_func_ref");
+				String inst_ref = bod.getStr("logic","inst_ref");
+				pInstance func = PlaneApplet.app.patch.common_functions.get(func_ref);
+				pInstance inst = PlaneApplet.app.patch.function_props.get(inst_ref);
+				if (func == null || inst == null) return;
+				Object[] script = func.get("get_instruction_script", Object[].class);
+				if (script == null) return;
+				Object[] ar = new Object[] { bod };
+				pFunc.func_script_run(inst, script, ar); 
+			}
+		}};
+		pGeom.newControlProp("func",logic,run_ctrl_func) 
+		;
+		
+		
+		
+		
+		
 		
 		
 		
@@ -1405,7 +1473,7 @@ public class pGeom extends pSystem {
 ////			}
 ////		} 
 		boolean halo = geom.getBoo("halo");
-		if (halo) {
+		if (halo && b != null) {
 			app.halo(b.getVec("ref", "pos"), 12, 
 					Utl.color(255,0,0,0), Utl.color(255,100,100,255));
 		}

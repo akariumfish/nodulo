@@ -12,8 +12,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.noodle.nodulo.GdxApp;
 
-import aa_term.CommandExecutor;
-import aa_term.CommandExecutor.ScriptableConstructor;
+import aa_term.Executor;
+//import aa_term.CommandExecutor.ScriptableConstructor;
 import aa_term.HelpCommand;
 import aa_term.LogLevel;
 import aa_term.pTerm;
@@ -173,18 +173,18 @@ public class pView {
 	}
 	
 	
-	class Par extends CommandExecutor.Scriptable<Par> {
-		
-		@ScriptedField(description = "an integer value", 
-				settings = {"def", "0", "min", "0", "max", "10", "granulo", "2"}) 
-		int val = 0;
-
-	}
+//	class Par extends CommandExecutor.Scriptable<Par> {
+//		
+//		@ScriptedField(description = "an integer value", 
+//				settings = {"def", "0", "min", "0", "max", "10", "granulo", "2"}) 
+//		int val = 0;
+//
+//	}
 	
 	
 	private void setupExecutor() {
 		
-		app.term.register("view", bloc, this);
+//		app.term.register("view", bloc, this);
 		
 //		CommandExecutor exec = app.term.addExecutor(new CommandExecutor("view", bloc, this) {
 //

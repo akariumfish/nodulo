@@ -17,10 +17,10 @@ import aa_nodulo.pProperty;
 import aa_nodulo.pSpace;
 import aa_nodulo.pSystem;
 import aa_nodulo.pView;
-import aa_term.CommandExecutor;
+import aa_term.Executor;
 import aa_term.HelpCommand;
 import aa_term.LogLevel;
-import aa_term.CommandExecutor;
+import aa_term.Executor;
 import aa_term.pTerm;
 import data.*;
 import gui.*;
@@ -639,6 +639,15 @@ public class pBox2d extends pSystem {
 			renderer.auraLayer.transparent.remove(body);
 			break_bodys.remove(body);
 			clearing_bodys.remove(body);
+		}
+
+		public void move_body(pBody b, float x, float y) {
+			if (b.param("box_body") == null) return;
+			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+			if (body == null) return;
+//			Vector2 pos = body.getPosition();
+			float rot = body.getAngle();
+			body.setTransform(x,y,rot);
 		}
 
 		public void accel_body(pBody b, boolean glob, float x, float y, float max) {

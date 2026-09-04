@@ -18,6 +18,8 @@ public class pTileHead {
 	
 	public static int func_counter = 0;
 
+	public static pStandard exec_context;
+	
 	public static void build_nodes() {
 
 //		build_stack_editor(app);
@@ -25,7 +27,7 @@ public class pTileHead {
 		float RS = nGUI.book.RS;
 		
 
-		pStandard exec_context = pStandard.newStandard("exec_context_abstract", "inst");
+		exec_context = pStandard.newStandard("exec_context_abstract", "inst");
 		
 		exec_context
 		.newRun("obtain_all_reg_of_model", new nRun() {public Object get() { 
@@ -224,17 +226,10 @@ public class pTileHead {
 				nWidget trigg_w = instance.get("get_mapped_widget", nWidget.class, 
 						"trigg_dropm");
 				if (trigg_w == null) return;
-//				instance.patch.patch_dropmenu.metode("clear_entrys");
 				for (String par : instance.patch.common_functions.allKey()) {
 					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
-						((pInstance)builder).setVar("target_ref", par); }}); 
-//					nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-//							.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-//					w1.addEventTrigger(new nRun(instance) { public void run() {
-//						((pInstance)builder).setVar("target_ref", par); 
-//					}}); 
+						((pInstance)builder).setVar("target_ref", par); }});  
 				}
-//				instance.patch.patch_dropmenu.metode("open", trigg_w); 
 				nGUI.open_dropmenu(trigg_w);
 			}})
 			.run(pNode.getRun(pNode.CT.RUNP_ADD_TRIGG), "trigg_dropm", "Pk", (int)2)
