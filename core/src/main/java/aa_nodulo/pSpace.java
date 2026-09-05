@@ -35,76 +35,76 @@ public class pSpace {
 		float RS = nGUI.book.RS;
 
 		// put in a map
-		pProperty.newProperty("registered")
-		.addData("name", "")
-		.addInitRun(new nRun() {public void run() {
-			pParam par = arg(0, pParam.class);
-			
-			
-			
-		}})
-		.addClearRun(new nRun() {public void run() {
-			pParam par = arg(0, pParam.class);
-			
-			
-			
-		}})
-		;
-		
-		// model for storing and recalling the state of space elements :
-		
-		// model to apply to a param data
-		pProperty.newProperty("data_value")
-		.addData("data_ref", "")
-		.addData("data_class", "")
-		.addData("data_val", "");
-		
-		// model to apply to a param
-		pProperty archetype = pProperty.newProperty("archetype");
-		archetype.copy("registered")
-		.addData("prop_ref", "") // ref of prop of params this can be applied to
-		.addCollecRef("vals", "data_value") // value to set at application
-		.addCollec("args", String.class) // data to ask as arg at application
-		;
-		
-		
-		// model for creating space elements :
-
-		// a value
-		pProperty.newProperty("value")
-		.addData("class", (int)0)
-		.addData("val", "");
-
-		// model to build a param from an arch
-		pProperty.newProperty("arch_print")
-		.addData("arch_name", "")
-		.addRef("arch", "archetype")
-		.addCollecRef("arch_args", "value") // args for the arch
-		.addCollecRef("sets", "data_value") // data to set at build
-		.addCollec("args", String.class) // data to ask as arg at build
-		;
-
-		// model for building a body
-		pProperty.newProperty("bodyprint")
-		.copy("registered")
-		.addCollecRef("prints", "arch_print") // each pop a param for the body
-		//at build it will ask args for arch_prints
-		;
-		
-
-		// model for building a bodyprint
-		pProperty.newProperty("print_builder")
-		.addData("print_name", "")
-		.addRef("print", "bodyprint")
-		.addCollecRef("args", "value") // args for the print
-		;
-
-		// model to build a group of body
-		pProperty.newProperty("builder")
-		.copy("registered")
-		.addCollecRef("builds", "print_builder")
-		;
-		
+//		pProperty.newProperty("registered")
+//		.addData("name", "")
+//		.addInitRun(new nRun() {public void run() {
+//			pParam par = arg(0, pParam.class);
+//			
+//			
+//			
+//		}})
+//		.addClearRun(new nRun() {public void run() {
+//			pParam par = arg(0, pParam.class);
+//			
+//			
+//			
+//		}})
+//		;
+//		
+//		// model for storing and recalling the state of space elements :
+//		
+//		// model to apply to a param data
+//		pProperty.newProperty("data_value")
+//		.addData("data_ref", "")
+//		.addData("data_class", "")
+//		.addData("data_val", "");
+//		
+//		// model to apply to a param
+//		pProperty archetype = pProperty.newProperty("archetype");
+//		archetype.copy("registered")
+//		.addData("prop_ref", "") // ref of prop of params this can be applied to
+//		.addCollecRef("vals", "data_value") // value to set at application
+//		.addCollec("args", String.class) // data to ask as arg at application
+//		;
+//		
+//		
+//		// model for creating space elements :
+//
+//		// a value
+//		pProperty.newProperty("value")
+//		.addData("class", (int)0)
+//		.addData("val", "");
+//
+//		// model to build a param from an arch
+//		pProperty.newProperty("arch_print")
+//		.addData("arch_name", "")
+//		.addRef("arch", "archetype")
+//		.addCollecRef("arch_args", "value") // args for the arch
+//		.addCollecRef("sets", "data_value") // data to set at build
+//		.addCollec("args", String.class) // data to ask as arg at build
+//		;
+//
+//		// model for building a body
+//		pProperty.newProperty("bodyprint")
+//		.copy("registered")
+//		.addCollecRef("prints", "arch_print") // each pop a param for the body
+//		//at build it will ask args for arch_prints
+//		;
+//		
+//
+//		// model for building a bodyprint
+//		pProperty.newProperty("print_builder")
+//		.addData("print_name", "")
+//		.addRef("print", "bodyprint")
+//		.addCollecRef("args", "value") // args for the print
+//		;
+//
+//		// model to build a group of body
+//		pProperty.newProperty("builder")
+//		.copy("registered")
+//		.addCollecRef("builds", "print_builder")
+//		;
+//		
 		
 	}
 	
@@ -678,7 +678,7 @@ public class pSpace {
 
 	public void draw() {
 
-		pProperty.run_draw(this);
+//		pProperty.run_draw(this);
 		
 	}
 	
@@ -727,14 +727,14 @@ public class pSpace {
 			pNodeSpace.init_body(b);
 		}
 		
-		app.addDelayEvent(1,new nRun() { public void run() {
-			for (pBody b : body_pool.all()) {
-//				app.getSystem(pGeom.class).init_body(b);
-//				plane.getSystem(pFlux.class).init_body(b);
-//				if (b.hasParam("selectable") && b.getBoo("selectable","selected")) {
-//					plane.getSystem(pGraph.class).select_body(b); } 
-			}
-		}});
+//		app.addDelayEvent(1,new nRun() { public void run() {
+//			for (pBody b : body_pool.all()) {
+////				app.getSystem(pGeom.class).init_body(b);
+////				plane.getSystem(pFlux.class).init_body(b);
+////				if (b.hasParam("selectable") && b.getBoo("selectable","selected")) {
+////					plane.getSystem(pGraph.class).select_body(b); } 
+//			}
+//		}});
 	}
 	
 	

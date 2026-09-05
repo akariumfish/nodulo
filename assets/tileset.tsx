@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.12.2" name="Tilemap" tilewidth="16" tileheight="16" spacing="1" tilecount="221" columns="13">
- <image source="Tilemap.png" width="221" height="288"/>
+<tileset version="1.10" tiledversion="1.12.2" name="Tilemap" tilewidth="16" tileheight="16" spacing="1" tilecount="234" columns="13">
+ <image source="Tilemap.png" width="221" height="305"/>
  <tile id="0">
   <properties>
    <property name="ground" type="bool" value="false"/>
@@ -25,28 +25,28 @@
  <tile id="3">
   <properties>
    <property name="ground" type="bool" value="false"/>
-   <property name="light" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="4">
   <properties>
    <property name="ground" type="bool" value="false"/>
-   <property name="light" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="5">
   <properties>
    <property name="ground" type="bool" value="false"/>
-   <property name="light" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="6">
   <properties>
    <property name="ground" type="bool" value="false"/>
-   <property name="light" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="true"/>
   </properties>
  </tile>
@@ -74,14 +74,14 @@
  <tile id="10">
   <properties>
    <property name="ground" type="bool" value="false"/>
-   <property name="light" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="11">
   <properties>
    <property name="ground" type="bool" value="false"/>
-   <property name="light" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="true"/>
   </properties>
  </tile>
@@ -116,14 +116,14 @@
  <tile id="16">
   <properties>
    <property name="ground" type="bool" value="false"/>
-   <property name="light" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="17">
   <properties>
    <property name="ground" type="bool" value="false"/>
-   <property name="light" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="true"/>
   </properties>
  </tile>
@@ -137,7 +137,7 @@
  <tile id="19">
   <properties>
    <property name="ground" type="bool" value="false"/>
-   <property name="light" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="true"/>
   </properties>
  </tile>
@@ -165,14 +165,14 @@
  <tile id="23">
   <properties>
    <property name="ground" type="bool" value="false"/>
-   <property name="light" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="24">
   <properties>
    <property name="ground" type="bool" value="false"/>
-   <property name="light" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="true"/>
   </properties>
  </tile>
@@ -207,28 +207,28 @@
  <tile id="29">
   <properties>
    <property name="ground" type="bool" value="false"/>
-   <property name="light" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="30">
   <properties>
    <property name="ground" type="bool" value="false"/>
-   <property name="light" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="31">
   <properties>
    <property name="ground" type="bool" value="false"/>
-   <property name="light" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="32">
   <properties>
    <property name="ground" type="bool" value="false"/>
-   <property name="light" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
    <property name="wall" type="bool" value="true"/>
   </properties>
  </tile>
@@ -1548,6 +1548,97 @@
    <property name="wall" type="bool" value="false"/>
   </properties>
  </tile>
+ <tile id="221">
+  <properties>
+   <property name="ground" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="222">
+  <properties>
+   <property name="ground" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="223">
+  <properties>
+   <property name="ground" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="224">
+  <properties>
+   <property name="ground" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="225">
+  <properties>
+   <property name="ground" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="226">
+  <properties>
+   <property name="ground" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="227">
+  <properties>
+   <property name="ground" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="228">
+  <properties>
+   <property name="ground" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="229">
+  <properties>
+   <property name="ground" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="230">
+  <properties>
+   <property name="ground" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="231">
+  <properties>
+   <property name="ground" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="232">
+  <properties>
+   <property name="ground" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="233">
+  <properties>
+   <property name="ground" type="bool" value="false"/>
+   <property name="light" type="bool" value="true"/>
+   <property name="wall" type="bool" value="false"/>
+  </properties>
+ </tile>
  <wangsets>
   <wangset name="Ground" type="mixed" tile="-1">
    <wangcolor name="dirt" color="#ff0000" tile="-1" probability="1">
@@ -1788,6 +1879,10 @@
    <wangtile tileid="218" wangid="5,6,5,5,5,6,6,6"/>
    <wangtile tileid="219" wangid="5,6,6,6,5,5,5,6"/>
    <wangtile tileid="220" wangid="5,5,5,5,5,5,5,5"/>
+   <wangtile tileid="221" wangid="3,3,1,1,2,1,1,3"/>
+   <wangtile tileid="222" wangid="1,1,2,1,1,3,3,3"/>
+   <wangtile tileid="223" wangid="2,1,1,3,3,3,1,1"/>
+   <wangtile tileid="224" wangid="1,3,3,3,1,1,2,1"/>
   </wangset>
  </wangsets>
 </tileset>

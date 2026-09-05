@@ -140,14 +140,15 @@ public class nDrawer {
 		
 
 		render_buffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);
-		render_buffer.initialize((int)GdxApp.app.getscreenwidth(),
-				(int)GdxApp.app.getscreenheight());
-
-		GdxApp.app.addEventScreen(new nRun() { public void run() {
-			render_buffer.reset();
-			render_buffer.initialize((int)GdxApp.app.getscreenwidth(),
-					(int)GdxApp.app.getscreenheight());
-		}});
+		render_buffer.initialize((int)GdxApp.WIDTH,
+				(int)GdxApp.HEIGHT);
+		
+		if (GdxApp.app != null)
+			GdxApp.app.addEventScreen(new nRun() { public void run() {
+				render_buffer.reset();
+				render_buffer.initialize((int)GdxApp.app.getscreenwidth(),
+						(int)GdxApp.app.getscreenheight());
+			}});
 
 		
 	}

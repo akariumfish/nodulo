@@ -827,11 +827,16 @@ public class pFunc {
 		EQ, ESUP, EINF, SUP, INF, 
 		
 		GETI, GETR, GETP, //SLOW, 
+		
+		PGET, 
+		
 		BRC, 
 		ARR, IND, PASS, //MEM, 
 		
 		//Instruction
 		SETO, SETR, SETP, 
+		
+		RUNP, 
 		
 		NEW, 
 		

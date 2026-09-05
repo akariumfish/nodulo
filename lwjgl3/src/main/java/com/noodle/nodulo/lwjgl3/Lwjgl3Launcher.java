@@ -10,6 +10,7 @@ import com.noodle.nodulo.Main;
 
 import aa_nodulo.PlaneApplet;
 import app.AppConfig;
+import util.nRun;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
@@ -58,7 +59,10 @@ public class Lwjgl3Launcher {
 			createApplication("nodulo", 610, 50, 
 					Lwjgl3Launcher.WIN_SOLO_WIDTH, 
 					Lwjgl3Launcher.WIN_SOLO_HEIGHT, 
-					false);
+					false, 
+					new nRun() { public void run() {
+						Launcher.launch();
+					}});
 		}
 		
 		
@@ -113,6 +117,97 @@ public class Lwjgl3Launcher {
 	}
 	
 	
+	public static class Launcher {
+
+		public static void launch() {
+
+			PlaneApplet.TITLE_SCREEN = false;
+
+			Thread thread = new Thread() {
+				public void run() {
+					try {
+						int res = JavaProcess.exec(Lwjgl3Launcher.Launcher.class, 
+								new LinkedList<String>()); 
+						System.out.println("exec res: "+res);
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			};
+
+			thread.start();
+		}
+		
+		public static String title = "server";
+		
+		public static String setting_file = "setting_server";
+		
+		public static boolean autorize_autoload = true;
+		public static boolean autorize_autobuild = true;
+		
+		public static boolean is_server = true;
+		
+		public static int window_pos_x = 20;
+		public static int window_pos_y = 50;
+		
+		public static void main(String[] args) {
+			GdxApp.WIDTH = Lwjgl3Launcher.WIN_DOUBLE_WIDTH;
+			GdxApp.HEIGHT = Lwjgl3Launcher.WIN_DOUBLE_HEIGHT;
+			
+			title = 				Lwjgl3Launcher.Lwjgl3LD1_title;
+			setting_file = 		Lwjgl3Launcher.Lwjgl3LD1_setting_file;
+			autorize_autoload = 	Lwjgl3Launcher.Lwjgl3LD1_autorize_autoload;
+			autorize_autobuild = Lwjgl3Launcher.Lwjgl3LD1_autorize_autobuild;
+			is_server = 			Lwjgl3Launcher.Lwjgl3LD1_is_server;
+			window_pos_x = 		Lwjgl3Launcher.Lwjgl3LD1_window_pos_x;
+			window_pos_y = 		Lwjgl3Launcher.Lwjgl3LD1_window_pos_y;
+			
+			// This handles macOS support and helps on Windows.
+			if (StartupHelper.startNewJvmIfRequired()) return; 
+			
+			createApplication(title, setting_file, autorize_autoload, autorize_autobuild, is_server, 
+					window_pos_x, window_pos_y);
+			
+		}
+		
+		protected static Lwjgl3Application createApplication(
+				String title, String setting_file, boolean autol, boolean autob, boolean netmode, int x, int y) {
+			return createApplication("nodulo", x, y, false);
+		}
+
+		private static Lwjgl3Application createApplication(String title, 
+				int posx, int posy, boolean fullscreen) {
+			return new Lwjgl3Application(new Main(new AppConfig(title, 
+						Lwjgl3Launcher.WIN_DOUBLE_WIDTH, 
+						Lwjgl3Launcher.WIN_DOUBLE_HEIGHT
+						, fullscreen)), 
+					getDefaultConfiguration("app - "+title, posx, posy)
+//					getConfiguration(posx, posy, sizex, sizey)
+					);
+		}
+
+		private static Lwjgl3ApplicationConfiguration getDefaultConfiguration(String t, int x, int y) {
+			Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
+			configuration.setTitle(t);
+			configuration.useVsync(true);
+			configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
+//			configuration.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+			configuration.setWindowedMode(Lwjgl3Launcher.WIN_DOUBLE_WIDTH, Lwjgl3Launcher.WIN_DOUBLE_HEIGHT);
+			configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
+			configuration.setWindowPosition(x, y);
+			return configuration;
+		}
+	}
+	
+
+	private static Lwjgl3Application createApplication(String title, 
+			int posx, int posy, int sizex, int sizey, boolean fullscreen, 
+			nRun app_run) {
+		return new Lwjgl3Application(new Main(new AppConfig(title, sizex, sizey, fullscreen, app_run)), 
+				getConfiguration(posx, posy, sizex, sizey));
+	}
 
 	private static Lwjgl3Application createApplication(String title, 
 			int posx, int posy, int sizex, int sizey, boolean fullscreen) {

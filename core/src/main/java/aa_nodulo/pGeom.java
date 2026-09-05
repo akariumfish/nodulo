@@ -680,19 +680,7 @@ public class pGeom extends pSystem {
 		
 		
 		
-
-
-//		pProperty logic = pProperty.newGeneralProperty("logic")
-//		.addData("run", true)
-//		.addData("frame", false)
-//		.addData("tick", true)
-//		.addData("delay", (int)0)
-//		.addData("func_ref", "")
-//		;
-//
-//		pFamily.newFamily("logic")
-//		.addProp("logic")
-//		;
+		
 
 		
 		
@@ -855,7 +843,6 @@ public class pGeom extends pSystem {
 				if (bod.getBoo("ctrl_pop","pop")) {
 					
 					String bluep_par = bod.getStr("ctrl_pop","blueprint_par");
-//					pParam bluep = bod.space.param_pools.get("blueprint").get(bluep_par);
 					
 					pParam bluep = null;
 					for (pParam p : bod.space.param_pools.get("blueprint").all()) 
@@ -875,7 +862,6 @@ public class pGeom extends pSystem {
 						
 						pNodeSpace.init_body(pop, bluep);
 						
-//						geo.speed_body(bod,pop,acc_pos.x,acc_pos.y,acc_rot);
 						if (box != null) {
 							if (pop.hasParam("ctrl_box")) {
 								pop.setBoo("ctrl_box","accel_move", true);
@@ -887,37 +873,6 @@ public class pGeom extends pSystem {
 						bod.param("ctrl_pop").setBody("last", pop);
 					} 
 				}
-				if (bod.getBoo("ctrl_pop","throw")) {
-					if (bod.param("ctrl_pop").getBody("last") != null) {
-						pBody last = bod.param("ctrl_pop").getBody("last");
-//						geo.speed_body(bod,last,acc_pos.x,acc_pos.y,acc_rot);
-//						if (box != null) {
-//							if (last.hasParam("ctrl_box")) {
-//								last.setBoo("ctrl_box","accel_move", true);
-//								last.setVec("ctrl_box","accel_dir", acc_pos.x,acc_pos.y);
-////								last.setFlt("ctrl_box","move_strength", acc_pos.len());
-//							}
-//						}
-					}
-				}
-//				if (!bod.getBoo("ctrl_pop","pop") && !bod.getBoo("ctrl_pop","throw") && 
-//						bod.getBoo("ctrl_pop","keep") && 
-//						bod.param("ctrl_pop").getBody("last") != null) {
-//					pBody keep = bod.param("ctrl_pop").getBody("last");
-//					Vector2 bod_pos = bod.getVec("ref","pos");
-//					Vector2 kp_pos = keep.getVec("ref","pos");
-//					float bod_rot = bod.getFlt("ref","rot");
-//					Vector2 trg_pos = new Vector2(pop_pos).add(bod_pos);//.rotateRad(bod_rot)
-//					float trg_rot = bod_rot + pop_rot;
-//					float keep_pos = bod.getFlt("ctrl_pop","keep_pos");
-//					float keep_rot = bod.getFlt("ctrl_pop","keep_rot");
-//					geo.move_to_target(keep, trg_pos, keep_pos);
-//					geo.rot_to_target(keep, trg_rot, keep_rot);
-//					float keep_dist = bod.getFlt("ctrl_pop","keep_dist");
-//					float dist = kp_pos.sub(bod_pos).len();
-//					if (dist > keep_dist) bod.param("ctrl_pop").setBody("last", "");
-//				}
-
 				bod.setBoo("ctrl_pop","pop", false);
 				if (bod.getBoo("ctrl_pop","throw") && 
 						bod.param("ctrl_pop").getBody("last") != null) {

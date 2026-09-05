@@ -192,11 +192,11 @@ public class pProperty extends Utl.OrderedPriorizableImplement {
 		for (nRun n : s.body_init_runs) body_init_runs.add(n);
 //		for (nRun n : s.body_clear_run) body_clear_run.add(n);
 		
-		for (nRun n : s.init_runs) addInitRun(n);
-		for (nRun n : s.clear_runs) addClearRun(n);
+//		for (nRun n : s.init_runs) addInitRun(n);
+//		for (nRun n : s.clear_runs) addClearRun(n);
 		for (nRun n : s.frame_runs) addFrameRun(n);
 		for (nRun n : s.tick_runs) addTickRun(n);
-		for (nRun n : s.draw_runs) addDrawRun(n);
+//		for (nRun n : s.draw_runs) addDrawRun(n);
 		
 		
 		for (Map.Entry<String,Integer> me : s.collec_vals.entrySet()) {
@@ -302,22 +302,22 @@ public class pProperty extends Utl.OrderedPriorizableImplement {
 //	public static void run_create(pSpace space) 		{ for (pProperty prop : with_create_run) 	for (pParam p : space.param_pools.get(prop.ref).all()) prop.create_runs.do_run(p); }
 //	public static void run_load(pSpace space) 		{ for (pProperty prop : with_load_run) 		for (pParam p : space.param_pools.get(prop.ref).all()) prop.load_runs.do_run(p); }
 //	public static void run_save(pSpace space) 		{ for (pProperty prop : with_save_run) 		for (pParam p : space.param_pools.get(prop.ref).all()) prop.save_runs.do_run(p); }
-	public static void run_init(pSpace space) 		{ for (pProperty prop : with_init_run) 		for (pParam p : space.param_pools.get(prop.ref).all()) prop.init_runs.do_run(p); }
+//	public static void run_init(pSpace space) 		{ for (pProperty prop : with_init_run) 		for (pParam p : space.param_pools.get(prop.ref).all()) prop.init_runs.do_run(p); }
 //	public static void run_finalize(pSpace space) 	{ for (pProperty prop : with_finalize_run) 	for (pParam p : space.param_pools.get(prop.ref).all()) prop.finalize_runs.do_run(p); }
-	public static void run_clear(pSpace space) 		{ for (pProperty prop : with_clear_run) 		for (pParam p : space.param_pools.get(prop.ref).all()) prop.clear_runs.do_run(p); }
+//	public static void run_clear(pSpace space) 		{ for (pProperty prop : with_clear_run) 		for (pParam p : space.param_pools.get(prop.ref).all()) prop.clear_runs.do_run(p); }
 	public static void run_frame(pSpace space) 		{ for (pProperty prop : with_frame_run) 		for (pParam p : space.param_pools.get(prop.ref).all()) prop.frame_runs.do_run(p); }
 	public static void run_tick(pSpace space) 		{ for (pProperty prop : with_tick_run) 		for (pParam p : space.param_pools.get(prop.ref).all()) prop.tick_runs.do_run(p); }
-	public static void run_draw(pSpace space) 		{ for (pProperty prop : with_draw_run) 		for (pParam p : space.param_pools.get(prop.ref).all()) prop.draw_runs.do_run(p); }
+//	public static void run_draw(pSpace space) 		{ for (pProperty prop : with_draw_run) 		for (pParam p : space.param_pools.get(prop.ref).all()) prop.draw_runs.do_run(p); }
 	
 //	public void run_create(ArrayList<pParam> l) 		{ for (pParam p : l) create_runs.do_run(p); }
 //	public void run_load(ArrayList<pParam> l) 		{ for (pParam p : l) load_runs.do_run(p); }
 //	public void run_save(ArrayList<pParam> l) 		{ for (pParam p : l) save_runs.do_run(p); }
-	public void run_init(ArrayList<pParam> l) 		{ for (pParam p : l) init_runs.do_run(p); }
+//	public void run_init(ArrayList<pParam> l) 		{ for (pParam p : l) init_runs.do_run(p); }
 //	public void run_finalize(ArrayList<pParam> l) 	{ for (pParam p : l) finalize_runs.do_run(p); }
-	public void run_clear(ArrayList<pParam> l) 		{ for (pParam p : l) clear_runs.do_run(p); }
+//	public void run_clear(ArrayList<pParam> l) 		{ for (pParam p : l) clear_runs.do_run(p); }
 	public void run_frame(ArrayList<pParam> l) 		{ for (pParam p : l) frame_runs.do_run(p); }
 	public void run_tick(ArrayList<pParam> l) 		{ for (pParam p : l) tick_runs.do_run(p); }
-	public void run_draw(ArrayList<pParam> l) 		{ for (pParam p : l) draw_runs.do_run(p); }
+//	public void run_draw(ArrayList<pParam> l) 		{ for (pParam p : l) draw_runs.do_run(p); }
 
 //	public void run_create(pParam p) 	{ create_runs.do_run(p); }
 //	public void run_load(pParam p) 		{ load_runs.do_run(p); }
@@ -327,7 +327,7 @@ public class pProperty extends Utl.OrderedPriorizableImplement {
 	public void run_clear(pParam p) 		{ clear_runs.do_run(p); }
 	public void run_frame(pParam p) 		{ frame_runs.do_run(p); }
 	public void run_tick(pParam p) 		{ tick_runs.do_run(p); }
-	public void run_draw(pParam p) 		{ draw_runs.do_run(p); }
+//	public void run_draw(pParam p) 		{ draw_runs.do_run(p); }
 	
 //	public nRuns create_runs = new nRuns().setAutoSorted();
 //	public nRuns load_runs = new nRuns().setOrdered().setPrioritized().setAutoSorted();
@@ -337,7 +337,7 @@ public class pProperty extends Utl.OrderedPriorizableImplement {
 	public nRuns clear_runs = new nRuns().setPrioritized().setAutoSorted();
 	public nRuns frame_runs = new nRuns().setOrdered().setPrioritized().setAutoSorted();
 	public nRuns tick_runs = new nRuns().setOrdered().setPrioritized().setAutoSorted();	
-	public nRuns draw_runs = new nRuns().setOrdered().setPrioritized().setAutoSorted();	
+//	public nRuns draw_runs = new nRuns().setOrdered().setPrioritized().setAutoSorted();	
 
 //	public pProperty addCreateRun(nRun r) 	{ with_create_run.addOne(this); create_runs.add(r); return this; }
 //	public pProperty addLoadRun(nRun r) 		{ with_load_run.addOne(this); load_runs.add(r); return this; }
@@ -347,7 +347,7 @@ public class pProperty extends Utl.OrderedPriorizableImplement {
 	public pProperty addClearRun(nRun r) 	{ with_clear_run.addOne(this); clear_runs.add(r); return this; }
 	public pProperty addFrameRun(nRun r) 	{ with_frame_run.addOne(this); frame_runs.add(r); return this; }
 	public pProperty addTickRun(nRun n) 		{ with_tick_run.addOne(this); tick_runs.add(n); return this; }
-	public pProperty addDrawRun(nRun n) 		{ with_draw_run.addOne(this); draw_runs.add(n); return this; }
+//	public pProperty addDrawRun(nRun n) 		{ with_draw_run.addOne(this); draw_runs.add(n); return this; }
 	
 //	private static nSortedArray<pProperty> with_create_run = new nSortedArray<pProperty>();
 //	private static nSortedArray<pProperty> with_load_run = new nSortedArray<pProperty>().setOrdered().setPrioritized().setAutoSorted();
@@ -357,7 +357,7 @@ public class pProperty extends Utl.OrderedPriorizableImplement {
 	private static nSortedArray<pProperty> with_clear_run = new nSortedArray<pProperty>().setPrioritized().setAutoSorted();
 	private static nSortedArray<pProperty> with_frame_run = new nSortedArray<pProperty>().setOrdered().setPrioritized().setAutoSorted();
 	private static nSortedArray<pProperty> with_tick_run = new nSortedArray<pProperty>().setOrdered().setPrioritized().setAutoSorted();
-	private static nSortedArray<pProperty> with_draw_run = new nSortedArray<pProperty>().setOrdered().setPrioritized().setAutoSorted();
+//	private static nSortedArray<pProperty> with_draw_run = new nSortedArray<pProperty>().setOrdered().setPrioritized().setAutoSorted();
 	
 	
 	

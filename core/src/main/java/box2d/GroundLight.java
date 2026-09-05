@@ -63,7 +63,7 @@ public class GroundLight extends GridLight {
 //				Utl.logn(""+x+" "+y+" "+dist);
 
 				float limit = limit_dist*0.85f;
-				float glimit = limit*1.3f*1.25f/0.85f;
+				float glimit = limit*1.1f*1.25f/0.85f;
 				float grid_end = (grid.getWidth()/2f)*cell_size*0.5f;
 				float fog_start = limit / 3f;
 				float grid_alpha = 1f;

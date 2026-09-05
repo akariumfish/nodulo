@@ -271,18 +271,6 @@ public class pFuncBook {
 			.openSec()
 			.param("ref", "reg_ref_watch", "var_link_ref", "reg_ref", "var_link_class", String.class.getName())
 			.param("width", (int)8)
-//			.param("run_right", new nRun() {public void run() {
-//				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
-//						"reg_ref_watch");
-//				if (triggP_w == null) return; 
-//				ArrayList<String> arr = instance.getInst("tile_node")
-//						.get("obtain_all_reg_of_model", ArrayList.class, "reg_in");
-//				if (arr != null) for (String par : arr) {
-//					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
-//						((pInstance)builder).setVar("reg_ref", par); }});
-//				}
-//				nGUI.open_dropmenu(triggP_w);
-//			}})
 			.commande(pTile.getCom(CT.ADD_FIELD))
 			.closeSec();
 		}});
@@ -322,17 +310,6 @@ public class pFuncBook {
 						((pInstance)builder).setVar("data_ref", ""); }});
 				}
 				nGUI.open_dropmenu(triggP_w);
-				
-				
-//				Object o1 = instance.get("plug_obtain", Object.class, "body");
-//				if (o1 != null && (o1 instanceof pBody)) {
-//					pBody bod = (pBody)o1; 
-//					for (String par : bod.params.allKey()) {
-//						nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
-//							((pInstance)builder).setVar("param_ref", par); }});
-//					}
-//					nGUI.open_dropmenu(triggP_w);
-//				}
 			}})
 			.commande(pTile.getCom(CT.ADD_WATCH))
 			.closeSec()
@@ -357,17 +334,6 @@ public class pFuncBook {
 					}
 				}
 				nGUI.open_dropmenu(triggP_w);
-				
-//				pInstance pl_param = instance.get("get_plug", pInstance.class, "param");
-//				Object o1 = pl_param.get("obtain");
-//				if (o1 != null && (o1 instanceof pParam)) {
-//					pParam param = (pParam)o1; 
-//					for (String par : param.prop.data_class.allKey()) {
-//						nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
-//							((pInstance)builder).setVar("data_ref", par); }});
-//					}
-//					nGUI.open_dropmenu(triggP_w);
-//				}
 			}})
 			.commande(pTile.getCom(CT.ADD_WATCH))
 			.closeSec();
@@ -608,6 +574,29 @@ public class pFuncBook {
 		}});
 		
 		
+
+
+		new Operator("param_get", "PG", C.PGET, new nRun() {public Object get() {
+			String run_ref = ask("run_ref", String.class);
+			Object[] arg = ask("arg", Object[].class);
+			Object o = ask("param", Object.class);
+			if (o == null || run_ref == null || !(o instanceof pParam)) return null;
+			return ((pParam)o).get(run_ref,arg); 
+		}})
+		.addVar("run_ref")
+		.addArg("param", null).addArg("arg", Object[].class)
+		.setStandRun(new nRun() {public void run() {
+			pStandard stand = arg(0,pStandard.class);
+			stand.process()
+			.run(pTile.getRun(CT.OBTAIN_VAR), "run_ref", "")
+			.openSec()
+			.param("ref", "run_ref_watch", "var_link_ref", "run_ref", 
+					"var_link_class", String.class.getName())
+			.param("width", (int)8)
+			.commande(pTile.getCom(CT.ADD_FIELD))
+			.closeSec()
+			;
+		}});
 		
 		
 		
@@ -685,7 +674,7 @@ public class pFuncBook {
 			pFunc.func_script_run(tile_node, script, Utl.duplic(arg)); 
 			return pFunc.C.NEXT;
 		}})
-		.addVar("func_ref").addArg("arg", Object[].class)
+		.addVar("func_ref").addArg("arg", Object[].class) 
 		.setActivated()
 		.setStandRun(new nRun() {public void run() {
 			pStandard stand = arg(0,pStandard.class);
@@ -777,18 +766,6 @@ public class pFuncBook {
 			.openSec()
 			.param("ref", "reg_ref_watch", "var_link_ref", "reg_ref", "var_link_class", String.class.getName())
 			.param("width", (int)8)
-//			.param("run_right", new nRun() {public void run() {
-//				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
-//						"reg_ref_watch");
-//				if (triggP_w == null) return;
-//				ArrayList<String> arr = instance.getInst("tile_node")
-//						.get("obtain_all_reg_of_model", ArrayList.class, "reg_out");
-//				if (arr != null) for (String par : arr) {
-//					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
-//						((pInstance)builder).setVar("reg_ref", par); }});
-//				}
-//				nGUI.open_dropmenu(triggP_w);
-//			}})
 			.commande(pTile.getCom(CT.ADD_FIELD))
 			.closeSec();
 		}})
@@ -876,23 +853,12 @@ public class pFuncBook {
 				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
 						"param_ref_watch");
 				if (triggP_w == null) return;
-
 				for (String par : pProperty.body_propertys.allKey()) {
 					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
 						((pInstance)builder).setVar("param_ref", par); 
 						((pInstance)builder).setVar("data_ref", ""); }});
 				}
 				nGUI.open_dropmenu(triggP_w);
-				
-//				Object o1 = instance.get("plug_obtain", Object.class, "body");
-//				if (o1 != null && (o1 instanceof pBody)) {
-//					pBody bod = (pBody)o1; 
-//					for (String par : bod.params.allKey()) {
-//						nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
-//							((pInstance)builder).setVar("param_ref", par); }});
-//					}
-//					nGUI.open_dropmenu(triggP_w);
-//				}
 			}})
 			.commande(pTile.getCom(CT.ADD_WATCH))
 			.closeSec()
@@ -917,23 +883,35 @@ public class pFuncBook {
 					}
 				}
 				nGUI.open_dropmenu(triggP_w);
-				
-				
-//				pInstance pl_body = instance.get("get_plug", pInstance.class, "body");
-//				Object o1 = pl_body.get("obtain");
-//				String param_ref = instance.getVar("param_ref", String.class);
-//				if (o1 != null && (o1 instanceof pBody)) {
-//					pBody bod = (pBody)o1;
-//					pParam param = bod.param(param_ref);
-//					if (param == null) return;
-//					for (String par : param.prop.data_class.allKey()) {
-//						nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
-//							((pInstance)builder).setVar("data_ref", par); }});
-//					}
-//					nGUI.open_dropmenu(triggP_w);
-//				}
 			}})
 			.commande(pTile.getCom(CT.ADD_WATCH))
+			.closeSec()
+			;
+		}});
+		
+		
+
+		new Instruction("run_param", "RP", C.RUNP, new nRun() {public Object get() {
+			String run_ref = ask("run_ref", String.class);
+			Object[] arg = ask("arg", Object[].class);
+			Object o = ask("param", Object.class);
+			if (o == null || run_ref == null || !(o instanceof pParam)) return pFunc.C.NEXT;
+			pParam par = (pParam)o;
+			if (par != null) { par.run(run_ref,arg); }
+			return pFunc.C.NEXT;
+		}})
+		.addVar("run_ref")
+		.addArg("param", null).addArg("arg", Object[].class)
+		.setWatched().setActivated()
+		.setStandRun(new nRun() {public void run() {
+			pStandard stand = arg(0,pStandard.class);
+			stand.process()
+			.run(pTile.getRun(CT.OBTAIN_VAR), "run_ref", "")
+			.openSec()
+			.param("ref", "run_ref_watch", "var_link_ref", "run_ref", 
+					"var_link_class", String.class.getName())
+			.param("width", (int)8)
+			.commande(pTile.getCom(CT.ADD_FIELD))
 			.closeSec()
 			;
 		}});

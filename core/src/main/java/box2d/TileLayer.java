@@ -55,6 +55,7 @@ public class TileLayer extends nRenderer.Layer {
 		public TiledMapTile tile;
 		public MapProperties prop;
 		public boolean wall = false;
+		public boolean light = false;
 		public boolean ground = false;
 		public boolean empty = false;
 		public boolean build = false;
@@ -64,10 +65,14 @@ public class TileLayer extends nRenderer.Layer {
 			tile = c.getTile();
 			prop = tile.getProperties();
 			ground = Utl.getBoo(prop,"ground");
-			wall = !Utl.getBoo(prop,"light");
+			light = Utl.getBoo(prop,"light");
+			wall = Utl.getBoo(prop,"wall");
+//			wall = !Utl.getBoo(prop,"light");
 			empty = !ground && !wall;
-			
+
 			if (!wall) build = true;
+			if (ground) build = true;
+			if (light) build = true;
 		}
 	}
 
@@ -116,26 +121,37 @@ public class TileLayer extends nRenderer.Layer {
 		if (rend.tileLayer == null) {
 			for (int w = map_width ; w > 0 ; w--)
 				for (int h = map_height ; h > 0 ; h--) {
-					search_place(w,h,false);
-					search_place(h,w,false);
+					search_place(w,h,false,true);
+					search_place(h,w,false,true);
 				}
+			for (int i = 0 ; i < map_width ; i++)
+				for (int j = 0 ; j < map_height ; j++) {
+					cells[i][j].build = true;
+					if (cells[i][j].wall && cells[i][j].light) cells[i][j].build = false;
+				}
+			for (int w = map_width ; w > 0 ; w--)
+				for (int h = map_height ; h > 0 ; h--) {
+					search_place(w,h,false,false);
+					search_place(h,w,false,false);
+				}
+
 			for (int i = 0 ; i < map_width ; i++)
 				for (int j = 0 ; j < map_height ; j++) {
 					cells[i][j].build = !cells[i][j].empty;
 				}
 			for (int w = map_width ; w > 0 ; w--)
 				for (int h = map_height ; h > 0 ; h--) {
-					search_place(w,h,true);
-					search_place(h,w,true);
+					search_place(w,h,true,false);
+					search_place(h,w,true,false);
 				}
 			
 		}
 	}
 	
-	public void search_place(int w, int h, boolean transp) {
+	public void search_place(int w, int h, boolean transp, boolean blocview) {
 		for (int i = 0 ; i < map_width - w ; i++)
 			for (int j = 0 ; j < map_height - h ; j++) 
-				build_wall(i,j,w,h,transp);
+				build_wall(i,j,w,h,transp,blocview);
 	}
 
 	public boolean test_place(int x, int y, int w, int h) {
@@ -143,7 +159,7 @@ public class TileLayer extends nRenderer.Layer {
 			if (i >= map_width || j >= map_height || cells[i][j].build) return false;
 		return true;
 	}
-	public void build_wall(int x, int y, int w, int h, boolean transp) {
+	public void build_wall(int x, int y, int w, int h, boolean transp, boolean blocview) {
 		if (!test_place(x,y,w,h)) return;
 		Vector2 p = getCellPos(x,y);
 		p.add(w*rend.tile_scale/2f,h*rend.tile_scale/2f);
@@ -151,8 +167,13 @@ public class TileLayer extends nRenderer.Layer {
 		groundBodyDef.position.set(p);  
 		Body groundBody = rend.world.createBody(groundBodyDef);  
 		
-		if (!transp) ground_bod.add(groundBody);
+		if (!transp && blocview) ground_bod.add(groundBody); //bloc vision
 		if (!transp) rend.box.body_breaker.add(groundBody);
+
+		if (!transp && !blocview) rend.visionLayer.transparent.add(groundBody);
+		if (!transp && !blocview) rend.lightLayer.transparent.add(groundBody);
+		if (!transp && !blocview) rend.colorLayer.transparent.add(groundBody);
+		
 		if (transp) rend.lightLayer.transparent.add(groundBody);
 		if (transp) rend.visionLayer.transparent.add(groundBody);
 		if (transp) rend.colorLayer.transparent.add(groundBody);

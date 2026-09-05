@@ -3,7 +3,18 @@ package box2d;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -221,16 +232,44 @@ public class pBox2d extends pSystem {
 
 		pView view;
 		
+//		PerspectiveCamera cam;
+//
+//		public ModelBatch modelBatch;
+//		public Model model;
+//		public ModelInstance instance;
+//		public Environment environment;
+		
 		public void system_init() {
 			bloc.addObject("box2d", this);
 
 			app.storeSystemType(bloc.ref, this.getClass());
 
 			useNetFrame();
+			
+
+//			modelBatch = new ModelBatch();
+//			
+//			cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+//			cam.position.set(10f, 10f, 10f);
+//			cam.lookAt(0,0,0);
+//			cam.near = 1f;
+//			cam.far = 300f;
+//			cam.update();
+//			
+//			environment = new Environment();
+//			environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+//			environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+//			
+//			ModelBuilder modelBuilder = new ModelBuilder();
+//			model = modelBuilder.createBox(5f, 5f, 5f, 
+//				new Material(ColorAttribute.createDiffuse(Color.GREEN)),
+//				Usage.Position | Usage.Normal);
+//			instance = new ModelInstance(model);
+			
 
 			val_draw_debug = bloc.obtainBoo("val_draw_debug", false);
 			val_draw_ray_debug = bloc.obtainBoo("val_draw_ray_debug", false);
-			val_draw_vision = bloc.obtainBoo("val_draw_vision", true);
+			val_draw_vision = bloc.obtainBoo("val_draw_vision", app.config.DRAW_VISION);
 			val_draw_tile = bloc.obtainBoo("val_draw_tile", true);
 			val_draw_solid = bloc.obtainBoo("val_draw_solid", true);
 			val_draw_light = bloc.obtainBoo("val_draw_light", true);
@@ -309,6 +348,9 @@ public class pBox2d extends pSystem {
 			app.view.removeDrawable(draw_run);
 
 			renderer.dispose();
+			
+//			modelBatch.dispose();
+//			model.dispose();
 		}
 
 		public void tool_init(nInterface interf) {
@@ -415,9 +457,20 @@ public class pBox2d extends pSystem {
 			view.app.gdx.drawer.end();
 			
 		}
+		
+//		public void draw_3d() {
+//
+////			Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+////			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+//
+//			modelBatch.begin(cam);
+//			modelBatch.render(instance, environment);
+//			modelBatch.end();
+//			
+//		}
 
 		public void draw() { 
-			
+
 			if (val_edit_tile.get()) {
 				if (app.input.mouseLeft.trigClick && 
 						app.view.mouse_is_hover_view()) {

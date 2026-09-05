@@ -88,7 +88,7 @@ public class PlaneApplet extends App {
 		public boolean VIEW_START_COLLAPSED = false;
 		public boolean VIEW_START_GRID = false;
 //		public float DEF_VIEW_ZOOM = 0.07f;
-		public float DEF_VIEW_ZOOM = 0.1f;
+		public float DEF_VIEW_ZOOM = 0.2f;
 		public Vector2 DEF_VIEW_POS = new Vector2(0f,0f);
 		// DEFAULT
 //		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
@@ -111,8 +111,12 @@ public class PlaneApplet extends App {
 		public boolean TOOLBOX_OPEN = true;
 		public boolean DRAW_GROUND = true;
 		public boolean DRAW_FOG = true;
+		public boolean DRAW_VISION = true;
 		
 		public boolean POP_BODY_EDITOR = false;
+
+		public boolean AVATAR_VIEW_MODE = true; //
+		public boolean AVATAR_CAM = true;
 		
 		public float DEF_TICK_BY_SEC = 60f;
 		

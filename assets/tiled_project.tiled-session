@@ -14,11 +14,11 @@
             "scaleInDock": 1
         },
         "Map.tmx": {
-            "scale": 0.33,
-            "selectedLayer": 1,
+            "scale": 0.75,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 889.3939393939393,
-                "y": 1025.7575757575758
+                "x": 921.9999999999999,
+                "y": 844.6666666666666
             }
         },
         "Map.tmx#Lighting": {
@@ -94,7 +94,7 @@
         "tileset.tsx"
     ],
     "project": "tiled_project.tiled-project",
-    "property.type": "float",
+    "property.type": "bool",
     "recentFiles": [
         "tileset.tsx",
         "Map.tmx",

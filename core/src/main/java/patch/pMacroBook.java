@@ -129,12 +129,12 @@ public class pMacroBook {
 		.addNode("ui", "UI", 								-1800f,		-300f)
 			.addRunPop("ui_switch", "pop_plug_node", 
 					"UI_widg_out", "UI_switch", "UI_widg_in").getMacro()
-			.addSetVar("ui_ui_switch", "state", false)
+			.addSetVar("ui_ui_switch", "state", PlaneApplet.app.config.AVATAR_VIEW_MODE)
 			.addSetVar("ui_ui_switch", "widg_text", "view")
 		.addNode("ui2", "UI", 								-1800f,		300f)
 			.addRunPop("ui_switch", "pop_plug_node", 
 					"UI_widg_out", "UI_switch", "UI_widg_in").getMacro()
-			.addSetVar("ui2_ui_switch", "state", true)
+			.addSetVar("ui2_ui_switch", "state", PlaneApplet.app.config.AVATAR_CAM)
 			.addSetVar("ui2_ui_switch", "widg_text", "cam")
 			.addSetVar("ui2", "view_pos", new Vector2(100,60))
 		.addNode("reg_in_mode", "reg_in", 					-1200f,	-300f)
@@ -399,24 +399,40 @@ public class pMacroBook {
 		.com("add_if")
 			.com("add_get_reg_in_at", "test", "mode")
 
-			.com("add_set_param", "ctrl_box", "accel_cw")
+			.com("add_set_param", "ctrl_box", "rot_to_target")
 			.com("add_get_pass_at", "body", (int)0)
-			.com("add_get_input_at", "data", "keycross_cw_state")
-
-			.com("add_set_param", "ctrl_box", "accel_ccw")
-			.com("add_get_pass_at", "body", (int)0)
-			.com("add_get_input_at", "data", "keycross_ccw_state")
-
-			.com("add_set_param", "ctrl_box", "decel_rot")
-			.com("add_get_pass_at", "body", (int)0)
-			.com("add_at", "data", "not", "out")
-			.com("add_get_input_at", "in", "keyrot_press")
-			.com("get_last")
+			.com("add_boo_at", "data", true)
 
 			.com("add_set_param", "ctrl_box", "global_ref")
 			.com("add_get_pass_at", "body", (int)0)
 			.com("add_boo_at", "data", false)
 
+			.com("add_if")
+				.com("add_get_input_at", "test", "keycross_cw_state")
+
+				.com("add_set_param", "ctrl_box", "rot_target")
+				.com("add_get_pass_at", "body", (int)0)
+				.com("add_add_at", "data")
+				.com("add_get_param_at", "in", "ctrl_box", "rot_target")
+				.com("add_get_pass_at", "body", (int)0).com("get_last")
+				.com("add_flt_at", "fact", -0.02f)
+				.com("get_last")
+				
+			.com("add_close")
+
+			.com("add_if")
+				.com("add_get_input_at", "test", "keycross_ccw_state")
+
+				.com("add_set_param", "ctrl_box", "rot_target")
+				.com("add_get_pass_at", "body", (int)0)
+				.com("add_add_at", "data")
+				.com("add_get_param_at", "in", "ctrl_box", "rot_target")
+				.com("add_get_pass_at", "body", (int)0).com("get_last")
+				.com("add_flt_at", "fact", 0.02f)
+				.com("get_last")
+				
+			.com("add_close")
+			
 			.com("add_if")
 				.com("add_get_reg_in_at", "test", "cam")
 				
@@ -433,7 +449,7 @@ public class pMacroBook {
 									.com("add_get_input_at", "fact", "cam_scale_inv")
 									.com("get_last")
 								.com("get_last")
-							.com("add_get_param_at", "rot", "ref", "rot")
+							.com("add_get_param_at", "rot", "ctrl_box", "rot_target")
 							.com("add_get_pass_at", "body", (int)0).com("get_last")
 							.com("get_last")
 						.com("add_get_param_at", "in", "ref", "pos")
@@ -443,7 +459,7 @@ public class pMacroBook {
 				.com("add_set_output", "cam_rot")
 					.com("add_add_at", "data")
 						.com("add_flt_at", "fact", -((float)Math.PI) / 2f)
-						.com("add_get_param_at", "in", "ref", "rot")
+						.com("add_get_param_at", "in", "ctrl_box", "rot_target")
 						.com("add_get_pass_at", "body", (int)0).com("get_last")
 					.com("get_last")
 				

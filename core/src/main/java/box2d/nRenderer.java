@@ -64,6 +64,7 @@ public class nRenderer {
 	public GroupLayer newGroupLayer(int p) { return new GroupLayer(this,p); }
 	public RunLayer newRunLayer() { return new RunLayer(this); }
 	public RunLayer newRunLayer(int p) { return new RunLayer(this,p); }
+	public ThreeDLayer new3DLayer(int p) { return new ThreeDLayer(this,p); }
 	public LightLayer newLightLayer(LightLayer.MODE m) { return new LightLayer(this, m); }
 	public LightLayer newLightLayer(LightLayer.MODE m, int p) { return new LightLayer(this, m,p); }
 	public TileLayer newTileLayer(TiledMapTileLayer ml) { return new TileLayer(this, ml); }
@@ -160,8 +161,10 @@ public class nRenderer {
 
 		RunLayer updateLayer = newRunLayer(0);
 		LightLayer groundLayer = newLightLayer(LightLayer.MODE.SOLID,1);
-		roomGroup = newGroupLayer(2);
-		LightLayer fogLayer = newLightLayer(LightLayer.MODE.SOLID,3);
+		new3DLayer(2);
+		
+		roomGroup = newGroupLayer(3);
+		LightLayer fogLayer = newLightLayer(LightLayer.MODE.SOLID,4);
 		
 		GroundLight grnd = new GroundLight(groundLayer, false);
 		GroundLight fog = new GroundLight(fogLayer, true);
@@ -170,8 +173,8 @@ public class nRenderer {
 			GroundLight g = arg(0, GroundLight.class);
 			GroundLight f = arg(1, GroundLight.class);
 			Vector2 p = new Vector2(view.val_cam_pos.get());
-			p.scl(1f/4f); g.setPos(p);
-			p.scl(-2f); f.setPos(p);
+			p.scl(-1f/4f); g.setPos(p);
+			p.scl(2f); f.setPos(p);
 			g.setActive(box.drawground());
 			f.setActive(box.drawfog());
 		}});
