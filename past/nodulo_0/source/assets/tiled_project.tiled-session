@@ -7,18 +7,18 @@
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "": {
-            "scaleInDock": 2,
-            "scaleInEditor": 4
+            "scaleInDock": 1.5,
+            "scaleInEditor": 5.5
         },
         ":/automap-tiles.tsx": {
             "scaleInDock": 1
         },
         "Map.tmx": {
-            "scale": 0.75,
-            "selectedLayer": 1,
+            "scale": 0.33,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 928.6666666666667,
-                "y": 774
+                "x": 1119.6969696969697,
+                "y": 1122.7272727272727
             }
         },
         "Map.tmx#Lighting": {
@@ -28,6 +28,12 @@
         "Map.tmx#Tilemap": {
             "scaleInDock": 2,
             "scaleInEditor": 4
+        },
+        "Map.tmx#tileset_flags": {
+            "scaleInEditor": 8
+        },
+        "Map.tmx#tileset_flags2": {
+            "scaleInDock": 1.5
         },
         "Map2.tmx": {
             "expandedObjectLayers": [
@@ -94,7 +100,7 @@
         "tileset.tsx"
     ],
     "project": "tiled_project.tiled-project",
-    "property.type": "bool",
+    "property.type": "int",
     "recentFiles": [
         "tileset.tsx",
         "Map.tmx",
@@ -103,9 +109,11 @@
         "Map3.tmx"
     ],
     "tileset.embedInMap": true,
+    "tileset.margin": 0,
+    "tileset.spacing": 1,
     "tileset.tileSize": {
         "height": 16,
         "width": 16
     },
-    "tileset.useTransparentColor": true
+    "tileset.useTransparentColor": false
 }

@@ -16,6 +16,8 @@ import aa_nodulo.pView;
 import util.Utl;
 import util.nRun;
 import app.App;
+import box2d.TileLayer.Cell;
+import box2d.TileLayer.NavCell;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -161,7 +163,8 @@ public class nRenderer {
 
 		RunLayer updateLayer = newRunLayer(0);
 		LightLayer groundLayer = newLightLayer(LightLayer.MODE.SOLID,1);
-		new3DLayer(2);
+		
+//		new3DLayer(2);
 		
 		roomGroup = newGroupLayer(3);
 		LightLayer fogLayer = newLightLayer(LightLayer.MODE.SOLID,4);
@@ -207,7 +210,7 @@ public class nRenderer {
 			MapLayer layer = map.getLayers().get(id);
 			if (!layer.isVisible()) continue;
 			MapProperties prop = layer.getProperties();
-			if (layer instanceof TiledMapTileLayer) {
+			if (!Utl.getBoo(prop,"flags") && (layer instanceof TiledMapTileLayer)) {
 				TiledMapTileLayer tl = (TiledMapTileLayer) layer;
 				TileLayer ll = roomGroup.newTileLayer(tl,2);
 				if (tileLayer == null) tileLayer = ll;
@@ -224,6 +227,30 @@ public class nRenderer {
 		
 		lightLayer.newCrossAmbiantLight(Utl.color(255), tileLayer);
 		
+		for (int id = 0 ; id < layer_cnt ; id++) {
+			MapLayer layer = map.getLayers().get(id);
+			if (!layer.isVisible()) continue;
+			MapProperties prop = layer.getProperties();
+			if (Utl.getBoo(prop,"flags") && (layer instanceof TiledMapTileLayer)) {
+				TiledMapTileLayer tl = (TiledMapTileLayer) layer;
+				for (int i = 0 ; i < tileLayer.map_width ; i++)
+					for (int j = 0 ; j < tileLayer.map_height ; j++) {
+						TiledMapTileLayer.Cell c = tl.getCell(i,j);
+						if (c == null) continue;
+						MapProperties prp = c.getTile().getProperties();
+						if (prp.get("id", Integer.class) != null) {
+							int cellid = prp.get("id", Integer.class);
+							int dir = prp.get("dir", Integer.class);
+							float rot = (float)Math.PI * 2f * dir / 360f;
+							Vector2 pos = new Vector2(tileLayer.getCellPos(i,j))
+									.add(tile_scale / 2f, tile_scale / 2f);
+							if (cellid == 0) box.setAvatarSpawn(pos, rot);
+							else box.addMobSpawn(pos, rot, cellid);
+						}
+					}
+				
+			} 
+		}
 
 //		float[] path = new float[] {
 ////				-200f,0f,
@@ -260,23 +287,23 @@ public class nRenderer {
 			if (Utl.getBoo(prop,"lightLayer")) {
 				lightLayer.loadMapObject(prop);
 			}
-			if (Utl.getBoo(prop,"spawn")) {
-				box.setAvatarSpawn(tileLayer.mapToSpace(
-						prop.get("x", Float.class), prop.get("y", Float.class)));
-			}
-			if (Utl.getBoo(prop,"mob")) {
-				box.addMobSpawn(
-					tileLayer.mapToSpace(
-						prop.get("x", Float.class), prop.get("y", Float.class))
-//					.scl(1f,-1f)
-//					.add(0,tileLayer.getHeight())
-					, 
-					tileLayer.mapToSpace(
-						prop.get("x2", Float.class), prop.get("y2", Float.class))
-//					.scl(1f,-1f)
-//					.add(0,tileLayer.getHeight())
-					);
-			}
+//			if (Utl.getBoo(prop,"spawn")) {
+//				box.setAvatarSpawn(tileLayer.mapToSpace(
+//						prop.get("x", Float.class), prop.get("y", Float.class)));
+//			}
+//			if (Utl.getBoo(prop,"mob")) {
+//				box.addMobSpawn(
+//					tileLayer.mapToSpace(
+//						prop.get("x", Float.class), prop.get("y", Float.class))
+////					.scl(1f,-1f)
+////					.add(0,tileLayer.getHeight())
+//					, 
+//					tileLayer.mapToSpace(
+//						prop.get("x2", Float.class), prop.get("y2", Float.class))
+////					.scl(1f,-1f)
+////					.add(0,tileLayer.getHeight())
+//					);
+//			}
 		}
 	}
 	

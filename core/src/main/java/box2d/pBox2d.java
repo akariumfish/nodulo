@@ -308,7 +308,7 @@ public class pBox2d extends pSystem {
 			view.addDrawable(10,draw_run);
 			
 			//		if (!app.RELEASE) 
-			tool_setup(true);
+			tool_setup(false);
 			
 
 //			app.term.register("sim", bloc, this);

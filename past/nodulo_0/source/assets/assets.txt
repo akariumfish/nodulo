@@ -13,6 +13,12 @@ console_ui/uiskin.atlas
 console_ui/uiskin.json
 console_ui/uiskin.png
 dir_light.tx
+dotpict_20260906_191236.png
+dotpict_20260906_191243.png
+dotpict_20260906_191246.png
+dotpict_20260906_191252.png
+dotpict_20260906_191256.png
+dotpict_20260910_211016.png
 ground_light.tx
 libgdx.png
 light1.png
@@ -31,6 +37,10 @@ steam_appid.txt
 tiled_project.tiled-project
 tiled_project.tiled-session
 tileset.tsx
+tileset_flags.png
+tileset_flags.xcf
+tileset_flags2.png
+tileset_flags2.xcf
 ui.rar
 ui/default.fnt
 ui/default.png

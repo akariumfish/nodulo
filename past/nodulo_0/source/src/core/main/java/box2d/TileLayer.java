@@ -22,6 +22,7 @@ import static com.badlogic.gdx.graphics.g2d.Batch.Y3;
 import static com.badlogic.gdx.graphics.g2d.Batch.Y4;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -50,6 +51,56 @@ public class TileLayer extends nRenderer.Layer {
 
 	public final TiledMapTileLayer mapLayer;
 	
+//	class NavNode {
+//		
+//	}
+//	private ArrayList<NavCell> tmpnav = new ArrayList<NavCell>();
+//	private ArrayList<NavCell> tmpnav2 = new ArrayList<NavCell>();
+	
+	public class NavCell extends Cell {
+		public NavCell(int i, int j, TiledMapTileLayer.Cell c) {
+			super(i, j, c);
+			all_navcells.add(this);
+		}
+//		public ArrayList<NavCell> nav = new ArrayList<NavCell>();
+		public HashMap<NavCell,Integer> nav_dist = new HashMap<NavCell,Integer>();
+		public void build_nav() {
+//			tmpnav.clear(); tmpnav2.clear(); 
+			for (int i = 0 ; i < 3 ; i++) for (int j = 0 ; j < 3 ; j++) 
+					if (neighs[i][j] != null) {
+//				tmpnav.add(neighs[i][j]);
+				
+			}
+			
+		}
+		
+		public NavCell neigh_TL = null, neigh_TC = null, neigh_TR = null, 
+				neigh_CL = null, neigh_CR = null, 
+				neigh_BL = null, neigh_BC = null, neigh_BR = null;
+		public NavCell[][] neighs = new NavCell[3][3];
+		public NavCell[] all_neighs = new NavCell[8];
+		public void build_neighs() {
+			neighs = new NavCell[3][3];
+			neigh_TL = getnavcell(x-1,y+1); neigh_TC = getnavcell(x,y+1); neigh_TR = getnavcell(x+1,y+1); 
+			neigh_CL = getnavcell(x-1,y); neigh_CR = getnavcell(x+1,y); 
+			neigh_BL = getnavcell(x-1,y-1); neigh_BC = getnavcell(x,y-1); neigh_BR = getnavcell(x+1,y-1);
+			setneigh(-1,1); 		setneigh(0,1); 	setneigh(1,1); 
+			setneigh(-1,0); 						setneigh(1,0); 
+			setneigh(-1,-1); 	setneigh(0,-1); 	setneigh(1,-1);
+			neighs[1][1] = null;
+			int cnt = 0;
+			for (int i = 0 ; i < 3 ; i++) for (int j = 0 ; j < 3 ; j++) 
+						if (neighs[i][j] != null) {
+				all_neighs[cnt] = neighs[i][j]; cnt++; }
+		}
+		private void setneigh(int i, int j) { neighs[i+1][j+1] = getnavcell(x+i,y+j); }
+		private NavCell getnavcell(int i, int j) { 
+			return (NavCell)((i >= 0 && j >= 0 && i < map_width && j < map_height && 
+					(cells[i][j] instanceof NavCell)) ? 
+					cells[i][j] : null); }
+		
+	}
+	
 	public class Cell {
 		public TiledMapTileLayer.Cell cell;
 		public TiledMapTile tile;
@@ -59,9 +110,11 @@ public class TileLayer extends nRenderer.Layer {
 		public boolean ground = false;
 		public boolean empty = false;
 		public boolean build = false;
-		public Cell(TiledMapTileLayer.Cell c) {
-			cell = c;
+		public int x, y;
+		public Cell(int i, int j, TiledMapTileLayer.Cell c) {
+			cell = c; x = i; y = j;
 			if (c == null) return;
+			all_cells.add(this);
 			tile = c.getTile();
 			prop = tile.getProperties();
 			ground = Utl.getBoo(prop,"ground");
@@ -75,16 +128,24 @@ public class TileLayer extends nRenderer.Layer {
 			if (light) build = true;
 		}
 	}
+	
+	public final int exploration_dist = 50;
 
+	public final ArrayList<Cell> all_cells = new ArrayList<Cell>();
+	public final ArrayList<NavCell> all_navcells = new ArrayList<NavCell>();
+	
 	public final RendererOrtho renderer;
 
 	public Cell[][] cells;
+	public Cell getcell(int i, int j) { return ((i >= 0 && j >= 0 && i < map_width && j < map_height) ? cells[i][j] : null); }
 	
 	public final int map_width, map_height;
 	public int tile_width = 0, tile_height = 0;
 
 	public ArrayList<Body> ground_bod = new ArrayList<Body>();
 
+	public final ArrayList<Light> map_lights = new ArrayList<Light>();
+	
 	private final StaticTiledMapTile brush;
 	private final pView view;
 	private final OrthographicCamera cam;
@@ -115,8 +176,15 @@ public class TileLayer extends nRenderer.Layer {
 		for (int i = 0 ; i < map_width ; i++)
 			for (int j = 0 ; j < map_height ; j++) {
 				TiledMapTileLayer.Cell c = mapLayer.getCell(i,j);
-				cells[i][j] = new Cell(c);
+				MapProperties prop = c.getTile().getProperties();
+				
+				if (Utl.getBoo(prop,"ground"))
+					cells[i][j] = new NavCell(i,j,c);
+				else cells[i][j] = new Cell(i,j,c);
 			}
+		
+		for (NavCell c : all_navcells) c.build_neighs();
+		for (NavCell c : all_navcells) c.build_nav();
 		
 		if (rend.tileLayer == null) {
 

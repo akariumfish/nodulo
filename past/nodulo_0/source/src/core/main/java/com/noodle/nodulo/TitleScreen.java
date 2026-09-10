@@ -111,12 +111,12 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 //		makeButton("Join", table1).addListener(new InputListener() { public boolean touchDown (
 //				InputEvent event, float x, float y, int pointer, int button) {
 //			return false; }});
-		makeButton("Test - Net", titletable).addListener(new InputListener() { public boolean touchDown (
-				InputEvent event, float x, float y, int pointer, int button) {
-			if (main.conf.app_run != null) main.conf.app_run.run(); return false; }});
-		makeButton("About", titletable).addListener(new InputListener() { public boolean touchDown (
-				InputEvent event, float x, float y, int pointer, int button) {
-			return false; }});
+//		makeButton("Test - Net", titletable).addListener(new InputListener() { public boolean touchDown (
+//				InputEvent event, float x, float y, int pointer, int button) {
+//			if (main.conf.app_run != null) main.conf.app_run.run(); return false; }});
+//		makeButton("About", titletable).addListener(new InputListener() { public boolean touchDown (
+//				InputEvent event, float x, float y, int pointer, int button) {
+//			return false; }});
 		makeButton("Exit", titletable).addListener(new InputListener() { public boolean touchDown (
 				InputEvent event, float x, float y, int pointer, int button) {
 			main.exit(); return false; }});

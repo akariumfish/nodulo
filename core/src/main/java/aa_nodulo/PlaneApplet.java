@@ -32,14 +32,14 @@ import util.nScripted;
 public class PlaneApplet extends App {
 
 	
-//	public static boolean TITLE_SCREEN = true; 
-	public static boolean TITLE_SCREEN = false;
+	public static boolean TITLE_SCREEN = true; 
+//	public static boolean TITLE_SCREEN = false;
 
 //	public static boolean START_FULLSCREEN = true;
 	public static boolean START_FULLSCREEN = false;
 
-//	public static boolean RELEASE = true;
-	public static boolean RELEASE = false;
+	public static boolean RELEASE = true;
+//	public static boolean RELEASE = false;
 	
 //	public static boolean BLOCK_NDRAWER_FX = true;
 	public static boolean BLOCK_NDRAWER_FX = false;
@@ -88,7 +88,7 @@ public class PlaneApplet extends App {
 		public boolean VIEW_START_COLLAPSED = false;
 		public boolean VIEW_START_GRID = false;
 //		public float DEF_VIEW_ZOOM = 0.07f;
-		public float DEF_VIEW_ZOOM = 0.12f;
+		public float DEF_VIEW_ZOOM = 0.3f;
 		public Vector2 DEF_VIEW_POS = new Vector2(0f,0f);
 		// DEFAULT
 //		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
@@ -101,13 +101,13 @@ public class PlaneApplet extends App {
 		public Vector2 DEF_VIEW_WIN_SZ = new Vector2(910f,770f);
 		public boolean PATCH_START_WALLPAPER = false;
 		public boolean PATCH_START_COLLAPSED = true;
-		public boolean PATCH_START_GRID = false;
+		public boolean PATCH_START_GRID = true;
 		public float DEF_PATCH_ZOOM = 0.1f;
 		public Vector2 DEF_PATCH_POS = new Vector2(0f,0f);
 		public Vector2 DEF_PATCH_WIN_POS = new Vector2(370f,915f);
 		public Vector2 DEF_PATCH_WIN_SZ = new Vector2(910f,450f);
 //		public boolean PATCH_TOOL_AUTOCOLLAPSE = true;
-		public boolean PATCH_SHEET_COLLAPSE = false;
+		public boolean PATCH_SHEET_COLLAPSE = true;
 		public boolean TOOLBOX_OPEN = true;
 		public boolean DRAW_GROUND = true;
 		public boolean DRAW_FOG = true;
@@ -115,7 +115,7 @@ public class PlaneApplet extends App {
 		
 		public boolean POP_BODY_EDITOR = false;
 
-		public boolean AVATAR_VIEW_MODE = false; //
+		public boolean AVATAR_VIEW_MODE = false; //false = def
 		public boolean AVATAR_CAM = true;
 		
 		public float DEF_TICK_BY_SEC = 60f;
@@ -255,7 +255,8 @@ public class PlaneApplet extends App {
 		if (config.PATCH_BUILD) {
 			run_startupmodel_setup(config.STARTUP_MODEL_REF); }
 
-		if (!RELEASE) tool_setup(true);
+//		if (!RELEASE) 
+			tool_setup(true);
 		
 		view = new pView(this);
 		time = new pTime(this);

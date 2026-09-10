@@ -85,7 +85,7 @@ public class pPatch {
 	
 	
 	public static void build_sheet(sData data) {
-		pSheet.SheetModel func_sheet_model = pSheet.newSheet(data, "function", false);
+		pSheet.SheetModel func_sheet_model = pSheet.newSheet(data, "function");
 		
 		pSheet.SheetModel main_sheet_model = pSheet.newSheet(data, "main");
 		
@@ -545,7 +545,9 @@ public class pPatch {
 	}
 	public void system_load() {
 //		load_contents();
-		if (!app.config.RELEASE) tool_setup(false);
+		
+//		if (!app.config.RELEASE) 
+			tool_setup(false);
 		
 
 //		app.term.register("view", bloc, this);

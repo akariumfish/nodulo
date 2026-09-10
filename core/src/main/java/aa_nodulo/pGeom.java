@@ -76,9 +76,9 @@ public class pGeom extends pSystem {
 				instance.run("empty_geom");
 			}});
 			stand.newRun("empty_geom", new nRun() {public void run() {
-				Color fill = nGUI.book.getModel("CL_graph").color_background;
-				Color line = nGUI.book.getModel("CL_graph").color_outline;
-				float thick = nGUI.book.getModel("CL_graph").outlineWeight;
+				Color fill = nGUI.book.getModel("CL_def_graph").color_background;
+				Color line = nGUI.book.getModel("CL_def_graph").color_outline;
+				float thick = nGUI.book.getModel("CL_def_graph").outlineWeight;
 				instance.setVar("fill_color", Utl.rgbToInt(fill));
 				instance.setVar("line_color", Utl.rgbToInt(line));
 				instance.setVar("line_thick", thick);

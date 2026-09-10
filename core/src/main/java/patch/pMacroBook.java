@@ -192,7 +192,7 @@ public class pMacroBook {
 				nMap<pInstance> list = arg(0, nMap.class);
 				list.get("startup").setVar("script", true);
 				list.get("avatar").setVar("script", true);
-//				for (String r : funcs) { list.get(r).setVar("script", true); }
+				for (String r : funcs) { list.get(r).setVar("script", true); }
 			}})
 			;
 

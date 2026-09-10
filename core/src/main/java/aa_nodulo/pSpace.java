@@ -529,7 +529,8 @@ public class pSpace {
 		
 //		load_contents();
 		
-		if (!app.config.RELEASE) tool_setup(false);
+//		if (!app.config.RELEASE) 
+			tool_setup(false);
 		
 //		if (app.AUTO_BUILD) {
 //			sValueBloc bloc2 = bloc.getBloc("bodyview");

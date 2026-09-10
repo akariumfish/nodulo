@@ -19,7 +19,7 @@ public class pFuncBook {
 	
 	
 	public static final String[] index_list = new String[] {
-		"0", "1", "2", "3"};
+		"0", "1", "2", "3", "4"};
 
 	public static void build_operators() {
 
