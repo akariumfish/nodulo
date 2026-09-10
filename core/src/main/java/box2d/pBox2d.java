@@ -188,16 +188,16 @@ public class pBox2d extends pSystem {
 
 		
 		
-		Vector2 avatarSpawn = new Vector2();
-		public void setAvatarSpawn(Vector2 p) { avatarSpawn.set(p); }
+		MobSpawn avatarSpawn;
+		public void setAvatarSpawn(Vector2 p, float r) { avatarSpawn = new MobSpawn(p,r,0); }
 		
 		private class MobSpawn { 
-			Vector2 p1,p2; 
-			MobSpawn(Vector2 v1, Vector2 v2) { 
-				p1 = new Vector2(v1); p2 = new Vector2(v2); } }
+			Vector2 pos; float rot; int id; 
+			MobSpawn(Vector2 v, float r, int i) { 
+				pos = new Vector2(v); rot = r; id = i; } }
 		int mobCnt = 0;
 		ArrayList<MobSpawn> mobspawn = new ArrayList<MobSpawn>();
-		public void addMobSpawn(Vector2 p1, Vector2 p2) { mobspawn.add(new MobSpawn(p1,p2)); }
+		public void addMobSpawn(Vector2 v, float r, int i) { mobspawn.add(new MobSpawn(v,r,i)); }
 
 		
 		
@@ -232,40 +232,12 @@ public class pBox2d extends pSystem {
 
 		pView view;
 		
-//		PerspectiveCamera cam;
-//
-//		public ModelBatch modelBatch;
-//		public Model model;
-//		public ModelInstance instance;
-//		public Environment environment;
-		
 		public void system_init() {
 			bloc.addObject("box2d", this);
 
 			app.storeSystemType(bloc.ref, this.getClass());
 
 			useNetFrame();
-			
-
-//			modelBatch = new ModelBatch();
-//			
-//			cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-//			cam.position.set(10f, 10f, 10f);
-//			cam.lookAt(0,0,0);
-//			cam.near = 1f;
-//			cam.far = 300f;
-//			cam.update();
-//			
-//			environment = new Environment();
-//			environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
-//			environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
-//			
-//			ModelBuilder modelBuilder = new ModelBuilder();
-//			model = modelBuilder.createBox(5f, 5f, 5f, 
-//				new Material(ColorAttribute.createDiffuse(Color.GREEN)),
-//				Usage.Position | Usage.Normal);
-//			instance = new ModelInstance(model);
-			
 
 			val_draw_debug = bloc.obtainBoo("val_draw_debug", false);
 			val_draw_ray_debug = bloc.obtainBoo("val_draw_ray_debug", false);
@@ -288,16 +260,20 @@ public class pBox2d extends pSystem {
 			app.outputs.put("next_mob_spawn", new nRun() { public void run() {
 				mobCnt++; }});
 			
-			app.inputs.put("get_mob_spawn_p1", new nRun() { public Object get() {
-				return mobspawn.get(mobCnt).p1; }});
-			app.inputs.put("get_mob_spawn_p2", new nRun() { public Object get() {
-				return mobspawn.get(mobCnt).p2; }});
+			app.inputs.put("get_mob_spawn_pos", new nRun() { public Object get() {
+				return mobspawn.get(mobCnt).pos; }});
+			app.inputs.put("get_mob_spawn_rot", new nRun() { public Object get() {
+				return mobspawn.get(mobCnt).rot; }});
+			app.inputs.put("get_mob_spawn_id", new nRun() { public Object get() {
+				return mobspawn.get(mobCnt).id; }});
 			
 			app.inputs.put("has_mob_spawn", new nRun() { public Object get() {
 				return mobCnt < mobspawn.size(); }});
 			
-			app.inputs.put("avatar_spawn", new nRun() { public Object get() {
-				return avatarSpawn; }});
+			app.inputs.put("avatar_spawn_pos", new nRun() { public Object get() {
+				return (avatarSpawn != null ? avatarSpawn.pos : new Vector2()); }});
+			app.inputs.put("avatar_spawn_rot", new nRun() { public Object get() {
+				return (avatarSpawn != null ? avatarSpawn.rot : 0f); }});
 			
 			
 			world = new World(new Vector2(0, 0), true);
@@ -440,7 +416,8 @@ public class pBox2d extends pSystem {
 			return val_draw_aura.get() && app.gdx.drawer.USE_FX; }
 		public boolean drawcolor() { 
 			return val_draw_color.get() && app.gdx.drawer.USE_FX; }
-		public boolean drawvision() { return val_draw_vision.get(); }
+		public boolean drawvision() { return 
+				has_vision_bod && val_draw_vision.get(); }
 		
 		public void draw_drawer() {
 
@@ -458,17 +435,6 @@ public class pBox2d extends pSystem {
 			
 		}
 		
-//		public void draw_3d() {
-//
-////			Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-////			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-//
-//			modelBatch.begin(cam);
-//			modelBatch.render(instance, environment);
-//			modelBatch.end();
-//			
-//		}
-
 		public void draw() { 
 
 			if (val_edit_tile.get()) {
@@ -498,6 +464,9 @@ public class pBox2d extends pSystem {
 			Fixture fb = contact.getFixtureB();
 			Body ba = fa.getBody();
 			Body bb = fb.getBody();
+
+			test_collided(ba,bb);
+			test_collided(bb,ba);
 			
 			if (break_bodys.contains(ba) && body_breaker.contains(bb)) {
 				if (!clearing_bodys.contains(ba)) clearing_bodys.add(ba);
@@ -531,10 +500,23 @@ public class pBox2d extends pSystem {
 			}
 		}
 		
+		private void test_collided(Body ba, Body bb) {
+
+			if (ba.getUserData() != null && 
+					(ba.getUserData() instanceof pBody)) {
+				pBody b1 = (pBody)ba.getUserData();
+				if (!b1.hasParam("ctrl_mob")) return;
+				b1.setBoo("ctrl_mob", "direction", 
+						!b1.getBoo("ctrl_mob", "direction"));
+			}
+		}
+		
 		public ArrayList<Body> break_bodys = new ArrayList<Body>();
 		public ArrayList<Body> body_breaker = new ArrayList<Body>();
 
 		public ArrayList<Body> clearing_bodys = new ArrayList<Body>();
+		
+		public boolean has_vision_bod = false;
 		
 		public nMap<Body> bodys = new nMap<Body>();
 		private int get_free_bod_nb() {
@@ -600,11 +582,15 @@ public class pBox2d extends pSystem {
 //							new Color(1f,0.6f,0.4f,1f), 400, 0, 0);
 //					attachToBody(pl, body);
 					SwarmLight.Unit su = renderer.auraLayer.newSwarmLightUnit(
-							new Color(1f,0.6f,0.4f,1f), 400);
+							new Color(1f,0.5f,0.3f,1f), 600);
+					attachToBody(su, body);
+					su = renderer.lightLayer.newSwarmLightUnit(
+							new Color(1f,0.5f,0.3f,0.5f), 400);
 					attachToBody(su, body);
 				}
 
 				if (b.getBoo("physic", "view_light")) {
+					has_vision_bod = true;
 					
 					renderer.newVisionLight(body);
 					
@@ -633,9 +619,12 @@ public class pBox2d extends pSystem {
 							b.getInt("physic", "b"), b.getInt("physic", "a"));
 					
 					renderer.rayHandler.transparent.add(body);
-					
+
 					SwarmLight.Unit su = renderer.auraLayer.newSwarmLightUnit(
 							new Color(col.r,col.g,col.b,col.a), dist);
+					attachToBody(su, body);
+					su = renderer.lightLayer.newSwarmLightUnit(
+							new Color(1f,0f,0f,0.7f), dist*0.5f);
 					attachToBody(su, body);
 				}
 
@@ -708,6 +697,7 @@ public class pBox2d extends pSystem {
 			if (b.param("box_body") == null) return;
 			Body body = bodys.get(b.getStr("box_body", "body_ref"));
 			if (body == null) return;
+			if (b.getBoo("physic", "view_light")) has_vision_bod = false;
 			bodys.remove(b.getStr("box_body", "body_ref"), body);
 			world.destroyBody(body);
 			if (lights.get(body) != null) {
@@ -729,6 +719,13 @@ public class pBox2d extends pSystem {
 //			Vector2 pos = body.getPosition();
 			float rot = body.getAngle();
 			body.setTransform(x,y,rot);
+		}
+
+		public void move_body(pBody b, float x, float y, float r) {
+			if (b.param("box_body") == null) return;
+			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+			if (body == null) return;
+			body.setTransform(x,y,r);
 		}
 
 		public void accel_body(pBody b, boolean glob, float x, float y, float max) {

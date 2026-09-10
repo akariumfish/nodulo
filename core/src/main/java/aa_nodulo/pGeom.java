@@ -697,33 +697,30 @@ public class pGeom extends pSystem {
 				return;
 			} else if (spawning == 0) {
 				bod.setInt("ctrl_mob","spawning",(int)(spawning-1));
-				Vector2 spawn = bod.getVec("ctrl_mob","spawn");
-				box.move_body(bod,spawn.x,spawn.y); 
+				Vector2 pos = bod.getVec("ctrl_mob","spawn_pos");
+				float rot = bod.getFlt("ctrl_mob","spawn_rot");
+				box.move_body(bod,pos.x,pos.y,rot); 
 				return;
 			} 
+			int spawnid = bod.getInt("ctrl_mob","spawn_id");
 			
-			if (bod.getBoo("ctrl_mob","activate")) {
-				Vector2 spawn = bod.getVec("ctrl_mob","spawn");
-				Vector2 target = bod.getVec("ctrl_mob","target");
-				Vector2 pos = bod.getVec("ref","pos");
-				Vector2 m = new Vector2();
+			if (bod.getBoo("ctrl_mob","activate") && (
+					spawnid == 1 || spawnid == 3)) {
+				float spawnrot = bod.getFlt("ctrl_mob","spawn_rot");
 				float speed = bod.getFlt("ctrl_mob","speed");
 				boolean direction = bod.getBoo("ctrl_mob","direction");
-				if (direction) {
-					m.set(target).sub(pos);
-				} else {
-					m.set(spawn).sub(pos);
-				}
-				if (m.len() < 80) bod.setBoo("ctrl_mob","direction", !direction);
-				m.nor().scl(speed);
+				Vector2 m = new Vector2(speed,0).rotateRad(spawnrot + (float)Math.PI / 2f);
+				if (!direction) m.scl(-1f); 
 				box.accel_body(bod,true,m.x,m.y,speed*2f); 
-				box.rot_body_toward(bod,m.angleRad(),speed/40f,speed/30f); 
+				box.rot_body_toward(bod,spawnrot,speed/40f,speed/30f); 
 			}
 			if (bod.getBoo("ctrl_mob","shoot")) {
 				if (bod.getInt("ctrl_mob","shoot_counter") < 
 						bod.getInt("ctrl_mob","shoot_delay")) {
+					int step = 1;
+					if (spawnid == 3 || spawnid == 4) step = 2;
 					bod.setInt("ctrl_mob","shoot_counter", 
-							bod.getInt("ctrl_mob","shoot_counter") + (int)1);
+							bod.getInt("ctrl_mob","shoot_counter") + step);
 				} else {
 					bod.setInt("ctrl_mob","shoot_counter", 0);
 					String bluep_par = bod.getStr("ctrl_mob","bullet_blueprint");
@@ -735,21 +732,21 @@ public class pGeom extends pSystem {
 						pBody pop = pNodeSpace.new_body(bluep);
 						if (pop == null) return;
 
-						Vector2 shoot_pop = bod.getVec("ctrl_mob","shoot_pop");
-						Vector2 shoot_dir = bod.getVec("ctrl_mob","shoot_dir");
-						
 						Vector2 bp = bod.getVec("ref", "pos");
-						Vector2 p = new Vector2(shoot_pop.x,shoot_pop.y);
-						p.add(bp);
+						float br = bod.getFlt("ref", "rot");
+						Vector2 p = new Vector2(150,0);
+						p.rotateRad(br).add(bp);
 						pop.setVec("ref", "pos", new Vector2(p.x,p.y));
-						pop.setFlt("ref", "rot", shoot_dir.angleRad());
+						pop.setFlt("ref", "rot", br);
 						
 						pNodeSpace.init_body(pop, bluep);
 						
 						if (box != null) {
 							if (pop.hasParam("ctrl_box")) {
+								Vector2 ac = new Vector2(1,0);
+								ac.rotateRad(br);
 								pop.setBoo("ctrl_box","accel_move", true);
-								pop.setVec("ctrl_box","accel_dir", shoot_dir.x,shoot_dir.y);
+								pop.setVec("ctrl_box","accel_dir", ac.x, ac.y);
 							}
 						}
 					} 
@@ -763,15 +760,25 @@ public class pGeom extends pSystem {
 		.addData("direction", true)
 		.addData("speed", 20f)
 		.addData("spawning", (int)2)
-		.addData("spawn", new Vector2(400,900))
-		.addData("target", new Vector2(1000,-900))
 		.addData("shoot", true)
 		.addData("bullet_blueprint", "bullet_print")
 		.addData("shoot_counter", (int)0)
 		.addData("shoot_delay", (int)30)
-		.addData("shoot_pop", new Vector2(150,0))
-		.addData("shoot_dir", new Vector2(1,0))
+		.addData("spawn_pos", new Vector2())
+		.addData("spawn_rot", 0f)
+		.addData("spawn_id", (int)0)
 		;
+		
+		/*
+		 * SPAWN IDS :
+		 * 
+		 * 0 : avatar
+		 * 1 : move + shoot
+		 * 2 : shoot
+		 * 3 : move + quick shoot
+		 * 4 : quick shoot
+		 * 
+		 * */
 
 		
 		

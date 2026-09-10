@@ -334,12 +334,11 @@ public class Utl {
 	
 	
 	
-	
+
 	public static boolean getBoo(MapProperties prop, String r) {
 		return (prop.get(r, Boolean.class) != null && 
 				prop.get(r, Boolean.class));
 	}
-	
 	
 	
 	public static float radToDeg(float d) {

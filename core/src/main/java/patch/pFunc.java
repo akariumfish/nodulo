@@ -893,7 +893,7 @@ public class pFunc {
 	}
 	
 	
-	public static final int MAX_INFO = 3;
+	public static final int MAX_INFO = 4;
 
 	public static class Data {
 		public String ref; public Class<?> arg_class; 
