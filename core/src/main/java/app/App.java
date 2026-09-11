@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.codedisaster.steamworks.SteamAPI;
+import com.codedisaster.steamworks.*;
 import com.noodle.nodulo.GdxApp;
 import com.noodle.nodulo.GdxApp.nAppListener;
 
@@ -53,13 +53,14 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 //			SteamAPI.loadLibraries(loader);
 //			
 //		    if (!SteamAPI.loadLibraries(loader)) {
-//		    		log("STEAM : Failed to load native libraries");
+//		    		Utl.logn("STEAM : Failed to load native libraries");
 //		    }
 //		    if (!SteamAPI.init()) {
-//		    		log("STEAM : Steamworks initialization error, e.g. Steam client not running");
-//		    }
+//		    		Utl.logn("STEAM : Steamworks initialization error, e.g. Steam client not running");
+//		    } else Utl.logn("STEAM Initialization success.");
+//		    
 //		} catch (SteamException e) {
-//			log("STEAM : You probably messed up the call order somehow");
+//			Utl.logn("STEAM : You probably messed up the call order somehow");
 //			e.printStackTrace(System.out);
 //		}
 

@@ -241,7 +241,8 @@ public class pBox2d extends pSystem {
 			bloc.addObject("box2d", this);
 
 			app.storeSystemType(bloc.ref, this.getClass());
-
+			app.box = this;
+			
 			useNetFrame();
 
 			val_draw_debug = bloc.obtainBoo("val_draw_debug", false);
@@ -298,7 +299,10 @@ public class pBox2d extends pSystem {
 			//		boolean drawVelocities, boolean drawContacts
 			boxRenderer = new Box2DRenderer(app, true, true, true, true, true, true);
 			
-			renderer = new nRenderer("Map.tmx", this, world);
+			renderer = new nRenderer(this, world);
+			
+			if (app.config.STARTUP_MAP_PATH.length() > 0)
+				renderer.setupMap(app.config.STARTUP_MAP_PATH);
 			
 		}
 		public void system_load() {

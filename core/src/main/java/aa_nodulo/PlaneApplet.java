@@ -16,6 +16,7 @@ import com.noodle.nodulo.Main;
 
 import app.App;
 import app.AppConfig;
+import box2d.pBox2d;
 import data.sValueBloc;
 import gui.nGUI;
 import gui.nGUIBook;
@@ -32,14 +33,14 @@ import util.nScripted;
 public class PlaneApplet extends App {
 
 	
-	public static boolean TITLE_SCREEN = true; 
-//	public static boolean TITLE_SCREEN = false;
+//	public static boolean TITLE_SCREEN = true; 
+	public static boolean TITLE_SCREEN = false;
 
 //	public static boolean START_FULLSCREEN = true;
 	public static boolean START_FULLSCREEN = false;
 
-	public static boolean RELEASE = true;
-//	public static boolean RELEASE = false;
+//	public static boolean RELEASE = true;
+	public static boolean RELEASE = false;
 	
 //	public static boolean BLOCK_NDRAWER_FX = true;
 	public static boolean BLOCK_NDRAWER_FX = false;
@@ -80,6 +81,9 @@ public class PlaneApplet extends App {
 
 		public String STARTUP_MODEL_REF = "exemple";
 //		public String STARTUP_MODEL_REF = "";
+
+		public String STARTUP_MAP_PATH = "Map2.tmx";
+//		public String STARTUP_MAP_PATH = "";
 
 		public String STARTUP_LOAD_FILE = "";
 		public String STARTUP_NEW_FILE = ""; 
@@ -161,6 +165,9 @@ public class PlaneApplet extends App {
 	public pPatch patch;
 	public pSpace space;
 	public pNet net;
+	
+	public pBox2d box;
+	
 //	public pTerm term;
 //	
 //	public Plane plane;

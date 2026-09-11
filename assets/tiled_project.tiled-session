@@ -1,5 +1,5 @@
 {
-    "activeFile": "Map.tmx",
+    "activeFile": "Map2.tmx",
     "automapping.whileDrawing": true,
     "expandedProjectPaths": [
         "."
@@ -39,11 +39,11 @@
             "expandedObjectLayers": [
                 2
             ],
-            "scale": 0.5,
-            "selectedLayer": 0,
+            "scale": 0.75,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 1024,
-                "y": 1025
+                "x": 483.33333333333326,
+                "y": 504.6666666666666
             }
         },
         "Map2.tmx#Lighting": {
@@ -53,6 +53,9 @@
         "Map2.tmx#Tilemap": {
             "scaleInDock": 2,
             "scaleInEditor": 4
+        },
+        "Map2.tmx#tileset_flags2": {
+            "scaleInDock": 1
         },
         "Map3.tmx": {
             "scale": 1.5,
@@ -97,17 +100,19 @@
     "map.width": 128,
     "openFiles": [
         "Map.tmx",
-        "tileset.tsx"
+        "tileset.tsx",
+        "Map2.tmx"
     ],
     "project": "tiled_project.tiled-project",
     "property.type": "int",
     "recentFiles": [
-        "tileset.tsx",
         "Map.tmx",
+        "tileset.tsx",
         "Map2.tmx",
         "Map4.tmx",
         "Map3.tmx"
     ],
+    "resizeMap.removeObjects": false,
     "tileset.embedInMap": true,
     "tileset.margin": 0,
     "tileset.spacing": 1,

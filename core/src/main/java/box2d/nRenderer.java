@@ -157,9 +157,16 @@ public class nRenderer {
 	}
 	
 	GroupLayer roomGroup;
+
+	public LightLayer visionLayer;
+	public LightLayer colorLayer;
+	public LightLayer lightLayer;
+	public LightLayer auraLayer;
+	public LightLayer solidLayer;
+	public TileLayer tileLayer;
+	
 	public void prepareLayers() {
 		
-
 		RunLayer updateLayer = newRunLayer(0);
 		LightLayer groundLayer = newLightLayer(LightLayer.MODE.SOLID,1);
 		
@@ -181,14 +188,9 @@ public class nRenderer {
 			f.setActive(box.drawfog());
 		}});
 		
-		
-		
 		// TileLayer prio = 2
 		
 		auraLayer = roomGroup.newLightLayer(LightLayer.MODE.AURA,3);
-		
-//		roomGroup.newRunLayer(4).addRun(new nRun() { public void run() {
-//			box.draw_drawer(); }});
 		
 		solidLayer = roomGroup.newLightLayer(LightLayer.MODE.SOLID,5);
 		
@@ -250,30 +252,6 @@ public class nRenderer {
 				
 			} 
 		}
-
-//		float[] path = new float[] {
-////				-200f,0f,
-////				-2000f,0f
-//				
-//				-200f,0f,
-//				-800f,0f, 
-//				-800f,300f, 
-//				-1400f,300f 
-//				
-//				};
-//		
-//		colorLayer.newChainLight(900, Utl.color(255), 500f, path);
-		
-//		ChainLight ch = new ChainLight(colorLayer, 900, Utl.color(255), 500f, 
-//				1, path);
-//		ch.setSoft(false);
-//		ch = new ChainLight(colorLayer, 900, Utl.color(255), 500f, 
-//				-1, path);
-//		ch.setSoft(false);
-		
-
-		
-//		ch = new SwarmLight(colorLayer, 300, Utl.color(255));
 	}
 	
 	public void loadLayerObject(MapLayer layer) {
@@ -286,23 +264,6 @@ public class nRenderer {
 			if (Utl.getBoo(prop,"lightLayer")) {
 				lightLayer.loadMapObject(prop);
 			}
-//			if (Utl.getBoo(prop,"spawn")) {
-//				box.setAvatarSpawn(tileLayer.mapToSpace(
-//						prop.get("x", Float.class), prop.get("y", Float.class)));
-//			}
-//			if (Utl.getBoo(prop,"mob")) {
-//				box.addMobSpawn(
-//					tileLayer.mapToSpace(
-//						prop.get("x", Float.class), prop.get("y", Float.class))
-////					.scl(1f,-1f)
-////					.add(0,tileLayer.getHeight())
-//					, 
-//					tileLayer.mapToSpace(
-//						prop.get("x2", Float.class), prop.get("y2", Float.class))
-////					.scl(1f,-1f)
-////					.add(0,tileLayer.getHeight())
-//					);
-//			}
 		}
 	}
 	
@@ -310,26 +271,19 @@ public class nRenderer {
 	
 	
 	
-	private final TiledMap map;
+	private TiledMap map;
 	
 	public final float tile_scale = 200f;
 
 	public pView view; 
 	public OrthographicCamera cam;
 
-	public LightLayer visionLayer;
-	public LightLayer colorLayer;
-	public LightLayer lightLayer;
-	public LightLayer auraLayer;
-	public LightLayer solidLayer;
-	public TileLayer tileLayer;
-	
 	public RayHandler rayHandler;
 	public pBox2d box;
 	public PlaneApplet app;
 	public World world;
 	
-	public nRenderer(String path, pBox2d b, World w) {
+	public nRenderer(pBox2d b, World w) { //String path, 
 		app = b.app;
 		box = b;
 		world = w;
@@ -340,6 +294,14 @@ public class nRenderer {
 
 		prepareLayers();
 		
+//		map = new TmxMapLoader(new InternalFileHandleResolver()).load(path);
+//		
+//		processMap(map);
+		
+	}
+	
+	public void setupMap(String path) {
+
 		map = new TmxMapLoader(new InternalFileHandleResolver()).load(path);
 		
 		processMap(map);

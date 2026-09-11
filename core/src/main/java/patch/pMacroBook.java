@@ -287,7 +287,7 @@ public class pMacroBook {
 
 
 		new MacroScript("startup")
-
+			
 		.com("add_func","func_pop_body")
 			.com("add_arr_at", "arg")
 				.com("add_new_at","entry","body_print")
