@@ -11,8 +11,6 @@ public class pNodeUI {
 	
 	public static void build() {
 
-		float RS = nGUI.book.RS;
-		
 		build_paint();
 		
 		pNode.newNodeModel("UI").process()
@@ -58,6 +56,7 @@ public class pNodeUI {
 		pNode.newChainnedNodeModel("UI_trigg")
 		.process()
 			.commande(new nRun() {public void run() {
+				instance.obtainVar("widg_size", new Vector2(3,1));
 				PlaneApplet.app.addDelayEvent(1, new nRun(instance) {public void run() {
 					pInstance inst = (pInstance)builder;
 					pInstance head = inst.get("get_chain_head", pInstance.class);
@@ -68,6 +67,9 @@ public class pNodeUI {
 							inst.getVar("widg_text", String.class));
 					inst.addObject("trigg", tr);
 					Vector2 size = inst.getVar("widg_size", Vector2.class);
+
+					float RS = nGUI.book.RS;
+					
 					tr.setSX(RS*size.x);
 					tr.setSY(RS*size.y);
 					tr.addEventTrigger(new nRun(inst) {public void run() { 
@@ -82,6 +84,9 @@ public class pNodeUI {
 					nWidget tr = instance.object("trigg", nWidget.class);
 					if (tr == null) return;
 					Vector2 size = instance.getVar("widg_size", Vector2.class);
+
+					float RS = nGUI.book.RS;
+					
 					tr.setSX(RS*size.x);
 					tr.setSY(RS*size.y);
 				}})
@@ -118,6 +123,7 @@ public class pNodeUI {
 		.process()
 			.commande(new nRun() {public void run() {
 				instance.obtainVar("state", false);
+				instance.obtainVar("widg_size", new Vector2(3,1));
 				PlaneApplet.app.addDelayEvent(1, new nRun(instance) {public void run() {
 					pInstance inst = (pInstance)builder;
 					pInstance head = inst.get("get_chain_head", pInstance.class);
@@ -128,6 +134,9 @@ public class pNodeUI {
 							inst.getVar("widg_text", String.class));
 					inst.addObject("widg", tr);
 					Vector2 size = inst.getVar("widg_size", Vector2.class);
+
+					float RS = nGUI.book.RS;
+					
 					tr.setSX(RS*size.x);
 					tr.setSY(RS*size.y);
 					tr.addEventSwitch(new nRun(inst) {public void run() { 
@@ -148,6 +157,9 @@ public class pNodeUI {
 					nWidget tr = instance.object("widg", nWidget.class);
 					if (tr == null) return;
 					Vector2 size = instance.getVar("widg_size", Vector2.class);
+
+					float RS = nGUI.book.RS;
+					
 					tr.setSX(RS*size.x);
 					tr.setSY(RS*size.y);
 				}})
@@ -194,6 +206,7 @@ public class pNodeUI {
 		}})
 		.process()
 			.commande(new nRun() {public void run() {
+				instance.obtainVar("widg_size", new Vector2(3,1));
 				PlaneApplet.app.addDelayEvent(1, new nRun(instance) {public void run() {
 					pInstance inst = (pInstance)builder;
 					pInstance head = inst.get("get_chain_head", pInstance.class);
@@ -204,6 +217,9 @@ public class pNodeUI {
 							inst.getVar("widg_text", String.class));
 					inst.addObject("widg", tr);
 					Vector2 size = inst.getVar("widg_size", Vector2.class);
+
+					float RS = nGUI.book.RS;
+					
 					tr.setSX(RS*size.x);
 					tr.setSY(RS*size.y);
 					nRun logic_run = new nRun(inst) {public void run() { 
@@ -223,6 +239,9 @@ public class pNodeUI {
 					nWidget tr = instance.object("widg", nWidget.class);
 					if (tr == null) return;
 					Vector2 size = instance.getVar("widg_size", Vector2.class);
+
+					float RS = nGUI.book.RS;
+					
 					tr.setSX(RS*size.x);
 					tr.setSY(RS*size.y);
 				}})

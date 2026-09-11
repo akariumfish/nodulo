@@ -17,7 +17,6 @@ import util.Utl;
 import util.nRun;
 import app.App;
 import box2d.TileLayer.Cell;
-import box2d.TileLayer.NavCell;
 
 import java.util.ArrayList;
 import java.util.HashMap;

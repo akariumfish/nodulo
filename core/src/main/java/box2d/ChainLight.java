@@ -194,27 +194,27 @@ public class ChainLight extends Light {
 	 * Draws a polygon, using ray start and end points as vertices
 	 */
 	public void debugRender(nDrawer.Drawer draw) {
-		draw.stroke(0,255,255,255,8f); draw.fill(0,0);
-		FloatArray vertices = Pools.obtain(FloatArray.class);
-		vertices.clear();
-		for (int i = 0; i < rayNum; i++) {
-			vertices.addAll(mx[i], my[i]);
-		}
-		for (int i = rayNum - 1; i > -1; i--) {
-			vertices.addAll(startX[i], startY[i]);
-		}
-		draw.polygon(vertices.shrink());
-//		if (rayBidirectional) {
-//			vertices.clear();
-//			for (int i = 0; i < rayNum; i++) {
-//				vertices.addAll(mx2[i], my2[i]);
-//			}
-//			for (int i = rayNum - 1; i > -1; i--) {
-//				vertices.addAll(startX2[i], startY2[i]);
-//			}
-//			draw.polygon(vertices.shrink());
+//		draw.stroke(0,255,255,255,8f); draw.fill(0,0);
+//		FloatArray vertices = Pools.obtain(FloatArray.class);
+//		vertices.clear();
+//		for (int i = 0; i < rayNum; i++) {
+//			vertices.addAll(mx[i], my[i]);
 //		}
-		Pools.free(vertices);
+//		for (int i = rayNum - 1; i > -1; i--) {
+//			vertices.addAll(startX[i], startY[i]);
+//		}
+//		draw.polygon(vertices.shrink());
+////		if (rayBidirectional) {
+////			vertices.clear();
+////			for (int i = 0; i < rayNum; i++) {
+////				vertices.addAll(mx2[i], my2[i]);
+////			}
+////			for (int i = rayNum - 1; i > -1; i--) {
+////				vertices.addAll(startX2[i], startY2[i]);
+////			}
+////			draw.polygon(vertices.shrink());
+////		}
+//		Pools.free(vertices);
 	}
 	
 	@Override
@@ -354,172 +354,172 @@ public class ChainLight extends Light {
 	 * any time the number or values of elements changes in {@link #chain}.
 	 */
 	public void updateChain() {
-		Vector2 v1 = Pools.obtain(Vector2.class);
-		Vector2 v2 = Pools.obtain(Vector2.class);
-		Vector2 vSegmentStart = Pools.obtain(Vector2.class);
-		Vector2 vDirection = Pools.obtain(Vector2.class);
-		Vector2 vRayOffset = Pools.obtain(Vector2.class);
-		Spinor tmpAngle = Pools.obtain(Spinor.class);
-		// Spinors used to represent perpendicular angle of each segment
-		Spinor previousAngle = Pools.obtain(Spinor.class);
-		Spinor currentAngle = Pools.obtain(Spinor.class);
-		Spinor nextAngle = Pools.obtain(Spinor.class);
-		// Spinors used to represent start, end and interpolated ray
-		// angles for a given segment
-		Spinor startAngle = Pools.obtain(Spinor.class);
-		Spinor endAngle = Pools.obtain(Spinor.class);
-		Spinor rayAngle = Pools.obtain(Spinor.class);
-		
-		int segmentCount = chain.size / 2 - 1;
-
-		segmentAngles.clear();
-		segmentLengths.clear();
-//		segmentAngles2.clear();
-//		segmentLengths2.clear();
-		float remainingLength = 0;
-//		float remainingLength2 = 0;
-		
-		for (int i = 0, j = 0; i < chain.size - 2; i += 2, j++) {
-			v1.set(chain.items[i + 2], chain.items[i + 3])
-				.sub(chain.items[i], chain.items[i + 1]);
-			segmentLengths.add(v1.len());
-			segmentAngles.add(
-				v1.rotate90(rayDirection).angleDeg() * MathUtils.degreesToRadians
-			);
-			remainingLength += segmentLengths.items[j];
-		}
-//		if (rayBidirectional) {
-//			for (int i = 0, j = 0; i < chain.size - 2; i += 2, j++) {
-//					v1.set(chain.items[i + 2], chain.items[i + 3])
-//					.sub(chain.items[i], chain.items[i + 1]);
-//				segmentLengths2.add(v1.len());
-//				segmentAngles2.add(
-//					v1.rotate90(-rayDirection).angleDeg() * MathUtils.degreesToRadians
-//				);
-//				remainingLength2 += segmentLengths2.items[j];
-//			}
+//		Vector2 v1 = Pools.obtain(Vector2.class);
+//		Vector2 v2 = Pools.obtain(Vector2.class);
+//		Vector2 vSegmentStart = Pools.obtain(Vector2.class);
+//		Vector2 vDirection = Pools.obtain(Vector2.class);
+//		Vector2 vRayOffset = Pools.obtain(Vector2.class);
+//		Spinor tmpAngle = Pools.obtain(Spinor.class);
+//		// Spinors used to represent perpendicular angle of each segment
+//		Spinor previousAngle = Pools.obtain(Spinor.class);
+//		Spinor currentAngle = Pools.obtain(Spinor.class);
+//		Spinor nextAngle = Pools.obtain(Spinor.class);
+//		// Spinors used to represent start, end and interpolated ray
+//		// angles for a given segment
+//		Spinor startAngle = Pools.obtain(Spinor.class);
+//		Spinor endAngle = Pools.obtain(Spinor.class);
+//		Spinor rayAngle = Pools.obtain(Spinor.class);
+//		
+//		int segmentCount = chain.size / 2 - 1;
+//
+//		segmentAngles.clear();
+//		segmentLengths.clear();
+////		segmentAngles2.clear();
+////		segmentLengths2.clear();
+//		float remainingLength = 0;
+////		float remainingLength2 = 0;
+//		
+//		for (int i = 0, j = 0; i < chain.size - 2; i += 2, j++) {
+//			v1.set(chain.items[i + 2], chain.items[i + 3])
+//				.sub(chain.items[i], chain.items[i + 1]);
+//			segmentLengths.add(v1.len());
+//			segmentAngles.add(
+//				v1.rotate90(rayDirection).angleDeg() * MathUtils.degreesToRadians
+//			);
+//			remainingLength += segmentLengths.items[j];
 //		}
-		
-		int rayNumber = 0;
-		int remainingRays = rayNum;
-		
-		for (int i = 0; i < segmentCount; i++) {
-			// get this and adjacent segment angles
-			previousAngle.set(
-				(i == 0) ?
-				segmentAngles.items[i] : segmentAngles.items[i - 1]);
-			currentAngle.set(segmentAngles.items[i]);
-			nextAngle.set(
-				(i == segmentAngles.size - 1) ?
-				segmentAngles.items[i] : segmentAngles.items[i + 1]);
-			
-			// interpolate to find actual start and end angles
-			startAngle.set(previousAngle).slerp(currentAngle, 0.5f);
-			endAngle.set(currentAngle).slerp(nextAngle, 0.5f);
-
-			int segmentVertex = i * 2;
-			vSegmentStart.set(
-				chain.items[segmentVertex], chain.items[segmentVertex + 1]);
-			vDirection.set(
-				chain.items[segmentVertex + 2], chain.items[segmentVertex + 3]
-			).sub(vSegmentStart).nor();
-
-			float raySpacing = remainingLength / remainingRays;
-			int segmentRays = (i == segmentCount - 1) ?
-				remainingRays :
-				(int) ((segmentLengths.items[i] / remainingLength) *
-						remainingRays);
-			
-			for (int j = 0; j < segmentRays; j++) {
-				float position = j * raySpacing;
-
-				// interpolate ray angle based on position within segment
-				rayAngle.set(startAngle).slerp(
-					endAngle, position / segmentLengths.items[i]);
-				float angle = rayAngle.angle();
-				vRayOffset.set(this.rayStartOffset, 0).rotateRad(angle);
-				v1.set(vDirection).scl(position).add(vSegmentStart).add(vRayOffset);
-				
-				this.startX[rayNumber] = v1.x;
-				this.startY[rayNumber] = v1.y;
-				v2.set(distance, 0).rotateRad(angle).add(v1);
-				this.endX[rayNumber] = v2.x;
-				this.endY[rayNumber] = v2.y;
-				rayNumber++;
-			}
-			
-			remainingRays -= segmentRays;
-			remainingLength -= segmentLengths.items[i];
-			
-		}
-
-//		if (rayBidirectional) {
-//			rayNumber = 0;
-//			remainingRays = rayNum;
+////		if (rayBidirectional) {
+////			for (int i = 0, j = 0; i < chain.size - 2; i += 2, j++) {
+////					v1.set(chain.items[i + 2], chain.items[i + 3])
+////					.sub(chain.items[i], chain.items[i + 1]);
+////				segmentLengths2.add(v1.len());
+////				segmentAngles2.add(
+////					v1.rotate90(-rayDirection).angleDeg() * MathUtils.degreesToRadians
+////				);
+////				remainingLength2 += segmentLengths2.items[j];
+////			}
+////		}
+//		
+//		int rayNumber = 0;
+//		int remainingRays = rayNum;
+//		
+//		for (int i = 0; i < segmentCount; i++) {
+//			// get this and adjacent segment angles
+//			previousAngle.set(
+//				(i == 0) ?
+//				segmentAngles.items[i] : segmentAngles.items[i - 1]);
+//			currentAngle.set(segmentAngles.items[i]);
+//			nextAngle.set(
+//				(i == segmentAngles.size - 1) ?
+//				segmentAngles.items[i] : segmentAngles.items[i + 1]);
 //			
-//			for (int i = 0; i < segmentCount; i++) {
-//				// get this and adjacent segment angles
-//				previousAngle.set(
-//					(i == 0) ?
-//					segmentAngles2.items[i] : segmentAngles2.items[i - 1]);
-//				currentAngle.set(segmentAngles2.items[i]);
-//				nextAngle.set(
-//					(i == segmentAngles2.size - 1) ?
-//					segmentAngles2.items[i] : segmentAngles2.items[i + 1]);
-//				
-//				// interpolate to find actual start and end angles
-//				startAngle.set(previousAngle).slerp(currentAngle, 0.5f);
-//				endAngle.set(currentAngle).slerp(nextAngle, 0.5f);
+//			// interpolate to find actual start and end angles
+//			startAngle.set(previousAngle).slerp(currentAngle, 0.5f);
+//			endAngle.set(currentAngle).slerp(nextAngle, 0.5f);
 //
-//				int segmentVertex = i * 2;
-//				vSegmentStart.set(
-//					chain.items[segmentVertex], chain.items[segmentVertex + 1]);
-//				vDirection.set(
-//					chain.items[segmentVertex + 2], chain.items[segmentVertex + 3]
-//				).sub(vSegmentStart).nor();
+//			int segmentVertex = i * 2;
+//			vSegmentStart.set(
+//				chain.items[segmentVertex], chain.items[segmentVertex + 1]);
+//			vDirection.set(
+//				chain.items[segmentVertex + 2], chain.items[segmentVertex + 3]
+//			).sub(vSegmentStart).nor();
 //
-//				float raySpacing = remainingLength2 / remainingRays;
-//				int segmentRays = (i == segmentCount - 1) ?
-//					remainingRays :
-//					(int) ((segmentLengths2.items[i] / remainingLength2) *
-//							remainingRays);
-//				
-//				for (int j = 0; j < segmentRays; j++) {
-//					float position = j * raySpacing;
+//			float raySpacing = remainingLength / remainingRays;
+//			int segmentRays = (i == segmentCount - 1) ?
+//				remainingRays :
+//				(int) ((segmentLengths.items[i] / remainingLength) *
+//						remainingRays);
+//			
+//			for (int j = 0; j < segmentRays; j++) {
+//				float position = j * raySpacing;
 //
-//					// interpolate ray angle based on position within segment
-//					rayAngle.set(startAngle).slerp(
-//						endAngle, position / segmentLengths2.items[i]);
-//					float angle = rayAngle.angle();
-//					vRayOffset.set(this.rayStartOffset, 0).rotateRad(angle);
-//					v1.set(vDirection).scl(position).add(vSegmentStart).add(vRayOffset);
-//					
-//					this.startX2[rayNumber] = v1.x;
-//					this.startY2[rayNumber] = v1.y;
-//					v2.set(distance, 0).rotateRad(angle).add(v1);
-//					this.endX2[rayNumber] = v2.x;
-//					this.endY2[rayNumber] = v2.y;
-//					rayNumber++;
-//				}
+//				// interpolate ray angle based on position within segment
+//				rayAngle.set(startAngle).slerp(
+//					endAngle, position / segmentLengths.items[i]);
+//				float angle = rayAngle.angle();
+//				vRayOffset.set(this.rayStartOffset, 0).rotateRad(angle);
+//				v1.set(vDirection).scl(position).add(vSegmentStart).add(vRayOffset);
 //				
-//				remainingRays -= segmentRays;
-//				remainingLength2 -= segmentLengths2.items[i];
-//				
+//				this.startX[rayNumber] = v1.x;
+//				this.startY[rayNumber] = v1.y;
+//				v2.set(distance, 0).rotateRad(angle).add(v1);
+//				this.endX[rayNumber] = v2.x;
+//				this.endY[rayNumber] = v2.y;
+//				rayNumber++;
 //			}
+//			
+//			remainingRays -= segmentRays;
+//			remainingLength -= segmentLengths.items[i];
+//			
 //		}
-		
-		Pools.free(v1);
-		Pools.free(v2);
-		Pools.free(vSegmentStart);
-		Pools.free(vDirection);
-		Pools.free(vRayOffset);
-		Pools.free(previousAngle);
-		Pools.free(currentAngle);
-		Pools.free(nextAngle);
-		Pools.free(startAngle);
-		Pools.free(endAngle);
-		Pools.free(rayAngle);
-		Pools.free(tmpAngle);
+//
+////		if (rayBidirectional) {
+////			rayNumber = 0;
+////			remainingRays = rayNum;
+////			
+////			for (int i = 0; i < segmentCount; i++) {
+////				// get this and adjacent segment angles
+////				previousAngle.set(
+////					(i == 0) ?
+////					segmentAngles2.items[i] : segmentAngles2.items[i - 1]);
+////				currentAngle.set(segmentAngles2.items[i]);
+////				nextAngle.set(
+////					(i == segmentAngles2.size - 1) ?
+////					segmentAngles2.items[i] : segmentAngles2.items[i + 1]);
+////				
+////				// interpolate to find actual start and end angles
+////				startAngle.set(previousAngle).slerp(currentAngle, 0.5f);
+////				endAngle.set(currentAngle).slerp(nextAngle, 0.5f);
+////
+////				int segmentVertex = i * 2;
+////				vSegmentStart.set(
+////					chain.items[segmentVertex], chain.items[segmentVertex + 1]);
+////				vDirection.set(
+////					chain.items[segmentVertex + 2], chain.items[segmentVertex + 3]
+////				).sub(vSegmentStart).nor();
+////
+////				float raySpacing = remainingLength2 / remainingRays;
+////				int segmentRays = (i == segmentCount - 1) ?
+////					remainingRays :
+////					(int) ((segmentLengths2.items[i] / remainingLength2) *
+////							remainingRays);
+////				
+////				for (int j = 0; j < segmentRays; j++) {
+////					float position = j * raySpacing;
+////
+////					// interpolate ray angle based on position within segment
+////					rayAngle.set(startAngle).slerp(
+////						endAngle, position / segmentLengths2.items[i]);
+////					float angle = rayAngle.angle();
+////					vRayOffset.set(this.rayStartOffset, 0).rotateRad(angle);
+////					v1.set(vDirection).scl(position).add(vSegmentStart).add(vRayOffset);
+////					
+////					this.startX2[rayNumber] = v1.x;
+////					this.startY2[rayNumber] = v1.y;
+////					v2.set(distance, 0).rotateRad(angle).add(v1);
+////					this.endX2[rayNumber] = v2.x;
+////					this.endY2[rayNumber] = v2.y;
+////					rayNumber++;
+////				}
+////				
+////				remainingRays -= segmentRays;
+////				remainingLength2 -= segmentLengths2.items[i];
+////				
+////			}
+////		}
+//		
+//		Pools.free(v1);
+//		Pools.free(v2);
+//		Pools.free(vSegmentStart);
+//		Pools.free(vDirection);
+//		Pools.free(vRayOffset);
+//		Pools.free(previousAngle);
+//		Pools.free(currentAngle);
+//		Pools.free(nextAngle);
+//		Pools.free(startAngle);
+//		Pools.free(endAngle);
+//		Pools.free(rayAngle);
+//		Pools.free(tmpAngle);
 	}
 	
 	/**
