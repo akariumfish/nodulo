@@ -32,7 +32,10 @@ import util.nScripted;
 
 public class PlaneApplet extends App {
 
-	
+
+//	public static boolean NETWORK = true; 
+	public static boolean NETWORK = false;
+
 //	public static boolean TITLE_SCREEN = true; 
 	public static boolean TITLE_SCREEN = false;
 
@@ -57,6 +60,15 @@ public class PlaneApplet extends App {
 			STARTUP_MODEL_REF = s; 
 			PATCH_BUILD = true;
 			STARTUP_NEW_FILE = filename;
+		}
+		public AppletConfig(String s, String filename, boolean dark_theme, boolean client) { 
+			RELEASE = !dark_theme;
+			STARTUP_MODEL_REF = s; 
+			PATCH_BUILD = true;
+			STARTUP_NEW_FILE = filename;
+			start_solo = false;
+			start_as_server = !client;
+			start_as_client = client;
 		}
 		public AppletConfig(boolean startup_load, String s, boolean dark_theme) { 
 			RELEASE = !dark_theme;
@@ -85,8 +97,8 @@ public class PlaneApplet extends App {
 		public String STARTUP_MODEL_REF = "exemple";
 //		public String STARTUP_MODEL_REF = "";
 
-		public String STARTUP_MAP_PATH = "Map2.tmx";
-//		public String STARTUP_MAP_PATH = "";
+//		public String STARTUP_MAP_PATH = "Map2.tmx";
+		public String STARTUP_MAP_PATH = "";
 
 		public String STARTUP_LOAD_FILE = "";
 		public String STARTUP_NEW_FILE = ""; 
@@ -95,7 +107,7 @@ public class PlaneApplet extends App {
 		public boolean VIEW_START_COLLAPSED = false;
 		public boolean VIEW_START_GRID = false;
 //		public float DEF_VIEW_ZOOM = 0.07f;
-		public float DEF_VIEW_ZOOM = 0.3f;
+		public float DEF_VIEW_ZOOM = 0.1f;
 		public Vector2 DEF_VIEW_POS = new Vector2(0f,0f);
 		// DEFAULT
 //		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
@@ -305,6 +317,11 @@ public class PlaneApplet extends App {
 		if (config.STARTUP_LOAD) addEventInitEnd(new nRun() { public void run(Object o) {
 			sValueBloc b = (sValueBloc)o; data.full_load(); }});
 		
+		if (config.start_as_server) 
+			addDelayEvent(180,new nRun() { public void run() {
+				GdxApp.app.main.conf.app_run.do_run("client",20,50,900,860,false,true);
+			}});
+
 		startup();
 
 	}

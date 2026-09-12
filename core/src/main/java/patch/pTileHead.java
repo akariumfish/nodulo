@@ -543,6 +543,11 @@ public class pTileHead {
 		.addCollec("script_arg", String.class)
 		.addCollec("script_arg_class", String.class)
 		.addCollecInst("tiles", "tile")
+		.newRun("run_stack", new nRun() {public void run() { 
+			Object[] script = instance.get("get_instruction_script", Object[].class);
+			if (script == null) return;
+			pFunc.func_script_run(instance, script, null); 
+		}})
 		.process()
 		.useLoad().commande(new nRun() {public void run() { 
 			if (instance.getInst("head_tile") == null || 
@@ -597,6 +602,18 @@ public class pTileHead {
 		.commande(pNode.getCom(pNode.CT.COM_ADD_ROW))
 		.run(pNode.getRun(pNode.CT.RUNP_ADD_LABEL), "", (int)16)
 		.getStand()
+		.openSec()
+			.param("event_receive", new nRun() {public void run() { 
+				pInstance node = instance.object("node", pInstance.class);
+				node.run("run_stack"); }})
+			.param("keys", new String[]{"bang", "func"}, "filters", new String[]{"bang"}) 
+			.run(pNode.getRun(pNode.CT.RUNS_ADD_CO_IN), "co_run")
+		.closeSec()
+		.openSec()
+			.param("keys", new String[]{"reg", "register", "in"}, 
+					"filters", new String[]{"out"}) 
+			.run(pNode.getRun(pNode.CT.RUNS_ADD_CO_IN), "co_reg")
+		.closeSec()
 //		.openSec()
 //		.param("keys", new String[] {"tile_pop"}, "filters", new String[] {"tile_pop"}) 
 //		.run(pNode.getRun(pNode.CT.RUNS_ADD_CHAIN_START_PLUG), "tile_pop", "bottom")

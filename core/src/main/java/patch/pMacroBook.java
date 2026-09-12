@@ -216,14 +216,22 @@ public class pMacroBook {
 		
 		Macro main_exemple = new Macro("main_exemple")
 			
-			.addNode("startup_run", "space_init", 	150f, 	1500f).getMacro()
-			.addNode("startup_exec", "executor", 	600f, 	1500f)
+			.addNode("startup_run", "space_init", 	0f, 	500f).getMacro()
+			.addNode("startup_exec", "executor", 	450f, 	500f)
 			.addSetVar("target_ref", "func_start").getMacro()
 			.addLink("startup_exec", "co_run", "startup_run", "start_run")
 			
-			.addNode("text", "text", 				-300f,		1500f).getMacro()
+			.addNode("setup_run", "space_init", 	-300f, 	-500f)
+				.addSetVar("setup", true).getMacro()
+			.addNode("setup", "function", 						300f, 		-500f)
+			.addSetVar("func_ref", "func_setup").addTileScript("setup").getMacro()
+			.addLink("setup", "co_run", "setup_run", "start_run")
+			
+			.addNode("text", "text", 				-450f,		500f).getMacro()
 			.addRun(new nRun() { public void run() {
 				nMap<pInstance> list = arg(0, nMap.class);
+
+//				list.get("setup").setVar("script", true);
 				
 			}})
 			;
@@ -238,6 +246,14 @@ public class pMacroBook {
 	
 	
 	private static void build_tile_scripts() {
+		
+
+		new MacroScript("setup")
+
+		.com("add_set_output", "load_map")
+		.com("add_str_at", "data", "Map2.tmx")
+		
+		;
 
 		newMacroScript("pop_body")
 		.com("add_set_param", "ref", "pos")

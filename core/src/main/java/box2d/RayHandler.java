@@ -140,7 +140,8 @@ public class RayHandler implements Disposable {
 	 */
 //	public final Array<AbstractLight> lightList = new Array<AbstractLight>(false, 16);
 
-
+	public ArrayList<AbstractLight> map_lights = new ArrayList<AbstractLight>();
+	
 
 	public final Array<LightLayer> layerList = new Array<LightLayer>(false, 16);
 

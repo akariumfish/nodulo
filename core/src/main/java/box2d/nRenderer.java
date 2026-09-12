@@ -1,6 +1,8 @@
 package box2d;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -68,8 +70,8 @@ public class nRenderer {
 	public ThreeDLayer new3DLayer(int p) { return new ThreeDLayer(this,p); }
 	public LightLayer newLightLayer(LightLayer.MODE m) { return new LightLayer(this, m); }
 	public LightLayer newLightLayer(LightLayer.MODE m, int p) { return new LightLayer(this, m,p); }
-	public TileLayer newTileLayer(TiledMapTileLayer ml) { return new TileLayer(this, ml); }
-	public TileLayer newTileLayer(TiledMapTileLayer ml, int p) { return new TileLayer(this, ml,p); }
+	public TileLayer newTileLayer() { return new TileLayer(this); }
+	public TileLayer newTileLayer(int p) { return new TileLayer(this,p); }
 	
 	public static class GroupLayer extends Layer {
 		
@@ -91,8 +93,8 @@ public class nRenderer {
 		public RunLayer newRunLayer(int p) { return (RunLayer) new RunLayer(rend).addTo(this,p); }
 		public LightLayer newLightLayer(LightLayer.MODE m) { return (LightLayer) new LightLayer(rend, m).addTo(this); }
 		public LightLayer newLightLayer(LightLayer.MODE m, int p) { return (LightLayer) new LightLayer(rend, m).addTo(this,p); }
-		public TileLayer newTileLayer(TiledMapTileLayer ml) { return (TileLayer) new TileLayer(rend, ml).addTo(this); }
-		public TileLayer newTileLayer(TiledMapTileLayer ml, int p) { return (TileLayer) new TileLayer(rend, ml).addTo(this,p); }
+		public TileLayer newTileLayer() { return (TileLayer) new TileLayer(rend).addTo(this); }
+		public TileLayer newTileLayer(int p) { return (TileLayer) new TileLayer(rend).addTo(this,p); }
 
 		public GroupLayer(nRenderer m) { super(m); }
 		public GroupLayer(nRenderer m, int p) { super(m,p); }
@@ -188,7 +190,7 @@ public class nRenderer {
 			f.setActive(box.drawfog());
 		}});
 		
-		// TileLayer prio = 2
+		tileLayer = roomGroup.newTileLayer(2);
 		
 		auraLayer = roomGroup.newLightLayer(LightLayer.MODE.AURA,3);
 		
@@ -213,8 +215,7 @@ public class nRenderer {
 			MapProperties prop = layer.getProperties();
 			if (!Utl.getBoo(prop,"flags") && (layer instanceof TiledMapTileLayer)) {
 				TiledMapTileLayer tl = (TiledMapTileLayer) layer;
-				TileLayer ll = roomGroup.newTileLayer(tl,2);
-				if (tileLayer == null) tileLayer = ll;
+				tileLayer.loadMap(tl);
 			} 
 		}
 		for (int id = 0 ; id < layer_cnt ; id++) {
@@ -253,7 +254,7 @@ public class nRenderer {
 			} 
 		}
 	}
-	
+
 	public void loadLayerObject(MapLayer layer) {
 		for (MapObject m : layer.getObjects()) {
 			if (!m.isVisible()) continue;
@@ -266,7 +267,23 @@ public class nRenderer {
 			}
 		}
 	}
-	
+
+	public void clearMap() {
+		visionLayer.light_blocker.clear();
+		for (RayHandler.AbstractLight l : rayHandler.map_lights) {
+			l.remove(true); }
+		rayHandler.map_lights.clear();
+		box.mobspawn.clear();
+		for (Body b : tileLayer.map_bod) box.world.destroyBody(b);
+		tileLayer.map_bod.clear();
+		
+		auraLayer.dispose();
+		solidLayer.dispose();
+		colorLayer.dispose();
+		lightLayer.dispose();
+		visionLayer.dispose();
+
+	}
 	
 	
 	
@@ -283,6 +300,8 @@ public class nRenderer {
 	public PlaneApplet app;
 	public World world;
 	
+	public ArrayList<String> map_files = new ArrayList<String>();
+	
 	public nRenderer(pBox2d b, World w) { //String path, 
 		app = b.app;
 		box = b;
@@ -292,6 +311,13 @@ public class nRenderer {
 
 		rayHandler = new RayHandler(app, world);
 
+		FileHandle[] files = Gdx.files.local("/").list();
+		for(FileHandle fl : files) {
+			if (fl.extension().equals("tmx")) {
+				map_files.add(fl.name());
+			}
+		}
+		
 		prepareLayers();
 		
 //		map = new TmxMapLoader(new InternalFileHandleResolver()).load(path);
@@ -300,8 +326,14 @@ public class nRenderer {
 		
 	}
 	
+	public boolean map_is_setup = false;
+	
 	public void setupMap(String path) {
 
+		if (map_is_setup) clearMap();
+		
+		map_is_setup = true;
+		
 		map = new TmxMapLoader(new InternalFileHandleResolver()).load(path);
 		
 		processMap(map);

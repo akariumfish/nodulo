@@ -23,7 +23,7 @@ import util.nTransform;
 
 public class App implements nAppListener, Runner, nDrawer.Drawer {
 	
-	public int LOADING_SCREEN_FRAME = 1;
+	public int LOADING_SCREEN_FRAME = 2;
 	
 	public GdxApp gdx;
 	public nInput input;
@@ -105,7 +105,7 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 			LOADING_SCREEN_FRAME = 3;
 
 			addDelayEvent(1, new nRun() { public void run() {
-				gdx.add_nodraw_frame(40); 
+				gdx.add_nodraw_frame(60); 
 			}});
 			addDelayEvent(2, new nRun() { public void run() {
 

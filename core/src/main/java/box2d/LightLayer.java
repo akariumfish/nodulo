@@ -86,6 +86,7 @@ public class LightLayer extends nRenderer.Layer {
 			Vector2 pos = rend.tileLayer.mapToSpace(prop.get("x", Float.class), 
 					prop.get("y", Float.class));
 			PointLight pl = newPointLight(col, dist, pos.x, pos.y);
+			rayHandler.map_lights.add(pl);
 //			pl.setHeight(1f);
 			if (mode == MODE.LIGHT) pl.setStaticLight(true);
 		}
@@ -100,6 +101,7 @@ public class LightLayer extends nRenderer.Layer {
 					dir * 360f, cone * 360f);
 			cl.setSoft(false);
 //			cl.setHeight(1f);
+			rayHandler.map_lights.add(cl);
 			if (mode == MODE.LIGHT) cl.setStaticLight(true);
 		}
 	}
@@ -181,21 +183,25 @@ public class LightLayer extends nRenderer.Layer {
 				-vp.x / 2f, -vp.y / 2f, mapwidth, mapheight, dr);
 		rl.setStaticLight(true);
 		rl.setSoftnessLength(soft);
+		rayHandler.map_lights.add(rl);
 		dr += 90f; vp.rotateRad((float)Math.PI / 2f);
 		rl = newRectLight(rayw, new Color(1f,1f,1f,1f), 
 				-vp.x / 2f, -vp.y / 2f, mapwidth, mapheight, dr);
 		rl.setStaticLight(true);
 		rl.setSoftnessLength(soft);
+		rayHandler.map_lights.add(rl);
 		dr += 90f; vp.rotateRad((float)Math.PI / 2f);
 		rl = newRectLight(rayh, new Color(1f,1f,1f,1f), 
 				-vp.x / 2f, -vp.y / 2f, mapwidth, mapheight, dr);
 		rl.setStaticLight(true);
 		rl.setSoftnessLength(soft);
+		rayHandler.map_lights.add(rl);
 		dr += 90f; vp.rotateRad((float)Math.PI / 2f);
 		rl = newRectLight(rayw, new Color(1f,1f,1f,1f), 
 				-vp.x / 2f, -vp.y / 2f, mapwidth, mapheight, dr);
 		rl.setStaticLight(true);
 		rl.setSoftnessLength(soft);
+		rayHandler.map_lights.add(rl);
 
 	} 
 

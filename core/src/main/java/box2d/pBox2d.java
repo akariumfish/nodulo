@@ -301,9 +301,19 @@ public class pBox2d extends pSystem {
 			
 			renderer = new nRenderer(this, world);
 			
-			if (app.config.STARTUP_MAP_PATH.length() > 0)
-				renderer.setupMap(app.config.STARTUP_MAP_PATH);
+//			if (app.config.STARTUP_MAP_PATH.length() > 0)
+//				renderer.setupMap(app.config.STARTUP_MAP_PATH);
+
+			app.outputs.put("load_map", new nRun() { public void run() {
+				String p = arg(0, String.class);
+				if (p != null) loadMap(p); }});
 			
+		}
+		public void loadMap(String p) {
+			renderer.setupMap(p);
+		}
+		public ArrayList<String> getMapFile() {
+			return renderer.map_files;
 		}
 		public void system_load() {
 
@@ -317,7 +327,7 @@ public class pBox2d extends pSystem {
 			view.addDrawable(10,draw_run);
 			
 			//		if (!app.RELEASE) 
-			tool_setup(false);
+			tool_setup(true);
 			
 
 //			app.term.register("sim", bloc, this);

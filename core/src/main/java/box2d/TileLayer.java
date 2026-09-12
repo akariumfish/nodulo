@@ -49,8 +49,6 @@ import util.Utl;
 
 public class TileLayer extends nRenderer.Layer {
 
-	public final TiledMapTileLayer mapLayer;
-	
 ////	class NavNode {
 ////		
 ////	}
@@ -128,49 +126,72 @@ public class TileLayer extends nRenderer.Layer {
 			if (light) build = true;
 		}
 	}
+
+	public TiledMapTileLayer mapLayer;
 	
 	public final int exploration_dist = 50;
 
 	public final ArrayList<Cell> all_cells = new ArrayList<Cell>();
 //	public final ArrayList<NavCell> all_navcells = new ArrayList<NavCell>();
 	
-	public final RendererOrtho renderer;
+	public RendererOrtho renderer;
 
 	public Cell[][] cells;
 	public Cell getcell(int i, int j) { return ((i >= 0 && j >= 0 && i < map_width && j < map_height) ? cells[i][j] : null); }
 	
-	public final int map_width, map_height;
+	public int map_width = 0, map_height = 0;
 	public int tile_width = 0, tile_height = 0;
 
 	public ArrayList<Body> ground_bod = new ArrayList<Body>();
+	public ArrayList<Body> map_bod = new ArrayList<Body>();
 
 	public final ArrayList<Light> map_lights = new ArrayList<Light>();
 	
-	private final StaticTiledMapTile brush;
+//	private StaticTiledMapTile brush;
 	private final pView view;
 	private final OrthographicCamera cam;
 
 
-	public TileLayer(nRenderer tm, TiledMapTileLayer ml) { this(tm,ml,0); }
-	public TileLayer(nRenderer tm, TiledMapTileLayer ml, int p) {
+	public TileLayer(nRenderer tm) { this(tm,0); }
+	public TileLayer(nRenderer tm, int p) {
 		super(tm,p);
-		mapLayer = ml;
 		view = tm.view;
 		cam = tm.cam;
+	}
 
+//	public TileLayer(nRenderer tm, TiledMapTileLayer ml) { this(tm,ml,0); }
+//	public TileLayer(nRenderer tm, TiledMapTileLayer ml, int p) {
+//		this(tm,p);
+//		loadMap(ml);
+//	}
+	
+	public void loadMap(TiledMapTileLayer ml) {
+		mapLayer = ml;
+
+		boolean nochange = map_width == ml.getWidth() && 
+		map_height == ml.getHeight() && 
+		tile_width == ml.getTileWidth() && 
+		tile_height == ml.getTileHeight();
+		
 		map_width = ml.getWidth();
 		map_height = ml.getHeight();
 		tile_width = ml.getTileWidth();
 		tile_height = ml.getTileHeight();
 		
-		
-		renderer = new RendererOrtho(1f / tile_width, GdxApp.app.drawer.spritebatch);
+		if (renderer == null || !nochange) renderer = new RendererOrtho(1f / tile_width, GdxApp.app.drawer.spritebatch);
 		
 		mapLayer.getProperties().put("tilelayer", this);
 		
-		brush = new StaticTiledMapTile(new TextureRegion(generatePixel(
-				tile_width, tile_height, Color.TEAL)));
+//		brush = new StaticTiledMapTile(new TextureRegion(generatePixel(
+//				tile_width, tile_height, Color.TEAL)));
 		
+		loadCell();
+		
+		buildBodys();
+	}
+	
+	public void loadCell() {
+
 		cells = new Cell[map_width][map_height];
 		
 		for (int i = 0 ; i < map_width ; i++)
@@ -188,59 +209,60 @@ public class TileLayer extends nRenderer.Layer {
 //		for (NavCell c : all_navcells) c.build_neighs();
 //		for (NavCell c : all_navcells) c.build_nav();
 		
-		if (rend.tileLayer == null) {
-
-//			for (int e = 0 ; e < map_width ; e++) {
-//				for (int w = map_width ; w > 0 ; w--) {
-//					int h = (w - e > 1 ? w - e : (int)1);
-//					search_place(w,h,false,true);
-//					search_place(h,w,false,true);
-//				}
-//			}
-			
-			for (int w = map_width ; w > 0 ; w--)
-				for (int h = map_height ; h > 0 ; h--) {
-					search_place(w,h,false,true);
-					search_place(h,w,false,true);
-				}
-			for (int i = 0 ; i < map_width ; i++)
-				for (int j = 0 ; j < map_height ; j++) {
-					cells[i][j].build = true;
-					if (cells[i][j].wall && cells[i][j].light) cells[i][j].build = false;
-				}
-//			for (int e = 0 ; e < map_width ; e++) {
-//				for (int w = map_width ; w > 0 ; w--) {
-//					int h = (w - e > 1 ? w - e : (int)1);
-//					search_place(w,h,false,false);
-//					search_place(h,w,false,false);
-//				}
-//			}
-			for (int w = map_width ; w > 0 ; w--)
-				for (int h = map_height ; h > 0 ; h--) {
-					search_place(w,h,false,false);
-					search_place(h,w,false,false);
-				}
-
-			for (int i = 0 ; i < map_width ; i++)
-				for (int j = 0 ; j < map_height ; j++) {
-					cells[i][j].build = !cells[i][j].empty;
-				}
-//			for (int e = 0 ; e < map_width ; e++) {
-//				for (int w = map_width ; w > 0 ; w--) {
-//					int h = (w - e > 1 ? w - e : (int)1);
-//					search_place(w,h,true,false);
-//					search_place(h,w,true,false);
-//				}
-//			}
-			for (int w = map_width ; w > 0 ; w--)
-				for (int h = map_height ; h > 0 ; h--) {
-					search_place(w,h,true,false);
-					search_place(h,w,true,false);
-				}
-			
-		}
 	}
-	
+
+	public void buildBodys() {
+
+//		for (int e = 0 ; e < map_width ; e++) {
+//			for (int w = map_width ; w > 0 ; w--) {
+//				int h = (w - e > 1 ? w - e : (int)1);
+//				search_place(w,h,false,true);
+//				search_place(h,w,false,true);
+//			}
+//		}
+		
+		for (int w = map_width ; w > 0 ; w--)
+			for (int h = map_height ; h > 0 ; h--) {
+				search_place(w,h,false,true);
+				search_place(h,w,false,true);
+			}
+		for (int i = 0 ; i < map_width ; i++)
+			for (int j = 0 ; j < map_height ; j++) {
+				cells[i][j].build = true;
+				if (cells[i][j].wall && cells[i][j].light) cells[i][j].build = false;
+			}
+//		for (int e = 0 ; e < map_width ; e++) {
+//			for (int w = map_width ; w > 0 ; w--) {
+//				int h = (w - e > 1 ? w - e : (int)1);
+//				search_place(w,h,false,false);
+//				search_place(h,w,false,false);
+//			}
+//		}
+		for (int w = map_width ; w > 0 ; w--)
+			for (int h = map_height ; h > 0 ; h--) {
+				search_place(w,h,false,false);
+				search_place(h,w,false,false);
+			}
+
+		for (int i = 0 ; i < map_width ; i++)
+			for (int j = 0 ; j < map_height ; j++) {
+				cells[i][j].build = !cells[i][j].empty;
+			}
+//		for (int e = 0 ; e < map_width ; e++) {
+//			for (int w = map_width ; w > 0 ; w--) {
+//				int h = (w - e > 1 ? w - e : (int)1);
+//				search_place(w,h,true,false);
+//				search_place(h,w,true,false);
+//			}
+//		}
+		for (int w = map_width ; w > 0 ; w--)
+			for (int h = map_height ; h > 0 ; h--) {
+				search_place(w,h,true,false);
+				search_place(h,w,true,false);
+			}
+		
+	}
+
 	public void search_place(int w, int h, boolean transp, boolean blocview) {
 		for (int i = 0 ; i < map_width - w ; i++)
 			for (int j = 0 ; j < map_height - h ; j++) 
@@ -259,7 +281,7 @@ public class TileLayer extends nRenderer.Layer {
 		BodyDef groundBodyDef = new BodyDef();  
 		groundBodyDef.position.set(p);  
 		Body groundBody = rend.world.createBody(groundBodyDef);  
-		
+		map_bod.add(groundBody);
 		if (!transp && blocview) ground_bod.add(groundBody); //bloc vision
 		if (!transp) rend.box.body_breaker.add(groundBody);
 
@@ -285,6 +307,7 @@ public class TileLayer extends nRenderer.Layer {
 
 	@Override
 	public void render() {
+		if (renderer == null) return;
 		if (rend.box.val_draw_tile.get()) {
 			prepareRenderer();
 			renderer.render(this);
@@ -293,6 +316,7 @@ public class TileLayer extends nRenderer.Layer {
 	
 
 	public void prepareRenderer() {
+		if (renderer == null) return;
 
 		float scale = view.val_cam_scale.get();
 		float sclinv = 1f / scale;
@@ -402,12 +426,12 @@ public class TileLayer extends nRenderer.Layer {
 	}
 	public void addCell(Vector2 v) { addCell(v.x,v.y); }
 	public void addCell(float x, float y) {
-		Vector2 s = new Vector2(x,y);
-		s.scl(1f/rend.tile_scale);
-		s.add(getWidth()/2f, 
-				getHeight()/2f);
-		TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-		cell.setTile(brush);
+//		Vector2 s = new Vector2(x,y);
+//		s.scl(1f/rend.tile_scale);
+//		s.add(getWidth()/2f, 
+//				getHeight()/2f);
+//		TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+//		cell.setTile(brush);
 		
 		//TODO
 //		mapLayer.setCell((int)(s.x), (int)(s.y), cell);

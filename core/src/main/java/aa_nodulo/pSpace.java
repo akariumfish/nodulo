@@ -111,13 +111,16 @@ public class pSpace {
 	
 	
 	
-	
+
+	ArrayList<nRun> eventSpaceSetup = new ArrayList<nRun>();	
 
 	ArrayList<nRun> eventSpaceStart = new ArrayList<nRun>();
 //	ArrayList<nRun> eventSpaceClear = new ArrayList<nRun>();
 	
 	public pSpace addEventSpaceStart(nRun r) { eventSpaceStart.add(r); return this; }
 	public pSpace removeEventSpaceStart(nRun r) { eventSpaceStart.remove(r); return this; }
+	public pSpace addEventSpaceSetup(nRun r) { eventSpaceSetup.add(r); return this; }
+	public pSpace removeEventSpaceSetup(nRun r) { eventSpaceSetup.remove(r); return this; }
 //	public pSpace addEventSpaceClear(nRun r) { eventSpaceClear.add(r); return this; }
 //	public pSpace removeEventSpaceClear(nRun r) { eventSpaceClear.remove(r); return this; }
 
@@ -432,7 +435,9 @@ public class pSpace {
 		app.view.addDrawable(draw_run);
 
 		app.addDelayEvent(50, new nRun() { public void run() {
-			start_space(); 
+			nRun.runEvents(eventSpaceSetup);
+			app.addDelayEvent(3, new nRun() { public void run() {
+				start_space(); }}); 
 		}}); 
 
 //		plane.addEventSave(new nRun() { public void run() {

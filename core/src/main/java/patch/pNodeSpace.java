@@ -303,10 +303,17 @@ public class pNodeSpace {
 		pNode.newNodeModel("space_init", false)
 		.process()
 		.useLoad().commande(new nRun() { public void run() {
+			nRun run_space_setup = new nRun(instance) {public void run() { 
+				pInstance inst = (pInstance)builder;
+				pInstance co = inst.get("get_co", pInstance.class, "start_run");
+				if (inst.getVar("setup", Boolean.class)) co.run("send");
+			}};
+			instance.addObject("run_space_setup", run_space_setup);
+			PlaneApplet.app.space.addEventSpaceSetup(run_space_setup);
 			nRun run_space_start = new nRun(instance) {public void run() { 
 				pInstance inst = (pInstance)builder;
 				pInstance co = inst.get("get_co", pInstance.class, "start_run");
-				co.run("send");
+				if (!inst.getVar("setup", Boolean.class)) co.run("send");
 			}};
 			instance.addObject("run_space_start", run_space_start);
 			PlaneApplet.app.space.addEventSpaceStart(run_space_start);
@@ -314,9 +321,16 @@ public class pNodeSpace {
 		.useClear().commande(new nRun() { public void run() {
 			PlaneApplet.app.space.removeEventSpaceStart(
 					instance.object("run_space_start", nRun.class));
+			PlaneApplet.app.space.removeEventSpaceSetup(
+					instance.object("run_space_setup", nRun.class));
 		}}).useInit()
 		.openSec()
-		.run(pNode.getRun(CT.RUNP_ADD_LABEL), "space_start > ", (int)8)
+			.param("def", false, "height", 1f) 
+			.run(pNode.getRun(pNode.CT.RUNP_VAR_BOO_SWITCH), 
+					"setup", "setup", (int)6)
+		.closeSec()
+		.openSec()
+		.run(pNode.getRun(CT.RUNP_ADD_LABEL), " > ", (int)4)
 		.closeSec()
 		.getStand()
 		.openSec()

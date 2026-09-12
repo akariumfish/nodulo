@@ -19,7 +19,7 @@ import patch.pInstance;
 public class pNet {
 	
 	
-	public static boolean PRINT_LOG = false;
+	public static boolean PRINT_LOG = true;
 	
 	
 

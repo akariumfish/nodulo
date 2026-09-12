@@ -60,6 +60,7 @@ public class Lwjgl3Launcher {
 
 		// 		>>>  RUN SINGLE <<<
 //		if (!solo_double) {
+		if (!PlaneApplet.NETWORK) {
 			if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
 			createApplication("nodulo", 610, 50, 
 //					Lwjgl3Launcher.WIN_SOLO_WIDTH, 
@@ -68,8 +69,33 @@ public class Lwjgl3Launcher {
 					false, 
 					new nRun() { public void run() {
 //						Launcher.launch();
+						Lwjgl3Launcher.launch(arg(0,String.class),
+								arg(1,Integer.class), 
+								arg(2,Integer.class), 
+								arg(3,Integer.class), 
+								arg(4,Integer.class), 
+								arg(5,Boolean.class), 
+								arg(6,Boolean.class));
 					}});
-//		}
+		} else {
+			if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
+			createApplication("nodulo", 1020, 50, 
+//					Lwjgl3Launcher.WIN_SOLO_WIDTH, 
+//					Lwjgl3Launcher.WIN_SOLO_HEIGHT, 
+					900,860,
+					false, true,
+					new nRun() { public void run() {
+//						Launcher.launch();
+						Lwjgl3Launcher.launch(arg(0,String.class),
+								arg(1,Integer.class), 
+								arg(2,Integer.class), 
+								arg(3,Integer.class), 
+								arg(4,Integer.class), 
+								arg(5,Boolean.class), 
+								arg(6,Boolean.class));
+					}});
+		}
+			
 			
 //		
 //		// 		>>>  RUN DOUBLE <<<
@@ -122,36 +148,54 @@ public class Lwjgl3Launcher {
 //		t2.start();
 //	}
 	
-	public static Conf tmp_conf = null;
+//	public static Conf tmp_conf = null;
 
 	public static String tmp_title = "app";
 	public static int tmp_window_pos_x = 610;
 	public static int tmp_window_pos_y = 50;
 	public static int tmp_window_width = 1300;
 	public static int tmp_window_height = 960;
+	public static boolean tmp_fs = false;
+	public static boolean tmp_net = false;
 
-	public static void launch(String title, int x, int y, int w, int h, Conf c) {
-		tmp_conf = c;
+//	public static void launch(String title, int x, int y, int w, int h, Conf c) {
+//		tmp_conf = c;
+//		tmp_title = title; 
+//		tmp_window_pos_x = x;
+//		tmp_window_pos_y = y;
+//		tmp_window_width = w;
+//		tmp_window_height = h;
+//		tmp_fs = false;
+//		tmp_net = false;
+//		Launcher.launch();
+//	}
+
+	public static void launch(String title, int x, int y, int w, int h, boolean fs, boolean net) {
+//		tmp_conf = c;
 		tmp_title = title; 
 		tmp_window_pos_x = x;
 		tmp_window_pos_y = y;
 		tmp_window_width = w;
 		tmp_window_height = h;
+		tmp_fs = fs;
+		tmp_net = net;
 		Launcher.launch();
 	}
 
-	public static void launch() {
-		tmp_conf = new Conf().set("launch", new Main.Launch() { 
-			public void launch(String title, int x, int y, int w, int h, Conf c) {
-				Lwjgl3Launcher.launch(title,x,y,w,h,c); }});
-		
-		tmp_title = "app"; 
-		tmp_window_pos_x = 610;
-		tmp_window_pos_y = 50;
-		tmp_window_width = 1300;
-		tmp_window_height = 960;
-		Launcher.launch();
-	}
+//	public static void launch() {
+//		tmp_conf = new Conf().set("launch", new Main.Launch() { 
+//			public void launch(String title, int x, int y, int w, int h, Conf c) {
+//				Lwjgl3Launcher.launch(title,x,y,w,h,c); }});
+//		
+//		tmp_title = "app"; 
+//		tmp_window_pos_x = 610;
+//		tmp_window_pos_y = 50;
+//		tmp_window_width = 1300;
+//		tmp_window_height = 960;
+//		tmp_fs = false;
+//		tmp_net = false;
+//		Launcher.launch();
+//	}
 	
 	public static class Launcher {
 
@@ -205,12 +249,30 @@ public class Lwjgl3Launcher {
 			
 //			createApplication(title, setting_file, autorize_autoload, autorize_autobuild, is_server, 
 //			window_pos_x, window_pos_y);
-			createApplication(new String(Lwjgl3Launcher.tmp_title), 
+//			createApplication(new String(Lwjgl3Launcher.tmp_title), 
+//					Lwjgl3Launcher.tmp_window_pos_x, 
+//					Lwjgl3Launcher.tmp_window_pos_y, 
+//					Lwjgl3Launcher.tmp_window_width, 
+//					Lwjgl3Launcher.tmp_window_height, 
+//					new Conf(Lwjgl3Launcher.tmp_conf));
+			
+			createApplication(Lwjgl3Launcher.tmp_title, 
 					Lwjgl3Launcher.tmp_window_pos_x, 
-					Lwjgl3Launcher.tmp_window_pos_y, 
-					Lwjgl3Launcher.tmp_window_width, 
-					Lwjgl3Launcher.tmp_window_height, 
-					new Conf(Lwjgl3Launcher.tmp_conf));
+					Lwjgl3Launcher.tmp_window_pos_y,
+					Lwjgl3Launcher.tmp_window_width,
+					Lwjgl3Launcher.tmp_window_height,
+					Lwjgl3Launcher.tmp_fs,
+					Lwjgl3Launcher.tmp_net,
+					new nRun() { public void run() {
+//						Launcher.launch();
+						Lwjgl3Launcher.launch(arg(0,String.class),
+								arg(1,Integer.class), 
+								arg(2,Integer.class), 
+								arg(3,Integer.class), 
+								arg(4,Integer.class), 
+								arg(5,Boolean.class), 
+								arg(6,Boolean.class));
+					}});
 			
 		}
 		
@@ -238,13 +300,46 @@ public class Lwjgl3Launcher {
 			configuration.setWindowPosition(x, y);
 			return configuration;
 		}
+		private static Lwjgl3Application createApplication(String title, 
+				int posx, int posy, int sizex, int sizey, boolean fullscreen, boolean net,
+				nRun app_run) {
+			return new Lwjgl3Application(new Main(new AppConfig(title, sizex, sizey, fullscreen, app_run)), 
+					getConfiguration(title, posx, posy, sizex, sizey));
+		}
+
+//		private static Lwjgl3Application createApplication(String title, 
+//				int posx, int posy, int sizex, int sizey, boolean fullscreen) {
+//			return new Lwjgl3Application(new Main(new AppConfig(title, sizex, sizey, fullscreen)), 
+//					getConfiguration(posx, posy, sizex, sizey));
+//		}
+
+		private static Lwjgl3ApplicationConfiguration getConfiguration(String t, int px, int py, int sx, int sy) {
+			Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
+			configuration.setTitle(t);
+			configuration.useVsync(true);
+			configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
+//			configuration.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+			configuration.setWindowedMode(sx,sy);
+			configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
+			configuration.setWindowPosition(px,py);
+			return configuration;
+		}
 	}
 	
 
 	private static Lwjgl3Application createApplication(String title, 
-			int posx, int posy, int sizex, int sizey, boolean fullscreen, 
+			int posx, int posy, int sizex, int sizey, boolean fullscreen,
 			nRun app_run) {
-		return new Lwjgl3Application(new Main(new AppConfig(title, sizex, sizey, fullscreen, app_run)), 
+		return new Lwjgl3Application(new Main(new AppConfig(title, sizex, sizey, fullscreen, 
+				app_run)), 
+				getConfiguration(title, posx, posy, sizex, sizey));
+	}
+
+	private static Lwjgl3Application createApplication(String title, 
+			int posx, int posy, int sizex, int sizey, boolean fullscreen, boolean net,
+			nRun app_run) {
+		return new Lwjgl3Application(new Main(new AppConfig(title, sizex, sizey, 
+				fullscreen, app_run)), 
 				getConfiguration(title, posx, posy, sizex, sizey));
 	}
 
