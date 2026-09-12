@@ -12,6 +12,8 @@ import com.codedisaster.steamworks.*;
 import com.noodle.nodulo.GdxApp;
 import com.noodle.nodulo.GdxApp.nAppListener;
 
+import aa_nodulo.PlaneApplet;
+import aa_steam.SteamNetworkingTest;
 import data.sData;
 import gui.nAlign;
 import gui.nGUI;
@@ -40,29 +42,33 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 	public void setup(GdxApp a) {
 		gdx = a; ap = this;
 		
-//		try {
-//			// with libGDX - requires steamworks4j-gdx
-////			SteamLibraryLoader loader = new SteamLibraryLoaderGdx();
-//
-//			// .. or via LWJGL3 - requires steamworks4j-lwjgl3
-//			SteamLibraryLoader loader = new SteamLibraryLoaderLwjgl3();
-//
-//			// optionally, tell the loader where to find binaries
-//			loader.setLibraryPath("bin");
-//
-//			SteamAPI.loadLibraries(loader);
-//			
-//		    if (!SteamAPI.loadLibraries(loader)) {
-//		    		Utl.logn("STEAM : Failed to load native libraries");
-//		    }
-//		    if (!SteamAPI.init()) {
-//		    		Utl.logn("STEAM : Steamworks initialization error, e.g. Steam client not running");
-//		    } else Utl.logn("STEAM Initialization success.");
-//		    
-//		} catch (SteamException e) {
-//			Utl.logn("STEAM : You probably messed up the call order somehow");
-//			e.printStackTrace(System.out);
-//		}
+		if (PlaneApplet.USE_STEAM) {
+			try {
+				// with libGDX - requires steamworks4j-gdx
+				SteamLibraryLoader loader = new SteamLibraryLoaderGdx();
+	
+				// .. or via LWJGL3 - requires steamworks4j-lwjgl3
+	//			SteamLibraryLoader loader = new SteamLibraryLoaderLwjgl3();
+	
+				// optionally, tell the loader where to find binaries
+				loader.setLibraryPath("bin");
+	
+				SteamAPI.loadLibraries(loader);
+				
+			    if (!SteamAPI.loadLibraries(loader)) {
+			    		Utl.logn("STEAM : Failed to load native libraries");
+			    }
+			    if (!SteamAPI.init()) {
+			    		Utl.logn("STEAM : Steamworks initialization error, e.g. Steam client not running");
+			    } else Utl.logn("STEAM Initialization success.");
+			    
+			} catch (SteamException e) {
+				Utl.logn("STEAM : You probably messed up the call order somehow");
+				e.printStackTrace(System.out);
+			}
+		}
+		
+//		new SteamNetworkingTest().clientMain(new String[0]);
 
 	    data = new sData(this);
 	    
@@ -79,7 +85,7 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 
 		gui.dispose();
 		
-//		SteamAPI.shutdown();
+		if (PlaneApplet.USE_STEAM) SteamAPI.shutdown();
 	}
 
 	public void startup() { do_startup = true; }
@@ -117,20 +123,24 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 	@Override
 	public void pre_draw() {
 
-//		if (SteamAPI.isSteamRunning()) {
-//		    SteamAPI.runCallbacks();
-//		}
-		
 		gdx.exec_nothrow("input.frame_str()", new nRun() { public void run() {	
 			//sInput
 			if (input != null) input.frame_str();
-		}});
+		}}); 
 		
 		gdx.exec_nothrow("data.frame_start()", new nRun() { public void run() {	
 			//data update
 			if (data != null) data.frame_start();
 		}});
-
+		
+		if (PlaneApplet.USE_STEAM)  {
+			gdx.exec_nothrow("SteamAPI.runCallbacks()", new nRun() { public void run() {	
+				if (SteamAPI.isSteamRunning()) {
+				    SteamAPI.runCallbacks();
+				}
+			}});
+		}
+		
 		gdx.exec_nothrow("runEvents(eventsFrame)", new nRun() { public void run() {	
 			// frame event
 			nRun.runEvents(runFrameStart);

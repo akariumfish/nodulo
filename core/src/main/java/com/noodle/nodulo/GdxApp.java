@@ -50,6 +50,7 @@ public class GdxApp implements Screen ,nDrawer.DrawContext {
 	
 	public GdxApp(Main m, AppConfig c) { this(m,c,null); }
 	public GdxApp(Main m, AppConfig c, nAppListener l) { 
+		Utl.gdx = this;
 		listener = l; main = m; window_title = c.window_title; 
 		WIDTH = c.WIDTH; HEIGHT = c.HEIGHT; START_FULLSCREEN = c.START_FULLSCREEN; 
 		create(); }

@@ -3,7 +3,9 @@ package app;
 import java.lang.reflect.Field;
 
 import com.badlogic.gdx.math.Vector2;
+import com.noodle.nodulo.Main;
 
+import util.Utl;
 import util.nRun;
 
 public class Conf {
@@ -25,6 +27,17 @@ public class Conf {
 	}
 
 	public Conf() {}
+
+	public Conf(Conf c) {
+		Field[] fields = this.getClass().getFields();
+		for (Field f : fields) {
+			try {
+				f.set(this,Utl.copy(f.get(c)));
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 	
 	public Conf(String t, int w, int h, boolean f, nRun n) {
 		window_title = t; 
@@ -62,6 +75,7 @@ public class Conf {
 	
 	public String window_title = "";
 	public nRun app_run;
+	public Main.Launch launcher;
 	
 //	public boolean TITLE_SCREEN = true; 
 	public boolean TITLE_SCREEN = false;

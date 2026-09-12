@@ -11,32 +11,53 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import aa_nodulo.PlaneApplet;
 import util.Utl;
 import app.AppConfig;
+import app.Conf;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
 	
+	public static abstract class Launch {
+		public abstract void launch(String title, int x, int y, int w, int h, Conf c);
+	}
+	
+	public void launch_app(String title, int x, int y, int w, int h, Conf c) {
+		if (cnf != null) cnf.launcher.launch(title,x,y,w,h,c);
+	}
+
 
     public OrthographicCamera camera; 
 	public ScreenViewport viewport; 
 	
 	
+	public Conf cnf;
+	
+	public Main(Conf c) {
+		cnf = c;
+		Utl.build(c);
+	}
+	
 	public AppConfig conf;
 	
 	public Main(AppConfig c) {
 		conf = c;
+		Utl.build();
 	}
 	
 	@Override
 	public void create() {
+		
+		Utl.main = this;
 
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		
-		camera = new OrthographicCamera(conf.WIDTH, conf.HEIGHT);
+		if (conf != null)
+			camera = new OrthographicCamera(conf.WIDTH, conf.HEIGHT);
+		else camera = new OrthographicCamera(cnf.WIDTH, cnf.HEIGHT);
 		viewport = new ScreenViewport(camera);
 		
 //		setScreen(new FirstScreen2()); 
 		
-		Utl.build();
+//		Utl.build();
 		
 		PlaneApplet.build_setup();
 		

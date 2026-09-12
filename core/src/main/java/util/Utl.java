@@ -16,9 +16,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.noodle.nodulo.GdxApp;
+import com.noodle.nodulo.Main;
 
+import aa_nodulo.PlaneApplet;
 import aa_nodulo.pProperty;
 import app.App;
+import app.Conf;
 import data.File_Bloc;
 import data.sBoo;
 import data.sFlt;
@@ -879,6 +882,17 @@ public class Utl {
 	
 	
 	
+	public static Conf conf = null;
+	public static Main main = null;
+	public static GdxApp gdx = null;
+	public static App app = null;
+	public static PlaneApplet plane = null;
+
+	public static void build(Conf c) {
+		build();
+		conf = c;
+		
+	}
 	
 	
 
@@ -887,7 +901,7 @@ public class Utl {
 	public static final String[] type_names = new String[data_type_nb];
 	public static final String[] type_short_names = new String[data_type_nb];
 	public static final byte[] type_id = new byte[data_type_nb];
-	
+
 	public static void build() {
 		
 //		build_prim();

@@ -41,9 +41,12 @@ public class PlaneApplet extends App {
 
 //	public static boolean RELEASE = true;
 	public static boolean RELEASE = false;
-	
+
 //	public static boolean BLOCK_NDRAWER_FX = true;
 	public static boolean BLOCK_NDRAWER_FX = false;
+
+//	public static boolean USE_STEAM = true;
+	public static boolean USE_STEAM = false;
 
 	
 	public static class AppletConfig {
@@ -141,7 +144,7 @@ public class PlaneApplet extends App {
 	
 	
 	public PlaneApplet(AppletConfig c) { 
-		config = c; RELEASE = c.RELEASE; app = this; 
+		config = c; RELEASE = c.RELEASE; app = this; Utl.plane = this;
 	}
 	
 	
