@@ -264,8 +264,8 @@ public class TileLayer extends nRenderer.Layer {
 	}
 
 	public void search_place(int w, int h, boolean transp, boolean blocview) {
-		for (int i = 0 ; i < map_width - w ; i++)
-			for (int j = 0 ; j < map_height - h ; j++) 
+		for (int i = 0 ; i < map_width ; i++)
+			for (int j = 0 ; j < map_height ; j++) 
 				build_wall(i,j,w,h,transp,blocview);
 	}
 

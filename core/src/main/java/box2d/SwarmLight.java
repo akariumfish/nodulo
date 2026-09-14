@@ -19,14 +19,21 @@ public class SwarmLight extends RayHandler.BaseLight {
 	
 	public class Unit extends RayHandler.AbstractLight {
 		
+		public void setPos(Vector2 p, float r) {
+			pos.set(p); pos2.set(p); rot = r; dirty = true; }
+//		public void setPos(Vector2 p1, Vector2 p2) {
+//			pos.set(p1); pos2.set(p2); dirty = true; }
+		
 		final Color color = new Color(0f,0f,0f,0f); 
 		float colorF;
 		float distance;
 		private Body body;
 		final Vector2 pos = new Vector2();
+		final Vector2 pos2 = new Vector2();
 		float rot = 0f;
 		float cos = 0f;
 		float sin = 0f;
+		boolean dirty = true;
 
 		Unit(Color col, float dist) {
 			color.set(col);
@@ -34,6 +41,8 @@ public class SwarmLight extends RayHandler.BaseLight {
 			distance = dist;
 			unitList.add(this);
 			unit_nb++;
+			pos.set(0,0); pos2.set(0,0); rot = 0;
+			dirty = true;
 		}
 		Unit init(Color col, float dist) {
 			body = null;
@@ -42,6 +51,8 @@ public class SwarmLight extends RayHandler.BaseLight {
 			distance = dist;
 			unitList.add(this);
 			unit_nb++;
+			pos.set(0,0); pos2.set(0,0); rot = 0;
+			dirty = true;
 			return this;
 		}
 
@@ -67,32 +78,100 @@ public class SwarmLight extends RayHandler.BaseLight {
 
 		public void render() { }
 		public void update() {
-			if (body == null) {
-				pos.set(0,0); rot = 0f;
+			if (body != null) {
+				tmpVec.set(body.getPosition());
+				tmpFlt = body.getAngle();
+				if (tmpFlt != rot || !tmpVec.equals(pos)) {
+					dirty = true; pos.set(tmpVec); pos2.set(tmpVec); rot = tmpFlt; }	
+			}
+			if (pos2.equals(pos)) {
+				if (dirty) {
+					cos = MathUtils.cos(rot);
+					sin = MathUtils.sin(rot); 
+					dirty = false;
+				}
+				for (int i = 0 ; i < unitRay ; i++) {
+					addTrig(pos.x, pos.y, 
+							pos.x + rotX(patronX[i] * distance, patronY[i] * distance), 
+							pos.y + rotY(patronX[i] * distance, patronY[i] * distance), 
+							pos.x + rotX(patronX[(i+1)%unitRay] * distance, 
+									patronY[(i+1)%unitRay] * distance), 
+							pos.y + rotY(patronX[(i+1)%unitRay] * distance, 
+									patronY[(i+1)%unitRay] * distance), 
+							colorF, 1, 0, 0);
+				}
 			} else {
-				pos.set(body.getPosition());
-				rot = body.getAngle();	
+//				if (dirty) {
+//					tmpVec.set(pos2).sub(pos);
+//					rot = tmpVec.angleRad();
+//					cos = MathUtils.cos(rot);
+//					sin = MathUtils.sin(rot); 
+//					dirty = false;
+//				}
+////				addTrig(pos.x, pos.y, pos2.x, pos2.y, 
+////						pos.x + rotX(0, distance), pos.y + rotY(0, distance), 
+////						colorF, 1, 1, 0);
+////				addTrig(pos2.x, pos2.y, 
+////						pos2.x + rotX(0, distance), pos2.y + rotY(0, distance),
+////						pos.x + rotX(0, distance), pos.y + rotY(0, distance), 
+////						colorF, 1, 0, 0);
+////				addTrig(pos.x, pos.y, pos2.x, pos2.y, 
+////						pos.x + rotX(0, -distance), pos.y + rotY(0, -distance), 
+////						colorF, 1, 1, 0);
+////				addTrig(pos2.x, pos2.y, 
+////						pos2.x + rotX(0, -distance), pos2.y + rotY(0, -distance),
+////						pos.x + rotX(0, -distance), pos.y + rotY(0, -distance), 
+////						colorF, 1, 0, 0);
+//				int half = (int)(unitRay * (rot+((float)Math.PI)) / ((float)Math.PI*2f));
+//				for (int i = 0 ; i < half ; i++) {
+//					addTrig(pos.x, pos.y, 
+//							pos.x + rotX(patronX[i] * distance, patronY[i] * distance), 
+//							pos.y + rotY(patronX[i] * distance, patronY[i] * distance), 
+//							pos.x + rotX(patronX[(i+1)%unitRay] * distance, 
+//									patronY[(i+1)%unitRay] * distance), 
+//							pos.y + rotY(patronX[(i+1)%unitRay] * distance, 
+//									patronY[(i+1)%unitRay] * distance), 
+//							colorF, 1, 0, 0);
+//				}
+//				for (int i = half ; i < unitRay ; i++) {
+//					addTrig(pos2.x, pos2.y, 
+//							pos2.x + rotX(patronX[i] * distance, patronY[i] * distance), 
+//							pos2.y + rotY(patronX[i] * distance, patronY[i] * distance), 
+//							pos2.x + rotX(patronX[(i+1)%unitRay] * distance, 
+//									patronY[(i+1)%unitRay] * distance), 
+//							pos2.y + rotY(patronX[(i+1)%unitRay] * distance, 
+//									patronY[(i+1)%unitRay] * distance), 
+//							colorF, 1, 0, 0);
+//				}
+//				
 			}
-			cos = MathUtils.cos(rot);
-			sin = MathUtils.sin(rot);
-			centerX[unit_cnt] = pos.x;
-			centerY[unit_cnt] = pos.y;
-			centerC[unit_cnt] = colorF;
-
-			for (int i = 0 ; i < unitRay ; i++) {
-				startX[unit_cnt * unitRay + i] = pos.x + rotX(patronX[i] * distance, patronY[i] * distance);
-				startY[unit_cnt * unitRay + i] = pos.y + rotY(patronX[i] * distance, patronY[i] * distance);
-				endX[unit_cnt * unitRay + i] = pos.x + rotX(patronX[(i+1)%unitRay] * distance, patronY[(i+1)%unitRay] * distance);
-				endY[unit_cnt * unitRay + i] = pos.y + rotY(patronX[(i+1)%unitRay] * distance, patronY[(i+1)%unitRay] * distance);
-			}
-			unit_cnt++;
 		}
-
 
 		private float rotX(float x, float y) { return x * cos - y * sin; }
 		private float rotY(float x, float y) { return x * sin + y * cos; }
 
 	}
+	private Vector2 tmpVec = new Vector2();
+	private float tmpFlt = 0;
+	
+	private void addTrig(float x1, float y1, float x2, float y2, float x3, float y3, 
+			float color, float f1, float f2, float f3) {
+//		if (trig_cnt >= vertexNum - 1) return;
+		segments[unit_cnt++] = x1;
+		segments[unit_cnt++] = y1;
+		segments[unit_cnt++] = color;
+		segments[unit_cnt++] = f1;
+		segments[unit_cnt++] = x2;
+		segments[unit_cnt++] = y2;
+		segments[unit_cnt++] = color;
+		segments[unit_cnt++] = f2;
+		segments[unit_cnt++] = x3;
+		segments[unit_cnt++] = y3; 
+		segments[unit_cnt++] = color;
+		segments[unit_cnt++] = f3;
+		trig_cnt++;
+	}
+	
 	
 	public Unit newUnit(Color c, float d) {
 		if (freeUnit.size > 0) 
@@ -109,19 +188,13 @@ public class SwarmLight extends RayHandler.BaseLight {
 	protected float[] patronX;
 	protected float[] patronY;
 	
-	protected float[] centerX;
-	protected float[] centerY;
-	protected float[] centerC;
-	protected float[] startX;
-	protected float[] startY;
-	protected float[] endX;
-	protected float[] endY;
-	
 	final int unitMax;
 	final int unitRay;
+	final int unitRayHalf;
 
 	private int unit_nb = 0;
 	private int unit_cnt = 0;
+	private int trig_cnt = 0;
 
 	protected float segments[];
 
@@ -138,6 +211,7 @@ public class SwarmLight extends RayHandler.BaseLight {
 		if (rays < MIN_RAYS) rays = MIN_RAYS;
 
 		unitRay = rays;
+		unitRayHalf = rays / 2;
 		patronX = new float[rays];
 		patronY = new float[rays];
 		for (int i = 0 ; i < rays ; i++) {
@@ -147,17 +221,9 @@ public class SwarmLight extends RayHandler.BaseLight {
 		}
 
 		rayNum = rays * unit_max;
-		vertexNum = rays * unit_max + unit_max;
+		vertexNum = rays * unit_max + unit_max * 5;
 
 		segments = new float[vertexNum * 12];
-		
-		endX = new float[rayNum];
-		endY = new float[rayNum];
-		startX = new float[rayNum];
-		startY = new float[rayNum];
-		centerX = new float[unit_max];
-		centerY = new float[unit_max];
-		centerC = new float[unit_max];
 		
 		vertexNum = (vertexNum - 1) * 3;
 		
@@ -175,49 +241,25 @@ public class SwarmLight extends RayHandler.BaseLight {
 		unitList = new Array<Unit>(false, unit_max);
 		freeUnit = new Array<Unit>(false, (int)(unit_max / 3f));
 		
-		updateMesh();
 	}
 	
 	
 	@Override
 	public void update() {
-		unit_cnt = 0;
+		unit_cnt = 0; trig_cnt = 0;
 		for (Unit u : unitList) u.update();
-		
-		updateMesh();
-
-//		Utl.logn("unit"+unitList.size);
-//		Utl.logn("free"+freeUnit.size);
+		lightMesh.setVertices(segments, 0, unit_cnt);
 	}
 	
 	@Override
 	public void render() {
 		rayHandler.lightRenderedLastFrame++;
+//		lightMesh.render(
+//				rayHandler.lightShader, GL20.GL_TRIANGLES, 0, (unit_nb * unitRay) * 3);
 		lightMesh.render(
-				rayHandler.lightShader, GL20.GL_TRIANGLES, 0, (unit_nb * unitRay) * 3);
+				rayHandler.lightShader, GL20.GL_TRIANGLES, 0, trig_cnt * 3);
 	}
 
-	protected void updateMesh() {
-
-		int size = 0;
-		for (int i = 0; i < unit_nb; i++) 
-			for (int j = 0 ; j < unitRay ; j++) {
-			segments[size++] = centerX[i];
-			segments[size++] = centerY[i];
-			segments[size++] = centerC[i];
-			segments[size++] = 1;
-			segments[size++] = startX[i * unitRay + j];
-			segments[size++] = startY[i * unitRay + j]; 
-			segments[size++] = centerC[i];
-			segments[size++] = 0;//1 - f[i];
-			segments[size++] = endX[i * unitRay + j];
-			segments[size++] = endY[i * unitRay + j]; 
-			segments[size++] = centerC[i];
-			segments[size++] = 0;//1 - f[i];
-		}
-		lightMesh.setVertices(segments, 0, size);
-	}
-	
 	public void debugRender(nDrawer.Drawer draw) {
 		draw.stroke(0,255,255,255,8f); draw.fill(0,0);
 		for (Unit u : unitList) draw.circle(u.pos.x, u.pos.y, 15f);

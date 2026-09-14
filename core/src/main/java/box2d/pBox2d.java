@@ -16,6 +16,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 
 import aa_nodulo.PlaneApplet;
@@ -110,6 +111,42 @@ public class pBox2d extends pSystem {
 			.addProp("box_body")
 			;
 
+
+			pProperty bullet = pProperty.newGeneralProperty("bullet");
+			
+			bullet.newRun("pop",new nRun() {public void run() {
+				pParam bullet = contextParam();
+				pBox2d box = bullet.space.app.getSystem(pBox2d.class);
+				if (box == null || bullet == null) return;
+				if (args.length < 2) return;
+				Vector2 pos = arg(0,Vector2.class);
+				float rot = arg(1,Float.class);
+				pParam par = bullet.space.new_param("bullet_unit");
+				box.init_bullet(par,bullet,pos,rot);
+			}});
+
+			bullet
+			.addData("name", "bullet_par")
+			.addData("speed", 3f)
+			.addData("damage", (int)1)
+			.addData("aura", true)
+			.addData("aura_dist", 200f)
+			.addData("light", true)
+			.addData("light_dist", 200f)
+			.addData("r", (int)255)
+			.addData("g", (int)50)
+			.addData("b", (int)50)
+			.addData("a", (int)255)
+			;
+
+			pProperty.newProperty("bullet_unit")
+			.setCommon()
+			.addRef("def", "bullet")
+			.addData("pos", new Vector2())
+			.addData("rot", 0f)
+			.addData("aura_id", (int)-1)
+			.addData("light_id", (int)-1)
+			;
 
 			
 			
@@ -228,7 +265,9 @@ public class pBox2d extends pSystem {
 			val_draw_ground, val_draw_fog, 
 			val_do_calc, val_edit_tile;
 		
-		public sInt val_body_nb, val_light_nb;
+		public sInt val_bullet_limit;
+		
+		public sInt val_body_nb, val_light_nb, val_bullet_nb;
 		
 		public World world;
 		public Box2DRenderer boxRenderer;
@@ -257,8 +296,10 @@ public class pBox2d extends pSystem {
 			val_draw_fog = bloc.obtainBoo("val_draw_fog", app.config.DRAW_FOG);
 			val_do_calc = bloc.obtainBoo("val_do_calc", true);
 			val_edit_tile = bloc.obtainBoo("val_edit_tile", false);
+			val_bullet_limit = bloc.obtainInt("val_bullet_limit", 15000);
 			val_body_nb = bloc.obtainInt("val_body_nb", 0);
 			val_light_nb = bloc.obtainInt("val_light_nb", 0);
+			val_bullet_nb = bloc.obtainInt("val_bullet_nb", 0);
 			
 
 			app.outputs.put("reset_mob_spawn", new nRun() { public void run() {
@@ -383,11 +424,14 @@ public class pBox2d extends pSystem {
 			interf.add_row();
 			interf.add_row_watch(5, "Body : ", "val_body_nb");
 			interf.add_row_watch(5, "Light : ", "val_light_nb");
+			interf.add_row();
+			interf.add_row_watch(10, "Bullet : ", "val_bullet_nb");
 
 		}
 
 		public void frame(float delta) { 
 			val_body_nb.set(bodys.size());
+			val_bullet_nb.set(bullet_units.size());
 			int c = 0;
 			for (LightLayer l : renderer.rayHandler.layerList) {
 				c += l.lightList.size;
@@ -406,6 +450,8 @@ public class pBox2d extends pSystem {
 			accumulator += frameTime;
 			while (accumulator >= TIME_STEP) {
 				world.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
+				for (pParam b : Utl.duplic(space.param_pools.get("bullet_unit").all())) 
+					update_bullet(b);
 				accumulator -= TIME_STEP;
 			}
 		}
@@ -487,36 +533,36 @@ public class pBox2d extends pSystem {
 			test_collided(ba,bb);
 			test_collided(bb,ba);
 			
-			if (break_bodys.contains(ba) && body_breaker.contains(bb)) {
-				if (!clearing_bodys.contains(ba)) clearing_bodys.add(ba);
-			}
-			if (break_bodys.contains(bb) && body_breaker.contains(ba)) {
-				if (!clearing_bodys.contains(bb)) clearing_bodys.add(bb);
-			}
-			if (ba.getUserData() != null && 
-					(ba.getUserData() instanceof pBody) && 
-					bb.getUserData() != null && 
-					(bb.getUserData() instanceof pBody)) {
-				pBody b1 = (pBody)ba.getUserData();
-				pBody b2 = (pBody)bb.getUserData();
-
-				if (!b1.hasParam("hp") || !b2.hasParam("hitzone")) {
-					pBody t = b1; b1 = b2; b2 = t; 
-					Body bt = ba; ba = bb; bb = bt; 
-					Fixture ft = fa; fa = fb; fb = ft; }
-				if (!b1.hasParam("hp") || !b2.hasParam("hitzone")) return;
-				
-				int damage = b2.getInt("hitzone", "damage");
-				b1.setInt("hp", "hp", b1.getInt("hp", "hp") - damage);
-				
-				if (b1.getInt("hp", "hp") <= 0) {
-					if (!clearing_bodys.contains(ba)) clearing_bodys.add(ba);
-					if (b1.getBoo("hitpoint","avatar") && 
-							app.getSystem(pGeom.class) != null) 
-						app.getSystem(pGeom.class).game_over();
-				}
-				if (!clearing_bodys.contains(bb)) clearing_bodys.add(bb);
-			}
+//			if (break_bodys.contains(ba) && body_breaker.contains(bb)) {
+//				if (!clearing_bodys.contains(ba)) clearing_bodys.add(ba);
+//			}
+//			if (break_bodys.contains(bb) && body_breaker.contains(ba)) {
+//				if (!clearing_bodys.contains(bb)) clearing_bodys.add(bb);
+//			}
+//			if (ba.getUserData() != null && 
+//					(ba.getUserData() instanceof pBody) && 
+//					bb.getUserData() != null && 
+//					(bb.getUserData() instanceof pBody)) {
+//				pBody b1 = (pBody)ba.getUserData();
+//				pBody b2 = (pBody)bb.getUserData();
+//
+//				if (!b1.hasParam("hp") || !b2.hasParam("hitzone")) {
+//					pBody t = b1; b1 = b2; b2 = t; 
+//					Body bt = ba; ba = bb; bb = bt; 
+//					Fixture ft = fa; fa = fb; fb = ft; }
+//				if (!b1.hasParam("hp") || !b2.hasParam("hitzone")) return;
+//				
+//				int damage = b2.getInt("hitzone", "damage");
+//				b1.setInt("hp", "hp", b1.getInt("hp", "hp") - damage);
+//				
+//				if (b1.getInt("hp", "hp") <= 0) {
+//					if (!clearing_bodys.contains(ba)) clearing_bodys.add(ba);
+//					if (b1.getBoo("hitpoint","avatar") && 
+//							app.getSystem(pGeom.class) != null) 
+//						app.getSystem(pGeom.class).game_over();
+//				}
+//				if (!clearing_bodys.contains(bb)) clearing_bodys.add(bb);
+//			}
 		}
 		
 		private void test_collided(Body ba, Body bb) {
@@ -529,6 +575,127 @@ public class pBox2d extends pSystem {
 						!b1.getBoo("ctrl_mob", "direction"));
 			}
 		}
+		
+		
+		Vector2 end = new Vector2();
+		float fract = 0;
+		Body coll = null;
+		final RayCastCallback ray = new RayCastCallback() {
+			@Override
+			final public float reportRayFixture(Fixture fixture, Vector2 point,
+					Vector2 normal, float fraction) {
+				
+				if (!body_breaker.contains(fixture.getBody())) return -1;
+				
+				end.set(point);
+				fract = fraction;
+				coll = fixture.getBody();
+				return fraction;
+			}
+		};
+		
+		private int get_free_bullet_nb() {
+			int n = 0; while (bullet_units.get(n) != null) n++; return n; }
+
+		public HashMap<Integer,SwarmLight.Unit> bullet_units = 
+				new HashMap<Integer,SwarmLight.Unit>();
+		
+		public void init_bullet(pParam par, pParam b, Vector2 pos, float rot) {
+			par.setRef("def",b);
+			par.set("pos",pos); par.set("rot",rot);
+			Color col = Utl.color(b.getInt("r"), b.getInt("g"), 
+					b.getInt("b"), b.getInt("a"));
+//			
+			if (b.getBoo("aura")) {
+				float adist = b.getFlt("aura_dist");
+				SwarmLight.Unit su = renderer.auraLayer.newSwarmLightUnit(
+						new Color(col), adist);
+				int nb = get_free_bullet_nb();
+				bullet_units.put(nb, su);
+				par.set("aura_id", nb);
+			}
+			
+			if (b.getBoo("light")) {
+				float ldist = b.getFlt("light_dist");
+				SwarmLight.Unit su = renderer.lightLayer.newSwarmLightUnit(
+						new Color(col), ldist);
+				int nb = get_free_bullet_nb();
+				bullet_units.put(nb, su);
+				par.set("light_id", nb);
+			}
+		}
+		
+		public void clear_bullet(pParam p) {
+			pParam def = p.getRef("def");
+			if (def.getBoo("light")) {
+				SwarmLight.Unit su = bullet_units.get(p.getInt("light_id"));
+				bullet_units.remove(p.getInt("light_id"),su);
+				su.remove();
+			}
+			if (def.getBoo("aura")) {
+				SwarmLight.Unit su = bullet_units.get(p.getInt("aura_id"));
+				bullet_units.remove(p.getInt("aura_id"),su);
+				su.remove();
+			}
+			p.clear();
+		}
+
+		public void update_bullet(pParam p) {
+			Vector2 pos = p.getVec("pos");
+//			Vector2 ppos = new Vector2(pos);
+			float rot = p.getFlt("rot");
+			pParam def = p.getRef("def");
+			float speed = def.getFlt("speed");
+			Vector2 m = new Vector2(speed,0).rotateRad(rot);
+//			ppos.sub(m).sub(m).sub(m).sub(m).sub(m).sub(m);
+			m.add(pos);
+			int lim = val_bullet_limit.get();
+			if (m.x > lim || m.x < -lim || m.y > lim || m.y < -lim) {
+				clear_bullet(p);
+				return;
+			}
+			coll = null; end.set(m); fract = 1.0f;
+			world.rayCast(ray, pos, m);
+			if (coll != null) {
+				if (coll.getUserData() != null && 
+						(coll.getUserData() instanceof pBody)) {
+					pBody bod = (pBody)coll.getUserData();
+					if (bod.hasParam("hp") && bod.hasParam("box_body")) {
+						int damage = def.getInt("damage");
+						bod.setInt("hp", "hp", bod.getInt("hp", "hp") - damage);
+						if (bod.getInt("hp", "hp") <= 0) {
+							Body body = bodys.get(bod.getStr("box_body", "body_ref"));
+							if (body != null) {
+								if (!clearing_bodys.contains(body)) 
+									clearing_bodys.add(body);
+								if (bod.getBoo("hitpoint","avatar") && 
+										app.getSystem(pGeom.class) != null) 
+									app.getSystem(pGeom.class).game_over();
+							}
+						}
+					}
+				}
+				clear_bullet(p);
+				return;
+			} else {
+				pos.set(m);
+				p.setVec("pos",pos);
+				if (def.getBoo("light")) {
+					SwarmLight.Unit su = bullet_units.get(p.getInt("light_id"));
+					su.setPos(pos,rot);
+//					su.setPos(ppos,pos);
+				}
+				if (def.getBoo("aura")) {
+					SwarmLight.Unit su = bullet_units.get(p.getInt("aura_id"));
+					su.setPos(pos,rot);
+//					su.setPos(ppos,pos);
+				}
+			}
+		}
+		
+		
+		
+		
 		
 		public ArrayList<Body> break_bodys = new ArrayList<Body>();
 		public ArrayList<Body> body_breaker = new ArrayList<Body>();

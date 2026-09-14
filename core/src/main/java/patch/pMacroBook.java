@@ -35,37 +35,18 @@ public class pMacroBook {
 		
 		build_tile_scripts();
 		
-		
-		Macro bullet_blueprint = new Macro("bullet_blueprint")
-		.addNode("blueprint", "blueprint", 	0f, 		0f).getMacro()
-//		.addNode("interactif", "interactif", -1200f, 	300f).getMacro()
-		.addNode("physic", "physic", 		-600f, 	900f)
-		.addSetVar("dynamic", true)
-		.addSetVar("use_ctrl_box", true)
-		.addSetVar("light", true)
-		.addSetVar("contact_break", true)
-		.addSetVar("sensor", true)
+
+		Macro bullet_par = new Macro("bullet_par")
+		.addNode("bullet", "bullet", 		-600f, 	0f)
+//		.addSetVar("sensor", true)
 		.getMacro()
-		.addNode("coordinate", "coordinate", -600f, 	600f).getMacro()
-		.addNode("geom", "geom", 			-600f, 	-300f)
-			.addSetVar("halo", true).getMacro()
-		.addNode("hitzone", "hitzone", -600f, 	0f).getMacro()
-		.addLink("coordinate", "param", "blueprint", "param_in")
-		.addLink("geom", "param", "blueprint", "param_in")
-		.addLink("hitzone", "param", "blueprint", "param_in")
-		.addLink("physic", "param", "blueprint", "param_in")
-//		.addLink("interactif", "param", "blueprint", "param_in")
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
-			pInstance geom = list.get("geom");
-			
-			list.get("blueprint").setVar("name", "bullet_print");
-			
-			list.get("geom").patch.app.addDelayEvent(2, new nRun() { public void run() {
-				geom.run("set_trig", 20f); 
-			}});
+//			list.get("bullet").setVar("name", "bullet_par");
 		}})
 		;
+
+		
 
 		Macro mob_blueprint = new Macro("mob_blueprint")
 		.addNode("blueprint", "blueprint", 	0f, 		0f).getMacro()
@@ -101,7 +82,7 @@ public class pMacroBook {
 		Macro body_blueprint = new Macro("body_blueprint")
 		.addNode("blueprint", "blueprint", 	0f, 		0f).getMacro()
 		.addNode("coordinate", "coordinate", -600f, 	600f)
-			.addSetVar("use_ctrl_pop", true)
+			.addSetVar("use_ctrl_bullet", true)
 			.addSetVar("use_ctrl_time", true)
 			.getMacro()
 		.addNode("interactif", "interactif", -600f, 	300f).getMacro()
@@ -175,7 +156,7 @@ public class pMacroBook {
 		new Macro("PARAM_SETUP")
 		.addMacro("mob_blueprint", mob_blueprint, 0f, -3000f)
 		.addMacro("body_blueprint", body_blueprint, 0f, -600f)
-		.addMacro("bullet_blueprint", bullet_blueprint, 0f, 1800f)
+		.addMacro("bullet_par", bullet_par, 0f, 1800f)
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
 		}})
@@ -251,7 +232,7 @@ public class pMacroBook {
 		new MacroScript("setup")
 
 		.com("add_set_output", "load_map")
-		.com("add_str_at", "data", "Map2.tmx")
+		.com("add_str_at", "data", "Map3.tmx")
 		
 		;
 
@@ -465,52 +446,52 @@ public class pMacroBook {
 				
 		.com("add_close")
 			
-		.com("add_set_param", "ctrl_time", "activate")
-		.com("add_get_pass_at", "body", (int)0)
-		.com("add_get_input_at", "data", "key_space_state")
-
-		.com("add_set_param", "ctrl_pop", "pop")
+		.com("add_set_param", "ctrl_bullet", "pop")
 		.com("add_get_pass_at", "body", (int)0)
 		.com("add_get_input_at", "data", "mouse_right_click")
-		
-		.com("add_set_param", "ctrl_pop", "throw")
-		.com("add_get_pass_at", "body", (int)0)
-		.com("add_get_input_at", "data", "mouse_right_unclick")
-		
-		.com("add_set_param", "ctrl_pop", "blueprint_par")
-		.com("add_get_pass_at", "body", (int)0)
-		.com("add_str_at", "data", "bullet_print")
-		
-		.com("add_set_param", "ctrl_pop", "pop_pos")
-		.com("add_get_pass_at", "body", (int)0)
-		.com("add_mag_at", "data")
-		.com("add_flt_at", "mag", 180f)
-		.com("add_get_param_at", "in", "mouse", "mousepos")
-		.com("add_get_pass_at", "body", (int)0).com("get_last")
-		.com("get_last")
-		
-		.com("add_set_param", "ctrl_pop", "acc_pos")
-		.com("add_get_pass_at", "body", (int)0)
-		.com("add_mag_at", "data")
-		.com("add_flt_at", "mag", 1f)
-		.com("add_get_param_at", "in", "mouse", "mousepos")
-		.com("add_get_pass_at", "body", (int)0).com("get_last")
-		.com("get_last")
-		
+
 		.com("add_set_param", "ctrl_time", "activate")
 		.com("add_get_pass_at", "body", (int)0)
 		.com("add_get_input_at", "data", "key_space_state")
 
-		.com("add_set_param", "ctrl_move", "trg_pos")
-		.com("add_get_pass_at", "body", (int)0)
-		.com("add_get_input_at", "data", "mouse_pos")	
+//		.com("add_set_param", "ctrl_pop", "pop")
+//		.com("add_get_pass_at", "body", (int)0)
+//		.com("add_get_input_at", "data", "mouse_right_click")
+//		
+//		.com("add_set_param", "ctrl_pop", "throw")
+//		.com("add_get_pass_at", "body", (int)0)
+//		.com("add_get_input_at", "data", "mouse_right_unclick")
+//
+//		.com("add_set_param", "ctrl_pop", "blueprint_par")
+//		.com("add_get_pass_at", "body", (int)0)
+//		.com("add_str_at", "data", "bullet_print")
+//		
+//		.com("add_set_param", "ctrl_pop", "pop_pos")
+//		.com("add_get_pass_at", "body", (int)0)
+//		.com("add_mag_at", "data")
+//		.com("add_flt_at", "mag", 180f)
+//		.com("add_get_param_at", "in", "mouse", "mousepos")
+//		.com("add_get_pass_at", "body", (int)0).com("get_last")
+//		.com("get_last")
+//		
+//		.com("add_set_param", "ctrl_pop", "acc_pos")
+//		.com("add_get_pass_at", "body", (int)0)
+//		.com("add_mag_at", "data")
+//		.com("add_flt_at", "mag", 1f)
+//		.com("add_get_param_at", "in", "mouse", "mousepos")
+//		.com("add_get_pass_at", "body", (int)0).com("get_last")
+//		.com("get_last")
 		
-		.com("add_set_param", "ctrl_move", "teleport")
-		.com("add_get_pass_at", "body", (int)0)
-		.com("add_and_at", "data")
-		.com("add_get_input_at", "in1", "key_shift_state")
-		.com("add_get_input_at", "in2", "mouse_left_click")
-		.com("get_last")
+//		.com("add_set_param", "ctrl_move", "trg_pos")
+//		.com("add_get_pass_at", "body", (int)0)
+//		.com("add_get_input_at", "data", "mouse_pos")	
+//		
+//		.com("add_set_param", "ctrl_move", "teleport")
+//		.com("add_get_pass_at", "body", (int)0)
+//		.com("add_and_at", "data")
+//		.com("add_get_input_at", "in1", "key_shift_state")
+//		.com("add_get_input_at", "in2", "mouse_left_click")
+//		.com("get_last")
 
 		;
 

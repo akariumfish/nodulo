@@ -723,32 +723,16 @@ public class pGeom extends pSystem {
 							bod.getInt("ctrl_mob","shoot_counter") + step);
 				} else {
 					bod.setInt("ctrl_mob","shoot_counter", 0);
-					String bluep_par = bod.getStr("ctrl_mob","bullet_blueprint");
-					pParam bluep = null;
-					for (pParam p : bod.space.param_pools.get("blueprint").all()) 
-						if (p.getStr("name").equals(bluep_par)) { bluep = p; break; }
 					
-					if (bluep != null) { 
-						pBody pop = pNodeSpace.new_body(bluep);
-						if (pop == null) return;
-
-						Vector2 bp = bod.getVec("ref", "pos");
-						float br = bod.getFlt("ref", "rot");
-						Vector2 p = new Vector2(150,0);
-						p.rotateRad(br).add(bp);
-						pop.setVec("ref", "pos", new Vector2(p.x,p.y));
-						pop.setFlt("ref", "rot", br);
-						
-						pNodeSpace.init_body(pop, bluep);
-						
-						if (box != null) {
-							if (pop.hasParam("ctrl_box")) {
-								Vector2 ac = new Vector2(1,0);
-								ac.rotateRad(br);
-								pop.setBoo("ctrl_box","accel_move", true);
-								pop.setVec("ctrl_box","accel_dir", ac.x, ac.y);
-							}
-						}
+					String bullet_par = bod.getStr("ctrl_mob","bullet_par");
+					pParam bullet = null;
+					for (pParam p : bod.space.param_pools.get("bullet").all()) 
+						if (p.getStr("name").equals(bullet_par)) { bullet = p; break; }
+					if (bullet != null) { 
+						Vector2 pos = bod.getVec("ref","pos");
+						float rot = bod.getFlt("ref","rot");
+						Vector2 m = new Vector2(180,0).rotateRad(rot).add(pos);
+						bullet.run("pop",m,rot);
 					} 
 				}
 			}
@@ -761,7 +745,7 @@ public class pGeom extends pSystem {
 		.addData("speed", 20f)
 		.addData("spawning", (int)2)
 		.addData("shoot", true)
-		.addData("bullet_blueprint", "bullet_print")
+		.addData("bullet_par", "bullet_par")
 		.addData("shoot_counter", (int)0)
 		.addData("shoot_delay", (int)30)
 		.addData("spawn_pos", new Vector2())
@@ -835,75 +819,115 @@ public class pGeom extends pSystem {
 		
 
 
-
-		nRun run_ctrl_pop = new nRun() { public void run(Object o) { 
+		
+		
+		nRun run_ctrl_bullet = new nRun() { public void run(Object o) { 
 			pBody bod = (pBody)o; if (bod == null) return;
 			pGeom geo = PlaneApplet.app.getSystem(pGeom.class);
-			pBox2d box = PlaneApplet.app.getSystem(pBox2d.class);
-			if (geo != null && bod.hasParam("ref") && bod.hasParam("ctrl_pop")) {
+//			pBox2d box = PlaneApplet.app.getSystem(pBox2d.class);
+			if (geo != null && bod.hasParam("ref") && bod.hasParam("ctrl_bullet")) {
 
-				Vector2 pop_pos = bod.getVec("ctrl_pop","pop_pos");
-				float pop_rot = bod.getFlt("ctrl_pop","pop_rot");
-				Vector2 acc_pos = bod.getVec("ctrl_pop","acc_pos");
-				float acc_rot = bod.getFlt("ctrl_pop","acc_rot");
-				
-				if (bod.getBoo("ctrl_pop","pop")) {
+				if (bod.getBoo("ctrl_bullet","pop")) {
 					
-					String bluep_par = bod.getStr("ctrl_pop","blueprint_par");
+					String bullet_par = bod.getStr("ctrl_bullet","bullet_par");
 					
-					pParam bluep = null;
-					for (pParam p : bod.space.param_pools.get("blueprint").all()) 
-						if (p.getStr("name").equals(bluep_par)) { bluep = p; break; }
+					pParam bullet = null;
+					for (pParam p : bod.space.param_pools.get("bullet").all()) 
+						if (p.getStr("name").equals(bullet_par)) { bullet = p; break; }
 					
-					if (bluep != null) { 
-						pBody pop = pNodeSpace.new_body(bluep);
-						if (pop == null) return;
-						
-						Vector2 bp = bod.getVec("ref", "pos");
-						Vector2 p = new Vector2(pop_pos.x,pop_pos.y);
-						p.add(bp);
-						pop.setVec("ref", "pos", new Vector2(p.x,p.y));
-						pop.setFlt("ref", "rot", bod.getFlt("ref", "rot") + pop_rot);
-
-						pop.setFlt("ref", "rot", acc_pos.angleRad());
-						
-						pNodeSpace.init_body(pop, bluep);
-						
-						if (box != null) {
-							if (pop.hasParam("ctrl_box")) {
-								pop.setBoo("ctrl_box","accel_move", true);
-								pop.setVec("ctrl_box","accel_dir", acc_pos.x,acc_pos.y);
-//								pop.setFlt("ctrl_box","move_strength", acc_pos.len());
-//								pop.setFlt("ctrl_box","max_speed", 1000f);
-							}
-						}
-						bod.param("ctrl_pop").setBody("last", pop);
+					if (bullet != null) { 
+						Vector2 pos = bod.getVec("ref","pos");
+						float rot = bod.getFlt("ref","rot");
+						Vector2 m = new Vector2(150,0).rotateRad(rot).add(pos);
+						bullet.run("pop",m,rot);
 					} 
 				}
-				bod.setBoo("ctrl_pop","pop", false);
-				if (bod.getBoo("ctrl_pop","throw") && 
-						bod.param("ctrl_pop").getBody("last") != null) {
-					bod.param("ctrl_pop").setBody("last", ""); }
-				bod.setBoo("ctrl_pop","throw", false);
+				bod.setBoo("ctrl_bullet","pop", false);
 
 			}
 		}};
 
-		pGeom.newControlProp("pop",coordinate,run_ctrl_pop,"ref") 
+		pGeom.newControlProp("bullet",coordinate,run_ctrl_bullet,"ref") 
 		.setFullSync()
 		.addData("pop", false)
-		.addData("blueprint_par", "")
-		.addData("pop_pos", new Vector2(150,0))
-		.addData("pop_rot", 0f, "min", -(float)Math.PI, "max", (float)Math.PI)
-		.addData("acc_pos", new Vector2(0,0))
-		.addData("acc_rot", 0f, "min", 0f, "max", 0.1f)
-		.addBody("last")
-		.addData("throw", false)
-		.addData("keep", true)
-		.addData("keep_dist", 500f, "min", 0f, "max", 1000f)
-		.addData("keep_pos", 20f, "min", 0f, "max", 20f)
-		.addData("keep_rot", 0.1f, "min", 0f, "max", 0.1f)
+		.addData("bullet_par", "bullet_par")
+//		.addData("pop_pos", new Vector2(150,0))
+//		.addData("pop_rot", 0f, "min", -(float)Math.PI, "max", (float)Math.PI)
 		;
+		
+
+		
+		
+		
+		
+//		nRun run_ctrl_pop = new nRun() { public void run(Object o) { 
+//			pBody bod = (pBody)o; if (bod == null) return;
+//			pGeom geo = PlaneApplet.app.getSystem(pGeom.class);
+//			pBox2d box = PlaneApplet.app.getSystem(pBox2d.class);
+//			if (geo != null && bod.hasParam("ref") && bod.hasParam("ctrl_pop")) {
+//
+//				Vector2 pop_pos = bod.getVec("ctrl_pop","pop_pos");
+//				float pop_rot = bod.getFlt("ctrl_pop","pop_rot");
+//				Vector2 acc_pos = bod.getVec("ctrl_pop","acc_pos");
+//				float acc_rot = bod.getFlt("ctrl_pop","acc_rot");
+//				
+//				if (bod.getBoo("ctrl_pop","pop")) {
+//					
+//					String bluep_par = bod.getStr("ctrl_pop","blueprint_par");
+//					
+//					pParam bluep = null;
+//					for (pParam p : bod.space.param_pools.get("blueprint").all()) 
+//						if (p.getStr("name").equals(bluep_par)) { bluep = p; break; }
+//					
+//					if (bluep != null) { 
+//						pBody pop = pNodeSpace.new_body(bluep);
+//						if (pop == null) return;
+//						
+//						Vector2 bp = bod.getVec("ref", "pos");
+//						Vector2 p = new Vector2(pop_pos.x,pop_pos.y);
+//						p.add(bp);
+//						pop.setVec("ref", "pos", new Vector2(p.x,p.y));
+//						pop.setFlt("ref", "rot", bod.getFlt("ref", "rot") + pop_rot);
+//
+//						pop.setFlt("ref", "rot", acc_pos.angleRad());
+//						
+//						pNodeSpace.init_body(pop, bluep);
+//						
+//						if (box != null) {
+//							if (pop.hasParam("ctrl_box")) {
+//								pop.setBoo("ctrl_box","accel_move", true);
+//								pop.setVec("ctrl_box","accel_dir", acc_pos.x,acc_pos.y);
+////								pop.setFlt("ctrl_box","move_strength", acc_pos.len());
+////								pop.setFlt("ctrl_box","max_speed", 1000f);
+//							}
+//						}
+//						bod.param("ctrl_pop").setBody("last", pop);
+//					} 
+//				}
+//				bod.setBoo("ctrl_pop","pop", false);
+//				if (bod.getBoo("ctrl_pop","throw") && 
+//						bod.param("ctrl_pop").getBody("last") != null) {
+//					bod.param("ctrl_pop").setBody("last", ""); }
+//				bod.setBoo("ctrl_pop","throw", false);
+//
+//			}
+//		}};
+//
+//		pGeom.newControlProp("pop",coordinate,run_ctrl_pop,"ref") 
+//		.setFullSync()
+//		.addData("pop", false)
+//		.addData("blueprint_par", "")
+//		.addData("pop_pos", new Vector2(150,0))
+//		.addData("pop_rot", 0f, "min", -(float)Math.PI, "max", (float)Math.PI)
+//		.addData("acc_pos", new Vector2(0,0))
+//		.addData("acc_rot", 0f, "min", 0f, "max", 0.1f)
+//		.addBody("last")
+//		.addData("throw", false)
+//		.addData("keep", true)
+//		.addData("keep_dist", 500f, "min", 0f, "max", 1000f)
+//		.addData("keep_pos", 20f, "min", 0f, "max", 20f)
+//		.addData("keep_rot", 0.1f, "min", 0f, "max", 0.1f)
+//		;
 		
 		
 
