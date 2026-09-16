@@ -75,7 +75,7 @@ public class Conf {
 	
 	public String window_title = "";
 	public nRun app_run;
-	public Main.Launch launcher;
+//	public Main.Launch launcher;
 	
 //	public boolean TITLE_SCREEN = true; 
 	public boolean TITLE_SCREEN = false;

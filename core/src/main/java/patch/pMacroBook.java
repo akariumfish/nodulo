@@ -240,7 +240,7 @@ public class pMacroBook {
 		new MacroScript("setup")
 
 		.com("add_set_output", "load_map")
-		.com("add_str_at", "data", "Map3.tmx")
+		.com("add_str_at", "data", "Map2.tmx")
 		
 		;
 
@@ -328,6 +328,14 @@ public class pMacroBook {
 		.com("add_not_at", "data")
 		.com("add_get_input_at", "in", "keycross_press")
 		.com("get_last")
+
+		.com("add_if")
+			.com("add_get_input_at", "test", "key_i_click")
+
+			.com("add_set_output", "screenshot")
+			.com("add_boo_at", "data", true)
+			
+		.com("add_close")
 
 		.com("add_if")
 			.com("add_not_at", "test")

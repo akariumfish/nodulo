@@ -61,11 +61,7 @@ public class PlaneApplet extends App {
 			PATCH_BUILD = true;
 			STARTUP_NEW_FILE = filename;
 		}
-		public AppletConfig(String s, String filename, boolean dark_theme, boolean client) { 
-			RELEASE = !dark_theme;
-			STARTUP_MODEL_REF = s; 
-			PATCH_BUILD = true;
-			STARTUP_NEW_FILE = filename;
+		public AppletConfig(boolean client) {
 			start_solo = false;
 			start_as_server = !client;
 			start_as_client = client;
@@ -260,9 +256,6 @@ public class PlaneApplet extends App {
 			pPatch.build(data, gui); }});
 
 		
-		
-		
-		
 		bloc.addEventSave(new nRun() { public void run() {
 			nRun.runEvents(eventSaveRun);
 		}});
@@ -317,11 +310,6 @@ public class PlaneApplet extends App {
 		if (config.STARTUP_LOAD) addEventInitEnd(new nRun() { public void run(Object o) {
 			sValueBloc b = (sValueBloc)o; data.full_load(); }});
 		
-		if (config.start_as_server) 
-			addDelayEvent(180,new nRun() { public void run() {
-				GdxApp.app.main.conf.app_run.do_run("client",20,50,900,860,false,true);
-			}});
-
 		startup();
 
 	}
@@ -499,6 +487,7 @@ public class PlaneApplet extends App {
 		
 		new KeyInput("key_space", "Input - Space", ' ');
 		new KeyInput("key_w", "Input - W", 'Z');
+		new KeyInput("key_i", "Input - I", 'I');
 		
 		inputs.put("keycross_up_state", new nRun() { public Object get() {
 			return key_up; }});
@@ -588,6 +577,10 @@ public class PlaneApplet extends App {
 			view.val_cam_rot_target.set(-r);
 			view.got_cam_rot_target = true;
 		}});
+
+		outputs.put("screenshot", new nRun() { public void run() {
+			gdx.screenshot();
+		}});
 		
 		
 	}
@@ -629,6 +622,11 @@ public class PlaneApplet extends App {
 			nInterface interf = gui.addInterface();
 			interf.pop(sec);
 			interf.setContext(bloc);
+			interf.add_row();
+			interf.add_row_label(1,"");
+			interf.add_row_trigg(7,"Screenshot", new nRun() { public void run() {
+				gdx.screenshot(); }});
+			interf.add_row_label(1,"");
 			nRun.runEvents(eventToolInitRun, interf);
 		}});
 		

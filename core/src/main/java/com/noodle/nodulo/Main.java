@@ -16,31 +16,14 @@ import app.Conf;
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
 	
-	public static abstract class Launch {
-		public abstract void launch(String title, int x, int y, int w, int h, Conf c);
-	}
-	
-	public void launch_app(String title, int x, int y, int w, int h, Conf c) {
-		if (cnf != null) cnf.launcher.launch(title,x,y,w,h,c);
-	}
-
-
     public OrthographicCamera camera; 
 	public ScreenViewport viewport; 
 	
-	
-	public Conf cnf;
-	
-	public Main(Conf c) {
-		cnf = c;
-		Utl.build(c);
-	}
 	
 	public AppConfig conf;
 	
 	public Main(AppConfig c) {
 		conf = c;
-		Utl.build();
 	}
 	
 	@Override
@@ -50,21 +33,15 @@ public class Main extends Game {
 
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		
-		if (conf != null)
-			camera = new OrthographicCamera(conf.WIDTH, conf.HEIGHT);
-		else camera = new OrthographicCamera(cnf.WIDTH, cnf.HEIGHT);
+		camera = new OrthographicCamera(conf.WIDTH, conf.HEIGHT);
 		viewport = new ScreenViewport(camera);
 		
-//		setScreen(new FirstScreen2()); 
-		
-//		Utl.build();
+		Utl.build();
 		
 		PlaneApplet.build_setup();
 		
 		if (PlaneApplet.TITLE_SCREEN) launch_title(); 
 		else launch_nodulo();
-		
-//		VisUI.load();k
 		
 	}
 	
@@ -90,13 +67,23 @@ public class Main extends Game {
 		setScreen(editor_app); }
 	
 	public void launch_nodulo() {
-		if (nodulo_app == null)
-			nodulo_app = PlaneApplet.make(this, new AppConfig("Nodulo", 1300, 960));
+		if (nodulo_app == null) {
+			if (!conf.net) {
+				nodulo_app = PlaneApplet.make(this, new AppConfig("Nodulo", 1300, 960));
+			} else {
+				if (conf.client) 
+					nodulo_app = PlaneApplet.make(this, conf, 
+							new PlaneApplet.AppletConfig(true));
+				else nodulo_app = PlaneApplet.make(this, conf, 
+						new PlaneApplet.AppletConfig(false));
+			}
+		}
 		nodulo_app.setInputProcessor();
 		setScreen(nodulo_app); }
 	
 	//new
-	public void launch_nodulo(String model, String file, boolean dark_theme, boolean fullscreen) {
+	public void launch_nodulo(String model, String file, boolean dark_theme, 
+			boolean fullscreen) {
 		if (nodulo_app == null) {
 			PlaneApplet.AppletConfig conf = 
 					new PlaneApplet.AppletConfig(model, file, dark_theme);

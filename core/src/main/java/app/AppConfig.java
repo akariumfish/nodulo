@@ -8,14 +8,15 @@ public class AppConfig {
 	public int WIDTH = 500;
 	public int HEIGHT = 500;
 	public String window_title = "";
-	public nRun app_run;
+	public boolean net = false;
+	public boolean client = false;
 	public AppConfig() {}
 	public AppConfig(String t) { window_title = t; }
 	public AppConfig(String t, int w, int h) {
 		window_title = t; WIDTH = w; HEIGHT = h; }
 	public AppConfig(String t, int w, int h, boolean f) {
 		window_title = t; WIDTH = w; HEIGHT = h; START_FULLSCREEN = f; }
-	public AppConfig(String t, int w, int h, boolean f, nRun n) {
-		window_title = t; WIDTH = w; HEIGHT = h; START_FULLSCREEN = f; app_run = n; }
+	public AppConfig(String t, int w, int h, boolean f, boolean ne, boolean c) {
+		window_title = t; WIDTH = w; HEIGHT = h; START_FULLSCREEN = f; net = ne; client = c; }
 }
 

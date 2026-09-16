@@ -1,6 +1,8 @@
 package com.noodle.nodulo;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.zip.Deflater;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
@@ -11,6 +13,8 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor.SystemCursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
@@ -231,6 +235,23 @@ public class GdxApp implements Screen ,nDrawer.DrawContext {
 		
 		if (!block_custom_metodes) {
 			post_draw(); if (listener != null) listener.post_draw(); }
+		
+		if (ask_screenshot) {
+			ask_screenshot = false;
+			
+			Pixmap pixmap = Pixmap.createFromFrameBuffer(0, 0, Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
+			ByteBuffer pixels = pixmap.getPixels();
+
+			// This loop makes sure the whole screenshot is opaque and looks exactly like what the user is seeing
+			int size = Gdx.graphics.getBackBufferWidth() * Gdx.graphics.getBackBufferHeight() * 4;
+			for (int i = 3; i < size; i += 4) {
+				pixels.put(i, (byte) 255);
+			}
+
+			PixmapIO.writePNG(Gdx.files.local(screenshot_path), pixmap, Deflater.DEFAULT_COMPRESSION, true);
+			pixmap.dispose();
+			
+		}
 
 		test_interupt();
 		
@@ -369,6 +390,20 @@ public class GdxApp implements Screen ,nDrawer.DrawContext {
 	public void interupt() {
 		exeption_interupt = true;
 		something_crashed = true;
+	}
+	
+	
+	private boolean ask_screenshot = false;
+	private String screenshot_base_path = "screenshot";
+	private String screenshot_path = "";
+	private int scrnshtcnt = 0;
+	public void screenshot() {
+		scrnshtcnt = 0;
+		screenshot_path = screenshot_base_path + scrnshtcnt + ".png";
+		while (Utl.file_exist(screenshot_path)) { 
+			scrnshtcnt++;
+			screenshot_path = screenshot_base_path + scrnshtcnt + ".png"; }
+		ask_screenshot = true;
 	}
 	
 
