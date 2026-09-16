@@ -243,11 +243,13 @@ public class nRenderer {
 						if (prp.get("id", Integer.class) != null) {
 							int cellid = prp.get("id", Integer.class);
 							int dir = prp.get("dir", Integer.class);
+							String col = prp.get("color", String.class);
 							float rot = (float)Math.PI * 2f * dir / 360f;
 							Vector2 pos = new Vector2(tileLayer.getCellPos(i,j))
 									.add(tile_scale / 2f, tile_scale / 2f);
-							if (cellid == 0) box.setAvatarSpawn(pos, rot);
-							else box.addMobSpawn(pos, rot, cellid);
+							if (cellid == 0 && col.equals("green")) 
+								box.setAvatarSpawn(pos, rot);
+							else box.addMobSpawn(pos, rot, cellid, col);
 						}
 					}
 				

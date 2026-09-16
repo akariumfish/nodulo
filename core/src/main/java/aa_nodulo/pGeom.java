@@ -101,6 +101,10 @@ public class pGeom extends pSystem {
 //				par.collecEmpty("halo");
 //				par.collecEmpty("halo_rad");
 			}});
+			stand.newRun("set_fill_color", new nRun() {public void run() {
+				Color col = arg(0, Color.class);
+				instance.setVar("fill_color", Utl.rgbToInt(col));
+			}});
 			stand.newRun("add_point", new nRun() {public void run() {
 				float x = arg(0, Float.class);
 				float y = arg(1, Float.class);

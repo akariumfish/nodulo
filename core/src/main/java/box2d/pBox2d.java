@@ -322,15 +322,16 @@ public class pBox2d extends pSystem {
 		
 		
 		MobSpawn avatarSpawn;
-		public void setAvatarSpawn(Vector2 p, float r) { avatarSpawn = new MobSpawn(p,r,0); }
+		public void setAvatarSpawn(Vector2 p, float r) { avatarSpawn = new MobSpawn(p,r,0,""); }
 		
 		private class MobSpawn { 
-			Vector2 pos; float rot; int id; 
-			MobSpawn(Vector2 v, float r, int i) { 
-				pos = new Vector2(v); rot = r; id = i; } }
+			Vector2 pos; float rot; int id; String color;
+			MobSpawn(Vector2 v, float r, int i, String c) { 
+				pos = new Vector2(v); rot = r; id = i; color = Utl.copy(c); } }
 		int mobCnt = 0;
 		ArrayList<MobSpawn> mobspawn = new ArrayList<MobSpawn>();
-		public void addMobSpawn(Vector2 v, float r, int i) { mobspawn.add(new MobSpawn(v,r,i)); }
+		public void addMobSpawn(Vector2 v, float r, int i, String c) { 
+			mobspawn.add(new MobSpawn(v,r,i,c)); }
 
 		
 		
@@ -406,6 +407,12 @@ public class pBox2d extends pSystem {
 				return mobspawn.get(mobCnt).rot; }});
 			app.inputs.put("get_mob_spawn_id", new nRun() { public Object get() {
 				return mobspawn.get(mobCnt).id; }});
+			app.inputs.put("get_mob_spawn_print", new nRun() { public Object get() {
+				if (mobspawn.get(mobCnt).color.equals("green")) return 1f;
+				else if (mobspawn.get(mobCnt).color.equals("red")) return 2f;
+				else if (mobspawn.get(mobCnt).color.equals("blue")) return 3f;
+				else if (mobspawn.get(mobCnt).color.equals("yellow")) return 4f;
+				return 0f; }});
 			
 			app.inputs.put("has_mob_spawn", new nRun() { public Object get() {
 				return mobCnt < mobspawn.size(); }});
@@ -743,11 +750,13 @@ public class pBox2d extends pSystem {
 //			jointDef.bodyA = bodyA;
 //			jointDef.bodyB = bodyB;
 			
+			float openning = 0.2f;
+			
 			RevoluteJointDef jointDef = new RevoluteJointDef();
 			jointDef.initialize(bodyA, bodyB, rotpos);
 
-			jointDef.lowerAngle = -0.2f * (float)Math.PI + rot; 
-			jointDef.upperAngle = 0.2f * (float)Math.PI + rot; 
+			jointDef.lowerAngle = -0.1f * (float)Math.PI + rot - openning; 
+			jointDef.upperAngle = 0.1f * (float)Math.PI + rot - openning; 
 
 			jointDef.enableLimit = true;
 			jointDef.enableMotor = true;
@@ -769,8 +778,8 @@ public class pBox2d extends pSystem {
 			jointDef = new RevoluteJointDef();
 			jointDef.initialize(bodyA, bodyB, rotpos);
 
-			jointDef.lowerAngle = -0.2f * (float)Math.PI + rot; 
-			jointDef.upperAngle = 0.2f * (float)Math.PI + rot; 
+			jointDef.lowerAngle = -0.1f * (float)Math.PI + rot + openning; 
+			jointDef.upperAngle = 0.1f * (float)Math.PI + rot + openning; 
 
 			jointDef.enableLimit = true;
 			jointDef.enableMotor = true;

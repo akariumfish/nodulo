@@ -153,7 +153,7 @@ public class pFuncBook {
 
 		new Operator("eq", "=", C.EQ, Boolean.class, new nRun() {public Object get() {
 			Float o1 = ask("in1", Float.class); Float o2 = ask("in2", Float.class);
-			if (o1 != null && o2 != null) { return (o1<=o2); }
+			if (o1 != null && o2 != null) { return (o1.equals(o2)); }
 			return null; }})
 		.addArg("in1", Float.class).addArg("in2", Float.class);
 

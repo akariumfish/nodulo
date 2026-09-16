@@ -101,7 +101,7 @@ public class pPatch {
 			pSheet.setDefMacro("function", "func_exemple");
 			pSheet.setDefMacro("blueprint", "PARAM_SETUP");
 			pSheet.setDefCollapse("main", false);
-			pSheet.setDefCollapse("function", true);
+			pSheet.setDefCollapse("function", false);
 			pSheet.setDefCollapse("blueprint", false);
 			
 		}})

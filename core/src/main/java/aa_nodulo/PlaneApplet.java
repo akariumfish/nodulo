@@ -127,8 +127,10 @@ public class PlaneApplet extends App {
 		public boolean DRAW_GROUND = true;
 		public boolean DRAW_FOG = true;
 		public boolean DRAW_VISION = true;
-		
+
 		public boolean POP_BODY_EDITOR = false;
+
+		public boolean SCRIPT_ALL_FUNC = true;
 
 		public boolean AVATAR_VIEW_MODE = false; //false = def
 		public boolean AVATAR_CAM = true;
