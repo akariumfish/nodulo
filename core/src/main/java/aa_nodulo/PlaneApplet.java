@@ -36,11 +36,11 @@ public class PlaneApplet extends App {
 //	public static boolean NETWORK = true; 
 	public static boolean NETWORK = false;
 
-	public static boolean TITLE_SCREEN = true; 
-//	public static boolean TITLE_SCREEN = false;
+//	public static boolean TITLE_SCREEN = true; 
+	public static boolean TITLE_SCREEN = false;
 
-	public static boolean START_FULLSCREEN = true;
-//	public static boolean START_FULLSCREEN = false;
+//	public static boolean START_FULLSCREEN = true;
+	public static boolean START_FULLSCREEN = false;
 
 //	public static boolean RELEASE = true;
 	public static boolean RELEASE = false;
@@ -103,7 +103,7 @@ public class PlaneApplet extends App {
 		public boolean VIEW_START_COLLAPSED = false;
 		public boolean VIEW_START_GRID = false;
 //		public float DEF_VIEW_ZOOM = 0.07f;
-		public float DEF_VIEW_ZOOM = 0.3f;
+		public float DEF_VIEW_ZOOM = 0.1f;
 		public Vector2 DEF_VIEW_POS = new Vector2(0f,0f);
 		// DEFAULT
 //		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
@@ -130,7 +130,7 @@ public class PlaneApplet extends App {
 		
 		public boolean POP_BODY_EDITOR = false;
 
-		public boolean AVATAR_VIEW_MODE = true; //false = def
+		public boolean AVATAR_VIEW_MODE = false; //false = def
 		public boolean AVATAR_CAM = true;
 		
 		public float DEF_TICK_BY_SEC = 60f;
