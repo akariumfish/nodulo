@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object type="dir">
+  <properties>
+   <property name="color" type="color" value="#ffffc783"/>
+   <property name="colorLayer" type="bool" value="true"/>
+   <property name="cone" type="float" value="0.05"/>
+   <property name="conelight" type="bool" value="true"/>
+   <property name="dir" type="float" value="0.75"/>
+   <property name="dist" type="float" value="6000"/>
+   <property name="lightLayer" type="bool" value="true"/>
+  </properties>
+  <point/>
+ </object>
+</template>

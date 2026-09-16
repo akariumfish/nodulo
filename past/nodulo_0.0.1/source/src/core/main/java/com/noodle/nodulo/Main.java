@@ -1,0 +1,116 @@
+package com.noodle.nodulo;
+
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+//import com.kotcrab.vis.ui.VisUI;
+
+import aa_nodulo.PlaneApplet;
+import util.Utl;
+import app.AppConfig;
+import app.Conf;
+
+/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
+public class Main extends Game {
+	
+    public OrthographicCamera camera; 
+	public ScreenViewport viewport; 
+	
+	
+	public AppConfig conf;
+	
+	public Main(AppConfig c) {
+		conf = c;
+	}
+	
+	@Override
+	public void create() {
+		
+		Utl.main = this;
+
+		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+		
+		camera = new OrthographicCamera(conf.WIDTH, conf.HEIGHT);
+		viewport = new ScreenViewport(camera);
+		
+		Utl.build();
+		
+		PlaneApplet.build_setup();
+		
+		if (PlaneApplet.TITLE_SCREEN) launch_title(); 
+		else launch_nodulo();
+		
+	}
+	
+	public void exit() { Gdx.app.exit(); }
+
+	TitleScreen titleScreen = null;
+
+	GdxApp nodulo_app = null;
+
+	GdxApp editor_app = null;
+	
+	public void launch_title() {
+		if (titleScreen == null)
+			titleScreen = new TitleScreen(this);
+		Gdx.input.setInputProcessor(titleScreen.stage);
+		setScreen(titleScreen); 
+	}
+
+	public void launch_editor() {
+		if (editor_app == null)
+			editor_app = EditorApp.make(this, new AppConfig("Nodulo - Editor", 1300, 960));
+		editor_app.setInputProcessor();
+		setScreen(editor_app); }
+	
+	public void launch_nodulo() {
+		if (nodulo_app == null) {
+			if (!conf.net) {
+				nodulo_app = PlaneApplet.make(this, new AppConfig("Nodulo", 1300, 960));
+			} else {
+				if (conf.client) 
+					nodulo_app = PlaneApplet.make(this, conf, 
+							new PlaneApplet.AppletConfig(true));
+				else nodulo_app = PlaneApplet.make(this, conf, 
+						new PlaneApplet.AppletConfig(false));
+			}
+		}
+		nodulo_app.setInputProcessor();
+		setScreen(nodulo_app); }
+	
+	//new
+	public void launch_nodulo(String model, String file, boolean dark_theme, 
+			boolean fullscreen) {
+		if (nodulo_app == null) {
+			PlaneApplet.AppletConfig conf = 
+					new PlaneApplet.AppletConfig(model, file, dark_theme);
+			nodulo_app = PlaneApplet.make(this, 
+					new AppConfig("Nodulo", 1300, 960, fullscreen), conf);
+		}
+		nodulo_app.setInputProcessor();
+		setScreen(nodulo_app); }
+
+	//load
+	public void launch_nodulo_save(String save, boolean dark_theme, boolean fullscreen) {
+		if (nodulo_app == null) {
+			PlaneApplet.AppletConfig conf = 
+					new PlaneApplet.AppletConfig(true, save, dark_theme);
+			nodulo_app = PlaneApplet.make(this, 
+					new AppConfig("Nodulo", 1300, 960, fullscreen), conf);
+		}
+		nodulo_app.setInputProcessor();
+		setScreen(nodulo_app); }
+
+	public void close_app() {
+		launch_title(); 
+		if (nodulo_app != null) {
+			nodulo_app.dispose(); nodulo_app = null; }
+		if (editor_app != null) {
+			editor_app.dispose(); editor_app = null; }
+	}
+
+	
+}
