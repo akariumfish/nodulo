@@ -148,21 +148,21 @@ public class pParam extends sPoolable {
 		rd.run.context = this;
 		rd.run.do_run(v); }
 	
-	public Object get(String ref, Object ... v) {
+	public Object run_get(String ref, Object ... v) {
 		if (prop == null) return null;
 		pProperty.RunDef rd = prop.getRunDef(ref);
 		if (rd == null) {
-			Utl.logn("ERROR : pParam.get : runDef <"+ref+"> dont exist"
+			Utl.logn("ERROR : pParam.run_get : runDef <"+ref+"> dont exist"
 					+ " param "+pool_ref+" prop "+prop.ref);
 			return null; }
 		rd.run.context = this;
 		return rd.run.do_get(v); }
 	
-	public <T> T get(String ref, Class<T> cl, Object ... v) {
+	public <T> T run_get(String ref, Class<T> cl, Object ... v) {
 		if (prop == null) return null;
 		pProperty.RunDef rd = prop.getRunDef(ref);
 		if (rd == null) {
-			Utl.logn("ERROR : pParam.get : runDef <"+ref+"> dont exist"
+			Utl.logn("ERROR : pParam.run_get : runDef <"+ref+"> dont exist"
 					+ " param "+pool_ref+" prop "+prop.ref);
 			return null; }
 		rd.run.context = this;

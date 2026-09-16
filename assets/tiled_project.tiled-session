@@ -39,8 +39,8 @@
             "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 549.9999999999999,
-                "y": 458
+                "x": 554.6666666666666,
+                "y": 512.6666666666666
             }
         },
         "Map2.tmx#Lighting": {
@@ -55,11 +55,11 @@
             "scaleInDock": 1
         },
         "Map3.tmx": {
-            "scale": 1,
-            "selectedLayer": 1,
+            "scale": 0.75,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 526.5,
-                "y": 508.5
+                "x": 497.99999999999994,
+                "y": 478
             }
         },
         "Map3.tmx#Lighting": {
@@ -69,7 +69,7 @@
             "scaleInDock": 1.5
         },
         "Map3.tmx#tileset_flags2": {
-            "scaleInDock": 1
+            "scaleInDock": 1.5
         },
         "Map4.tmx": {
             "scale": 2,

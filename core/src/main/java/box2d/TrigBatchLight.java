@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.Array;
 import app.nDrawer;
 
 
-public class SolidLight extends RayHandler.BaseLight {
+public class TrigBatchLight extends RayHandler.BaseLight {
 	
 	public class Unit extends RayHandler.AbstractLight {
 		
@@ -56,6 +56,24 @@ public class SolidLight extends RayHandler.BaseLight {
 			patronX[trigUse*3+1] = x2; patronY[trigUse*3+1] = y2;
 			patronX[trigUse*3+2] = x3; patronY[trigUse*3+2] = y3;
 			patronC[trigUse] = c.toFloatBits();
+			trigUse++;
+		}
+
+		public void trig(float x1, float y1, float x2, float y2, float x3, float y3, 
+				float c) {
+			patronX[trigUse*3] = x1; patronY[trigUse*3] = y1;
+			patronX[trigUse*3+1] = x2; patronY[trigUse*3+1] = y2;
+			patronX[trigUse*3+2] = x3; patronY[trigUse*3+2] = y3;
+			patronC[trigUse] = c;
+			trigUse++;
+		}
+
+		public void trig(float x1, float y1, float x2, float y2, float x3, float y3, 
+				float c1, float c2, float c3) {
+			patronX[trigUse*3] = x1; patronY[trigUse*3] = y1;
+			patronX[trigUse*3+1] = x2; patronY[trigUse*3+1] = y2;
+			patronX[trigUse*3+2] = x3; patronY[trigUse*3+2] = y3;
+			patronC[trigUse] = c1;
 			trigUse++;
 		}
 
@@ -149,8 +167,8 @@ public class SolidLight extends RayHandler.BaseLight {
 
 	protected Mesh lightMesh;
 	
-	public SolidLight(LightLayer l) { this(l, 16, 200); }
-	public SolidLight(LightLayer layer, int trigs, int unit_max) {
+	public TrigBatchLight(LightLayer l) { this(l, 16, 256); }
+	public TrigBatchLight(LightLayer layer, int trigs, int unit_max) {
 		super(layer);
 		this.unitMax = unit_max;
 		

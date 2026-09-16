@@ -21,8 +21,8 @@ public class SwarmLight extends RayHandler.BaseLight {
 		
 		public void setPos(Vector2 p, float r) {
 			pos.set(p); pos2.set(p); rot = r; dirty = true; }
-//		public void setPos(Vector2 p1, Vector2 p2) {
-//			pos.set(p1); pos2.set(p2); dirty = true; }
+		public void setPos(Vector2 p1, Vector2 p2) {
+			pos.set(p1); pos2.set(p2); dirty = true; }
 		
 		final Color color = new Color(0f,0f,0f,0f); 
 		float colorF;
@@ -101,49 +101,49 @@ public class SwarmLight extends RayHandler.BaseLight {
 							colorF, 1, 0, 0);
 				}
 			} else {
-//				if (dirty) {
-//					tmpVec.set(pos2).sub(pos);
-//					rot = tmpVec.angleRad();
-//					cos = MathUtils.cos(rot);
-//					sin = MathUtils.sin(rot); 
-//					dirty = false;
-//				}
-////				addTrig(pos.x, pos.y, pos2.x, pos2.y, 
-////						pos.x + rotX(0, distance), pos.y + rotY(0, distance), 
-////						colorF, 1, 1, 0);
-////				addTrig(pos2.x, pos2.y, 
-////						pos2.x + rotX(0, distance), pos2.y + rotY(0, distance),
-////						pos.x + rotX(0, distance), pos.y + rotY(0, distance), 
-////						colorF, 1, 0, 0);
-////				addTrig(pos.x, pos.y, pos2.x, pos2.y, 
-////						pos.x + rotX(0, -distance), pos.y + rotY(0, -distance), 
-////						colorF, 1, 1, 0);
-////				addTrig(pos2.x, pos2.y, 
-////						pos2.x + rotX(0, -distance), pos2.y + rotY(0, -distance),
-////						pos.x + rotX(0, -distance), pos.y + rotY(0, -distance), 
-////						colorF, 1, 0, 0);
-//				int half = (int)(unitRay * (rot+((float)Math.PI)) / ((float)Math.PI*2f));
-//				for (int i = 0 ; i < half ; i++) {
-//					addTrig(pos.x, pos.y, 
-//							pos.x + rotX(patronX[i] * distance, patronY[i] * distance), 
-//							pos.y + rotY(patronX[i] * distance, patronY[i] * distance), 
-//							pos.x + rotX(patronX[(i+1)%unitRay] * distance, 
-//									patronY[(i+1)%unitRay] * distance), 
-//							pos.y + rotY(patronX[(i+1)%unitRay] * distance, 
-//									patronY[(i+1)%unitRay] * distance), 
-//							colorF, 1, 0, 0);
-//				}
-//				for (int i = half ; i < unitRay ; i++) {
-//					addTrig(pos2.x, pos2.y, 
-//							pos2.x + rotX(patronX[i] * distance, patronY[i] * distance), 
-//							pos2.y + rotY(patronX[i] * distance, patronY[i] * distance), 
-//							pos2.x + rotX(patronX[(i+1)%unitRay] * distance, 
-//									patronY[(i+1)%unitRay] * distance), 
-//							pos2.y + rotY(patronX[(i+1)%unitRay] * distance, 
-//									patronY[(i+1)%unitRay] * distance), 
-//							colorF, 1, 0, 0);
-//				}
-//				
+				if (dirty) {
+					tmpVec.set(pos2).sub(pos);
+					rot = (tmpVec.angleRad() + ((float)Math.PI / 2f));
+					if (rot > ((float)Math.PI)) rot -= ((float)Math.PI * 2f);
+					cos = MathUtils.cos(rot);
+					sin = MathUtils.sin(rot); 
+					dirty = false;
+				}
+				addTrig(pos.x, pos.y, pos2.x, pos2.y, 
+						pos.x + rotX(distance, 0), pos.y + rotY(distance, 0), 
+						colorF, 1, 1, 0);
+				addTrig(pos2.x, pos2.y, 
+						pos2.x + rotX(distance, 0), pos2.y + rotY(distance, 0),
+						pos.x + rotX(distance, 0), pos.y + rotY(distance, 0), 
+						colorF, 1, 0, 0);
+				addTrig(pos.x, pos.y, pos2.x, pos2.y, 
+						pos.x + rotX(-distance, 0), pos.y + rotY(-distance, 0), 
+						colorF, 1, 1, 0);
+				addTrig(pos2.x, pos2.y, 
+						pos2.x + rotX(-distance, 0), pos2.y + rotY(-distance, 0),
+						pos.x + rotX(-distance, 0), pos.y + rotY(-distance, 0), 
+						colorF, 1, 0, 0);
+				for (int i = 0 ; i < unitRayHalf ; i++) {
+					addTrig(pos.x, pos.y, 
+							pos.x + rotX(patronX[i] * distance, patronY[i] * distance), 
+							pos.y + rotY(patronX[i] * distance, patronY[i] * distance), 
+							pos.x + rotX(patronX[(i+1)%unitRay] * distance, 
+									patronY[(i+1)%unitRay] * distance), 
+							pos.y + rotY(patronX[(i+1)%unitRay] * distance, 
+									patronY[(i+1)%unitRay] * distance), 
+							colorF, 1, 0, 0);
+				}
+				for (int i = unitRayHalf ; i < unitRay ; i++) {
+					addTrig(pos2.x, pos2.y, 
+							pos2.x + rotX(patronX[i] * distance, patronY[i] * distance), 
+							pos2.y + rotY(patronX[i] * distance, patronY[i] * distance), 
+							pos2.x + rotX(patronX[(i+1)%unitRay] * distance, 
+									patronY[(i+1)%unitRay] * distance), 
+							pos2.y + rotY(patronX[(i+1)%unitRay] * distance, 
+									patronY[(i+1)%unitRay] * distance), 
+							colorF, 1, 0, 0);
+				}
+				
 			}
 		}
 
@@ -203,7 +203,7 @@ public class SwarmLight extends RayHandler.BaseLight {
 
 	protected Mesh lightMesh;
 	
-	public SwarmLight(LightLayer l) { this(l, 16, 200); }
+	public SwarmLight(LightLayer l) { this(l, 16, 256); }
 	public SwarmLight(LightLayer layer, int rays, int unit_max) {
 		super(layer);
 		this.unitMax = unit_max;

@@ -125,17 +125,19 @@ public class LightLayer extends nRenderer.Layer {
 			unit = s.newUnit(col, dist);
 			if (unit != null) return unit; }
 		SwarmLight swrm = new SwarmLight(this);
+		swarms.add(swrm);
 		return swrm.newUnit(col, dist); }
 
-	public ArrayList<SolidLight> solids = new ArrayList<SolidLight>();
+	public ArrayList<TrigBatchLight> trig_batchs = new ArrayList<TrigBatchLight>();
 
-	public SolidLight.Unit newSolidLightUnit() {
-		if (solids.size() == 0) solids.add(new SolidLight(this));
-		SolidLight.Unit unit = null;
-		for (SolidLight s : solids) {
+	public TrigBatchLight.Unit newTrigBatchUnit() {
+		if (trig_batchs.size() == 0) trig_batchs.add(new TrigBatchLight(this));
+		TrigBatchLight.Unit unit = null;
+		for (TrigBatchLight s : trig_batchs) {
 			unit = s.newUnit();
 			if (unit != null) return unit; }
-		SolidLight swrm = new SolidLight(this);
+		TrigBatchLight swrm = new TrigBatchLight(this);
+		trig_batchs.add(swrm);
 		return swrm.newUnit(); }
 
 	public PointLight newPointLight(Color col, float dist, float x, float y) {

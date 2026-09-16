@@ -37,12 +37,17 @@ public class pMacroBook {
 		
 
 		Macro bullet_par = new Macro("bullet_par")
-		.addNode("bullet", "bullet", 		-600f, 	0f)
-//		.addSetVar("sensor", true)
-		.getMacro()
+		.addNode("bullet", "bullet", 		-600f, 	0f).getMacro()
+		.addNode("shape", "shape", 		-600f, 	-600f).getMacro()
+		.addNode("geom", "geom", 		-600f, 	-1200f).getMacro()
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
-//			list.get("bullet").setVar("name", "bullet_par");
+			list.get("geom").setVar("name", "geom_def");
+
+			list.get("geom").patch.app.addDelayEvent(2, new nRun() { public void run() {
+				list.get("geom").run("empty_geom");
+				list.get("geom").run("new_trig",0f,0f,40f,0f);
+			}});
 		}})
 		;
 
@@ -100,6 +105,8 @@ public class pMacroBook {
 		.addNode("hitpoint", "hitpoint", 	-600f, 	1050f)
 			.addSetVar("avatar", true)
 		.getMacro()
+		.addNode("member", "member", 		-600f, 	-900f).getMacro()
+		.addLink("member", "param", "blueprint", "param_in")
 		.addLink("coordinate", "param", "blueprint", "param_in")
 		.addLink("interactif", "param", "blueprint", "param_in")
 		.addLink("geom", "param", "blueprint", "param_in")
@@ -445,10 +452,14 @@ public class pMacroBook {
 				.com("get_last")
 				
 		.com("add_close")
-			
+
 		.com("add_set_param", "ctrl_bullet", "pop")
 		.com("add_get_pass_at", "body", (int)0)
 		.com("add_get_input_at", "data", "mouse_right_click")
+
+		.com("add_set_param", "ctrl_bullet", "shoot")
+		.com("add_get_pass_at", "body", (int)0)
+		.com("add_get_input_at", "data", "mouse_right_state")
 
 		.com("add_set_param", "ctrl_time", "activate")
 		.com("add_get_pass_at", "body", (int)0)

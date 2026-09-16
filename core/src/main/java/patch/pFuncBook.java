@@ -581,7 +581,7 @@ public class pFuncBook {
 			Object[] arg = ask("arg", Object[].class);
 			Object o = ask("param", Object.class);
 			if (o == null || run_ref == null || !(o instanceof pParam)) return null;
-			return ((pParam)o).get(run_ref,arg); 
+			return ((pParam)o).run_get(run_ref,arg); 
 		}})
 		.addVar("run_ref")
 		.addArg("param", null).addArg("arg", Object[].class)

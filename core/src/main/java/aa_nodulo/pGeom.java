@@ -582,6 +582,7 @@ public class pGeom extends pSystem {
 		
 		pProperty geom = pProperty.newGeneralProperty("geom")
 		.setGroupFlag("draw")
+		.addData("name","")
 		.addData("halo", false)
 		.addCollec("point", Vector2.class)
 		.addCollec("color", Integer.class)
@@ -607,6 +608,45 @@ public class pGeom extends pSystem {
 		
 		.addNodeRun(geom_prop_run)
 		;
+
+		geom.newRun("get_flt_array",new nRun() {public Object get() {
+			pParam geom = contextParam();
+			if (geom == null) return null;
+			ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
+			ArrayList<Integer> color = geom.getCollecData("color", Integer.class);
+			ArrayList<Integer> faceA = geom.getCollecData("faceA", Integer.class);
+			ArrayList<Integer> faceB = geom.getCollecData("faceB", Integer.class);
+			ArrayList<Integer> faceC = geom.getCollecData("faceC", Integer.class);
+			if (faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
+					color.size() != point.size()) return null;
+			Float[] pl = new Float[9 * faceA.size()];
+			for (int i = 0 ; i < faceA.size() ; i++) {
+				int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
+				if (p1 < 0 || p1 >= point.size() || 
+						p2 < 0 || p2 >= point.size() || 
+						p3 < 0 || p3 >= point.size()) continue;
+				pl[i*9] = point.get(p1).x; 
+				pl[i*9+1] = point.get(p1).y;
+				pl[i*9+2] = Utl.intToColor(color.get(p1)).toFloatBits(); 
+				pl[i*9+3] = point.get(p2).x;
+				pl[i*9+4] = point.get(p2).y; 
+				pl[i*9+5] = Utl.intToColor(color.get(p2)).toFloatBits(); 
+				pl[i*9+6] = point.get(p3).x; 
+				pl[i*9+7] = point.get(p3).y; 
+				pl[i*9+8] = Utl.intToColor(color.get(p3)).toFloatBits();
+			}
+			return pl;
+		}});
+
+		geom.newRun("pop_shape",new nRun() {public Object get() {
+			pParam geom = contextParam();
+			pBox2d box = PlaneApplet.app.getSystem(pBox2d.class);
+			if (box == null || args.length < 3) return null;
+			String shape = arg(0,String.class);
+			Vector2 pos = arg(1,Vector2.class);
+			float rot = arg(2,Float.class);
+			return box.popShape(shape,geom,pos,rot);
+		}});
 
 		
 
@@ -712,7 +752,7 @@ public class pGeom extends pSystem {
 				Vector2 m = new Vector2(speed,0).rotateRad(spawnrot + (float)Math.PI / 2f);
 				if (!direction) m.scl(-1f); 
 				box.accel_body(bod,true,m.x,m.y,speed*2f); 
-				box.rot_body_toward(bod,spawnrot,speed/40f,speed/30f); 
+				box.rot_body_toward(bod,spawnrot,speed/20f,speed/10f); 
 			}
 			if (bod.getBoo("ctrl_mob","shoot")) {
 				if (bod.getInt("ctrl_mob","shoot_counter") < 
@@ -723,17 +763,11 @@ public class pGeom extends pSystem {
 							bod.getInt("ctrl_mob","shoot_counter") + step);
 				} else {
 					bod.setInt("ctrl_mob","shoot_counter", 0);
-					
 					String bullet_par = bod.getStr("ctrl_mob","bullet_par");
-					pParam bullet = null;
-					for (pParam p : bod.space.param_pools.get("bullet").all()) 
-						if (p.getStr("name").equals(bullet_par)) { bullet = p; break; }
-					if (bullet != null) { 
-						Vector2 pos = bod.getVec("ref","pos");
-						float rot = bod.getFlt("ref","rot");
-						Vector2 m = new Vector2(180,0).rotateRad(rot).add(pos);
-						bullet.run("pop",m,rot);
-					} 
+					Vector2 pos = bod.getVec("ref","pos");
+					float rot = bod.getFlt("ref","rot");
+					Vector2 m = new Vector2(180,50).rotateRad(rot).add(pos);
+					box.shootBullet(bullet_par,m,rot);
 				}
 			}
 		}};
@@ -747,7 +781,7 @@ public class pGeom extends pSystem {
 		.addData("shoot", true)
 		.addData("bullet_par", "bullet_par")
 		.addData("shoot_counter", (int)0)
-		.addData("shoot_delay", (int)30)
+		.addData("shoot_delay", (int)15)
 		.addData("spawn_pos", new Vector2())
 		.addData("spawn_rot", 0f)
 		.addData("spawn_id", (int)0)
@@ -824,25 +858,33 @@ public class pGeom extends pSystem {
 		nRun run_ctrl_bullet = new nRun() { public void run(Object o) { 
 			pBody bod = (pBody)o; if (bod == null) return;
 			pGeom geo = PlaneApplet.app.getSystem(pGeom.class);
-//			pBox2d box = PlaneApplet.app.getSystem(pBox2d.class);
-			if (geo != null && bod.hasParam("ref") && bod.hasParam("ctrl_bullet")) {
+			pBox2d box = PlaneApplet.app.getSystem(pBox2d.class);
+			if (geo != null && box != null && 
+					bod.hasParam("ref") && bod.hasParam("ctrl_bullet")) {
 
 				if (bod.getBoo("ctrl_bullet","pop")) {
-					
+					bod.setInt("ctrl_bullet","shoot_counter", 0);
 					String bullet_par = bod.getStr("ctrl_bullet","bullet_par");
-					
-					pParam bullet = null;
-					for (pParam p : bod.space.param_pools.get("bullet").all()) 
-						if (p.getStr("name").equals(bullet_par)) { bullet = p; break; }
-					
-					if (bullet != null) { 
+					Vector2 pos = bod.getVec("ref","pos");
+					float rot = bod.getFlt("ref","rot");
+					Vector2 m = new Vector2(150,0).rotateRad(rot).add(pos);
+					box.shootBullet(bullet_par,m,rot);
+					bod.setBoo("ctrl_bullet","pop", false);
+				} 
+				else if (bod.getBoo("ctrl_bullet","shoot")) {
+					if (bod.getInt("ctrl_bullet","shoot_counter") < 
+							bod.getInt("ctrl_bullet","shoot_delay")) {
+						bod.setInt("ctrl_bullet","shoot_counter", 
+								bod.getInt("ctrl_bullet","shoot_counter") + (int)1);
+					} else {
+						bod.setInt("ctrl_bullet","shoot_counter", 0);
+						String bullet_par = bod.getStr("ctrl_bullet","bullet_par");
 						Vector2 pos = bod.getVec("ref","pos");
 						float rot = bod.getFlt("ref","rot");
-						Vector2 m = new Vector2(150,0).rotateRad(rot).add(pos);
-						bullet.run("pop",m,rot);
-					} 
+						Vector2 m = new Vector2(180,0).rotateRad(rot).add(pos);
+						box.shootBullet(bullet_par,m,rot);
+					}
 				}
-				bod.setBoo("ctrl_bullet","pop", false);
 
 			}
 		}};
@@ -850,7 +892,10 @@ public class pGeom extends pSystem {
 		pGeom.newControlProp("bullet",coordinate,run_ctrl_bullet,"ref") 
 		.setFullSync()
 		.addData("pop", false)
+		.addData("shoot", false)
 		.addData("bullet_par", "bullet_par")
+		.addData("shoot_counter", (int)0)
+		.addData("shoot_delay", (int)15)
 //		.addData("pop_pos", new Vector2(150,0))
 //		.addData("pop_rot", 0f, "min", -(float)Math.PI, "max", (float)Math.PI)
 		;
@@ -987,6 +1032,14 @@ public class pGeom extends pSystem {
 		
 		
 	}
+	
+
+	public pParam getGeom(String name) {
+		for (pParam p : app.space.param_pools.get("geom").all())
+			if (p.getStr("name").equals(name)) return p;
+		return null;
+	}
+
 
 	
 	
