@@ -744,6 +744,10 @@ public class pGeom extends pSystem {
 			} 
 			int spawnid = bod.getInt("ctrl_mob","spawn_id");
 			
+			if (bod.getInt("ctrl_mob","collision_tmp") > 0) {
+				bod.setInt("ctrl_mob","collision_tmp", 
+						bod.getInt("ctrl_mob","collision_tmp") - (int)1);
+			} 
 			if (bod.getBoo("ctrl_mob","activate") && (
 					spawnid == 1 || spawnid == 3)) {
 				float spawnrot = bod.getFlt("ctrl_mob","spawn_rot");
@@ -776,7 +780,8 @@ public class pGeom extends pSystem {
 		.setFullSync()
 		.addData("activate", true)
 		.addData("direction", true)
-		.addData("speed", 20f)
+		.addData("collision_tmp", (int)0)
+		.addData("speed", 50f)
 		.addData("spawning", (int)2)
 		.addData("shoot", true)
 		.addData("bullet_par", "bullet_par")

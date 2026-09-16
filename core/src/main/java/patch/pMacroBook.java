@@ -46,7 +46,8 @@ public class pMacroBook {
 
 			list.get("geom").patch.app.addDelayEvent(2, new nRun() { public void run() {
 				list.get("geom").run("empty_geom");
-				list.get("geom").run("new_trig",0f,0f,40f,0f);
+				list.get("geom").run("new_face",-50f,0f,40f,20f,40f,-20f);
+//				list.get("geom").run("new_trig",0f,0f,80f,0f);
 			}});
 		}})
 		;

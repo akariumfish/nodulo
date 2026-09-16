@@ -20,6 +20,8 @@ import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.DistanceJoint;
 import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
+import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
+import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 
 import aa_nodulo.PlaneApplet;
@@ -86,7 +88,7 @@ public class pBox2d extends pSystem {
 			}});
 
 			physic
-			.addData("density", 0.000001f)
+			.addData("density", 10f)
 			.addData("friction", 0.0f)
 			.addData("restitution", 0.0f)
 			.addData("dynamic", false)
@@ -94,15 +96,15 @@ public class pBox2d extends pSystem {
 			.addData("copy_geom", true)
 			.addData("aura", false)
 			.addData("view_light", false)
-			.addData("contact_break", false)
-			.addData("sensor", false)
-			.addData("light", false)
-			.addData("light_pos", new Vector2())
-			.addData("light_dist", 300f)
-			.addData("r", (int)255)
-			.addData("g", (int)50)
-			.addData("b", (int)50)
-			.addData("a", (int)255)
+//			.addData("contact_break", false)
+//			.addData("sensor", false)
+//			.addData("light", false)
+//			.addData("light_pos", new Vector2())
+//			.addData("light_dist", 300f)
+//			.addData("r", (int)255)
+//			.addData("g", (int)50)
+//			.addData("b", (int)50)
+//			.addData("a", (int)255)
 			;
 
 			physic.newLocalProperty("box_body")
@@ -177,7 +179,7 @@ public class pBox2d extends pSystem {
 			.addData("dynamic", true)
 			.addData("kinematic", false)
 			.addData("static", false)
-			.addData("density", 0f)
+			.addData("density", 1f)
 			.addData("friction", 0f)
 			.addData("restitution", 0f)
 			.addData("sensor", false)
@@ -225,11 +227,17 @@ public class pBox2d extends pSystem {
 
 			member.addData("shape_name","shape_def")
 			.addData("geom_name","geom_def")
-			.addData("pop_pos",new Vector2(-200,0))
+			.addData("pop_pos",new Vector2(-60,0))
+			.addData("rot_pos",new Vector2(-30,0))
 			;
 			
 			member.newLocalProperty("mem_unit")
 			.addRef("shape","shape_unit")
+			.addRef("shape1","shape_unit")
+//			.addRef("shape2","shape_unit")
+//			.addRef("shape3","shape_unit")
+//			.addRef("shape4","shape_unit")
+//			.addRef("shape5","shape_unit")
 			;
 			
 			
@@ -284,9 +292,9 @@ public class pBox2d extends pSystem {
 			.addData("decel_rot", false)
 			.addData("rot_to_target", false)
 			.addData("rot_target", 0f)
-			.addData("move_strength", 4f)
+			.addData("move_strength", 70f)
 			.addData("rot_strength", 1f/50f)
-			.addData("max_speed", 90f)
+			.addData("max_speed", 140f)
 			.addData("max_rot", 0.3f)
 			;
 
@@ -657,9 +665,11 @@ public class pBox2d extends pSystem {
 			if (ba.getUserData() != null && 
 					(ba.getUserData() instanceof pBody)) {
 				pBody b1 = (pBody)ba.getUserData();
-				if (!b1.hasParam("ctrl_mob")) return;
+				if (!b1.hasParam("ctrl_mob") || 
+						b1.getInt("ctrl_mob","collision_tmp") > 0) return;
 				b1.setBoo("ctrl_mob", "direction", 
 						!b1.getBoo("ctrl_mob", "direction"));
+				b1.setInt("ctrl_mob","collision_tmp",(int)10);
 			}
 		}
 		
@@ -697,35 +707,107 @@ public class pBox2d extends pSystem {
 		public void init_member(pBody bod) {
 			pParam member = bod.param("member");
 			pParam geom = geo.getGeom(member.getStr("geom_name"));
-			Vector2 poppos = member.getVec("pop_pos");
 			Vector2 pos = bod.getVec("ref","pos");
 			float rot = bod.getFlt("ref","rot");
-			poppos.rotateRad(rot).add(pos);
+			Vector2 poppos = member.getVec("pop_pos").add(0,60).rotateRad(rot).add(pos); 
+			Vector2 rotpos = member.getVec("rot_pos").add(0,60).rotateRad(rot).add(pos);
 			pParam newmem = geom.run_get("pop_shape",pParam.class, 
 					member.getStr("shape_name"), poppos, rot);
 			bod.param("mem_unit").setRef("shape", newmem);
 			Body bodyB = getShapeBody(newmem);
 			Body bodyA = getBody(bod);
 			
-//			DistanceJointDef defJoint = new DistanceJointDef ();
-//			defJoint.initialize(bodyA, bodyB, pos, poppos);
-//			defJoint.length = 300f;
-//			defJoint.frequencyHz = 10f;
-//			defJoint.dampingRatio = 0.5f;
+//			DistanceJointDef jointDef = new DistanceJointDef ();
+//			jointDef.initialize(bodyA, bodyB, pos, poppos);
+////			jointDef.length = 300f;
+//			jointDef.frequencyHz = 1f;
+//			jointDef.dampingRatio = 0f;
 
-//			RopeJointDef defJoint = new RopeJointDef ();
-//			defJoint.maxLength = 300;
-////			defJoint.collideConnected = true;
-//			defJoint.bodyA = bodyA;
-//			defJoint.bodyB = bodyB;
+//			RopeJointDef jointDef = new RopeJointDef ();
+//			jointDef.maxLength = 200;
+//			jointDef.collideConnected = true;
+//			jointDef.bodyA = bodyA;
+//			jointDef.bodyB = bodyB;
 			
-//			world.createJoint(defJoint); 
+			RevoluteJointDef jointDef = new RevoluteJointDef();
+			jointDef.initialize(bodyA, bodyB, rotpos);
+
+			jointDef.lowerAngle = -0.2f * (float)Math.PI + rot; 
+			jointDef.upperAngle = 0.2f * (float)Math.PI + rot; 
+
+			jointDef.enableLimit = true;
+			jointDef.enableMotor = true;
+
+			jointDef.maxMotorTorque = 20.0f;
+			jointDef.motorSpeed = 1.0f;
+			
+			world.createJoint(jointDef); 
+			
+			
+			
+			poppos = member.getVec("pop_pos").add(0,-60).rotateRad(rot).add(pos); 
+			rotpos = member.getVec("rot_pos").add(0,-60).rotateRad(rot).add(pos);
+			newmem = geom.run_get("pop_shape",pParam.class, 
+					member.getStr("shape_name"), poppos, rot);
+			bod.param("mem_unit").setRef("shape1", newmem);
+			bodyB = getShapeBody(newmem);
+			
+			jointDef = new RevoluteJointDef();
+			jointDef.initialize(bodyA, bodyB, rotpos);
+
+			jointDef.lowerAngle = -0.2f * (float)Math.PI + rot; 
+			jointDef.upperAngle = 0.2f * (float)Math.PI + rot; 
+
+			jointDef.enableLimit = true;
+			jointDef.enableMotor = true;
+
+			jointDef.maxMotorTorque = 20.0f;
+			jointDef.motorSpeed = 1.0f;
+			
+			world.createJoint(jointDef); 
+
+			
+			
+			
+			
+//			new_mem_tail(bod,1,bodyB,poppos,rot);
 
 		}
+		
+//		private void new_mem_tail(pBody bod, int i, Body bodyA, Vector2 ppos, float rot) {
+//			pParam member = bod.param("member");
+//			pParam geom = geo.getGeom(member.getStr("geom_name"));
+//			Vector2 poppos = member.getVec("pop_pos").rotateRad(rot).add(ppos); 
+//			Vector2 rotpos = member.getVec("rot_pos").rotateRad(rot).add(ppos);
+//			pParam newmem = geom.run_get("pop_shape",pParam.class, 
+//					member.getStr("shape_name"), poppos, rot);
+//			bod.param("mem_unit").setRef("shape"+i, newmem);
+//			Body bodyB = getShapeBody(newmem);
+//			
+//			RevoluteJointDef jointDef = new RevoluteJointDef();
+//			jointDef.initialize(bodyA, bodyB, rotpos);
+//
+//			jointDef.lowerAngle = -0.1f * (float)Math.PI + rot; 
+//			jointDef.upperAngle = 0.1f * (float)Math.PI + rot; 
+//
+//			jointDef.enableLimit = true;
+//			jointDef.enableMotor = true;
+//
+//			jointDef.maxMotorTorque = 50.0f;
+//			jointDef.motorSpeed = 1.0f;
+//			
+//			world.createJoint(jointDef); 
+//
+//			if (i < 6) { new_mem_tail(bod,i+1,bodyB,poppos,rot); }
+//		}
 
 		public void clear_member(pBody bod) {
 			pParam mem = bod.param("mem_unit").getRef("shape");
 			clear_shape(mem);
+			for (int i = 1 ; i < 6 ; i++) {
+				mem = bod.param("mem_unit").getRef("shape"+i);
+				if (mem != null) clear_shape(mem);
+			}
 		}
 		
 		
@@ -829,79 +911,79 @@ public class pBox2d extends pSystem {
 			}
 		}
 
-		public void move_shape(pParam b, float x, float y) {
-			Body body = shape_units.get(b.getInt("body_id"));
-			if (body == null) return;
-			float rot = body.getAngle();
-			body.setTransform(x,y,rot);
-		}
-
-		public void move_shape(pParam b, float x, float y, float r) {
-			Body body = shape_units.get(b.getInt("body_id"));
-			if (body == null) return;
-			body.setTransform(x,y,r);
-		}
-
-		public void accel_shape(pParam b, boolean glob, float x, float y, float max) {
-			Body body = shape_units.get(b.getInt("body_id"));
-			if (body == null) return;
-			Vector2 pos = body.getPosition();
-			Vector2 vel = body.getLinearVelocity();
-			Vector2 a = new Vector2(x,y).scl(body.getMass());
-			if (!glob) a.rotateRad(body.getAngle()-(float)(Math.PI/2f));
-			Vector2 futur = new Vector2(a).add(vel);
-			float futl = futur.len();
-			if (futl > max) { decel_shape_move(b,futl-max); }
-			body.applyLinearImpulse(a.x, a.y, pos.x, pos.y, true);
-		}
-
-		public void decel_shape_move(pParam b, float s) {
-			Body body = shape_units.get(b.getInt("body_id"));
-			if (body == null) return;
-			Vector2 pos = body.getPosition();
-			Vector2 vel = body.getLinearVelocity();
-			float vell = vel.len();
-			if (vell > s) vel.nor().scl(s);
-			vel.scl(-1f).scl(body.getMass());
-			body.applyLinearImpulse(vel.x, vel.y, pos.x, pos.y, true);
-		}
-
-		public void rot_shape_toward(pParam b, float targ, float r, float max) {
-			Body body = shape_units.get(b.getInt("body_id"));
-			if (body == null) return;
-			float vel = body.getAngularVelocity();
-			float rot = body.getAngle();
-			float m = Utl.mapToCircularValuesDist(rot, targ, r, 
-					-((float)Math.PI), ((float)Math.PI));
-			float d = Utl.mapToCircularValuesDir(rot, targ, r, 
-					-((float)Math.PI), ((float)Math.PI)); 
-			float d2 = Utl.mapToCircularValuesDir(rot+vel, targ, r, 
-					-((float)Math.PI), ((float)Math.PI)); 
-			if ((d>0) == (d2>0) && m > 0.01f) {
-				m *= d;
-				rot_shape(b, m, max);
-			} else {
-				decel_shape_rot(b, r);
-			}
-		}
-
-		public void rot_shape(pParam b, float r, float max) {
-			Body body = shape_units.get(b.getInt("body_id"));
-			if (body == null) return;
-			float vel = body.getAngularVelocity();
-			if (vel > 0f && vel > max) return;
-			if (vel < 0f && vel < -max) return;
-			body.applyAngularImpulse(body.getInertia()*r, true);
-		}
-
-		public void decel_shape_rot(pParam b, float s) {
-			Body body = shape_units.get(b.getInt("body_id"));
-			if (body == null) return;
-			float vel = body.getAngularVelocity();
-			if (vel > 0f && vel > s) vel = s;
-			if (vel < 0f && vel < -s) vel = -s;
-			body.applyAngularImpulse(body.getInertia()*-vel, true);
-		}
+//		public void move_shape(pParam b, float x, float y) {
+//			Body body = shape_units.get(b.getInt("body_id"));
+//			if (body == null) return;
+//			float rot = body.getAngle();
+//			body.setTransform(x,y,rot);
+//		}
+//
+//		public void move_shape(pParam b, float x, float y, float r) {
+//			Body body = shape_units.get(b.getInt("body_id"));
+//			if (body == null) return;
+//			body.setTransform(x,y,r);
+//		}
+//
+//		public void accel_shape(pParam b, boolean glob, float x, float y, float max) {
+//			Body body = shape_units.get(b.getInt("body_id"));
+//			if (body == null) return;
+//			Vector2 pos = body.getPosition();
+//			Vector2 vel = body.getLinearVelocity();
+//			Vector2 a = new Vector2(x,y).scl(body.getMass());
+//			if (!glob) a.rotateRad(body.getAngle()-(float)(Math.PI/2f));
+//			Vector2 futur = new Vector2(a).add(vel);
+//			float futl = futur.len();
+//			if (futl > max) { decel_shape_move(b,futl-max); }
+//			body.applyLinearImpulse(a.x, a.y, pos.x, pos.y, true);
+//		}
+//
+//		public void decel_shape_move(pParam b, float s) {
+//			Body body = shape_units.get(b.getInt("body_id"));
+//			if (body == null) return;
+//			Vector2 pos = body.getPosition();
+//			Vector2 vel = body.getLinearVelocity();
+//			float vell = vel.len();
+//			if (vell > s) vel.nor().scl(s);
+//			vel.scl(-1f).scl(body.getMass());
+//			body.applyLinearImpulse(vel.x, vel.y, pos.x, pos.y, true);
+//		}
+//
+//		public void rot_shape_toward(pParam b, float targ, float r, float max) {
+//			Body body = shape_units.get(b.getInt("body_id"));
+//			if (body == null) return;
+//			float vel = body.getAngularVelocity();
+//			float rot = body.getAngle();
+//			float m = Utl.mapToCircularValuesDist(rot, targ, r, 
+//					-((float)Math.PI), ((float)Math.PI));
+//			float d = Utl.mapToCircularValuesDir(rot, targ, r, 
+//					-((float)Math.PI), ((float)Math.PI)); 
+//			float d2 = Utl.mapToCircularValuesDir(rot+vel, targ, r, 
+//					-((float)Math.PI), ((float)Math.PI)); 
+//			if ((d>0) == (d2>0) && m > 0.01f) {
+//				m *= d;
+//				rot_shape(b, m, max);
+//			} else {
+//				decel_shape_rot(b, r);
+//			}
+//		}
+//
+//		public void rot_shape(pParam b, float r, float max) {
+//			Body body = shape_units.get(b.getInt("body_id"));
+//			if (body == null) return;
+//			float vel = body.getAngularVelocity();
+//			if (vel > 0f && vel > max) return;
+//			if (vel < 0f && vel < -max) return;
+//			body.applyAngularImpulse(body.getInertia()*r, true);
+//		}
+//
+//		public void decel_shape_rot(pParam b, float s) {
+//			Body body = shape_units.get(b.getInt("body_id"));
+//			if (body == null) return;
+//			float vel = body.getAngularVelocity();
+//			if (vel > 0f && vel > s) vel = s;
+//			if (vel < 0f && vel < -s) vel = -s;
+//			body.applyAngularImpulse(body.getInertia()*-vel, true);
+//		}
 
 		
 		
@@ -1081,6 +1163,8 @@ public class pBox2d extends pSystem {
 					bodyDef.position.set(b.getVec("ref", "pos"));
 				else bodyDef.position.set(b.getVec("box_body", "pos"));
 				
+				bodyDef.linearDamping = 1f;
+				
 
 				// Create our body in the world using our body definition
 				Body body = world.createBody(bodyDef);
@@ -1090,11 +1174,11 @@ public class pBox2d extends pSystem {
 				renderer.lightLayer.transparent.add(body);
 				renderer.visionLayer.transparent.add(body);
 				
-				if (b.getBoo("physic", "contact_break")) {
-					break_bodys.add(body);
-				} else {
+//				if (b.getBoo("physic", "contact_break")) {
+//					break_bodys.add(body);
+//				} else {
 					body_breaker.add(body);
-				}
+//				}
 
 				if (b.getBoo("physic", "aura")) {
 					SwarmLight.Unit su = renderer.auraLayer.newSwarmLightUnit(
@@ -1136,18 +1220,19 @@ public class pBox2d extends pSystem {
 				float friction = b.getFlt("physic", "friction");
 				float restitution = b.getFlt("physic", "restitution");
 
-				if (!b.getBoo("physic", "copy_geom") || !b.hasParam("geom")) {
-					PolygonShape polygonshape = new PolygonShape();
-					polygonshape.setAsBox(100,100);
-					FixtureDef fixtureDef2 = new FixtureDef();
-					fixtureDef2.shape = polygonshape;
-					fixtureDef2.density = density;
-					fixtureDef2.friction = friction;
-					fixtureDef2.restitution = restitution;
-					if (b.getBoo("physic", "sensor")) fixtureDef2.isSensor = true;
-					Fixture fixture = body.createFixture(fixtureDef2);
-//					fixture.setUserData(new LightData(10f));
-				} else if (b.hasParam("geom")) {
+//				if (!b.getBoo("physic", "copy_geom") || !b.hasParam("geom")) {
+//					PolygonShape polygonshape = new PolygonShape();
+//					polygonshape.setAsBox(100,100);
+//					FixtureDef fixtureDef2 = new FixtureDef();
+//					fixtureDef2.shape = polygonshape;
+//					fixtureDef2.density = density;
+//					fixtureDef2.friction = friction;
+//					fixtureDef2.restitution = restitution;
+//					if (b.getBoo("physic", "sensor")) fixtureDef2.isSensor = true;
+//					Fixture fixture = body.createFixture(fixtureDef2);
+////					fixture.setUserData(new LightData(10f));
+//				} else 
+				if (b.hasParam("geom")) {
 					for (pParam p : b.params.all()) if (p.prop.ref.equals("geom")) {
 						pParam geom = p;
 						ArrayList<Vector2> point = geom.getCollecData("point", Vector2.class);
@@ -1167,11 +1252,11 @@ public class pBox2d extends pSystem {
 									p2 < 0 || p2 >= point.size() || 
 									p3 < 0 || p3 >= point.size()) continue;
 							Vector2[] pl = new Vector2[3];
-							float s = b.getFlt("ref","scale");
+//							float s = b.getFlt("ref","scale");
 							pl[0] = Utl.copy(point.get(p1)); 
 							pl[1] = Utl.copy(point.get(p2)); 
 							pl[2] = Utl.copy(point.get(p3));
-							pl[0].scl(s); pl[1].scl(s); pl[2].scl(s);
+//							pl[0].scl(s); pl[1].scl(s); pl[2].scl(s);
 							PolygonShape polygonshape = new PolygonShape();
 							polygonshape.set(pl);
 							FixtureDef fixtureDef2 = new FixtureDef();
@@ -1179,11 +1264,11 @@ public class pBox2d extends pSystem {
 							fixtureDef2.density = density;
 							fixtureDef2.friction = friction;
 							fixtureDef2.restitution = restitution;
-							if (b.getBoo("physic", "sensor")) fixtureDef2.isSensor = true;
+//							if (b.getBoo("physic", "sensor")) fixtureDef2.isSensor = true;
 							Fixture fixture = body.createFixture(fixtureDef2);
 //							fixture.setUserData(new LightData(1f));
 
-							s = 1.1f;
+							float s = 1.1f;
 							pl[0].scl(s); pl[1].scl(s); pl[2].scl(s);
 							su.trig(pl[0].x, pl[0].y, pl[1].x, pl[1].y, pl[2].x, pl[2].y, 
 									new Color(0.1f,0.1f,0.1f,0.3f));
@@ -1245,14 +1330,28 @@ public class pBox2d extends pSystem {
 			if (b.param("box_body") == null) return;
 			Body body = bodys.get(b.getStr("box_body", "body_ref"));
 			if (body == null) return;
-			Vector2 pos = body.getPosition();
+//			Vector2 pos = body.getPosition();
 			Vector2 vel = body.getLinearVelocity();
-			Vector2 a = new Vector2(x,y).scl(body.getMass());
+//			Utl.logn(""+vel.len());
+			Vector2 a = new Vector2(x,y); 
 			if (!glob) a.rotateRad(body.getAngle()-(float)(Math.PI/2f));
-			Vector2 futur = new Vector2(a).add(vel);
-			float futl = futur.len();
-			if (futl > max) { decel_body_move(b,futl-max); }
-			body.applyLinearImpulse(a.x, a.y, pos.x, pos.y, true);
+			float d = (a.angleRad() - vel.angleRad());
+			boolean go = false;
+			if (d <= 0.1f && d >= -0.1f) go = true;
+			d = (a.angleRad() + vel.angleRad());
+			if (d <= 0.1f && d >= -0.1f) go = true;
+			if (go) {
+				float futl = vel.len();
+				if (futl < max) {
+					a.scl( (1f - (futl/(max*1f))) * body.getMass()*15f);
+					body.applyForceToCenter(a.x, a.y, true);
+				} 
+			} else {
+				a.scl(body.getMass()*15f);
+				body.applyForceToCenter(a.x, a.y, true);
+			}
+////			body.applyLinearImpulse(a.x, a.y, pos.x, pos.y, true);
+//			else body.applyForceToCenter(a.x, a.y, true);
 		}
 
 		public void decel_body_move(pBody b, float s) {
@@ -1263,8 +1362,9 @@ public class pBox2d extends pSystem {
 			Vector2 vel = body.getLinearVelocity();
 			float vell = vel.len();
 			if (vell > s) vel.nor().scl(s);
-			vel.scl(-1f).scl(body.getMass());
+			vel.scl(-1f).scl(body.getMass()); 
 			body.applyLinearImpulse(vel.x, vel.y, pos.x, pos.y, true);
+//			body.applyForceToCenter(vel.x, vel.y, true);
 		}
 
 		public void rot_body_toward(pBody b, float targ, float r, float max) {
