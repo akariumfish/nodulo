@@ -880,6 +880,12 @@ public class pTileHead {
 			return Utl.duplic(added_tile);
 		}})
 		.newRun("get_last", new nRun() {public Object get() {
+			if (args.length > 0 && arg(0,Integer.class) != null) {
+				int len = arg(0,Integer.class);
+				for (int i = 0 ; i < len ; i++)
+					instance.get_this("get_last");
+				return instance;
+			}
 			ArrayList<pInstance> last_build = instance.object("last_build", ArrayList.class);
 			if (last_build.size() == 0) return instance;
 			Script script = instance.object("script", Script.class);
@@ -999,226 +1005,226 @@ public class pTileHead {
 
 		float RS = nGUI.book.RS;
 
-		pNode.newChainnedNodeModel("stack_editor")
-		.process()
-			.useLoad().commande(new nRun() {public void run() {
-				nInterface interf = instance.object("interf", nInterface.class);
-
-				interf.add_col();
-				interf.add_row();
-				interf.add_row_label(9, "Stack Editor");
-				
-				interf.set_param("entry_height","0.7");
-				interf.add_row();
-				nWidgetGroup list = interf.add_treelist(9,8);
-				interf.set_param("entry_height","1");
-				nRun list_run = new nRun(instance) { public void run() {
-					pInstance inst = (pInstance)builder;
-					if (inst.hasObject("doing_list_run") && 
-							inst.object("doing_list_run", Boolean.class)) return;
-					inst.setObject("doing_list_run", true);
-					app.addDelayEvent(1,new nRun(inst) { public void run() {
-						pInstance inst = (pInstance)builder;
-						inst.setObject("doing_list_run", false);
-						pInstance head = inst.get("get_chain_head", pInstance.class);
-						if (head == null || head.getInst("head_tile") == null) return;
-						pInstance head_tile = head.getInst("head_tile");
-						head_tile.run("calc_script");
-						Script script = head_tile.object("script", Script.class);
-						if (script == null) return;
-						interf.change_current_list(list);
-						for (ScriptCom sc : script.coms) {
-							interf.add_list_entry(sc.to_string());
-							interf.go_up_tree();
-						}
-					}});
-				}};
-				
-				interf.add_row();
-				interf.add_row_label(9, "");
-				interf.add_row();
-				interf.add_row_label(2, "");
-				nWidget add_at_w = interf.add_row_trigg(5,"add_at");
-				interf.add_row_label(2, "");
-				interf.add_row();
-				nWidget add_at_out_pk_w = interf.add_row_trigg(2,"out");
-				nWidget add_at_out_targ_w = interf.add_row_label(7, "");
-				interf.add_row();
-				nWidget add_at_mod_pk_w = interf.add_row_trigg(1,"mod");
-				nWidget add_at_mod_targ_w = interf.add_row_label(4, "");
-				nWidget add_at_in_targ_w = interf.add_row_label(4, "");
-				
-				nRun run_pk = new nRun() { public void run() {
-					nWidget trigg_w = arg(0, nWidget.class);
-					nWidget lab_w = arg(1, nWidget.class);
-					ArrayList<String> arr = arg(2, ArrayList.class);
-//					instance.patch.patch_dropmenu.metode("clear_entrys"); 
-					for (String par : arr) {
-						nWidget w1 = nGUI.add_dropmenu_entry(par); 
-//						nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-//								.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-						w1.addEventTrigger(new nRun(par) { public void run() {
-							String targ = arg(0, String.class);
-							lab_w.setText(targ); }}); }
-//					instance.patch.patch_dropmenu.metode("open", trigg_w);
-					nGUI.open_dropmenu(trigg_w); 
-				}};
-				nRun run_add_at_out_pk = new nRun(instance) { public void run() {
-					pInstance inst = (pInstance)builder;
-					pInstance head = inst.get("get_chain_head", pInstance.class);
-					if (head == null || head.getInst("head_tile") == null) return;
-					pInstance head_tile = head.getInst("head_tile");
-					pInstance current_build = 
-							head_tile.object("current_build", pInstance.class);
-					ArrayList<String> arr = new ArrayList<String>();
-					for (pInstance c : current_build.collecInstAll("plugs")) {
-						if (c.getInst("plugged") == null) {
-							arr.add(c.getVar("ref", String.class));
-						}
-					}
-					run_pk.do_run(inst,add_at_out_pk_w, add_at_out_targ_w, arr);
-				}};
-				add_at_out_pk_w.addEventTrigger(run_add_at_out_pk);
-
-				nRun run_add_at_mod_pk = new nRun(instance) { public void run() {
-					pInstance inst = (pInstance)builder;
-					pInstance head = inst.get("get_chain_head", pInstance.class);
-					if (head == null || head.getInst("head_tile") == null) return;
-					pInstance head_tile = head.getInst("head_tile");
-					pInstance current_build = 
-							head_tile.object("current_build", pInstance.class);
-					String out_ref = add_at_out_targ_w.getText();
-					pInstance out_plug = current_build.get("get_plug", 
-							pInstance.class, out_ref);
-					if (out_plug == null) {
-						add_at_out_targ_w.setText("");
-						add_at_mod_targ_w.setText("");
-						add_at_in_targ_w.setText("");
-						return;
-					}
-					
-					ArrayList<String> arr = new ArrayList<String>();
-					PlugDef out_pd = null;
-					for (PlugDef p : pTile.getTileModelPlugs(current_build.stand.ref)) 
-						if (p.ref.equals(out_ref)) { out_pd = p; break; }
-					if (out_pd == null) {
-						Utl.logn("ERROR plug run trigg r"); }
-					for (String tile_model : pTile.tile_models.allKey()) 
-						if (!Utl.contains(pTile.not_poppable_models, tile_model)) {
-						pStandard tile_model_stan = pTile.tile_models.get(tile_model);
-						for (PlugDef pd : pTile.getTileModelPlugs(tile_model_stan)) {
-							if (pTile.key_filter_compatibility(out_pd.keys, out_pd.filters, 
-									pd.keys, pd.filters)) {
-								String r = pd.ref;
-								arr.add(tile_model+" "+r);
-							}
-						}
-					}
-
-//					instance.patch.patch_dropmenu.metode("clear_entrys"); 
-					for (String par : arr) {
-						nWidget w1 = nGUI.add_dropmenu_entry(par); 
-//						nWidget w1 = (nWidget)instance.patch.patch_dropmenu
-//								.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
-						w1.addEventTrigger(new nRun(par) { public void run() {
-							String targ = arg(0, String.class);
-							String[] tg = Utl.split(targ, ' ');
-							if (!(tg.length == 2)) return;
-							add_at_mod_targ_w.setText(tg[0]);
-							add_at_in_targ_w.setText(tg[1]);
-						}}); }
-//					instance.patch.patch_dropmenu.metode("open", add_at_mod_pk_w); 
-					nGUI.open_dropmenu(add_at_mod_pk_w);
-					
-				}};
-				add_at_mod_pk_w.addEventTrigger(run_add_at_mod_pk);
-				
-				nRun run_add_at = new nRun(instance) { public void run() {
-					pInstance inst = (pInstance)builder;
-					pInstance head = inst.get("get_chain_head", pInstance.class);
-					if (head == null || head.getInst("head_tile") == null) return;
-					pInstance head_tile = head.getInst("head_tile");
-					String out_ref = add_at_out_targ_w.getText();
-					String mod_ref = add_at_mod_targ_w.getText();
-					String in_ref = add_at_in_targ_w.getText();
-					head_tile.get("add_at", pInstance.class, out_ref, mod_ref, in_ref);
-					add_at_out_targ_w.setText("");
-					add_at_mod_targ_w.setText("");
-					add_at_in_targ_w.setText("");
-					list_run.do_run(inst);
-				}};
-				add_at_w.addEventTrigger(run_add_at);
-				
-				
+//		pNode.newChainnedNodeModel("stack_editor")
+//		.process()
+//			.useLoad().commande(new nRun() {public void run() {
+//				nInterface interf = instance.object("interf", nInterface.class);
+//
+//				interf.add_col();
 //				interf.add_row();
-//				interf.add_row_trigg(5,"set_var", new nRun(instance) { public void run() {
+//				interf.add_row_label(9, "Stack Editor");
+//				
+//				interf.set_param("entry_height","0.7");
+//				interf.add_row();
+//				nWidgetGroup list = interf.add_treelist(9,8);
+//				interf.set_param("entry_height","1");
+//				nRun list_run = new nRun(instance) { public void run() {
+//					pInstance inst = (pInstance)builder;
+//					if (inst.hasObject("doing_list_run") && 
+//							inst.object("doing_list_run", Boolean.class)) return;
+//					inst.setObject("doing_list_run", true);
+//					app.addDelayEvent(1,new nRun(inst) { public void run() {
+//						pInstance inst = (pInstance)builder;
+//						inst.setObject("doing_list_run", false);
+//						pInstance head = inst.get("get_chain_head", pInstance.class);
+//						if (head == null || head.getInst("head_tile") == null) return;
+//						pInstance head_tile = head.getInst("head_tile");
+//						head_tile.run("calc_script");
+//						Script script = head_tile.object("script", Script.class);
+//						if (script == null) return;
+//						interf.change_current_list(list);
+//						for (ScriptCom sc : script.coms) {
+//							interf.add_list_entry(sc.to_string());
+//							interf.go_up_tree();
+//						}
+//					}});
+//				}};
+//				
+//				interf.add_row();
+//				interf.add_row_label(9, "");
+//				interf.add_row();
+//				interf.add_row_label(2, "");
+//				nWidget add_at_w = interf.add_row_trigg(5,"add_at");
+//				interf.add_row_label(2, "");
+//				interf.add_row();
+//				nWidget add_at_out_pk_w = interf.add_row_trigg(2,"out");
+//				nWidget add_at_out_targ_w = interf.add_row_label(7, "");
+//				interf.add_row();
+//				nWidget add_at_mod_pk_w = interf.add_row_trigg(1,"mod");
+//				nWidget add_at_mod_targ_w = interf.add_row_label(4, "");
+//				nWidget add_at_in_targ_w = interf.add_row_label(4, "");
+//				
+//				nRun run_pk = new nRun() { public void run() {
+//					nWidget trigg_w = arg(0, nWidget.class);
+//					nWidget lab_w = arg(1, nWidget.class);
+//					ArrayList<String> arr = arg(2, ArrayList.class);
+////					instance.patch.patch_dropmenu.metode("clear_entrys"); 
+//					for (String par : arr) {
+//						nWidget w1 = nGUI.add_dropmenu_entry(par); 
+////						nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+////								.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
+//						w1.addEventTrigger(new nRun(par) { public void run() {
+//							String targ = arg(0, String.class);
+//							lab_w.setText(targ); }}); }
+////					instance.patch.patch_dropmenu.metode("open", trigg_w);
+//					nGUI.open_dropmenu(trigg_w); 
+//				}};
+//				nRun run_add_at_out_pk = new nRun(instance) { public void run() {
 //					pInstance inst = (pInstance)builder;
 //					pInstance head = inst.get("get_chain_head", pInstance.class);
 //					if (head == null || head.getInst("head_tile") == null) return;
 //					pInstance head_tile = head.getInst("head_tile");
-//					head_tile.get("set_var", pInstance.class);
+//					pInstance current_build = 
+//							head_tile.object("current_build", pInstance.class);
+//					ArrayList<String> arr = new ArrayList<String>();
+//					for (pInstance c : current_build.collecInstAll("plugs")) {
+//						if (c.getInst("plugged") == null) {
+//							arr.add(c.getVar("ref", String.class));
+//						}
+//					}
+//					run_pk.do_run(inst,add_at_out_pk_w, add_at_out_targ_w, arr);
+//				}};
+//				add_at_out_pk_w.addEventTrigger(run_add_at_out_pk);
+//
+//				nRun run_add_at_mod_pk = new nRun(instance) { public void run() {
+//					pInstance inst = (pInstance)builder;
+//					pInstance head = inst.get("get_chain_head", pInstance.class);
+//					if (head == null || head.getInst("head_tile") == null) return;
+//					pInstance head_tile = head.getInst("head_tile");
+//					pInstance current_build = 
+//							head_tile.object("current_build", pInstance.class);
+//					String out_ref = add_at_out_targ_w.getText();
+//					pInstance out_plug = current_build.get("get_plug", 
+//							pInstance.class, out_ref);
+//					if (out_plug == null) {
+//						add_at_out_targ_w.setText("");
+//						add_at_mod_targ_w.setText("");
+//						add_at_in_targ_w.setText("");
+//						return;
+//					}
+//					
+//					ArrayList<String> arr = new ArrayList<String>();
+//					PlugDef out_pd = null;
+//					for (PlugDef p : pTile.getTileModelPlugs(current_build.stand.ref)) 
+//						if (p.ref.equals(out_ref)) { out_pd = p; break; }
+//					if (out_pd == null) {
+//						Utl.logn("ERROR plug run trigg r"); }
+//					for (String tile_model : pTile.tile_models.allKey()) 
+//						if (!Utl.contains(pTile.not_poppable_models, tile_model)) {
+//						pStandard tile_model_stan = pTile.tile_models.get(tile_model);
+//						for (PlugDef pd : pTile.getTileModelPlugs(tile_model_stan)) {
+//							if (pTile.key_filter_compatibility(out_pd.keys, out_pd.filters, 
+//									pd.keys, pd.filters)) {
+//								String r = pd.ref;
+//								arr.add(tile_model+" "+r);
+//							}
+//						}
+//					}
+//
+////					instance.patch.patch_dropmenu.metode("clear_entrys"); 
+//					for (String par : arr) {
+//						nWidget w1 = nGUI.add_dropmenu_entry(par); 
+////						nWidget w1 = (nWidget)instance.patch.patch_dropmenu
+////								.metodeGet("add_entry_custom", par, RS*6f, RS*2f/3f);
+//						w1.addEventTrigger(new nRun(par) { public void run() {
+//							String targ = arg(0, String.class);
+//							String[] tg = Utl.split(targ, ' ');
+//							if (!(tg.length == 2)) return;
+//							add_at_mod_targ_w.setText(tg[0]);
+//							add_at_in_targ_w.setText(tg[1]);
+//						}}); }
+////					instance.patch.patch_dropmenu.metode("open", add_at_mod_pk_w); 
+//					nGUI.open_dropmenu(add_at_mod_pk_w);
+//					
+//				}};
+//				add_at_mod_pk_w.addEventTrigger(run_add_at_mod_pk);
+//				
+//				nRun run_add_at = new nRun(instance) { public void run() {
+//					pInstance inst = (pInstance)builder;
+//					pInstance head = inst.get("get_chain_head", pInstance.class);
+//					if (head == null || head.getInst("head_tile") == null) return;
+//					pInstance head_tile = head.getInst("head_tile");
+//					String out_ref = add_at_out_targ_w.getText();
+//					String mod_ref = add_at_mod_targ_w.getText();
+//					String in_ref = add_at_in_targ_w.getText();
+//					head_tile.get("add_at", pInstance.class, out_ref, mod_ref, in_ref);
+//					add_at_out_targ_w.setText("");
+//					add_at_mod_targ_w.setText("");
+//					add_at_in_targ_w.setText("");
+//					list_run.do_run(inst);
+//				}};
+//				add_at_w.addEventTrigger(run_add_at);
+//				
+//				
+////				interf.add_row();
+////				interf.add_row_trigg(5,"set_var", new nRun(instance) { public void run() {
+////					pInstance inst = (pInstance)builder;
+////					pInstance head = inst.get("get_chain_head", pInstance.class);
+////					if (head == null || head.getInst("head_tile") == null) return;
+////					pInstance head_tile = head.getInst("head_tile");
+////					head_tile.get("set_var", pInstance.class);
+////					add_at_out_targ_w.setText("");
+////					add_at_mod_targ_w.setText("");
+////					add_at_in_targ_w.setText("");
+////					list_run.do_run(inst);
+////				}});
+////				interf.add_row_label(4, "");
+//				interf.add_row();
+//				interf.add_row_trigg(4,"get_last", new nRun(instance) { public void run() {
+//					pInstance inst = (pInstance)builder;
+//					pInstance head = inst.get("get_chain_head", pInstance.class);
+//					if (head == null || head.getInst("head_tile") == null) return;
+//					pInstance head_tile = head.getInst("head_tile");
+//					head_tile.get("get_last", pInstance.class);
 //					add_at_out_targ_w.setText("");
 //					add_at_mod_targ_w.setText("");
 //					add_at_in_targ_w.setText("");
 //					list_run.do_run(inst);
 //				}});
-//				interf.add_row_label(4, "");
-				interf.add_row();
-				interf.add_row_trigg(4,"get_last", new nRun(instance) { public void run() {
-					pInstance inst = (pInstance)builder;
-					pInstance head = inst.get("get_chain_head", pInstance.class);
-					if (head == null || head.getInst("head_tile") == null) return;
-					pInstance head_tile = head.getInst("head_tile");
-					head_tile.get("get_last", pInstance.class);
-					add_at_out_targ_w.setText("");
-					add_at_mod_targ_w.setText("");
-					add_at_in_targ_w.setText("");
-					list_run.do_run(inst);
-				}});
-				interf.add_row_label(1, "");
-				interf.add_row_trigg(4,"del_last_com", new nRun(instance) { public void run() {
-					pInstance inst = (pInstance)builder;
-					pInstance head = inst.get("get_chain_head", pInstance.class);
-					if (head == null || head.getInst("head_tile") == null) return;
-					pInstance head_tile = head.getInst("head_tile");
-					head_tile.run("calc_script");
-					Script script = head_tile.object("script", Script.class);
-					if (script == null) return;
-					if (script.coms.size() > 0) script.coms.remove(
-							script.coms.get(script.coms.size() - 1));
-					head.run("build_script", script, !head.getVar("script", Boolean.class));
-					add_at_out_targ_w.setText("");
-					add_at_mod_targ_w.setText("");
-					add_at_in_targ_w.setText("");
-					list_run.do_run(inst);
-				}});
-
-				interf.add_row();
-				interf.add_row_label(9, "");
-				interf.add_row();
-				interf.add_row_label(1, "");
-				interf.add_row_trigg(7,"rebuild", new nRun(instance) { public void run() {
-					pInstance inst = (pInstance)builder;
-					pInstance head = inst.get("get_chain_head", pInstance.class);
-					if (head == null || head.getInst("head_tile") == null) return;
-					pInstance head_tile = head.getInst("head_tile");
-					head_tile.run("calc_script");
-					Script script = head_tile.object("script", Script.class);
-					head.run("build_script", script, !head.getVar("script", Boolean.class));
-					list_run.do_run(inst);
-				}});
-				interf.add_row_label(1, "");
-				
-				
-				list_run.do_run(instance);
-				
-			}})
-			.getStand()
-		.openSec()
-		.param("keys", new String[] {"tile_pop"}, "filters", new String[] {"tile_pop"}) 
-		.run(pNode.getRun(pNode.CT.RUNS_ADD_CHAIN_PLUGS), "tile_pop", "bottom")
-		.closeSec()
-		;
+//				interf.add_row_label(1, "");
+//				interf.add_row_trigg(4,"del_last_com", new nRun(instance) { public void run() {
+//					pInstance inst = (pInstance)builder;
+//					pInstance head = inst.get("get_chain_head", pInstance.class);
+//					if (head == null || head.getInst("head_tile") == null) return;
+//					pInstance head_tile = head.getInst("head_tile");
+//					head_tile.run("calc_script");
+//					Script script = head_tile.object("script", Script.class);
+//					if (script == null) return;
+//					if (script.coms.size() > 0) script.coms.remove(
+//							script.coms.get(script.coms.size() - 1));
+//					head.run("build_script", script, !head.getVar("script", Boolean.class));
+//					add_at_out_targ_w.setText("");
+//					add_at_mod_targ_w.setText("");
+//					add_at_in_targ_w.setText("");
+//					list_run.do_run(inst);
+//				}});
+//
+//				interf.add_row();
+//				interf.add_row_label(9, "");
+//				interf.add_row();
+//				interf.add_row_label(1, "");
+//				interf.add_row_trigg(7,"rebuild", new nRun(instance) { public void run() {
+//					pInstance inst = (pInstance)builder;
+//					pInstance head = inst.get("get_chain_head", pInstance.class);
+//					if (head == null || head.getInst("head_tile") == null) return;
+//					pInstance head_tile = head.getInst("head_tile");
+//					head_tile.run("calc_script");
+//					Script script = head_tile.object("script", Script.class);
+//					head.run("build_script", script, !head.getVar("script", Boolean.class));
+//					list_run.do_run(inst);
+//				}});
+//				interf.add_row_label(1, "");
+//				
+//				
+//				list_run.do_run(instance);
+//				
+//			}})
+//			.getStand()
+//		.openSec()
+//		.param("keys", new String[] {"tile_pop"}, "filters", new String[] {"tile_pop"}) 
+//		.run(pNode.getRun(pNode.CT.RUNS_ADD_CHAIN_PLUGS), "tile_pop", "bottom")
+//		.closeSec()
+//		;
 		
 		
 	}

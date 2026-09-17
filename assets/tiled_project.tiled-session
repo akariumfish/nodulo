@@ -39,8 +39,8 @@
             "scale": 2,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 439.75,
-                "y": 431.25
+                "x": 302.75,
+                "y": 437.75
             }
         },
         "Map2.tmx#Lighting": {
@@ -105,13 +105,14 @@
     "map.width": 128,
     "openFiles": [
         "Map.tmx",
-        "Map2.tmx"
+        "Map2.tmx",
+        "tileset_flags2.tsx"
     ],
     "project": "tiled_project.tiled-project",
     "property.type": "string",
     "recentFiles": [
-        "tileset_flags2.tsx",
         "Map.tmx",
+        "tileset_flags2.tsx",
         "Map2.tmx",
         "Map3.tmx",
         "tileset.tsx",

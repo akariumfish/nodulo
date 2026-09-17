@@ -87,7 +87,7 @@ public class pPatch {
 	public static void build_sheet(sData data) {
 		pSheet.SheetModel func_sheet_model = pSheet.newSheet(data, "function");
 		
-		pSheet.SheetModel main_sheet_model = pSheet.newSheet(data, "main");
+//		pSheet.SheetModel main_sheet_model = pSheet.newSheet(data, "main");
 		
 	}
 	
@@ -97,10 +97,10 @@ public class pPatch {
 		PlaneApplet.newStartupModel("exemple")
 		.setSetupRun(new nRun() { public void run() {
 			
-			pSheet.setDefMacro("main", "main_exemple");
+//			pSheet.setDefMacro("main", "main_exemple");
 			pSheet.setDefMacro("function", "func_exemple");
 			pSheet.setDefMacro("blueprint", "PARAM_SETUP");
-			pSheet.setDefCollapse("main", false);
+//			pSheet.setDefCollapse("main", false);
 			pSheet.setDefCollapse("function", false);
 			pSheet.setDefCollapse("blueprint", false);
 			

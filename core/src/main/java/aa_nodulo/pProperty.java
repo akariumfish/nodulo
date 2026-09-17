@@ -322,11 +322,11 @@ public class pProperty extends Utl.OrderedPriorizableImplement {
 //	public void run_create(pParam p) 	{ create_runs.do_run(p); }
 //	public void run_load(pParam p) 		{ load_runs.do_run(p); }
 //	public void run_save(pParam p) 		{ save_runs.do_run(p); }
-	public void run_init(pParam p) 		{ init_runs.do_run(p); }
+	public void run_init(pParam p) 		{ init_runs.setContext(p); init_runs.do_run(p); }
 //	public void run_finalize(pParam p) 	{ finalize_runs.do_run(p); }
-	public void run_clear(pParam p) 		{ clear_runs.do_run(p); }
-	public void run_frame(pParam p) 		{ frame_runs.do_run(p); }
-	public void run_tick(pParam p) 		{ tick_runs.do_run(p); }
+	public void run_clear(pParam p) 		{ clear_runs.setContext(p); clear_runs.do_run(p); }
+	public void run_frame(pParam p) 		{ frame_runs.setContext(p); frame_runs.do_run(p); }
+	public void run_tick(pParam p) 		{ tick_runs.setContext(p); tick_runs.do_run(p); }
 //	public void run_draw(pParam p) 		{ draw_runs.do_run(p); }
 	
 //	public nRuns create_runs = new nRuns().setAutoSorted();

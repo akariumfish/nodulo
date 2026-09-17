@@ -114,25 +114,25 @@ public abstract class nRun implements Utl.Priorizable, Utl.Ordered {
 	
 	
 	
-	public void do_run(Object ... v) {  
-		instance = null; param = null; answer = null; args = v; run(); context = null; }
+	public void do_run(Object ... v) {  // context = null;
+		instance = null; param = null; answer = null; args = v; run(); }
 	public void do_run(pPar p, Object ... v) { 
-		instance = null; param = p; answer = null; args = v; run(); context = null; }
+		instance = null; param = p; answer = null; args = v; run(); }
 	public void do_run(pInstance c, Object ... v) { 
-		instance = c; param = null; answer = null; args = v; run(); context = null; }
+		instance = c; param = null; answer = null; args = v; run(); }
 	public void do_run(pInstance c, pPar p, Object ... v) { 
 		instance = c; param = p; answer = null; args = v;
-		run();  context = null; }
+		run(); }
 
 	public void do_run(nRun answ, Object ... v) { 
-		instance = null; param = null; answer = answ; args = v; run(); context = null; }
+		instance = null; param = null; answer = answ; args = v; run(); }
 	public void do_run(pPar p, nRun answ, Object ... v) { 
-		instance = null; param = p; answer = answ; args = v; run(); context = null; }
+		instance = null; param = p; answer = answ; args = v; run(); }
 	public void do_run(pInstance c, nRun answ, Object ... v) { 
-		instance = c; param = null; answer = answ; args = v; run(); context = null; }
+		instance = c; param = null; answer = answ; args = v; run(); }
 	public void do_run(pInstance c, pPar p, nRun answ, Object ... v) { 
 		instance = c; param = p; answer = answ; args = v;
-		run();  context = null; }
+		run();  }
 	
 	public Object do_get(Object ... v) { 
 		instance = null; param = null; answer = null; args = v; return get(); }

@@ -567,6 +567,75 @@ public class pGeom extends pSystem {
 		
 		// PROPERTY DEF
 		
+		
+
+		pProperty space_prop = pProperty.newGeneralProperty("space");
+
+		space_prop.addInitRun(new nRun() {public void run() {
+			Utl.plane.space.space_param = contextParam(); }});
+
+		space_prop.addClearRun(new nRun() {public void run() {
+			Utl.plane.space.space_param = null; }});
+		
+		nRun space_prop_run = new nRun() { public void run() {
+			pStandard stand = arg(0,pStandard.class);
+			if (stand == null) return;
+			stand.addInitRun(new nRun() {public void run() {
+				int i = 0;
+				String r = ""+i;
+				while (instance.patch.function_props.hasKey(r)) {
+					i++; r = ""+i; }
+				instance.patch.function_props.put(r,instance);
+				instance.setVar("inst_ref",r);
+			}});
+			stand.addClearRun(new nRun() {public void run() {
+				instance.patch.function_props.remove(
+						instance.getVar("inst_ref", String.class),instance);
+			}});
+			stand.append(pTileHead.exec_context);
+			stand.openSec()
+				.param("keys", new String[]{"reg", "register", "in"}, 
+						"filters", new String[]{"out"}) 
+				.run(pNode.getRun(pNode.CT.RUNS_ADD_CO_IN), "co_reg")
+			.closeSec();
+		}};
+
+		space_prop
+		.addData("setup_func", "func_setup")
+		.addData("init_func", "func_start")
+		.addData("inst_ref", "")
+		.addData("tilemap", "Map2.tmx")
+		.addNodeRun(space_prop_run)
+		;
+
+		space_prop.newRun("start",new nRun() {public void run() {
+			pParam sp = contextParam();
+			String funcref = sp.getStr("init_func");
+			pInstance func = Utl.plane.patch.common_functions.get(funcref);
+			String inst_ref = sp.getStr("inst_ref");
+			pInstance inst = Utl.plane.patch.function_props.get(inst_ref);
+			if (func == null) return;
+			Object[] script = func.get("get_instruction_script", Object[].class);
+			if (script == null) return;
+			pFunc.func_script_run(inst, script, null); 
+		}});
+
+		space_prop.newRun("setup",new nRun() {public void run() {
+//			Utl.logn("setup");
+			pParam sp = contextParam();
+			String map = sp.getStr("tilemap");
+			Utl.plane.getSystem(pBox2d.class).loadMap(map);
+			String funcref = sp.getStr("setup_func");
+			pInstance func = Utl.plane.patch.common_functions.get(funcref);
+			String inst_ref = sp.getStr("inst_ref");
+			pInstance inst = Utl.plane.patch.function_props.get(inst_ref);
+			if (func == null) return;
+			Object[] script = func.get("get_instruction_script", Object[].class);
+			if (script == null) return;
+			pFunc.func_script_run(inst, script, null); 
+		}});
+
+		
 
 		pProperty coordinate = pProperty.newGeneralProperty("coordinate");
 //		coordinate
@@ -774,7 +843,7 @@ public class pGeom extends pSystem {
 					String bullet_par = bod.getStr("ctrl_mob","bullet_par");
 					Vector2 pos = bod.getVec("ref","pos");
 					float rot = bod.getFlt("ref","rot");
-					Vector2 m = new Vector2(180,50).rotateRad(rot).add(pos);
+					Vector2 m = new Vector2(180,0).rotateRad(rot).add(pos);
 					box.shootBullet(bullet_par,m,rot);
 				}
 			}
@@ -1019,7 +1088,7 @@ public class pGeom extends pSystem {
 		nRun run_ctrl_func = new nRun() { public void run(Object o) { 
 			pBody bod = (pBody)o; if (bod == null) return;
 			if (bod.hasParam("logic") && bod.hasParam("ctrl_func")) {
-				String func_ref = bod.getStr("logic","tick_func_ref");
+				String func_ref = bod.getStr("logic","tick_func_ref"); 
 				String inst_ref = bod.getStr("logic","inst_ref");
 				pInstance func = PlaneApplet.app.patch.common_functions.get(func_ref);
 				pInstance inst = PlaneApplet.app.patch.function_props.get(inst_ref);

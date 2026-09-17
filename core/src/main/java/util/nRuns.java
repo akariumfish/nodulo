@@ -15,6 +15,8 @@ public class nRuns extends nSortedArray<nRun> {
 	public void run(Object v) { nRun.runEvents(this,v); }
 	public void run(Object v1, Object v2) { nRun.runEvents(this,v1,v2); }
 	public void run(Object v1, Object v2, Object v3) { nRun.runEvents(this,v1,v2,v3); }
+
+	public nRuns setContext(Object p) { for (nRun n : this) n.context = p; return this; }
 	
 	public nRuns setOrdered() { super.setOrdered(); return this; }
 	public nRuns setPrioritized() { super.setPrioritized(); return this; }

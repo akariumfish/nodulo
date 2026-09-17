@@ -834,11 +834,11 @@ public class pFunc {
 		ARR, IND, PASS, //MEM, 
 		
 		//Instruction
-		SETO, SETR, SETP, 
+		SETO, SETR, SETP, PSET,
 		
 		RUNP, 
 		
-		NEW, 
+		NEWP, NEWB,  
 		
 		START, RTRN, 
 		IF, CLS, 

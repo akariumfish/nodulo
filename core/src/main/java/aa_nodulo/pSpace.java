@@ -140,6 +140,7 @@ public class pSpace {
 //					reset_rng();
 //					time.val_tick_cnt.set(0);
 					nRun.runEvents(eventSpaceStart);
+					if (space_param != null) space_param.run("start");
 					app.addDelayEvent(2, new nRun() { public void run() {
 						time.set_pause(false);
 						space_starting = false; 
@@ -398,6 +399,8 @@ public class pSpace {
 
 	public sInt val_seed;
 	public Random rng;
+	
+	public pParam space_param = null;
 
 	public void reset_rng() { rng.setSeed(val_seed.get()); }
 
@@ -436,6 +439,9 @@ public class pSpace {
 
 		app.addDelayEvent(50, new nRun() { public void run() {
 			nRun.runEvents(eventSpaceSetup);
+			if (space_param != null) {
+				space_param.run("setup");
+			}
 			app.addDelayEvent(50, new nRun() { public void run() {
 				start_space(); }}); 
 		}}); 

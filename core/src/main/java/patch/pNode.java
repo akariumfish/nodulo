@@ -1179,25 +1179,56 @@ public class pNode {
 			
 			PlaneApplet app = PlaneApplet.app;
 			
+			float mx = ((pos.x + pos2.x) / 2f) + (RS*0.3f*instance.pool_index) - 4f*RS;
+			float my = ((pos.y + pos2.y) / 2f) + (RS*0.3f*instance.pool_index) - 4f*RS;
+			float sdy = 1f;
+			
+			if (co1.getData("side",String.class).equals("left")) sdy = -1f;
+			
+			llines[0].set(pos.x,pos.y); llines[1].set(pos.x+RS*2f*sdy,pos.y);
+			llines[2].set(pos2.x,pos2.y); llines[3].set(pos2.x-RS*2f*sdy,pos2.y);
+			if (pos.x >= pos2.x) {
+				llines[4].set(pos.x+RS*2f*sdy,my); llines[5].set(pos.x+RS*2f*sdy,pos.y);
+				llines[6].set(pos2.x-RS*2f*sdy,my); llines[7].set(pos2.x-RS*2f*sdy,pos2.y);
+				llines[8].set(pos2.x-RS*2f*sdy,my); llines[9].set(pos.x+RS*2f*sdy,my);
+			} else {
+				llines[4].set(mx,pos.y); llines[5].set(pos.x+RS*2f*sdy,pos.y);
+				llines[6].set(mx,pos2.y); llines[7].set(pos2.x-RS*2f*sdy,pos2.y);
+				llines[8].set(mx,pos.y); llines[9].set(mx,pos2.y);
+			}
+			
+			float d = Utl.distanceSegmentPoint(llines[0], llines[1], mouse);
+			for (int i = 1 ; i < 5 ; i++) {
+				d = Math.min(d,Utl.distanceSegmentPoint(llines[i*2],llines[i*2+1],mouse)); }
+
+			float touch_d = 12;
+			float touch_w = 9;
+			float notouch_w = 7;
+			
+			float w = notouch_w;
+
 			app.noFill();
-//			app.stroke(255,255,0,255, 5f);
-//			if (instance.getDataInt("hightlight_count") > 0) {
-//				app.circle(pos.x, pos.y, 5);
-//				app.circle(pos2.x, pos2.y, 5); }
 			
-			float d = Utl.distanceSegmentPoint(pos, pos2, mouse);
-			
-			float touch_d = 15;
-			float touch_w = 20;
-			float notouch_w = 15;
-			
-			if (d <= touch_d) { app.stroke(255,155,0,255, touch_w); } 
+			if (d <= touch_d) { app.stroke(255,200,0,255, touch_w); w = touch_w; } 
 			else if (instance.getDataInt("hightlight_count") > 0) 
 				app.stroke(255,150,90,255, notouch_w);
 			else app.stroke(80,100,240,255, notouch_w);
 			
-			app.line(pos, pos2);
+			for (int i = 0 ; i < 5 ; i++) {
+				app.line(llines[i*2],llines[i*2+1]); }
 			
+			app.noStroke();
+			if (d <= touch_d) { app.fill(255,200,0,255); } 
+			else if (instance.getDataInt("hightlight_count") > 0) 
+				app.fill(255,150,90,255);
+			else app.fill(80,100,240,255);
+			
+			w /= 2f;
+			
+			app.circle(llines[1].x,llines[1].y,w);
+			for (int i = 3 ; i < 10 ; i++) {
+				app.circle(llines[i].x,llines[i].y,w); }
+
 			if (d <= 18 && instance.patch.mouse_is_hover_back() && 
 					app.input.getClick("MouseRight")) {
 				co1.run("unlink_from", co2); } 
@@ -1486,6 +1517,10 @@ public class pNode {
 		return ok;
 	}
 	
+
+	private static Vector2[] llines = new Vector2[] {
+			new Vector2(), new Vector2(), new Vector2(), new Vector2(), new Vector2(), 
+			new Vector2(), new Vector2(), new Vector2(), new Vector2(), new Vector2() };
 	
 	
 	public static void build_coms() {

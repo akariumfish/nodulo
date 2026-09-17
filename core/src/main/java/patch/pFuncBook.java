@@ -527,9 +527,38 @@ public class pFuncBook {
 		
 		
 		
+
+		new Operator("new_param", "NEWP", C.NEWP, new nRun() {public Object get() {
+			String prop_name = ask("prop", String.class);
+			pSpace space = PlaneApplet.app.space;
+			pParam p = space.new_param(prop_name);
+			return p;
+		}})
+		.addVar("prop")
+		.setStandRun(new nRun() {public void run() {
+			pStandard stand = arg(0,pStandard.class);
+			stand.process()
+			.run(pTile.getRun(CT.OBTAIN_VAR), "prop", "")
+			.openSec()
+			.param("run_right", new nRun() {public void run() {
+				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
+						"prop_watch");
+				if (triggP_w == null) return; 
+				for (String par : pProperty.general_propertys.allKey()) {
+					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
+						((pInstance)builder).setVar("prop", par); }});
+				}
+				nGUI.open_dropmenu(triggP_w);
+			}})
+			.param("ref", "prop_watch", "var_link_ref", "prop", 
+					"var_link_class", String.class.getName())
+			.param("width", (int)8)
+			.commande(pTile.getCom(CT.ADD_WATCH))
+			.closeSec();
+		}});
 		
 
-		new Operator("new", "NEW", C.NEW, new nRun() {public Object get() {
+		new Operator("new_body", "NEWB", C.NEWB, new nRun() {public Object get() {
 			String print_name = ask("print", String.class);
 			pSpace space = PlaneApplet.app.space;
 			pParam bluep = null;
@@ -889,6 +918,55 @@ public class pFuncBook {
 			;
 		}});
 		
+
+		new Instruction("param_set", "PS", C.PSET, new nRun() {public Object get() {
+			Object o1 = ask("data", Object.class);
+			Object o2 = ask("param", Object.class);
+			Boolean active = ask("active", Boolean.class);
+			if (active == null || !active) return pFunc.C.NEXT;
+			String data_ref = ask("data_ref", String.class);
+			if (o1 != null && o2 != null && (o2 instanceof pParam)) {
+				pParam par = (pParam)o2;
+				if (par != null && par.has(data_ref, o1.getClass())) {
+					if (ask("exec_in_instance", Boolean.class)) 
+						instance.setVar("watch", Utl.to_string(o1));
+					par.set(data_ref, o1);
+				}
+			}
+			return pFunc.C.NEXT;
+		}})
+		.addVar("data_ref")
+		.addArg("data", null).addArg("param", null)
+		.setWatched().setActivated()
+		.setStandRun(new nRun() {public void run() {
+			pStandard stand = arg(0,pStandard.class);
+			stand.process()
+			.run(pTile.getRun(CT.OBTAIN_VAR), "data_ref", "")
+			.openSec()
+			.param("ref", "data_ref_watch", "var_link_ref", "data_ref", 
+					"var_link_class", String.class.getName())
+			.param("width", (int)8)
+//			.param("run_right", new nRun() {public void run() {
+//				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
+//						"data_ref_watch");
+//				if (triggP_w == null) return;
+//				String par_ref = instance.getVar("param_ref", String.class);
+//				pProperty prop = pProperty.get(par_ref);
+//				if (prop == null) return;
+//				for (Map.Entry<Class<?>, nMap<Integer>> me : prop.data_vals.entrySet()) {
+////					Class<?> ct = me.getKey();
+//					for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) {
+//						String k = map_me.getKey();
+//						nGUI.add_dropmenu_entry(k, new nRun(instance) { public void run() {
+//							((pInstance)builder).setVar("data_ref", k); }});
+//					}
+//				}
+//				nGUI.open_dropmenu(triggP_w);
+//			}})
+			.commande(pTile.getCom(CT.ADD_WATCH))
+			.closeSec()
+			;
+		}});
 		
 
 		new Instruction("run_param", "RP", C.RUNP, new nRun() {public Object get() {

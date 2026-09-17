@@ -1225,9 +1225,9 @@ public class pBox2d extends pSystem {
 					
 					renderer.newVisionLight(body);
 					
-//					attachToBody(renderer.colorLayer.newRectLight(
-//							10, new Color(1f,0f,0f,1f), 0f, 0f, 200f, 40f), 
-//							body, 80f, -20f, 0f);
+					attachToBody(renderer.colorLayer.newRectLight(
+							10, new Color(1f,0f,0f,1f), 0f, 0f, 200f, 40f), 
+							body, 80f, -20f, 0f);
 					
 				}
 

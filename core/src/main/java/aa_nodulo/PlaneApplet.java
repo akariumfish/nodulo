@@ -103,21 +103,21 @@ public class PlaneApplet extends App {
 		public boolean VIEW_START_COLLAPSED = false;
 		public boolean VIEW_START_GRID = false;
 //		public float DEF_VIEW_ZOOM = 0.07f;
-		public float DEF_VIEW_ZOOM = 0.1f;
+		public float DEF_VIEW_ZOOM = 0.15f;
 		public Vector2 DEF_VIEW_POS = new Vector2(0f,0f);
 		// DEFAULT
-//		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
-//		public Vector2 DEF_VIEW_WIN_SZ = new Vector2(910f,370f);
+		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
+		public Vector2 DEF_VIEW_WIN_SZ = new Vector2(910f,370f);
 		// SMALL
 //		public Vector2 DEF_VIEW_WIN_POS = new Vector2(870f,425f);
 //		public Vector2 DEF_VIEW_WIN_SZ = new Vector2(410f,370f);
 		// BIG
-		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,900f);
-		public Vector2 DEF_VIEW_WIN_SZ = new Vector2(910f,770f);
+//		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,900f);
+//		public Vector2 DEF_VIEW_WIN_SZ = new Vector2(910f,770f);
 		public boolean PATCH_START_WALLPAPER = false;
 		public boolean PATCH_START_COLLAPSED = true;
-		public boolean PATCH_START_GRID = true;
-		public float DEF_PATCH_ZOOM = 0.1f;
+		public boolean PATCH_START_GRID = false;
+		public float DEF_PATCH_ZOOM = 0.15f;
 		public Vector2 DEF_PATCH_POS = new Vector2(0f,0f);
 		public Vector2 DEF_PATCH_WIN_POS = new Vector2(370f,915f);
 		public Vector2 DEF_PATCH_WIN_SZ = new Vector2(910f,450f);
