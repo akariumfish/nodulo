@@ -776,8 +776,8 @@ public class pBox2d extends pSystem {
 		
 
 		public void particle(float x, float y, float r, Color c, float d) {
-			int l = (int)Utl.rng(10,30);
-			float s = Utl.rng(8f,15f);;
+			int l = (int)Utl.rng(10,40);
+			float s = Utl.rng(2f,22f);
 			ParticleLight.Unit p = renderer.colorLayer.newPartLightUnit(c,d);
 			p.set(x,y,r,l,s);
 			p = renderer.lightLayer.newPartLightUnit(c,d);
