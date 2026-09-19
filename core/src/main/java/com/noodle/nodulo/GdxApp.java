@@ -300,11 +300,22 @@ public class GdxApp implements Screen ,nDrawer.DrawContext {
 			drawCalls = glprofiler.getDrawCalls();  
 			shaderSwitch = glprofiler.getShaderSwitches(); 
 			glprofiler.reset();
+		}
+	}
+	
+	public void reset_profiler() {
+		if (USE_GLPROFILER) {
+			glprofiler.reset();
+		}
+		drawer.spritebatch.renderCalls = 0;
+	}
 
-//			Utl.log("glCalls "+glCalls);
-//			Utl.log("   textureBindings "+textureBindings);
-//			Utl.log("   drawCalls "+drawCalls);
-//			Utl.logn("   shaderSwitch "+shaderSwitch);
+	public void store_profiler() {
+		if (USE_GLPROFILER) {
+			glCalls = glprofiler.getCalls(); 
+			textureBindings = glprofiler.getTextureBindings(); 
+			drawCalls = glprofiler.getDrawCalls();  
+			shaderSwitch = glprofiler.getShaderSwitches(); 
 		}
 	}
 	

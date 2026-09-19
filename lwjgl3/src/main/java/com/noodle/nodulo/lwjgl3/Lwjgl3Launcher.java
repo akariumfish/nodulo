@@ -65,6 +65,7 @@ public class Lwjgl3Launcher {
 //		configuration.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
 		configuration.setWindowedMode(sx,sy);
 //		configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
+		configuration.setWindowIcon("icone.jpg");
 		configuration.setWindowPosition(px,py);
 		if (PlaneApplet.OPENGLES3) configuration.setOpenGLEmulation(
 				Lwjgl3ApplicationConfiguration.GLEmulation.GL32,3,3);
@@ -140,6 +141,7 @@ public class Lwjgl3Launcher {
 //			configuration.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
 			configuration.setWindowedMode(sx,sy);
 //			configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
+			configuration.setWindowIcon("icone.jpg");
 			configuration.setWindowPosition(px,py);
 			if (PlaneApplet.OPENGLES3) configuration.setOpenGLEmulation(
 					Lwjgl3ApplicationConfiguration.GLEmulation.GL32,3,3);

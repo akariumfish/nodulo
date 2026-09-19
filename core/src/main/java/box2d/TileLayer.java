@@ -25,11 +25,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.Mesh.VertexDataType;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -43,9 +49,12 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.noodle.nodulo.GdxApp;
 
+import aa_nodulo.PlaneApplet;
 import aa_nodulo.pView;
 import gui.nGUI;
+import shaders.BlendFunc;
 import util.Utl;
+import util.iMap;
 
 public class TileLayer extends nRenderer.Layer {
 
@@ -99,31 +108,103 @@ public class TileLayer extends nRenderer.Layer {
 //		
 //	}
 	
-	public class Cell {
-		public TiledMapTileLayer.Cell cell;
-		public TiledMapTile tile;
+	static protected final int NUM_VERTICES = 20;
+
+	public class Tile {
+		public int id;
+		public TiledMapTile maptile;
 		public MapProperties prop;
+		private TextureRegion region;
+		private Texture texture;
+		private float vertices[] = new float[NUM_VERTICES];
+		private float x1,y1,x2,y2,u1,v1,u2,v2;
+
+		public Tile(TiledMapTile t) {
+			maptile = t; id = t.getId();
+			prop = maptile.getProperties();
+			
+			region = maptile.getTextureRegion();
+			texture = region.getTexture();
+			
+			x1 = maptile.getOffsetX() * unitScale - getMapWidth() / 2f;
+			y1 = maptile.getOffsetY() * unitScale - getMapHeight() / 2f;
+			x2 = x1 + region.getRegionWidth() * unitScale;
+			y2 = y1 + region.getRegionHeight() * unitScale;
+
+			u1 = region.getU();
+			v1 = region.getV2();
+			u2 = region.getU2();
+			v2 = region.getV();
+
+			float color = new Color(1f,1f,1f,1f).toFloatBits();
+
+			vertices[C1] = color;
+			vertices[U1] = u1;
+			vertices[V1] = v1;
+			vertices[C2] = color;
+			vertices[U2] = u1;
+			vertices[V2] = v2;
+			vertices[C3] = color;
+			vertices[U3] = u2;
+			vertices[V3] = v2;
+			vertices[C4] = color;
+			vertices[U4] = u2;
+			vertices[V4] = v1;
+		}
+		
+		public void setVert(float x, float y) {
+			vertices[X1] = x1 + x;
+			vertices[Y1] = y1 + y;
+			vertices[X2] = x1 + x;
+			vertices[Y2] = y2 + y;
+			vertices[X3] = x2 + x;
+			vertices[Y3] = y2 + y;
+			vertices[X4] = x2 + x;
+			vertices[Y4] = y1 + y;
+		}
+		public void render(float x, float y) {
+			setVert(x,y);
+			renderbatch.draw(texture, vertices, 0, NUM_VERTICES);
+		}
+		
+	}
+	public Tile getTile(TiledMapTile mt) {
+		int i = mt.getId();
+		if (tiles.hasKey(i)) return tiles.get(i);
+		Tile t = new Tile(mt);
+		tiles.put(i,t);
+		return t;
+	}
+	
+	public iMap<Tile> tiles = new iMap<Tile>();
+	
+	public class Cell {
+		public Tile tile;
+		public TiledMapTileLayer.Cell cell;
 		public boolean wall = false;
 		public boolean light = false;
 		public boolean ground = false;
 		public boolean empty = false;
 		public boolean build = false;
 		public int x, y;
-		public Cell(int i, int j, TiledMapTileLayer.Cell c) {
+		public Cell(int i, int j, TiledMapTileLayer.Cell c) { 
 			cell = c; x = i; y = j;
 			if (c == null) return;
 			all_cells.add(this);
-			tile = c.getTile();
-			prop = tile.getProperties();
-			ground = Utl.getBoo(prop,"ground");
-			light = Utl.getBoo(prop,"light");
-			wall = Utl.getBoo(prop,"wall");
-//			wall = !Utl.getBoo(prop,"light");
+			tile = getTile(c.getTile());
+			ground = Utl.getBoo(tile.prop,"ground");
+			light = Utl.getBoo(tile.prop,"light");
+			wall = Utl.getBoo(tile.prop,"wall");
 			empty = !ground && !wall;
 
 			if (!wall) build = true;
 			if (ground) build = true;
 			if (light) build = true;
+		}
+		
+		public void render() {
+			if (empty) return;
+			tile.render(x,y);
 		}
 	}
 
@@ -150,6 +231,9 @@ public class TileLayer extends nRenderer.Layer {
 //	private StaticTiledMapTile brush;
 	private final pView view;
 	private final OrthographicCamera cam;
+	private final Batch renderbatch;
+
+	protected float unitScale;
 
 
 	public TileLayer(nRenderer tm) { this(tm,0); }
@@ -157,6 +241,9 @@ public class TileLayer extends nRenderer.Layer {
 		super(tm,p);
 		view = tm.view;
 		cam = tm.cam;
+
+		renderbatch = GdxApp.app.drawer.spritebatch;
+		
 	}
 
 //	public TileLayer(nRenderer tm, TiledMapTileLayer ml) { this(tm,ml,0); }
@@ -178,7 +265,9 @@ public class TileLayer extends nRenderer.Layer {
 		tile_width = ml.getTileWidth();
 		tile_height = ml.getTileHeight();
 		
-		if (renderer == null || !nochange) renderer = new RendererOrtho(1f / tile_width, GdxApp.app.drawer.spritebatch);
+		unitScale = 1f / tile_width;
+		if (renderer == null || !nochange) renderer = new RendererOrtho(
+				unitScale, renderbatch);
 		
 		mapLayer.getProperties().put("tilelayer", this);
 		
@@ -447,11 +536,10 @@ public class TileLayer extends nRenderer.Layer {
 		pixmap.fill();
 		return new Texture(pixmap);
 	}
-
 	
 	
 	
-
+	
 	public class RendererOrtho extends BatchTiledMapRenderer {
 		
 		public RendererOrtho (float unitScale, Batch b) {
@@ -467,7 +555,9 @@ public class TileLayer extends nRenderer.Layer {
 			
 			batch.begin();
 
-			renderTileLayer(layer.mapLayer);
+//			renderTileLayer(layer.mapLayer);
+
+			for (Cell c : all_cells) if (!c.empty) c.render();
 
 			batch.end();
 			
@@ -522,7 +612,7 @@ public class TileLayer extends nRenderer.Layer {
 			for (int row = row2; row >= row1; row--) {
 				float x = xStart;
 				for (int col = col1; col < col2; col++) {
-					final TiledMapTileLayer.Cell cell = layer.getCell(col, row);
+					final TiledMapTileLayer.Cell cell = layer.getCell(col, row); 
 					
 					if (cell == null) {
 						x += layerTileWidth;

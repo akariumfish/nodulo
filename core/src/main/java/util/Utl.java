@@ -19,6 +19,7 @@ import com.noodle.nodulo.GdxApp;
 import com.noodle.nodulo.Main;
 
 import aa_nodulo.PlaneApplet;
+import aa_nodulo.PlaneApplet.AppletConfig;
 import aa_nodulo.pProperty;
 import app.App;
 import app.Conf;
@@ -882,17 +883,18 @@ public class Utl {
 	
 	
 	
-	public static Conf conf = null;
+//	public static Conf conf = null;
 	public static Main main = null;
 	public static GdxApp gdx = null;
 	public static App app = null;
 	public static PlaneApplet plane = null;
+	public static AppletConfig conf = null;
 
-	public static void build(Conf c) {
-		build();
-		conf = c;
-		
-	}
+//	public static void build(Conf c) {
+//		build();
+//		conf = c;
+//		
+//	}
 	
 	public static final float PI = (float)Math.PI;
 	public static final float HPI = (float)Math.PI / 2f;

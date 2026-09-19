@@ -301,9 +301,6 @@ public class pMacroBook {
 		
 
 		new MacroScript("setup")
-
-//		.com("add_set_output", "load_map")
-//			.com("add_str_at", "data", "Map2.tmx")
 		
 		;
 

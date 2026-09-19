@@ -39,11 +39,11 @@ public class PlaneApplet extends App {
 //	public static boolean NETWORK = true; 
 	public static boolean NETWORK = false;
 
-//	public static boolean TITLE_SCREEN = true; 
-	public static boolean TITLE_SCREEN = false;
+	public static boolean TITLE_SCREEN = true; 
+//	public static boolean TITLE_SCREEN = false;
 
-//	public static boolean START_FULLSCREEN = true;
-	public static boolean START_FULLSCREEN = false;
+	public static boolean START_FULLSCREEN = true;
+//	public static boolean START_FULLSCREEN = false;
 
 //	public static boolean RELEASE = true;
 	public static boolean RELEASE = false;
@@ -56,6 +56,9 @@ public class PlaneApplet extends App {
 
 //	public static boolean USE_GLPROFILER = true;
 	public static boolean USE_GLPROFILER = false;
+
+//	public static boolean PROFILER_FOCUS_VIEW = true;
+	public static boolean PROFILER_FOCUS_VIEW = false;
 	
 //	public static boolean CATCH_THROW = true;
 	public static boolean CATCH_THROW = false;
@@ -105,8 +108,8 @@ public class PlaneApplet extends App {
 		public String STARTUP_MODEL_REF = "exemple";
 //		public String STARTUP_MODEL_REF = "";
 
-//		public String STARTUP_MAP_PATH = "Map2.tmx";
-		public String STARTUP_MAP_PATH = "";
+		public String STARTUP_MAP_PATH = "Map2.tmx";
+//		public String STARTUP_MAP_PATH = "";
 
 		public String STARTUP_LOAD_FILE = "";
 		public String STARTUP_NEW_FILE = ""; 
@@ -115,7 +118,7 @@ public class PlaneApplet extends App {
 		public boolean VIEW_START_COLLAPSED = false;
 		public boolean VIEW_START_GRID = false;
 //		public float DEF_VIEW_ZOOM = 0.07f;
-		public float DEF_VIEW_ZOOM = 0.25f;
+		public float DEF_VIEW_ZOOM = 0.45f;
 		public Vector2 DEF_VIEW_POS = new Vector2(0f,0f);
 		// DEFAULT
 		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
@@ -166,7 +169,7 @@ public class PlaneApplet extends App {
 	
 	
 	public PlaneApplet(AppletConfig c) { 
-		config = c; RELEASE = c.RELEASE; app = this; Utl.plane = this;
+		config = c; RELEASE = c.RELEASE; app = this; Utl.plane = this; Utl.conf = c;
 	}
 	
 	

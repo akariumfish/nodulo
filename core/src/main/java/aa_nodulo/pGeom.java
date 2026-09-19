@@ -604,7 +604,7 @@ public class pGeom extends pSystem {
 		.addData("setup_func", "func_setup")
 		.addData("init_func", "func_start")
 		.addData("inst_ref", "")
-		.addData("tilemap", "Map2.tmx")
+		.addData("tilemap", Utl.conf.STARTUP_MAP_PATH)
 		.addNodeRun(space_prop_run)
 		;
 

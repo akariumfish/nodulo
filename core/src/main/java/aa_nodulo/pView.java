@@ -398,6 +398,8 @@ public class pView {
 
 		view.get("backref").setCustomDrawer(new nDrawable() { public void drawing() {
 			
+			if (PlaneApplet.PROFILER_FOCUS_VIEW) app.gdx.reset_profiler();
+			
 			ArrayList<nDrawable> alldraw = Utl.duplic(preDrawRun);
 			
 			for (int prio = 0 ; prio <= max_prio ; prio++)
@@ -425,6 +427,8 @@ public class pView {
 					if (drawPrio.get(d) == prio) { d.drawing(); alldraw.remove(d); } 
 			
 			for (nDrawable d : alldraw) d.drawing(); 
+
+			if (PlaneApplet.PROFILER_FOCUS_VIEW) app.input.store_profiler();
 			
 		}});
 		

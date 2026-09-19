@@ -453,9 +453,9 @@ public class pBox2d extends pSystem {
 //			if (app.config.STARTUP_MAP_PATH.length() > 0)
 //				renderer.setupMap(app.config.STARTUP_MAP_PATH);
 
-			app.outputs.put("load_map", new nRun() { public void run() {
-				String p = arg(0, String.class);
-				if (p != null) loadMap(p); }});
+//			app.outputs.put("load_map", new nRun() { public void run() {
+//				String p = arg(0, String.class);
+//				if (p != null) loadMap(p); }});
 			
 		}
 		public void loadMap(String p) {
@@ -491,7 +491,7 @@ public class pBox2d extends pSystem {
 //			});
 
 			
-			test_setup();
+//			test_setup(); // TODO
 			
 			
 		}
@@ -641,136 +641,136 @@ public class pBox2d extends pSystem {
 			}
 			
 
-			app.gdx.drawer.spritebatch.end();
+//			app.gdx.drawer.spritebatch.end();
+//
+////			mesh.setInstanceData(insts, 0, instSize);
+//			
+//			simpleBlendFunc.apply();
+//			shader.bind();
+//			shader.setUniformMatrix("u_projTrans", renderer.rayHandler.getCombinedMatrix());
+//
+//			mesh.render(shader, GL20.GL_TRIANGLES, 0, indSize, true);
+//
+//			app.gdx.drawer.spritebatch.begin();
 
+		}
+		
+//		BlendFunc simpleBlendFunc = new BlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+//		Mesh mesh;
+//		int vertexNum = 4;
+//		int trigNum = 2;
+//		int instNum = 1800;
+//		protected float vertices[];
+//		protected short indices[];
+//		protected float insts[];
+//		ShaderProgram shader;
+//		private int vertSize = 0, indSize = 0, instSize = 0;
+//		
+//		void test_setup() {
+//			
+//			vertices = new float[vertexNum * 3];	
+//			indices = new short[trigNum * 3];
+//			insts = new float[instNum * 2];
+//			vertSize = 0; indSize = 0; instSize = 0;
+//
+//			float c1 = new Color(1f,1f,1f,1f).toFloatBits();
+//			float c2 = new Color(1f,1f,0f,1f).toFloatBits();
+//
+//			pushVert(0f,-20f,c1);
+//			pushVert(0f,120f,c2);
+//			pushVert(100f,100f,c1);
+//			pushVert(100f,0f,c2);
+//			pushIndice(0,1,2);
+//			pushIndice(0,2,3);
+//			
+//			int col = 50;
+//
+//			float ix = -500, iy = 0, is = 200;
+//			for (int i = 0 ; i < instNum ; i++)
+//				pushInst(ix+is*(i%col),iy+((i-(i%col))/col)*is);
+//
+//			Mesh.VertexDataType vertexDataType = Mesh.VertexDataType.VertexArray;
+////			Mesh.VertexDataType vertexDataType = Mesh.VertexDataType.VertexBufferObject;
+////			if (Gdx.gl30 != null) { 
+////				vertexDataType = VertexDataType.VertexBufferObjectWithVAO; }
+//			if (PlaneApplet.OPENGLES3) 
+//				vertexDataType = VertexDataType.VertexBufferObjectWithVAO;
+//			
+//			mesh = new Mesh(vertexDataType, false, vertexNum, trigNum * 3
+//					, new VertexAttribute(Usage.Position, 2, "vertex_positions")
+//					, new VertexAttribute(Usage.ColorPacked, 4, "quad_colors")
+//					);
+//			mesh.enableInstancedRendering (false, instNum
+//					, new VertexAttribute(Usage.Position, 2, "i_position")
+//					);
+//
+//			mesh.setVertices(vertices, 0, vertSize);
+//			mesh.setIndices(indices, 0, indSize);
 //			mesh.setInstanceData(insts, 0, instSize);
-			
-			simpleBlendFunc.apply();
-			shader.bind();
-			shader.setUniformMatrix("u_projTrans", renderer.rayHandler.getCombinedMatrix());
-
-			mesh.render(shader, GL20.GL_TRIANGLES, 0, indSize, true);
-
-			app.gdx.drawer.spritebatch.begin();
-
-		}
-		
-		BlendFunc simpleBlendFunc = new BlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
-		Mesh mesh;
-		int vertexNum = 4;
-		int trigNum = 2;
-		int instNum = 1800;
-		protected float vertices[];
-		protected short indices[];
-		protected float insts[];
-		ShaderProgram shader;
-		private int vertSize = 0, indSize = 0, instSize = 0;
-		
-		void test_setup() {
-			
-			vertices = new float[vertexNum * 3];	
-			indices = new short[trigNum * 3];
-			insts = new float[instNum * 2];
-			vertSize = 0; indSize = 0; instSize = 0;
-
-			float c1 = new Color(1f,1f,1f,1f).toFloatBits();
-			float c2 = new Color(1f,1f,0f,1f).toFloatBits();
-
-			pushVert(0f,-20f,c1);
-			pushVert(0f,120f,c2);
-			pushVert(100f,100f,c1);
-			pushVert(100f,0f,c2);
-			pushIndice(0,1,2);
-			pushIndice(0,2,3);
-			
-			int col = 50;
-
-			float ix = -500, iy = 0, is = 200;
-			for (int i = 0 ; i < instNum ; i++)
-				pushInst(ix+is*(i%col),iy+((i-(i%col))/col)*is);
-
-			Mesh.VertexDataType vertexDataType = Mesh.VertexDataType.VertexArray;
-//			Mesh.VertexDataType vertexDataType = Mesh.VertexDataType.VertexBufferObject;
-//			if (Gdx.gl30 != null) { 
-//				vertexDataType = VertexDataType.VertexBufferObjectWithVAO; }
-			if (PlaneApplet.OPENGLES3) 
-				vertexDataType = VertexDataType.VertexBufferObjectWithVAO;
-			
-			mesh = new Mesh(vertexDataType, false, vertexNum, trigNum * 3
-					, new VertexAttribute(Usage.Position, 2, "vertex_positions")
-					, new VertexAttribute(Usage.ColorPacked, 4, "quad_colors")
-					);
-			mesh.enableInstancedRendering (false, instNum
-					, new VertexAttribute(Usage.Position, 2, "i_position")
-					);
-
-			mesh.setVertices(vertices, 0, vertSize);
-			mesh.setIndices(indices, 0, indSize);
-			mesh.setInstanceData(insts, 0, instSize);
-
-			shader = createShader();
-			
-//			mesh.bind(shader);
-//			int loc = shader.getAttributeLocation("i_position");
-//			Utl.logn("i_pos: "+loc);
-//			loc = shader.getAttributeLocation("vertex_positions");
-//			Utl.logn("v_pos: "+loc);
-			
-		}
-		private void pushVert(float x, float y, float c) {
-			vertices[vertSize++] = x; 
-			vertices[vertSize++] = y; 
-			vertices[vertSize++] = c;
-		}
-		private void pushIndice(int i1, int i2, int i3) {
-			indices[indSize++] = (short)i1; 
-			indices[indSize++] = (short)i2;
-			indices[indSize++] = (short)i3;
-		}
-		private void pushInst(float x, float y) {
-			insts[instSize++] = x; 
-			insts[instSize++] = y;
-//			insts[instSize++] = 0f;
-		}
-		
-		
-
-		public static ShaderProgram createShader() {
-			final String vertexShader = "#version 330 core\n"
-				+ "attribute vec2 vertex_positions;\n" //
-				+ "attribute vec4 quad_colors;\n" //
-				+ "attribute vec2 i_position;\n" //
-				+ "uniform mat4 u_projTrans;\n" //
-				+ "varying vec4 v_color;\n" //				
-				+ "void main()\n" //
-				+ "{\n" //
-				+ "   v_color = quad_colors;\n" //		
-//				+ "   vec4 v = vec4(-500 + vertex_positions.x + 200 * gl_InstanceID, "
-//				+ "			vertex_positions.y, 0.0, 1.0);\n"	
-				+ "   vec4 v = vec4(i_position.x + vertex_positions.x, "
-				+ "			i_position.y + vertex_positions.y, 0.0, 1.0);\n"	
-				+ "   gl_Position = u_projTrans * v;\n" //
-				+ "}\n";
-			final String fragmentShader = "#version 330 core\n"
-				+ "#ifdef GL_ES\n" //
-				+ "precision lowp float;\n" //
-				+ "#define MED mediump\n"
-				+ "#else\n"
-				+ "#define MED \n"
-				+ "#endif\n" //
-				+ "varying vec4 v_color;\n" //
-				+ "void main()\n"//
-				+ "{\n" //
-				+ "  gl_FragColor = v_color;\n" //
-				+ "}";
-			ShaderProgram.pedantic = true;
-			ShaderProgram shader = new ShaderProgram(vertexShader, fragmentShader);
-//			if (!shader.isCompiled()) {
-//				shader = new ShaderProgram("#version 330 core\n" +vertexShader, "#version 330 core\n" +fragmentShader);
-				if(!shader.isCompiled()) { Utl.logn("ERROR : createShader : " + shader.getLog()); }
-//			}
-			return shader;
-		}
+//
+//			shader = createShader();
+//			
+////			mesh.bind(shader);
+////			int loc = shader.getAttributeLocation("i_position");
+////			Utl.logn("i_pos: "+loc);
+////			loc = shader.getAttributeLocation("vertex_positions");
+////			Utl.logn("v_pos: "+loc);
+//			
+//		}
+//		private void pushVert(float x, float y, float c) {
+//			vertices[vertSize++] = x; 
+//			vertices[vertSize++] = y; 
+//			vertices[vertSize++] = c;
+//		}
+//		private void pushIndice(int i1, int i2, int i3) {
+//			indices[indSize++] = (short)i1; 
+//			indices[indSize++] = (short)i2;
+//			indices[indSize++] = (short)i3;
+//		}
+//		private void pushInst(float x, float y) {
+//			insts[instSize++] = x; 
+//			insts[instSize++] = y;
+////			insts[instSize++] = 0f;
+//		}
+//		
+//		
+//
+//		public static ShaderProgram createShader() {
+//			final String vertexShader = "#version 330 core\n"
+//				+ "attribute vec2 vertex_positions;\n" //
+//				+ "attribute vec4 quad_colors;\n" //
+//				+ "attribute vec2 i_position;\n" //
+//				+ "uniform mat4 u_projTrans;\n" //
+//				+ "varying vec4 v_color;\n" //				
+//				+ "void main()\n" //
+//				+ "{\n" //
+//				+ "   v_color = quad_colors;\n" //		
+////				+ "   vec4 v = vec4(-500 + vertex_positions.x + 200 * gl_InstanceID, "
+////				+ "			vertex_positions.y, 0.0, 1.0);\n"	
+//				+ "   vec4 v = vec4(i_position.x + vertex_positions.x, "
+//				+ "			i_position.y + vertex_positions.y, 0.0, 1.0);\n"	
+//				+ "   gl_Position = u_projTrans * v;\n" //
+//				+ "}\n";
+//			final String fragmentShader = "#version 330 core\n"
+//				+ "#ifdef GL_ES\n" //
+//				+ "precision lowp float;\n" //
+//				+ "#define MED mediump\n"
+//				+ "#else\n"
+//				+ "#define MED \n"
+//				+ "#endif\n" //
+//				+ "varying vec4 v_color;\n" //
+//				+ "void main()\n"//
+//				+ "{\n" //
+//				+ "  gl_FragColor = v_color;\n" //
+//				+ "}";
+//			ShaderProgram.pedantic = true;
+//			ShaderProgram shader = new ShaderProgram(vertexShader, fragmentShader);
+////			if (!shader.isCompiled()) {
+////				shader = new ShaderProgram("#version 330 core\n" +vertexShader, "#version 330 core\n" +fragmentShader);
+//				if(!shader.isCompiled()) { Utl.logn("ERROR : createShader : " + shader.getLog()); }
+////			}
+//			return shader;
+//		}
 
 		
 		

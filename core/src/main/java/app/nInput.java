@@ -191,6 +191,19 @@ public class nInput implements InputProcessor {
 	private int heap_cnt = 0;
 	private long jheap_med = 0, nheap_med = 0;
 	
+	private boolean prof_stored = false;
+	public void store_profiler() {
+		if (GdxApp.USE_GLPROFILER) {
+			prof_stored = true;
+			app.gdx.store_profiler();
+			val_glCalls.set(app.gdx.glCalls);
+			val_textureBindings.set(app.gdx.textureBindings);
+			val_drawCalls.set(app.gdx.drawCalls);
+			val_shaderSwitch.set(app.gdx.shaderSwitch);
+		}
+		val_batchCalls.set(app.gdx.drawer.spritebatch.renderCalls);
+	}
+	
 	public void frame_str() {
 
 		jheaps[heap_cnt] = app.gdx.javaHeap;
@@ -203,14 +216,17 @@ public class nInput implements InputProcessor {
 		
 		val_javaHeap.set(jheap_med / 1000000);
 		val_nativeHeap.set(nheap_med / 1000000);
-		
-		if (GdxApp.USE_GLPROFILER) {
-			val_glCalls.set(app.gdx.glCalls);
-			val_textureBindings.set(app.gdx.textureBindings);
-			val_drawCalls.set(app.gdx.drawCalls);
-			val_shaderSwitch.set(app.gdx.shaderSwitch);
+	
+		if (!prof_stored) {
+			if (GdxApp.USE_GLPROFILER) {
+				val_glCalls.set(app.gdx.glCalls);
+				val_textureBindings.set(app.gdx.textureBindings);
+				val_drawCalls.set(app.gdx.drawCalls);
+				val_shaderSwitch.set(app.gdx.shaderSwitch);
+			}
+			val_batchCalls.set(app.gdx.drawer.spritebatch.renderCalls);
 		}
-		val_batchCalls.set(app.gdx.drawer.spritebatch.renderCalls);
+		prof_stored = false;
 		
 		pmouse.x = mouse.x; 
 		pmouse.y = mouse.y;
