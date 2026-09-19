@@ -39,11 +39,11 @@ public class PlaneApplet extends App {
 //	public static boolean NETWORK = true; 
 	public static boolean NETWORK = false;
 
-	public static boolean TITLE_SCREEN = true; 
-//	public static boolean TITLE_SCREEN = false;
+//	public static boolean TITLE_SCREEN = true; 
+	public static boolean TITLE_SCREEN = false;
 
-	public static boolean START_FULLSCREEN = true;
-//	public static boolean START_FULLSCREEN = false;
+//	public static boolean START_FULLSCREEN = true;
+	public static boolean START_FULLSCREEN = false;
 
 //	public static boolean RELEASE = true;
 	public static boolean RELEASE = false;
@@ -54,8 +54,8 @@ public class PlaneApplet extends App {
 //	public static boolean USE_STEAM = true;
 	public static boolean USE_STEAM = false;
 
-//	public static boolean USE_GLPROFILER = true;
-	public static boolean USE_GLPROFILER = false;
+	public static boolean USE_GLPROFILER = true;
+//	public static boolean USE_GLPROFILER = false;
 
 //	public static boolean PROFILER_FOCUS_VIEW = true;
 	public static boolean PROFILER_FOCUS_VIEW = false;

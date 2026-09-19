@@ -15,18 +15,25 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.PixmapPacker;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.PixmapPacker.GuillotineStrategy;
+import com.badlogic.gdx.graphics.g2d.PixmapPacker.PackStrategy;
+import com.badlogic.gdx.graphics.g2d.PixmapPacker.PixmapPackerRectangle;
+import com.badlogic.gdx.graphics.g2d.PixmapPacker.SkylineStrategy;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 //import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
@@ -92,52 +99,67 @@ public class nDrawer {
 	public void restart_batch() { 
 		begin(); 
 	}
-//	Texture tex;
-	private BitmapFont makeFont(String s) {
-
-		FreeTypeFontGenerator fontgenerator = new FreeTypeFontGenerator(
-				Gdx.files.internal(s));
-		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-//		parameter.borderWidth = basetxtSize/20f;
-//		parameter.borderColor = Color.BLACK; 
-//		parameter.borderStraight = true;
-		parameter.size = (int) basetxtSize;
-		BitmapFont f = fontgenerator.generateFont(parameter);
-		fontgenerator.dispose();
-		//font has 15pt, but we need to scale it to our viewport by ratio of viewport height to screen height
-		f.setUseIntegerPositions(false);
-//		bitmapfont.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
-
-		f.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		return f;
-	}
-
+	
+	/** The maximum texture size allowed by generateData, when storing in a texture atlas. Multiple texture pages will be created
+	 * if necessary. Default is 1024. */
+	static private int maxTextureSize = 4096;
+	PixmapPacker packer;
+	
 	public nDrawer(DrawContext a, boolean fx) {
 		context = a; USE_FX = fx;
 
 		spritebatch = new PolygonSpriteBatch();
 
-		bitmapfont = makeFont("Mx437_IBM_BIOS.ttf");
-		bitmapfont_2y = makeFont("Mx437_IBM_BIOS-2y.ttf");
-		font = bitmapfont_2y;
 
+		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+		parameter.size = (int) basetxtSize;
+		int size = maxTextureSize;
+		PackStrategy packStrategy = new GuillotineStrategy();
+		packer = new PixmapPacker(size, size, Format.RGBA8888, 1, false, packStrategy);
+		packer.setTransparentColor(parameter.color);
+		packer.getTransparentColor().a = 0;
+		if (parameter.borderWidth > 0) {
+			packer.setTransparentColor(parameter.borderColor);
+			packer.getTransparentColor().a = 0; }
+		parameter.packer = packer;
+		
 		Pixmap pixmap = new Pixmap(1, 1, Format.RGBA8888);
-		pixmap.setColor(Color.WHITE);
-		pixmap.drawPixel(0, 0);
-		texture = new Texture(pixmap); 
+		pixmap.setColor(Color.WHITE); pixmap.drawPixel(0, 0);
+		PixmapPackerRectangle pr = packer.pack("pix",pixmap);
+		Array<TextureRegion> regions = new Array<TextureRegion>();
+		packer.updateTextureRegions(regions, parameter.minFilter, 
+				parameter.magFilter, parameter.genMipMaps);
+		TextureRegion region = new TextureRegion(pr.page.getTexture(), 
+				pr.getX(), pr.getY(), 1, 1);
+		regions.add(region);
+		packer.updateTextureRegions(regions, parameter.minFilter, 
+				parameter.magFilter, parameter.genMipMaps);
 		pixmap.dispose();
-		
-		
-//		texture = bitmapfont.getRegion().getTexture();
 
 		// curve sides :
 		int minimumSides = 16;
 		int maximumSides = 1000;
 		float sideMultiplier = 0.5f;
-		TextureRegion region = new TextureRegion(texture, 0, 0, 1, 1);
 		drawer = new ShapeDrawer(spritebatch, region, 
 				new DefaultSideEstimator(minimumSides, maximumSides, sideMultiplier));
+		
+		FreeTypeFontGenerator fontgenerator1 = new FreeTypeFontGenerator(
+				Gdx.files.internal("Mx437_IBM_BIOS.ttf"));
+		bitmapfont = fontgenerator1.generateFont(parameter);
+		bitmapfont.setUseIntegerPositions(false);
+		bitmapfont.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		FreeTypeFontGenerator fontgenerator2 = new FreeTypeFontGenerator(
+				Gdx.files.internal("Mx437_IBM_BIOS-2y.ttf"));
+		bitmapfont_2y = fontgenerator2.generateFont(parameter);
+		bitmapfont_2y.setUseIntegerPositions(false);
+		bitmapfont_2y.getRegion().getTexture().setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		fontgenerator1.dispose();
+		fontgenerator2.dispose();
 
+		font = bitmapfont_2y;
+
+		
 //		light_constructor();
 //		
 //
@@ -158,6 +180,8 @@ public class nDrawer {
 	public void dispose() {
 		
 //		light_dispose();
+		
+		packer.dispose();
 		
 		bitmapfont.dispose(); bitmapfont_2y.dispose();
 		spritebatch.dispose();
