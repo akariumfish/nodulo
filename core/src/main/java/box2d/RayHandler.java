@@ -439,6 +439,9 @@ public class RayHandler implements Disposable {
 		cam.prepareCombinedMatrix(pview.val_pos.get(), pview.val_view_size.get(), 
 				pview.val_cam_pos.get(), pview.val_cam_scale.get(), pview.val_cam_rot.get());
 	}
+	
+	public Matrix4 getCombinedMatrix() { return cam.combined; }
+	
 	private class FalseCam {
 		private final Vector2 position2 = new Vector2();
 		private final Vector3 position = new Vector3();

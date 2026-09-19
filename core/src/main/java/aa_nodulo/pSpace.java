@@ -169,13 +169,15 @@ public class pSpace {
 	
 	public boolean client_space = false;
 
-	public pBody new_body() { pBody b = body_pool.obtain(); newBodys.add(b); return b; }
+	public pBody new_body() { pBody b = body_pool.obtain(); 
+		if (b == null) return null; newBodys.add(b); return b; }
 
 //	public pBody new_body(String species) { 
 //		pBody b = new_body(); if (b == null) return null; else return b.addSpecies(species); }
 
 	public pParam new_param(String pr) { 
-		pParam p = param_pools.get(pr).obtain().obtain(); 
+		pParam p = param_pools.get(pr).obtain();
+		if (p == null) return null; else p.obtain(); 
 		if (p.prop != null && !p.prop.mode_nosync) newParams.add(p);
 		return p; }
 	

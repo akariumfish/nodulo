@@ -36,11 +36,11 @@
             "scaleInDock": 1
         },
         "Map2.tmx": {
-            "scale": 2,
+            "scale": 1,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 302.75,
-                "y": 437.75
+                "x": 416.5,
+                "y": 600.5
             }
         },
         "Map2.tmx#Lighting": {

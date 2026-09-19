@@ -39,6 +39,42 @@ public class Lwjgl3Launcher {
 			
 	}
 	
+	
+
+
+	private static Lwjgl3Application createApplication(String title, 
+			int posx, int posy, int sizex, int sizey, boolean fullscreen) {
+		return new Lwjgl3Application(new Main(new AppConfig(title, sizex, sizey, 
+				fullscreen)), 
+				getConfiguration(title, posx, posy, sizex, sizey));
+	}
+
+	private static Lwjgl3Application createApplication(String title, 
+			int posx, int posy, int sizex, int sizey, boolean fullscreen, boolean net, 
+			boolean cli) {
+		return new Lwjgl3Application(new Main(new AppConfig(title, sizex, sizey, 
+				fullscreen, net, cli)), 
+				getConfiguration(title, posx, posy, sizex, sizey));
+	}
+
+	private static Lwjgl3ApplicationConfiguration getConfiguration(String t, int px, int py, int sx, int sy) {
+		Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
+		configuration.setTitle(t);
+		configuration.useVsync(true);
+		configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
+//		configuration.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+		configuration.setWindowedMode(sx,sy);
+//		configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
+		configuration.setWindowPosition(px,py);
+		if (PlaneApplet.OPENGLES3) configuration.setOpenGLEmulation(
+				Lwjgl3ApplicationConfiguration.GLEmulation.GL32,3,3);
+		return configuration;
+	}
+	
+	
+	
+	
+	
 	public static class Launcher {
 
 		public static void launch() {
@@ -103,38 +139,17 @@ public class Lwjgl3Launcher {
 			configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
 //			configuration.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
 			configuration.setWindowedMode(sx,sy);
-			configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
+//			configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
 			configuration.setWindowPosition(px,py);
+			if (PlaneApplet.OPENGLES3) configuration.setOpenGLEmulation(
+					Lwjgl3ApplicationConfiguration.GLEmulation.GL32,3,3);
 			return configuration;
 		}
 	}
 	
-
-	private static Lwjgl3Application createApplication(String title, 
-			int posx, int posy, int sizex, int sizey, boolean fullscreen) {
-		return new Lwjgl3Application(new Main(new AppConfig(title, sizex, sizey, 
-				fullscreen)), 
-				getConfiguration(title, posx, posy, sizex, sizey));
-	}
-
-	private static Lwjgl3Application createApplication(String title, 
-			int posx, int posy, int sizex, int sizey, boolean fullscreen, boolean net, 
-			boolean cli) {
-		return new Lwjgl3Application(new Main(new AppConfig(title, sizex, sizey, 
-				fullscreen, net, cli)), 
-				getConfiguration(title, posx, posy, sizex, sizey));
-	}
-
-	private static Lwjgl3ApplicationConfiguration getConfiguration(String t, int px, int py, int sx, int sy) {
-		Lwjgl3ApplicationConfiguration configuration = new Lwjgl3ApplicationConfiguration();
-		configuration.setTitle(t);
-		configuration.useVsync(true);
-		configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
-//		configuration.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
-		configuration.setWindowedMode(sx,sy);
-		configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
-		configuration.setWindowPosition(px,py);
-		return configuration;
-	}
+	
+	
+	
+	
 
 }

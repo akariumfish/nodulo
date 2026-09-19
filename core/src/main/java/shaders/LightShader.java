@@ -3,7 +3,7 @@ package shaders;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
-import box2dLight.RayHandler;
+import box2d.RayHandler;
 
 public final class LightShader {
 	static final public ShaderProgram createLightShader() {

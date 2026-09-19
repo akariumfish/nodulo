@@ -18,11 +18,13 @@ import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import aa_nodulo.PlaneApplet;
 import app.AppConfig;
 import app.nDrawer;
 import app.nDrawer.DrawContext;
@@ -45,12 +47,18 @@ public class GdxApp implements Screen ,nDrawer.DrawContext {
 		public void setInputProcessor();
 		
 	}
-	
-//	public static boolean CATCH_THROW = true;
-	public static boolean CATCH_THROW = false;
 
+	public static boolean USE_GLPROFILER = PlaneApplet.USE_GLPROFILER;
+//	public static boolean USE_GLPROFILER = true;
+//	public static boolean USE_GLPROFILER = false;
+
+	public static boolean CATCH_THROW = PlaneApplet.CATCH_THROW;
+//	public static boolean CATCH_THROW = true;
+//	public static boolean CATCH_THROW = false;
+
+	public static boolean PRINT_TIMETRACK = PlaneApplet.PRINT_TIMETRACK;
 //	public static boolean PRINT_TIMETRACK = true;
-	public static boolean PRINT_TIMETRACK = false;
+//	public static boolean PRINT_TIMETRACK = false;
 	
 	public GdxApp(Main m, AppConfig c) { this(m,c,null); }
 	public GdxApp(Main m, AppConfig c, nAppListener l) { 
@@ -80,11 +88,28 @@ public class GdxApp implements Screen ,nDrawer.DrawContext {
 	
 	nAppListener listener;
 	
+	GLProfiler glprofiler;
+
+	/** the total gl calls made since the last reset */
+	public int glCalls = 0, 
+	/** the total amount of texture bindings made since the last reset */
+			textureBindings = 0, 
+	/** the total amount of draw calls made since the last reset */		
+			drawCalls = 0, 
+	/** the total amount of shader switches made since the last reset */
+			shaderSwitch = 0;
+	
 	public void setInputProcessor() {
 		if (listener != null) listener.setInputProcessor();
 	}
 	
 	public void create() {
+
+		
+		if (USE_GLPROFILER) {
+			glprofiler = new GLProfiler(Gdx.graphics);
+			glprofiler.enable();
+		}
 		
 		camera = main.camera;
 		viewport = main.viewport;
@@ -134,6 +159,8 @@ public class GdxApp implements Screen ,nDrawer.DrawContext {
 		if (listener != null) listener.closing();
 		 
 		drawer.dispose();
+		
+		if (USE_GLPROFILER) glprofiler.disable();
 		
 	}
 
@@ -267,6 +294,18 @@ public class GdxApp implements Screen ,nDrawer.DrawContext {
 		if (to_title_flag2) { to_title_flag2 = false; main.close_app(); }
 		if (to_title_flag) { to_title_flag = false; to_title_flag2 = true; }
 		
+		if (USE_GLPROFILER) {
+			glCalls = glprofiler.getCalls(); 
+			textureBindings = glprofiler.getTextureBindings(); 
+			drawCalls = glprofiler.getDrawCalls();  
+			shaderSwitch = glprofiler.getShaderSwitches(); 
+			glprofiler.reset();
+
+//			Utl.log("glCalls "+glCalls);
+//			Utl.log("   textureBindings "+textureBindings);
+//			Utl.log("   drawCalls "+drawCalls);
+//			Utl.logn("   shaderSwitch "+shaderSwitch);
+		}
 	}
 	
 	

@@ -395,6 +395,13 @@ public class nGUI {
 			add_info_text("mouse:", app.input.val_mouse_pos);
 			add_info_text("javHeap:", app.input.val_javaHeap);
 //			add_info_text("natHeap:", app.input.val_nativeHeap);
+			if (GdxApp.USE_GLPROFILER) {
+				add_info_text("glCall:", app.input.val_glCalls);
+				add_info_text("textBind:", app.input.val_textureBindings);
+				add_info_text("drawCall:", app.input.val_drawCalls);
+				add_info_text("shadeSw:", app.input.val_shaderSwitch);
+				add_info_text("batchCll:", app.input.val_batchCalls);
+			}
 		}
 		
 	}

@@ -33,6 +33,9 @@ import util.nScripted;
 public class PlaneApplet extends App {
 
 
+	public static boolean OPENGLES3 = true; 
+//	public static boolean OPENGLES3 = false;
+
 //	public static boolean NETWORK = true; 
 	public static boolean NETWORK = false;
 
@@ -51,6 +54,15 @@ public class PlaneApplet extends App {
 //	public static boolean USE_STEAM = true;
 	public static boolean USE_STEAM = false;
 
+//	public static boolean USE_GLPROFILER = true;
+	public static boolean USE_GLPROFILER = false;
+	
+//	public static boolean CATCH_THROW = true;
+	public static boolean CATCH_THROW = false;
+
+//	public static boolean PRINT_TIMETRACK = true;
+	public static boolean PRINT_TIMETRACK = false;
+	
 	
 	public static class AppletConfig {
 
@@ -103,7 +115,7 @@ public class PlaneApplet extends App {
 		public boolean VIEW_START_COLLAPSED = false;
 		public boolean VIEW_START_GRID = false;
 //		public float DEF_VIEW_ZOOM = 0.07f;
-		public float DEF_VIEW_ZOOM = 0.15f;
+		public float DEF_VIEW_ZOOM = 0.25f;
 		public Vector2 DEF_VIEW_POS = new Vector2(0f,0f);
 		// DEFAULT
 		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
@@ -272,8 +284,10 @@ public class PlaneApplet extends App {
 		if (config.PATCH_BUILD) {
 			run_startupmodel_setup(config.STARTUP_MODEL_REF); }
 
-//		if (!RELEASE) 
-			tool_setup(true);
+//		addDelayEvent(2, new nRun() { public void run() {
+//			if (!RELEASE) 
+				tool_setup(true);
+//		}});
 		
 		view = new pView(this);
 		time = new pTime(this);
@@ -335,7 +349,6 @@ public class PlaneApplet extends App {
 		
 		net.frame(delta);
 		time.do_frame(delta);
-//		view.frame(delta);
 		patch.frame(delta);
 		
 		for (int prio = pSystem.max_frame_prio ; prio >= 0 ; prio--)
@@ -630,6 +643,19 @@ public class PlaneApplet extends App {
 				gdx.screenshot(); }});
 			interf.add_row_label(1,"");
 			nRun.runEvents(eventToolInitRun, interf);
+			if (GdxApp.USE_GLPROFILER) {
+				interf.cmd_context(app.data.system_bloc.adress);
+				interf.add_row();
+				interf.add_row_watch(4,"batchCalls: ","val_batchCalls");
+				interf.add_row_label(1,"");
+				interf.add_row_watch(4,"glCalls: ","val_glCalls");
+				interf.add_row();
+				interf.add_row_watch(9,"textureBindings: ","val_textureBindings");
+				interf.add_row();
+				interf.add_row_watch(4,"drawCalls: ","val_drawCalls");
+				interf.add_row_label(1,"");
+				interf.add_row_watch(4,"shaderSwtch: ","val_shaderSwitch");
+			}
 		}});
 		
 	}

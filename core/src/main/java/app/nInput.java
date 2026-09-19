@@ -9,10 +9,13 @@ import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.noodle.nodulo.GdxApp;
 
+import aa_nodulo.PlaneApplet;
 import data.sBoo;
 import data.sInt;
 import data.sVec;
+import gui.nInterface;
 import util.Utl;
 import util.nRun;
 
@@ -98,12 +101,35 @@ public class nInput implements InputProcessor {
 
 		val_javaHeap = app.data.system_bloc.newInt("val_javaHeap", 0);
 		val_nativeHeap = app.data.system_bloc.newInt("val_nativeHeap", 0);
+		val_glCalls = app.data.system_bloc.newInt("val_glCalls", 0);
+		val_textureBindings = app.data.system_bloc.newInt("val_textureBindings", 0);
+		val_drawCalls = app.data.system_bloc.newInt("val_drawCalls", 0);
+		val_shaderSwitch = app.data.system_bloc.newInt("val_shaderSwitch", 0);
+		val_batchCalls = app.data.system_bloc.newInt("val_batchCalls", 0);
 			
 		app.addEventNextFrame(new nRun() { public void run() {
 			run_fs.run();
 			val_fullscreen.addEventChangeLastFrame(run_fs); 
 			app.gdx.addEventScreen(new nRun() { public void run() {
-				val_fullscreen.set(app.gdx.isfullscreen()); }}); }});
+				val_fullscreen.set(app.gdx.isfullscreen()); }}); 
+
+//			if (GdxApp.USE_GLPROFILER) {
+//				PlaneApplet.app.addEventToolInit(new nRun() { public void run(Object o) {
+//					nInterface interf = (nInterface)o;
+//						interf.cmd_context(app.data.system_bloc.adress);
+//						interf.add_row();
+//						interf.add_row_watch(9,"glCalls : ","val_glCalls");
+//						interf.add_row();
+//						interf.add_row_watch(9,"textureBindings : ","val_textureBindings");
+//						interf.add_row();
+//						interf.add_row_watch(9,"drawCalls : ","val_drawCalls");
+//						interf.add_row();
+//						interf.add_row_watch(9,"shaderSwitch : ","val_shaderSwitch");
+//				}});
+//			}
+		}});
+		
+		
 	}
 
 	public App app;
@@ -114,7 +140,8 @@ public class nInput implements InputProcessor {
 	
 	public sVec val_mouse_pos, val_mouse_prev, val_mouse_move;
 	
-	public sInt val_seed, val_javaHeap, val_nativeHeap;
+	public sInt val_seed, val_javaHeap, val_nativeHeap, 
+		val_glCalls, val_textureBindings, val_drawCalls, val_shaderSwitch, val_batchCalls;
 	public Random rng;
 	
 	public void reset_rng() { rng.setSeed(val_seed.get()); }
@@ -176,6 +203,14 @@ public class nInput implements InputProcessor {
 		
 		val_javaHeap.set(jheap_med / 1000000);
 		val_nativeHeap.set(nheap_med / 1000000);
+		
+		if (GdxApp.USE_GLPROFILER) {
+			val_glCalls.set(app.gdx.glCalls);
+			val_textureBindings.set(app.gdx.textureBindings);
+			val_drawCalls.set(app.gdx.drawCalls);
+			val_shaderSwitch.set(app.gdx.shaderSwitch);
+		}
+		val_batchCalls.set(app.gdx.drawer.spritebatch.renderCalls);
 		
 		pmouse.x = mouse.x; 
 		pmouse.y = mouse.y;
