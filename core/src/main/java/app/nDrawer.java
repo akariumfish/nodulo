@@ -102,7 +102,7 @@ public class nDrawer {
 	
 	/** The maximum texture size allowed by generateData, when storing in a texture atlas. Multiple texture pages will be created
 	 * if necessary. Default is 1024. */
-	static private int maxTextureSize = 4096;
+	static private int maxTextureSize = 1024;
 	PixmapPacker packer;
 	
 	public nDrawer(DrawContext a, boolean fx) {

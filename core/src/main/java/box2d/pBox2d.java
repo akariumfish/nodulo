@@ -774,69 +774,49 @@ public class pBox2d extends pSystem {
 
 		
 		
-		
-		
-		
-		
-		public void endContact(Contact contact) {
-			
-		}
-		public void beginContact(Contact contact) {
-			Fixture fa = contact.getFixtureA();
-			Fixture fb = contact.getFixtureB();
-			Body ba = fa.getBody();
-			Body bb = fb.getBody();
 
-			test_collided(ba,bb);
-			test_collided(bb,ba);
-			
-//			if (break_bodys.contains(ba) && body_breaker.contains(bb)) {
-//				if (!clearing_bodys.contains(ba)) clearing_bodys.add(ba);
-//			}
-//			if (break_bodys.contains(bb) && body_breaker.contains(ba)) {
-//				if (!clearing_bodys.contains(bb)) clearing_bodys.add(bb);
-//			}
-//			if (ba.getUserData() != null && 
-//					(ba.getUserData() instanceof pBody) && 
-//					bb.getUserData() != null && 
-//					(bb.getUserData() instanceof pBody)) {
-//				pBody b1 = (pBody)ba.getUserData();
-//				pBody b2 = (pBody)bb.getUserData();
-//
-//				if (!b1.hasParam("hp") || !b2.hasParam("hitzone")) {
-//					pBody t = b1; b1 = b2; b2 = t; 
-//					Body bt = ba; ba = bb; bb = bt; 
-//					Fixture ft = fa; fa = fb; fb = ft; }
-//				if (!b1.hasParam("hp") || !b2.hasParam("hitzone")) return;
-//				
-//				int damage = b2.getInt("hitzone", "damage");
-//				b1.setInt("hp", "hp", b1.getInt("hp", "hp") - damage);
-//				
-//				if (b1.getInt("hp", "hp") <= 0) {
-//					if (!clearing_bodys.contains(ba)) clearing_bodys.add(ba);
-//					if (b1.getBoo("hitpoint","avatar") && 
-//							app.getSystem(pGeom.class) != null) 
-//						app.getSystem(pGeom.class).game_over();
-//				}
-//				if (!clearing_bodys.contains(bb)) clearing_bodys.add(bb);
-//			}
+		public void particle(float x, float y, float r, Color c, float d) {
+			int l = (int)Utl.rng(10,30);
+			float s = Utl.rng(8f,15f);;
+			ParticleLight.Unit p = renderer.colorLayer.newPartLightUnit(c,d);
+			p.set(x,y,r,l,s);
+			p = renderer.lightLayer.newPartLightUnit(c,d);
+			p.set(x,y,r,l,s);
 		}
-		
-		private void test_collided(Body ba, Body bb) {
-
-			if (ba.getUserData() != null && 
-					(ba.getUserData() instanceof pBody)) {
-				pBody b1 = (pBody)ba.getUserData();
-				if (!b1.hasParam("ctrl_mob") || 
-						b1.getInt("ctrl_mob","collision_tmp") > 0) return;
-				b1.setBoo("ctrl_mob", "direction", 
-						!b1.getBoo("ctrl_mob", "direction"));
-				b1.setInt("ctrl_mob","collision_tmp",(int)10);
+		public void particle(float x, float y, float r, Color c) {
+			float d = Utl.rng(10,30);
+			particle(x,y,r,c,d);
+		}
+		public void particle(float x, float y, float r, float d) {
+			float b = Utl.rng(0.7f,0.9f);
+			Color c = new Color(b,b*0.75f,0.1f,1f);
+			particle(x,y,r,c,d);
+		}
+		public void particle(float x, float y, float r) {
+			float d = Utl.rng(10,30);
+			particle(x,y,r,d);
+		}
+		public void particles(float x, float y, int n) {
+			for (int i = 0 ; i < n ; i++) {
+				float r = Utl.rng(-Utl.PI,Utl.PI);
+				particle(x,y,r);
+			}
+		}
+		public void particles(float x, float y, Color c, int n) {
+			for (int i = 0 ; i < n ; i++) {
+				float r = Utl.rng(-Utl.PI,Utl.PI);
+				particle(x,y,r,c);
 			}
 		}
 		
 		
-
+		
+		
+		
+		
+		
+		
+		
 		public void space_start() {
 			for (pParam p : app.space.param_pools.get("bullet_unit").temp_all())
 				clear_bullet(p);
@@ -848,7 +828,11 @@ public class pBox2d extends pSystem {
 
 		public void shootBullet(String name, Vector2 pos, float rot) {
 			for (pParam p : app.space.param_pools.get("bullet").all())
-				if (p.getStr("name").equals(name)) { p.run("pop",pos,rot); return; }
+				if (p.getStr("name").equals(name)) { 
+					p.run("pop",pos,rot); 
+					particles(pos.x,pos.y,6);
+					particles(pos.x,pos.y,new Color(1f,1f,1f,1f),6); 
+					return; }
 		}
 
 		public pParam getBullet(String name) {
@@ -1248,6 +1232,9 @@ public class pBox2d extends pSystem {
 			coll = null; end.set(m); //fract = 1.0f;
 			world.rayCast(ray, pos, m);
 			if (coll != null) {
+
+				particles(end.x,end.y,6);
+				
 				if (coll.getUserData() != null && 
 						(coll.getUserData() instanceof pBody)) {
 					pBody bod = (pBody)coll.getUserData();
@@ -1256,10 +1243,20 @@ public class pBox2d extends pSystem {
 						int filterA = def.getInt("filter");
 						int filterB = bod.getInt("physic","filter");
 						if (filterA == filterB) {
+
+							particles(end.x,end.y,12);
+							particles(end.x,end.y,new Color(1f,0.4f,0.15f,1f),12);
+							particles(end.x,end.y,new Color(1f,0f,0f,1f),12);
+							
 							bod.setInt("hp", "hp", bod.getInt("hp", "hp") - damage);
 							if (bod.getInt("hp", "hp") <= 0) {
 								Body body = bodys.get(bod.getStr("box_body", "body_ref"));
 								if (body != null) {
+
+									particles(end.x,end.y,60);
+									particles(end.x,end.y,new Color(1f,0.4f,0.15f,1f),60);
+									particles(end.x,end.y,new Color(1f,0f,0f,1f),60);
+									
 									if (!clearing_bodys.contains(body)) 
 										clearing_bodys.add(body);
 									if (bod.getBoo("hitpoint","avatar") && 
@@ -1291,6 +1288,63 @@ public class pBox2d extends pSystem {
 		
 		
 		
+
+		public void endContact(Contact contact) {
+			
+		}
+		public void beginContact(Contact contact) {
+			Fixture fa = contact.getFixtureA();
+			Fixture fb = contact.getFixtureB();
+			Body ba = fa.getBody();
+			Body bb = fb.getBody();
+
+			test_collided(ba,bb);
+			test_collided(bb,ba);
+			
+//			if (break_bodys.contains(ba) && body_breaker.contains(bb)) {
+//				if (!clearing_bodys.contains(ba)) clearing_bodys.add(ba);
+//			}
+//			if (break_bodys.contains(bb) && body_breaker.contains(ba)) {
+//				if (!clearing_bodys.contains(bb)) clearing_bodys.add(bb);
+//			}
+//			if (ba.getUserData() != null && 
+//					(ba.getUserData() instanceof pBody) && 
+//					bb.getUserData() != null && 
+//					(bb.getUserData() instanceof pBody)) {
+//				pBody b1 = (pBody)ba.getUserData();
+//				pBody b2 = (pBody)bb.getUserData();
+//
+//				if (!b1.hasParam("hp") || !b2.hasParam("hitzone")) {
+//					pBody t = b1; b1 = b2; b2 = t; 
+//					Body bt = ba; ba = bb; bb = bt; 
+//					Fixture ft = fa; fa = fb; fb = ft; }
+//				if (!b1.hasParam("hp") || !b2.hasParam("hitzone")) return;
+//				
+//				int damage = b2.getInt("hitzone", "damage");
+//				b1.setInt("hp", "hp", b1.getInt("hp", "hp") - damage);
+//				
+//				if (b1.getInt("hp", "hp") <= 0) {
+//					if (!clearing_bodys.contains(ba)) clearing_bodys.add(ba);
+//					if (b1.getBoo("hitpoint","avatar") && 
+//							app.getSystem(pGeom.class) != null) 
+//						app.getSystem(pGeom.class).game_over();
+//				}
+//				if (!clearing_bodys.contains(bb)) clearing_bodys.add(bb);
+//			}
+		}
+		
+		private void test_collided(Body ba, Body bb) {
+
+			if (ba.getUserData() != null && 
+					(ba.getUserData() instanceof pBody)) {
+				pBody b1 = (pBody)ba.getUserData();
+				if (!b1.hasParam("ctrl_mob") || 
+						b1.getInt("ctrl_mob","collision_tmp") > 0) return;
+				b1.setBoo("ctrl_mob", "direction", 
+						!b1.getBoo("ctrl_mob", "direction"));
+				b1.setInt("ctrl_mob","collision_tmp",(int)10);
+			}
+		}
 		
 		public ArrayList<Body> break_bodys = new ArrayList<Body>();
 		public ArrayList<Body> body_breaker = new ArrayList<Body>();

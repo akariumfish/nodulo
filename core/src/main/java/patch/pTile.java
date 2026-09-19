@@ -1338,7 +1338,7 @@ public class pTile {
 //		.setOutlineConstant(true)
 		.setTextAlignment(nAlign.LEFT, nAlign.CENTER)
 		.setFont(RS*5f/4f)
-		.setMask(true)
+//		.setMask(true)
 		;
 		if (PlaneApplet.app.config.RELEASE) 
 			PT_back.setOutline(true)

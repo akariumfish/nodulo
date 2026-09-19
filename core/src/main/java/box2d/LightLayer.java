@@ -116,6 +116,18 @@ public class LightLayer extends nRenderer.Layer {
 		rayHandler.renderLayer(this);
 	}
 
+	public ArrayList<ParticleLight> parts = new ArrayList<ParticleLight>();
+
+	public ParticleLight.Unit newPartLightUnit(Color col, float dist) {
+		if (parts.size() == 0) parts.add(new ParticleLight(this));
+		ParticleLight.Unit unit = null;
+		for (ParticleLight s : parts) {
+			unit = s.newUnit(col, dist);
+			if (unit != null) return unit; }
+		ParticleLight swrm = new ParticleLight(this);
+		parts.add(swrm);
+		return swrm.newUnit(col, dist); }
+
 	public ArrayList<SwarmLight> swarms = new ArrayList<SwarmLight>();
 
 	public SwarmLight.Unit newSwarmLightUnit(Color col, float dist) {
