@@ -4,6 +4,7 @@ import data.*;
 import gui.*;
 import util.*;
 import aa_nodulo.*;
+import aa_nodulo.pProperty.Ctrl;
 import app.*;
 import patch.pMacro.Macro;
 import patch.pNode.CT;
@@ -509,6 +510,11 @@ public class pNodeSpace {
 			pProperty prop = m.getValue();
 //			if (!prop.mode_common) continue;
 			pStandard stand = build_prop_node(r,prop);
+			pProcess proc = stand.process();
+			
+			for (pProperty.Ctrl c : prop.controls.all()) {
+				build_prop_ctrl(prop, proc, c.ref, c.clazz, c.args);
+			}
 			
 			for (nRun rn : prop.node_run) {
 				stand.openSec().run(rn).closeSec();
@@ -519,6 +525,37 @@ public class pNodeSpace {
 		
 		
 		
+	}
+	
+	private static void build_prop_ctrl(pProperty prop, pProcess proc, 
+			String ref, Class<?> clazz, Object ... args) {
+		proc.commande(pNode.getCom(CT.COM_ADD_ROW));
+		if (clazz == Boolean.class) {
+			proc.openSec()
+				.param("text", ref, "width", (int)8) 
+				.run(pNode.getRun(pNode.CT.RUNP_VAR_BOO_SWITCH), ref)
+			.closeSec();
+		} else if (clazz == Integer.class) {
+			proc.openSec()
+//				.param("def", (int)1, "min", 1f, "max", 60f, "granulo", 1f)
+				.run(pNode.getRun(pNode.CT.RUNP_VAR_INT_LAB_FIELD), ref, ref, (int)8)
+			.closeSec();
+		} else if (clazz == Float.class) {
+			proc.openSec()
+//				.param("def", (int)1, "min", 1f, "max", 60f, "granulo", 1f)
+				.run(pNode.getRun(pNode.CT.RUNP_VAR_FLT_LAB_FIELD), ref, ref, (int)8)
+			.closeSec();
+		} else if (clazz == String.class) {
+			proc.openSec()
+//				.param("def", (int)1, "min", 1f, "max", 60f, "granulo", 1f)
+				.run(pNode.getRun(pNode.CT.RUNP_VAR_STR_LAB_FIELD), ref, ref, (int)8)
+			.closeSec();
+		} else if (clazz == Vector2.class) {
+			proc.openSec()
+//				.param("def", (int)1, "min", 1f, "max", 60f, "granulo", 1f)
+				.run(pNode.getRun(pNode.CT.RUNP_VAR_VEC_LAB_FIELD), ref, ref, (int)8)
+			.closeSec();
+		} 
 	}
 	
 	

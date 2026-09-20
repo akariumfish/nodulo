@@ -112,44 +112,6 @@ public class pSpace {
 	
 	
 
-	ArrayList<nRun> eventSpaceSetup = new ArrayList<nRun>();	
-
-	ArrayList<nRun> eventSpaceStart = new ArrayList<nRun>();
-//	ArrayList<nRun> eventSpaceClear = new ArrayList<nRun>();
-	
-	public pSpace addEventSpaceStart(nRun r) { eventSpaceStart.add(r); return this; }
-	public pSpace removeEventSpaceStart(nRun r) { eventSpaceStart.remove(r); return this; }
-	public pSpace addEventSpaceSetup(nRun r) { eventSpaceSetup.add(r); return this; }
-	public pSpace removeEventSpaceSetup(nRun r) { eventSpaceSetup.remove(r); return this; }
-//	public pSpace addEventSpaceClear(nRun r) { eventSpaceClear.add(r); return this; }
-//	public pSpace removeEventSpaceClear(nRun r) { eventSpaceClear.remove(r); return this; }
-
-	private boolean space_starting = false; 
-
-	public void start_space() {
-		if (!space_starting) {
-			space_starting = true;
-			pTime time = app.time;
-			clear_all_body();
-			app.addDelayEvent(1, new nRun() { public void run() {
-				time.set_pause(true);
-				reset_rng();
-				time.val_tick_cnt.set(0);
-				app.addDelayEvent(1, new nRun() { public void run() {
-	//				time.set_pause(true);
-//					reset_rng();
-//					time.val_tick_cnt.set(0);
-					nRun.runEvents(eventSpaceStart);
-					if (space_param != null) space_param.run("start");
-					app.addDelayEvent(2, new nRun() { public void run() {
-						time.set_pause(false);
-						space_starting = false; 
-					}}); 
-				}}); 
-			}}); 
-		}
-	}
-	
 	
 	
 	
@@ -375,6 +337,53 @@ public class pSpace {
 		}
 	}
 	
+
+	ArrayList<nRun> eventSpaceSetup = new ArrayList<nRun>();	
+
+	ArrayList<nRun> eventSpaceStart = new ArrayList<nRun>();
+//	ArrayList<nRun> eventSpaceClear = new ArrayList<nRun>();
+	
+	public pSpace addEventSpaceStart(nRun r) { eventSpaceStart.add(r); return this; }
+	public pSpace removeEventSpaceStart(nRun r) { eventSpaceStart.remove(r); return this; }
+	public pSpace addEventSpaceSetup(nRun r) { eventSpaceSetup.add(r); return this; }
+	public pSpace removeEventSpaceSetup(nRun r) { eventSpaceSetup.remove(r); return this; }
+//	public pSpace addEventSpaceClear(nRun r) { eventSpaceClear.add(r); return this; }
+//	public pSpace removeEventSpaceClear(nRun r) { eventSpaceClear.remove(r); return this; }
+
+	private boolean space_starting = false; 
+
+	public void start_space() {
+		if (!space_starting) {
+			space_starting = true;
+			pTime time = app.time;
+			clear_all_body();
+			app.addDelayEvent(1, new nRun() { public void run() {
+				time.set_pause(true);
+				reset_rng();
+				time.val_tick_cnt.set(0);
+				app.addDelayEvent(1, new nRun() { public void run() {
+	//				time.set_pause(true);
+//					reset_rng();
+//					time.val_tick_cnt.set(0);
+					nRun.runEvents(eventSpaceStart);
+					if (space_param != null) space_param.run("start");
+					app.addDelayEvent(2, new nRun() { public void run() {
+						time.set_pause(false);
+						space_starting = false; 
+					}}); 
+				}}); 
+			}}); 
+		}
+	}
+	
+	public void setup_space() {
+		nRun.runEvents(eventSpaceSetup);
+		if (space_param != null) {
+			space_param.run("setup");
+		}
+		app.addDelayEvent(50, new nRun() { public void run() {
+			start_space(); }}); 
+	}
 	
 	
 	pSpace(PlaneApplet a) {
@@ -440,12 +449,7 @@ public class pSpace {
 		app.view.addDrawable(draw_run);
 
 		app.addDelayEvent(50, new nRun() { public void run() {
-			nRun.runEvents(eventSpaceSetup);
-			if (space_param != null) {
-				space_param.run("setup");
-			}
-			app.addDelayEvent(50, new nRun() { public void run() {
-				start_space(); }}); 
+			setup_space();
 		}}); 
 
 //		plane.addEventSave(new nRun() { public void run() {

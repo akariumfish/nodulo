@@ -466,8 +466,13 @@ public class pProperty extends Utl.OrderedPriorizableImplement {
 	
 	
 	
+	public pProperty addCtrl(String ref, Class<?> clazz, Object ... args) {
+		controls.put(ref, new Ctrl(ref,clazz,args)); return this; }
 	
-	
+	public class Ctrl { 
+		public String ref; public Class<?> clazz; public Object[] args; 
+		Ctrl(String r, Class<?> c, Object ... a) { ref = Utl.copy(r); clazz = c; args = a; } }
+	public nMap<Ctrl> controls = new nMap<Ctrl>();
 	
 	
 	

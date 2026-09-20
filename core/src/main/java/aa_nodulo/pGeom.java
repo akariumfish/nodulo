@@ -601,10 +601,10 @@ public class pGeom extends pSystem {
 		}};
 
 		space_prop
-		.addData("setup_func", "func_setup")
-		.addData("init_func", "func_start")
+		.addData("setup_func", "func_setup").addCtrl("setup_func", String.class)
+		.addData("init_func", "func_start").addCtrl("init_func", String.class)
 		.addData("inst_ref", "")
-		.addData("tilemap", Utl.conf.STARTUP_MAP_PATH)
+		.addData("tilemap", Utl.conf.STARTUP_MAP_PATH).addCtrl("tilemap", String.class)
 		.addNodeRun(space_prop_run)
 		;
 
@@ -655,8 +655,8 @@ public class pGeom extends pSystem {
 		
 		pProperty geom = pProperty.newGeneralProperty("geom")
 		.setGroupFlag("draw")
-		.addData("name","")
-		.addData("halo", false)
+		.addData("name","").addCtrl("name", String.class)
+//		.addData("halo", false)
 		.addCollec("point", Vector2.class)
 		.addCollec("color", Integer.class)
 //		.addCollec("color3", Integer.class)
@@ -724,14 +724,14 @@ public class pGeom extends pSystem {
 		
 
 		pProperty hitpoint = pProperty.newGeneralProperty("hitpoint")
-		.addData("avatar", false)
+		.addData("avatar", false).addCtrl("avatar", Boolean.class)
 		;
 		hitpoint.newLocalProperty("hp")
 		.addData("hp", (int)5)
 		;
 
 		pProperty.newGeneralProperty("hitzone")
-		.addData("damage", (int)1)
+		.addData("damage", (int)1).addCtrl("damage", Integer.class)
 		;
 		
 		pFamily.newFamily("hitpoint")
@@ -1079,11 +1079,26 @@ public class pGeom extends pSystem {
 
 
 		pProperty logic = pProperty.newGeneralProperty("logic")
-//		.addData("init_func_ref", "")
-		.addData("tick_func_ref", "")
+		.addData("init_func_ref", "").addCtrl("init_func_ref", String.class)
+		.addData("tick_func_ref", "").addCtrl("tick_func_ref", String.class)
 		.addData("inst_ref", "")
 		.addNodeRun(func_prop_run)
 		;
+
+		logic.addBodyInitRun(new nRun() {public void run() {
+			pBody bod = arg(0,pBody.class);
+			if (bod.hasParam("logic") && bod.hasParam("ctrl_func")) {
+				String func_ref = bod.getStr("logic","init_func_ref"); 
+				String inst_ref = bod.getStr("logic","inst_ref");
+				pInstance func = PlaneApplet.app.patch.common_functions.get(func_ref);
+				pInstance inst = PlaneApplet.app.patch.function_props.get(inst_ref);
+				if (func == null || inst == null) return;
+				Object[] script = func.get("get_instruction_script", Object[].class);
+				if (script == null) return;
+				Object[] ar = new Object[] { bod };
+				pFunc.func_script_run(inst, script, ar); 
+			}
+		}});
 
 		nRun run_ctrl_func = new nRun() { public void run(Object o) { 
 			pBody bod = (pBody)o; if (bod == null) return;
@@ -1594,11 +1609,11 @@ public class pGeom extends pSystem {
 ////				app.line(toRef(b, point.get(p1)), toRef(b, point.get(p2)));
 ////			}
 ////		} 
-		boolean halo = geom.getBoo("halo");
-		if (halo && b != null) {
-			app.halo(b.getVec("ref", "pos"), 12, 
-					Utl.color(255,0,0,0), Utl.color(255,100,100,255));
-		}
+//		boolean halo = geom.getBoo("halo");
+//		if (halo && b != null) {
+//			app.halo(b.getVec("ref", "pos"), 12, 
+//					Utl.color(255,0,0,0), Utl.color(255,100,100,255));
+//		}
 	}
 	
 	
