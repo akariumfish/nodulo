@@ -1,6 +1,8 @@
 package com.noodle.nodulo;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.zip.Deflater;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
@@ -8,6 +10,8 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -40,7 +44,7 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 	TextButtonStyle textbuttstyle;
 	
 	Table titletable, editortable;
-	CheckBox themeCheckBox, fullScreenCheckBox;
+	CheckBox fullScreenCheckBox; //themeCheckBox
 
 	Table newtable;
 	Table loadtable;
@@ -76,14 +80,14 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 //		table1.debug();
 		stage.addActor(editortable);
 
-		TextButton button = new TextButton("Open Editor", textbuttstyle);
-		button.addListener(new InputListener() { public boolean touchDown (
-				InputEvent event, float x, float y, int pointer, int button) {
-			main.launch_editor(); return false; }});
-		editortable.row().fill().pad(10)
-		.minWidth(main.conf.WIDTH / 5f)
-		.minHeight(main.conf.HEIGHT / 26f);
-		editortable.add(button);
+//		TextButton button = new TextButton("Open Editor", textbuttstyle);
+//		button.addListener(new InputListener() { public boolean touchDown (
+//				InputEvent event, float x, float y, int pointer, int button) {
+//			main.launch_editor(); return false; }});
+//		editortable.row().fill().pad(10)
+//		.minWidth(main.conf.WIDTH / 5f)
+//		.minHeight(main.conf.HEIGHT / 26f);
+//		editortable.add(button);
 
 		titletable = new Table();
 		titletable.setSize(m.conf.WIDTH / 1f,m.conf.HEIGHT * 4f / 5f);
@@ -121,16 +125,16 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 				InputEvent event, float x, float y, int pointer, int button) {
 			main.exit(); return false; }});
 
-		themeCheckBox = new CheckBox("Dark Theme", skin);
-		themeCheckBox.setChecked(!PlaneApplet.RELEASE);
-		titletable.row().fill().pad(100,10,10,10).minWidth(main.conf.WIDTH / 5f);
-		titletable.add(themeCheckBox);
+//		themeCheckBox = new CheckBox("Dark Theme", skin);
+//		themeCheckBox.setChecked(!PlaneApplet.RELEASE);
+//		titletable.row().fill().pad(100,10,10,10).minWidth(main.conf.WIDTH / 5f);
+//		titletable.add(themeCheckBox);
 		fullScreenCheckBox = new CheckBox("Fullscreen", skin);
 		fullScreenCheckBox.setChecked(PlaneApplet.START_FULLSCREEN);
 		titletable.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
 		titletable.add(fullScreenCheckBox);
 		titletable.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
-		titletable.add(new Label("Some text, contact, ext ... ", skin));
+		titletable.add(new Label("", skin));//Some text, contact, ext ... 
 
 	}
 	
@@ -163,7 +167,7 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 					InputEvent event, float x, float y, int pointer, int button) {
 				String file = textfield.getText()+"."+sData.file_ext_txt;
 				new_to_title(); 
-				main.launch_nodulo(nm, file, themeCheckBox.isChecked(), 
+				main.launch_nodulo(nm, file, true, //themeCheckBox.isChecked()
 						fullScreenCheckBox.isChecked()); return false; }}); }
 		
 		makeButton("Back", newtable, true).addListener(new InputListener() { public boolean touchDown (
@@ -186,7 +190,7 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 				makeButton(s, loadtable).addListener(new InputListener() { public boolean touchDown (
 						InputEvent event, float x, float y, int pointer, int button) {
 					load_to_title(); 
-					main.launch_nodulo_save(s, themeCheckBox.isChecked(), 
+					main.launch_nodulo_save(s, true, //themeCheckBox.isChecked() 
 							fullScreenCheckBox.isChecked()); return false; }});				
 			}
 		}
@@ -229,6 +233,8 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 		// Prepare your screen here.
 		
 	}
+	
+	int rcnt = 0;
 
 	@Override
 	public void render(float delta) {
@@ -257,6 +263,23 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 		drawer.draw_end();
 		
 		stage.draw();
+		
+		rcnt++;
+		if (rcnt == 500) {
+
+			Pixmap pixmap = Pixmap.createFromFrameBuffer(0, 0, Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
+			ByteBuffer pixels = pixmap.getPixels();
+
+			// This loop makes sure the whole screenshot is opaque and looks exactly like what the user is seeing
+			int size = Gdx.graphics.getBackBufferWidth() * Gdx.graphics.getBackBufferHeight() * 4;
+			for (int i = 3; i < size; i += 4) {
+				pixels.put(i, (byte) 255);
+			}
+
+			PixmapIO.writePNG(Gdx.files.local("title_screenshot.png"), pixmap, Deflater.DEFAULT_COMPRESSION, true);
+			pixmap.dispose();
+			
+		}
 	}
 
 	@Override
