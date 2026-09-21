@@ -234,7 +234,7 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 		
 	}
 	
-	int rcnt = 0;
+//	int rcnt = 0;
 
 	@Override
 	public void render(float delta) {
@@ -264,22 +264,22 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 		
 		stage.draw();
 		
-		rcnt++;
-		if (rcnt == 500) {
-
-			Pixmap pixmap = Pixmap.createFromFrameBuffer(0, 0, Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
-			ByteBuffer pixels = pixmap.getPixels();
-
-			// This loop makes sure the whole screenshot is opaque and looks exactly like what the user is seeing
-			int size = Gdx.graphics.getBackBufferWidth() * Gdx.graphics.getBackBufferHeight() * 4;
-			for (int i = 3; i < size; i += 4) {
-				pixels.put(i, (byte) 255);
-			}
-
-			PixmapIO.writePNG(Gdx.files.local("title_screenshot.png"), pixmap, Deflater.DEFAULT_COMPRESSION, true);
-			pixmap.dispose();
-			
-		}
+//		rcnt++;
+//		if (rcnt == 500) {
+//
+//			Pixmap pixmap = Pixmap.createFromFrameBuffer(0, 0, Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
+//			ByteBuffer pixels = pixmap.getPixels();
+//
+//			// This loop makes sure the whole screenshot is opaque and looks exactly like what the user is seeing
+//			int size = Gdx.graphics.getBackBufferWidth() * Gdx.graphics.getBackBufferHeight() * 4;
+//			for (int i = 3; i < size; i += 4) {
+//				pixels.put(i, (byte) 255);
+//			}
+//
+//			PixmapIO.writePNG(Gdx.files.local("title_screenshot.png"), pixmap, Deflater.DEFAULT_COMPRESSION, true);
+//			pixmap.dispose();
+//			
+//		}
 	}
 
 	@Override
