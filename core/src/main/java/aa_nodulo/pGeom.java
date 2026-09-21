@@ -73,7 +73,13 @@ public class pGeom extends pSystem {
 			if (stand == null) return;
 
 			stand.addInitRun(new nRun() {public void run() {
-				instance.run("empty_geom");
+//				instance.run("empty_geom");
+				Color fill = nGUI.book.getModel("CL_def_graph").color_background;
+				Color line = nGUI.book.getModel("CL_def_graph").color_outline;
+				float thick = nGUI.book.getModel("CL_def_graph").outlineWeight;
+				instance.setVar("fill_color", Utl.rgbToInt(fill));
+				instance.setVar("line_color", Utl.rgbToInt(line));
+				instance.setVar("line_thick", thick);
 			}});
 			stand.newRun("empty_geom", new nRun() {public void run() {
 				Color fill = nGUI.book.getModel("CL_def_graph").color_background;
@@ -510,28 +516,28 @@ public class pGeom extends pSystem {
 			
 			
 			stand.process()
-			.commande(pNode.getCom(CT.COM_ADD_ROW))
-			.openSec()
-			.param("text", "size", "width", (int)8, 
-					"def", 80f, "min", 1f, "max", 120f, "granulo", 1f)
-			.run(pNode.getRun(pNode.CT.RUNP_VAR_FLT_LAB_FIELD_SLIDE), "size")
-			.closeSec()
-			.commande(pNode.getCom(CT.COM_ADD_ROW))
-			.openSec()
-				.param("run", new nRun() {public void run() {
-					instance.run("set_def"); }})
-				.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "set_def", "set_def", (int)6)
-			.closeSec()
-			.openSec()
-				.param("run", new nRun() {public void run() {
-					instance.run("set_trig", instance.getVar("size", Float.class)); }})
-				.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "set_trig", "set_trig", (int)6)
-			.closeSec()
-			.openSec()
-				.param("run", new nRun() {public void run() {
-					instance.run("set_rect", instance.getVar("size", Float.class)); }})
-				.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "set_rect", "set_rect", (int)6)
-			.closeSec()
+//			.commande(pNode.getCom(CT.COM_ADD_ROW))
+//			.openSec()
+//			.param("text", "size", "width", (int)8, 
+//					"def", 80f, "min", 1f, "max", 120f, "granulo", 1f)
+//			.run(pNode.getRun(pNode.CT.RUNP_VAR_FLT_LAB_FIELD_SLIDE), "size")
+//			.closeSec()
+//			.commande(pNode.getCom(CT.COM_ADD_ROW))
+//			.openSec()
+//				.param("run", new nRun() {public void run() {
+//					instance.run("set_def"); }})
+//				.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "set_def", "set_def", (int)6)
+//			.closeSec()
+//			.openSec()
+//				.param("run", new nRun() {public void run() {
+//					instance.run("set_trig", instance.getVar("size", Float.class)); }})
+//				.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "set_trig", "set_trig", (int)6)
+//			.closeSec()
+//			.openSec()
+//				.param("run", new nRun() {public void run() {
+//					instance.run("set_rect", instance.getVar("size", Float.class)); }})
+//				.run(pNode.getRun(CT.RUNP_ADD_TRIGG), "set_rect", "set_rect", (int)6)
+//			.closeSec()
 			.commande(pNode.getCom(CT.COM_ADD_ROW))
 			.openSec()
 				.param("run", new nRun() {public void run() {
@@ -601,8 +607,11 @@ public class pGeom extends pSystem {
 		}};
 
 		space_prop
-		.addData("setup_func", "func_setup").addCtrl("setup_func", String.class)
+//		.addData("setup_func", "func_setup").addCtrl("setup_func", String.class)
 		.addData("init_func", "func_start").addCtrl("init_func", String.class)
+		.addData("gameover_func", "func_gameover").addCtrl("gameover_func", String.class)
+		.addData("tick_func", "func_tick").addCtrl("tick_func", String.class)
+		.addData("frame_func", "func_frame").addCtrl("frame_func", String.class)
 		.addData("inst_ref", "")
 		.addData("tilemap", Utl.conf.STARTUP_MAP_PATH).addCtrl("tilemap", String.class)
 		.addNodeRun(space_prop_run)
@@ -610,6 +619,8 @@ public class pGeom extends pSystem {
 
 		space_prop.newRun("start",new nRun() {public void run() {
 			pParam sp = contextParam();
+			String map = sp.getStr("tilemap");
+			Utl.plane.getSystem(pBox2d.class).loadMap(map);
 			String funcref = sp.getStr("init_func");
 			pInstance func = Utl.plane.patch.common_functions.get(funcref);
 			String inst_ref = sp.getStr("inst_ref");
@@ -620,12 +631,9 @@ public class pGeom extends pSystem {
 			pFunc.func_script_run(inst, script, null); 
 		}});
 
-		space_prop.newRun("setup",new nRun() {public void run() {
-//			Utl.logn("setup");
+		space_prop.newRun("gameover",new nRun() {public void run() {
 			pParam sp = contextParam();
-			String map = sp.getStr("tilemap");
-			Utl.plane.getSystem(pBox2d.class).loadMap(map);
-			String funcref = sp.getStr("setup_func");
+			String funcref = sp.getStr("gameover_func");
 			pInstance func = Utl.plane.patch.common_functions.get(funcref);
 			String inst_ref = sp.getStr("inst_ref");
 			pInstance inst = Utl.plane.patch.function_props.get(inst_ref);
@@ -634,6 +642,45 @@ public class pGeom extends pSystem {
 			if (script == null) return;
 			pFunc.func_script_run(inst, script, null); 
 		}});
+
+		space_prop.newRun("tick",new nRun() {public void run() {
+			pParam sp = contextParam();
+			String funcref = sp.getStr("tick_func");
+			pInstance func = Utl.plane.patch.common_functions.get(funcref);
+			String inst_ref = sp.getStr("inst_ref");
+			pInstance inst = Utl.plane.patch.function_props.get(inst_ref);
+			if (func == null) return;
+			Object[] script = func.get("get_instruction_script", Object[].class);
+			if (script == null) return;
+			pFunc.func_script_run(inst, script, null); 
+		}});
+
+		space_prop.newRun("frame",new nRun() {public void run() {
+			pParam sp = contextParam();
+			String funcref = sp.getStr("frame_func");
+			pInstance func = Utl.plane.patch.common_functions.get(funcref);
+			String inst_ref = sp.getStr("inst_ref");
+			pInstance inst = Utl.plane.patch.function_props.get(inst_ref);
+			if (func == null) return;
+			Object[] script = func.get("get_instruction_script", Object[].class);
+			if (script == null) return;
+			pFunc.func_script_run(inst, script, null); 
+		}});
+
+//		space_prop.newRun("setup",new nRun() {public void run() {
+////			Utl.logn("setup");
+//			pParam sp = contextParam();
+//			String map = sp.getStr("tilemap");
+//			Utl.plane.getSystem(pBox2d.class).loadMap(map);
+//			String funcref = sp.getStr("setup_func");
+//			pInstance func = Utl.plane.patch.common_functions.get(funcref);
+//			String inst_ref = sp.getStr("inst_ref");
+//			pInstance inst = Utl.plane.patch.function_props.get(inst_ref);
+//			if (func == null) return;
+//			Object[] script = func.get("get_instruction_script", Object[].class);
+//			if (script == null) return;
+//			pFunc.func_script_run(inst, script, null); 
+//		}});
 
 		
 
@@ -692,12 +739,15 @@ public class pGeom extends pSystem {
 			ArrayList<Integer> faceC = geom.getCollecData("faceC", Integer.class);
 			if (faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
 					color.size() != point.size()) return null;
-			Float[] pl = new Float[9 * faceA.size()];
+			Float[] pl = new Float[(int)9 * faceA.size()];
 			for (int i = 0 ; i < faceA.size() ; i++) {
 				int p1 = faceA.get(i), p2 = faceB.get(i), p3 = faceC.get(i);
 				if (p1 < 0 || p1 >= point.size() || 
 						p2 < 0 || p2 >= point.size() || 
-						p3 < 0 || p3 >= point.size()) continue;
+						p3 < 0 || p3 >= point.size()) {
+					Utl.logn("ERROR : pGeom geom.runDef get_flt_array");
+					continue;
+				}
 				pl[i*9] = point.get(p1).x; 
 				pl[i*9+1] = point.get(p1).y;
 				pl[i*9+2] = Utl.intToColor(color.get(p1)).toFloatBits(); 
@@ -1185,13 +1235,13 @@ public class pGeom extends pSystem {
 								for (Map.Entry<String, Integer> mr : 
 								map.entrySet()) {
 							String dt_ref = mr.getKey();
-							String dt = Utl.to_string(par.get(dt_ref, Utl.data_type[i]));
+							String dt = Utl.to_string(par.getDt(dt_ref, Utl.data_type[i]));
 							nWidget w = interf.add_list_entry("   "+Utl.type_short_names[i]+" " + dt_ref + " = " +dt);
 							w.addEventLogic(new nRun(i, dt_ref, par) { public void run() {
 								int i = (int)args[0];
 								String dt_ref = (String)args[1];
 								pParam par = (pParam)args[2];
-								String dt = Utl.to_string(par.get(dt_ref, Utl.data_type[i]));
+								String dt = Utl.to_string(par.getDt(dt_ref, Utl.data_type[i]));
 								w.setText("   "+Utl.type_short_names[i]+" " + dt_ref + " = " +dt);
 							}});
 							interf.go_up_tree();
@@ -1753,7 +1803,8 @@ public class pGeom extends pSystem {
 	
 	
 	public void game_over() {
-		app.time.set_pause(true);
+//		app.time.set_pause(true);
+		if (app.space.space_param != null) app.space.space_param.run("gameover");
 	}
 	
 

@@ -418,7 +418,7 @@ public class pPatch {
 		
 		app.addEventSave(new nRun() { public void run() {
 			save_contents(); 
-			app.space.save_contents(); 
+//			app.space.save_contents(); 
 		}});
 
 		app.addEventEmpty(new nRun() { public void run() {
@@ -430,7 +430,7 @@ public class pPatch {
 		app.addEventLoad(new nRun() { public void run() {
 			app.addDelayEvent(1, new nRun() { public void run() {
 //				Utl.logn("patch "+bloc.ref+" load_contents");
-				app.space.load_contents();
+//				app.space.load_contents();
 				load_contents();
 //				app.addDelayEvent(1, new nRun() { public void run() {
 ////					app.space.load_contents();

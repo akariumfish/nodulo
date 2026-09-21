@@ -29,7 +29,7 @@ public class pMacroBook {
 			m.addNode(r, "function", 	(n * -1200f) -2400f, c*-2400f)
 			.addSetVar("func_ref", "func_"+r)
 			.addTileScript(r).getMacro();
-			n++; if (n > 3) { n = 0; c++; }
+			n++; if (n > 4) { n = 0; c++; }
 		}
 		return m;
 	}
@@ -39,7 +39,7 @@ public class pMacroBook {
 		build_tile_scripts();
 		
 
-		Macro bullet_par = new Macro("bullet_par")
+		Macro common_param = new Macro("common_param")
 		.addNode("space", "space", 				0f, 	1200f).getMacro()
 		.addNode("bullet_def", "bullet", 		0f, 	600f)
 			.addSetVar("len", 90f)
@@ -59,6 +59,8 @@ public class pMacroBook {
 
 			list.get("geom").patch.app.addDelayEvent(2, new nRun() { public void run() {
 				list.get("geom").run("empty_geom");
+				list.get("geom").run("set_fill_color",new Color(0.75f,0.8f,0.85f,0.95f));
+				list.get("geom").run("new_face",40f,0f,-30f,-10f,-30f,10f);
 				list.get("geom").run("set_fill_color",new Color(0.5f,0.5f,0.5f,0.7f));
 				list.get("geom").run("new_face",-50f,0f,40f,20f,40f,-20f);
 			}});
@@ -206,6 +208,8 @@ public class pMacroBook {
 				geom.run("new_trig",-15f,-50f,35f,0f);
 				geom.run("set_fill_color",new Color(0.65f,0.65f,0.65f,1f));
 				geom.run("new_trig",0f,0f,80f,0f);
+				geom.run("set_fill_color",new Color(0.4f,0.85f,0.9f,0.85f));
+				geom.run("new_trig",-10f,0f,45f,0f);
 				geom.run("set_fill_color",new Color(0.2f,0.2f,0.2f,1f));
 				geom.run("new_trig",-10f,0f,35f,0f);
 			}});
@@ -223,7 +227,7 @@ public class pMacroBook {
 		new Macro("PARAM_SETUP")
 		.addMacro("mob_blueprint", mob_blueprint, 0f, 0f)
 		.addMacro("body_blueprint", body_blueprint, -1800f, 0f)
-		.addMacro("bullet_par", bullet_par, 1800f, 0f)
+		.addMacro("common_param", common_param, 1800f, 0f)
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
 		}})
@@ -236,13 +240,14 @@ public class pMacroBook {
 			.addSetVar("func_ref", "func_avatar").addTileScript("avatar").getMacro()
 			.addNode("startup", "function", 						-1200f, 		0f)
 			.addSetVar("func_ref", "func_start").addTileScript("startup").getMacro()
-			.addNode("setup", "function", 						-1200f, 		-2400f)
-			.addSetVar("func_ref", "func_setup").addTileScript("setup").getMacro()
+			.addNode("gameover", "function", 					-1200f, 		-2400f)
+			.addSetVar("func_ref", "func_gameover").addTileScript("gameover").getMacro()
 			.addRun(new nRun() { public void run() {
 				nMap<pInstance> list = arg(0, nMap.class);
 				if (Utl.plane.config.SCRIPT_ALL_FUNC) {
-//					list.get("startup").setVar("script", true);
+					list.get("startup").setVar("script", true);
 					list.get("avatar").setVar("script", true);
+					list.get("gameover").setVar("script", true);
 					for (String r : funcs) { list.get(r).setVar("script", true); }
 				}
 			}})
@@ -300,7 +305,35 @@ public class pMacroBook {
 	private static void build_tile_scripts() {
 		
 
-		new MacroScript("setup")
+		new MacroScript("gameover")
+			.com("add_set_val", "time_bloc", "val_pause")
+			.com("add_boo_at", "data", true)
+		;
+
+		new MacroScript("startup")
+			
+		.com("add_func","func_pop_body")
+			.com("add_arr_at", "arg")
+				.com("add_new_body_at","entry","body_print")
+				.com("add_arr_at", "array")
+					.com("add_get_input_at", "entry", "avatar_spawn_pos")
+					.com("add_arr_at", "array")
+						.com("add_get_input_at", "entry", "avatar_spawn_rot")
+					.com("get_last", (int)3)
+//				.com("get_last")
+//			.com("get_last")
+		
+		.com("add_set_output", "reset_mob_spawn")
+			.com("add_boo_at", "data", true)
+		.com("add_func","func_test_mob")
+		
+		;
+
+		newMacroScript("tick")
+		
+		;
+
+		newMacroScript("frame")
 		
 		;
 
@@ -313,18 +346,24 @@ public class pMacroBook {
 			.com("add_get_pass_at", "data", (int)2)
 		;
 
-		newMacroScript("pop_mob")
-		.com("add_set_param", "ctrl_mob", "spawn_pos")
-			.com("add_get_pass_at", "body", (int)0)
-			.com("add_get_pass_at", "data", (int)1)
-		.com("add_set_param", "ctrl_mob", "spawn_rot")
-			.com("add_get_pass_at", "body", (int)0)
-			.com("add_get_pass_at", "data", (int)2)
-		.com("add_set_param", "ctrl_mob", "spawn_id")
-			.com("add_get_pass_at", "body", (int)0)
-			.com("add_get_pass_at", "data", (int)3)
-		;
+		newMacroScript("test_mob")
+		.com("add_if")
+			.com("add_get_input_at", "test", "has_mob_spawn")
 
+			.com("add_func","func_choose_mob_print")
+				
+			.com("add_set_output", "next_mob_spawn")
+				.com("add_boo_at", "data", true)
+		
+		.com("add_close")
+		
+		.com("add_if")
+			.com("add_get_input_at", "test", "has_mob_spawn")
+			
+			.com("add_func","func_test_mob")
+		
+		.com("add_close")
+		;
 		newMacroScript("choose_mob_print")
 		.com("add_if")
 			.com("add_eq_at", "test")
@@ -412,44 +451,19 @@ public class pMacroBook {
 			.com("get_last", (int)4)//.com("get_last").com("get_last").com("get_last")
 		;
 
-		newMacroScript("test_mob")
-		.com("add_if")
-			.com("add_get_input_at", "test", "has_mob_spawn")
-
-			.com("add_func","func_choose_mob_print")
-				
-			.com("add_set_output", "next_mob_spawn")
-				.com("add_boo_at", "data", true)
-		
-		.com("add_close")
-		
-		.com("add_if")
-			.com("add_get_input_at", "test", "has_mob_spawn")
-			
-			.com("add_func","func_test_mob")
-		
-		.com("add_close")
+		newMacroScript("pop_mob")
+		.com("add_set_param", "ctrl_mob", "spawn_pos")
+			.com("add_get_pass_at", "body", (int)0)
+			.com("add_get_pass_at", "data", (int)1)
+		.com("add_set_param", "ctrl_mob", "spawn_rot")
+			.com("add_get_pass_at", "body", (int)0)
+			.com("add_get_pass_at", "data", (int)2)
+		.com("add_set_param", "ctrl_mob", "spawn_id")
+			.com("add_get_pass_at", "body", (int)0)
+			.com("add_get_pass_at", "data", (int)3)
 		;
 
 
-		new MacroScript("startup")
-			
-		.com("add_func","func_pop_body")
-			.com("add_arr_at", "arg")
-				.com("add_new_body_at","entry","body_print")
-				.com("add_arr_at", "array")
-					.com("add_get_input_at", "entry", "avatar_spawn_pos")
-					.com("add_arr_at", "array")
-						.com("add_get_input_at", "entry", "avatar_spawn_rot")
-					.com("get_last", (int)3)
-//				.com("get_last")
-//			.com("get_last")
-		
-		.com("add_set_output", "reset_mob_spawn")
-			.com("add_boo_at", "data", true)
-		.com("add_func","func_test_mob")
-		
-		;
 
 		
 		

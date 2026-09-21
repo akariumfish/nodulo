@@ -76,13 +76,21 @@ public class ParticleLight extends RayHandler.BaseLight {
 		
 
 		public void render() { }
-		public void update() {
+		public void tick() { 
 			if (dirty) {
 				cos = MathUtils.cos(rot);
 				sin = MathUtils.sin(rot); 
 				dirty = false;
 			} else {
 				pos.add(rotX(speed,0),rotY(speed,0));
+			} 
+			life--;
+		}
+		public void update() {
+			if (dirty) {
+				cos = MathUtils.cos(rot);
+				sin = MathUtils.sin(rot); 
+				dirty = false;
 			}
 			for (int i = 0 ; i < unitRay ; i++) {
 				addTrig(pos.x, pos.y, 
@@ -94,7 +102,6 @@ public class ParticleLight extends RayHandler.BaseLight {
 								patronY[(i+1)%unitRay] * distance), 
 						colorF, 1, 0, 0);
 			}
-			life--;
 		}
 
 		private float rotX(float x, float y) { return x * cos - y * sin; }
@@ -126,7 +133,15 @@ public class ParticleLight extends RayHandler.BaseLight {
 		else return new Unit(c, d);
 	}
 
+	private ArrayList<Unit> tmpunit = new ArrayList<Unit>();
+	public void clear_units() {
+		tmpunit.clear();
+		for (Unit u : unitList) tmpunit.add(u);
+		for (Unit u : tmpunit) u.remove();
+		tmpunit.clear();
+	}
 
+	
 	public final Array<Unit> unitList;
 	public final Array<Unit> freeUnit;
 
@@ -218,11 +233,14 @@ public class ParticleLight extends RayHandler.BaseLight {
 	}
 	
 	private static ArrayList<Unit> tmp_unit = new ArrayList<Unit>();
-	@Override
-	public void update() {
+	public void tick() {
 		tmp_unit.clear();
 		for (Unit u : unitList) if (u.life <= 0) tmp_unit.add(u);
 		for (Unit u : tmp_unit) u.remove();
+		for (Unit u : unitList) u.tick();
+	}
+	@Override
+	public void update() {
 		unit_cnt = 0; trig_cnt = 0;
 		for (Unit u : unitList) u.update();
 		lightMesh.setVertices(segments, 0, unit_cnt);

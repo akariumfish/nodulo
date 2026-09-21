@@ -148,7 +148,7 @@ public class pNodeSpace {
 							par.collecAdd("param_ref", p.pool_ref);
 						}
 					}
-					par.set("name", inst.getVar("name", String.class)); 
+					par.setDt("name", inst.getVar("name", String.class)); 
 				}};
 				instance.addObject("run_frame", run_frame);
 				instance.patch.addEventFrame(run_frame);
@@ -220,7 +220,7 @@ public class pNodeSpace {
 //				}
 			}
 			for (pProperty opt : gene_prop.option_props) 
-					if (gene_par.get("use_"+opt.ref, Boolean.class)) {
+					if (gene_par.getDt("use_"+opt.ref, Boolean.class)) {
 				String new_ref = opt.ref;
 				int cnt2 = 1;
 				while (pop.hasParam(new_ref)) { 
@@ -304,17 +304,18 @@ public class pNodeSpace {
 		pNode.newNodeModel("space_init", false)
 		.process()
 		.useLoad().commande(new nRun() { public void run() {
-			nRun run_space_setup = new nRun(instance) {public void run() { 
-				pInstance inst = (pInstance)builder;
-				pInstance co = inst.get("get_co", pInstance.class, "start_run");
-				if (inst.getVar("setup", Boolean.class)) co.run("send");
-			}};
-			instance.addObject("run_space_setup", run_space_setup);
-			PlaneApplet.app.space.addEventSpaceSetup(run_space_setup);
+//			nRun run_space_setup = new nRun(instance) {public void run() { 
+//				pInstance inst = (pInstance)builder;
+//				pInstance co = inst.get("get_co", pInstance.class, "start_run");
+//				if (inst.getVar("setup", Boolean.class)) co.run("send");
+//			}};
+//			instance.addObject("run_space_setup", run_space_setup);
+//			PlaneApplet.app.space.addEventSpaceSetup(run_space_setup);
 			nRun run_space_start = new nRun(instance) {public void run() { 
 				pInstance inst = (pInstance)builder;
 				pInstance co = inst.get("get_co", pInstance.class, "start_run");
-				if (!inst.getVar("setup", Boolean.class)) co.run("send");
+//				if (!inst.getVar("setup", Boolean.class)) 
+					co.run("send");
 			}};
 			instance.addObject("run_space_start", run_space_start);
 			PlaneApplet.app.space.addEventSpaceStart(run_space_start);
@@ -322,16 +323,16 @@ public class pNodeSpace {
 		.useClear().commande(new nRun() { public void run() {
 			PlaneApplet.app.space.removeEventSpaceStart(
 					instance.object("run_space_start", nRun.class));
-			PlaneApplet.app.space.removeEventSpaceSetup(
-					instance.object("run_space_setup", nRun.class));
+//			PlaneApplet.app.space.removeEventSpaceSetup(
+//					instance.object("run_space_setup", nRun.class));
 		}}).useInit()
+//		.openSec()
+//			.param("def", false, "height", 1f) 
+//			.run(pNode.getRun(pNode.CT.RUNP_VAR_BOO_SWITCH), 
+//					"setup", "setup", (int)6)
+//		.closeSec()
 		.openSec()
-			.param("def", false, "height", 1f) 
-			.run(pNode.getRun(pNode.CT.RUNP_VAR_BOO_SWITCH), 
-					"setup", "setup", (int)6)
-		.closeSec()
-		.openSec()
-		.run(pNode.getRun(CT.RUNP_ADD_LABEL), " > ", (int)4)
+		.run(pNode.getRun(CT.RUNP_ADD_LABEL), " > ", (int)10)
 		.closeSec()
 		.getStand()
 		.openSec()
@@ -576,7 +577,7 @@ public class pNodeSpace {
 				nMap<Integer> map = prop.data_vals.get(Utl.data_type[i]);
 				if (map != null) for (Map.Entry<String, Integer> mr : map.entrySet()) {
 					String dt_ref = mr.getKey();
-					Object dt = par.get(dt_ref, Utl.data_type[i]);
+					Object dt = par.getDt(dt_ref, Utl.data_type[i]);
 					instance.setVar(dt_ref, dt);
 				}
 			}
@@ -609,7 +610,7 @@ public class pNodeSpace {
 					nMap<Integer> map = prop.data_vals.get(Utl.data_type[i]);
 					if (map != null) for (Map.Entry<String, Integer> mr : map.entrySet()) {
 						String dt_ref = mr.getKey();
-						par.set(dt_ref, inst.getVar(dt_ref, Utl.data_type[i]));
+						par.setDt(dt_ref, inst.getVar(dt_ref, Utl.data_type[i]));
 					}
 				}
 			}};
@@ -629,7 +630,7 @@ public class pNodeSpace {
 						nMap<Integer> map = prop.data_vals.get(Utl.data_type[i]);
 						if (map != null) for (Map.Entry<String, Integer> mr : map.entrySet()) {
 							String dt_ref = mr.getKey();
-							par.set(dt_ref, inst.getVar(dt_ref, Utl.data_type[i]));
+							par.setDt(dt_ref, inst.getVar(dt_ref, Utl.data_type[i]));
 						}
 					}
 					

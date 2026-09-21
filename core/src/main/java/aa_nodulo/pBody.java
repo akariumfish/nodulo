@@ -329,23 +329,23 @@ public class pBody extends sPoolable {
 		for (pParam p : params.all()) if (p.prop.ref.equals(r)) ar.add(p);
 		return ar; }
 	
-	public void addVec(String p, String r, float x, float y) { param(p).set(r,getVec(p,r).add(x,y)); }
-	public void addVec(String p, String r, Vector2 v) { param(p).set(r,getVec(p,r).add(v)); }
-	public void sclVec(String p, String r, float v) { param(p).set(r,getVec(p,r).scl(v)); }
-	public void setVec(String p, String r, Vector2 v) { param(p).set(r,v); }
-	public void setVec(String p, String r, float x, float y) { param(p).set(r,new Vector2(x,y)); }
-	public void setFlt(String p, String r, float v) { param(p).set(r,v); }
-	public void addFlt(String p, String r, float v) { param(p).set(r, getFlt(p,r) + v); }
-	public void setInt(String p, String r, int v) { param(p).set(r,v); }
-	public void addInt(String p, String r, int v) { param(p).set(r, getInt(p,r) + v); }
-	public void setBoo(String p, String r, boolean v) { param(p).set(r,v); }
-	public void setStr(String p, String r, String v) { param(p).set(r,v); }
+	public void addVec(String p, String r, float x, float y) { param(p).setDt(r,getVec(p,r).add(x,y)); }
+	public void addVec(String p, String r, Vector2 v) { param(p).setDt(r,getVec(p,r).add(v)); }
+	public void sclVec(String p, String r, float v) { param(p).setDt(r,getVec(p,r).scl(v)); }
+	public void setVec(String p, String r, Vector2 v) { param(p).setDt(r,v); }
+	public void setVec(String p, String r, float x, float y) { param(p).setDt(r,new Vector2(x,y)); }
+	public void setFlt(String p, String r, float v) { param(p).setDt(r,v); }
+	public void addFlt(String p, String r, float v) { param(p).setDt(r, getFlt(p,r) + v); }
+	public void setInt(String p, String r, int v) { param(p).setDt(r,v); }
+	public void addInt(String p, String r, int v) { param(p).setDt(r, getInt(p,r) + v); }
+	public void setBoo(String p, String r, boolean v) { param(p).setDt(r,v); }
+	public void setStr(String p, String r, String v) { param(p).setDt(r,v); }
 	
-	public Vector2 getVec(String p, String r) { return param(p).get(r,Vector2.class); }
-	public float getFlt(String p, String r) { return param(p).get(r,Float.class); }
-	public int getInt(String p, String r) { return param(p).get(r,Integer.class); }
-	public boolean getBoo(String p, String r) { return param(p).get(r,Boolean.class); }
-	public String getStr(String p, String r) { return param(p).get(r,String.class); }
+	public Vector2 getVec(String p, String r) { return param(p).getDt(r,Vector2.class); }
+	public float getFlt(String p, String r) { return param(p).getDt(r,Float.class); }
+	public int getInt(String p, String r) { return param(p).getDt(r,Integer.class); }
+	public boolean getBoo(String p, String r) { return param(p).getDt(r,Boolean.class); }
+	public String getStr(String p, String r) { return param(p).getDt(r,String.class); }
 	
 
 	public void collecSetVec(String p, String r, int i, float x, float y) {

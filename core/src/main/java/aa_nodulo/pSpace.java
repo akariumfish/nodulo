@@ -288,6 +288,7 @@ public class pSpace {
 	}
 
 	public void clear_all_body() {
+		nRun.runEvents(eventSpaceClear);
 		body_pool.freeAll(); 
 		for (sPool<pParam> p : param_pools.all()) test_param_use(p);
 //		for (sPool<pParam> p : param_pools.all()) p.freeAll(); 
@@ -297,12 +298,12 @@ public class pSpace {
 	}
 
 	public void clear_all_obj() {
+		nRun.runEvents(eventSpaceClear);
 		body_pool.freeAll(); 
 		for (sPool<pParam> p : param_pools.all()) p.freeAll(); 
 		collec_pool.freeAll(); 
 		families_updated = true;
 		update_families();
-//		nRun.runEvents(eventSpaceClear);
 	}
 
 	public nMap<sPool<pParam>> param_pools = new nMap<sPool<pParam>>();
@@ -338,17 +339,16 @@ public class pSpace {
 	}
 	
 
-	ArrayList<nRun> eventSpaceSetup = new ArrayList<nRun>();	
-
+//	ArrayList<nRun> eventSpaceSetup = new ArrayList<nRun>();	
 	ArrayList<nRun> eventSpaceStart = new ArrayList<nRun>();
-//	ArrayList<nRun> eventSpaceClear = new ArrayList<nRun>();
+	ArrayList<nRun> eventSpaceClear = new ArrayList<nRun>();
 	
 	public pSpace addEventSpaceStart(nRun r) { eventSpaceStart.add(r); return this; }
 	public pSpace removeEventSpaceStart(nRun r) { eventSpaceStart.remove(r); return this; }
-	public pSpace addEventSpaceSetup(nRun r) { eventSpaceSetup.add(r); return this; }
-	public pSpace removeEventSpaceSetup(nRun r) { eventSpaceSetup.remove(r); return this; }
-//	public pSpace addEventSpaceClear(nRun r) { eventSpaceClear.add(r); return this; }
-//	public pSpace removeEventSpaceClear(nRun r) { eventSpaceClear.remove(r); return this; }
+//	public pSpace addEventSpaceSetup(nRun r) { eventSpaceSetup.add(r); return this; }
+//	public pSpace removeEventSpaceSetup(nRun r) { eventSpaceSetup.remove(r); return this; }
+	public pSpace addEventSpaceClear(nRun r) { eventSpaceClear.add(r); return this; }
+	public pSpace removeEventSpaceClear(nRun r) { eventSpaceClear.remove(r); return this; }
 
 	private boolean space_starting = false; 
 
@@ -362,9 +362,6 @@ public class pSpace {
 				reset_rng();
 				time.val_tick_cnt.set(0);
 				app.addDelayEvent(1, new nRun() { public void run() {
-	//				time.set_pause(true);
-//					reset_rng();
-//					time.val_tick_cnt.set(0);
 					nRun.runEvents(eventSpaceStart);
 					if (space_param != null) space_param.run("start");
 					app.addDelayEvent(2, new nRun() { public void run() {
@@ -377,12 +374,13 @@ public class pSpace {
 	}
 	
 	public void setup_space() {
-		nRun.runEvents(eventSpaceSetup);
-		if (space_param != null) {
-			space_param.run("setup");
-		}
-		app.addDelayEvent(50, new nRun() { public void run() {
-			start_space(); }}); 
+//		nRun.runEvents(eventSpaceSetup);
+//		if (space_param != null) {
+//			space_param.run("setup");
+//		}
+//		app.addDelayEvent(50, new nRun() { public void run() {
+			start_space(); 
+//		}}); 
 	}
 	
 	
@@ -634,6 +632,8 @@ public class pSpace {
 		
 		pProperty.run_frame(this);
 		
+		if (space_param != null) space_param.run("frame");
+		
 //		for(pProperty p : pProperty.general_propertys.all()) {
 //			
 //		}
@@ -660,6 +660,8 @@ public class pSpace {
 	public void tick(float delta) {
 
 		pProperty.run_tick(this);
+
+		if (space_param != null) space_param.run("tick");
 		
 		update_families();
 		

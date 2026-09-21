@@ -826,7 +826,7 @@ public class pFunc {
 		
 		EQ, ESUP, EINF, SUP, INF, 
 		
-		GETI, GETR, GETP, //SLOW, 
+		GETI, GETR, GETP, GETV, //SLOW, 
 		
 		PGET, 
 		
@@ -834,7 +834,7 @@ public class pFunc {
 		ARR, IND, PASS, //MEM, 
 		
 		//Instruction
-		SETO, SETR, SETP, PSET,
+		SETO, SETR, SETP, PSET, SETV, 
 		
 		RUNP, 
 		

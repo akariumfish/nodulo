@@ -284,9 +284,11 @@ public class pFuncBook {
 			if (o2 != null && (o2 instanceof pBody)) {
 				pBody bod = (pBody)o2;
 				pParam par = bod.param(param_ref);
-				if (par != null && par.has(data_ref, par.prop.data_class.get(data_ref))) {
-					return par.get(data_ref, par.prop.data_class.get(data_ref));
-				}
+				if (par == null) return null;
+				if (par.hasDt(data_ref, par.prop.data_class.get(data_ref))) {
+					return par.getDt(data_ref, par.prop.data_class.get(data_ref)); }
+				else if (par.hasRef(data_ref)) { return par.getRef(data_ref); }
+				else if (par.hasBody(data_ref)) { return par.getBody(data_ref); }
 			}
 			return null;
 		}})
@@ -326,13 +328,79 @@ public class pFuncBook {
 				pProperty prop = pProperty.get(par_ref);
 				if (prop == null) return;
 				for (Map.Entry<Class<?>, nMap<Integer>> me : prop.data_vals.entrySet()) {
-//					Class<?> ct = me.getKey();
+					Class<?> ct = me.getKey(); 
+					String cl_name = ct.getSimpleName() + " - ";
 					for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) {
 						String k = map_me.getKey();
-						nGUI.add_dropmenu_entry(k, new nRun(instance) { public void run() {
+						nGUI.add_dropmenu_entry(cl_name + k, new nRun(instance) { public void run() {
 							((pInstance)builder).setVar("data_ref", k); }});
 					}
 				}
+				for (Map.Entry<String,Integer> map_me : prop.ref_vals.entrySet()) {
+					String k = map_me.getKey();
+					nGUI.add_dropmenu_entry("param - "+k, new nRun(instance) { public void run() {
+						((pInstance)builder).setVar("data_ref", k); }});
+				}
+				for (Map.Entry<String,Integer> map_me : prop.body_vals.entrySet()) {
+					String k = map_me.getKey();
+					nGUI.add_dropmenu_entry("body - "+k, new nRun(instance) { public void run() {
+						((pInstance)builder).setVar("data_ref", k); }});
+				}
+				nGUI.open_dropmenu(triggP_w);
+			}})
+			.commande(pTile.getCom(CT.ADD_WATCH))
+			.closeSec();
+		}});
+
+		
+		
+		new Operator("get_val", "GV", C.GETV, new nRun() {public Object get() {
+			String bloc_ref = ask("bloc_ref", String.class);
+			String val_ref = ask("val_ref", String.class);
+				sValueBloc bloc = PlaneApplet.app.bloc.getBloc(bloc_ref);
+				if (bloc == null) return null;
+				sValue val = bloc.getValue(val_ref);
+				if (val == null) return null;
+				return val.get_val();
+		}})
+		.addVar("bloc_ref").addVar("val_ref")
+		.setStandRun(new nRun() {public void run() {
+			pStandard stand = arg(0,pStandard.class);
+			stand.process()
+			.run(pTile.getRun(CT.OBTAIN_VAR), "bloc_ref", "")
+			.openSec()
+			.param("ref", "bloc_ref_watch", "var_link_ref", "bloc_ref", 
+					"var_link_class", String.class.getName())
+			.param("width", (int)8)
+			.param("run_right", new nRun() {public void run() {
+				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
+						"bloc_ref_watch");
+				if (triggP_w == null) return;
+				
+				for (String par : PlaneApplet.app.bloc.blocs.allKey()) {
+					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
+						((pInstance)builder).setVar("bloc_ref", par); }});
+				}
+				nGUI.open_dropmenu(triggP_w);
+			}})
+			.commande(pTile.getCom(CT.ADD_WATCH))
+			.closeSec()
+			.run(pTile.getRun(CT.OBTAIN_VAR), "val_ref", "")
+			.openSec()
+			.param("ref", "val_ref_watch", "var_link_ref", "val_ref", 
+					"var_link_class", String.class.getName())
+			.param("width", (int)8)
+			.param("run_right", new nRun() {public void run() {
+				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
+						"val_ref_watch");
+				if (triggP_w == null) return;
+				String bloc_ref = instance.getVar("bloc_ref", String.class);
+				sValueBloc bloc = PlaneApplet.app.bloc.getBloc(bloc_ref);
+				if (bloc == null) return;
+				for (String par : bloc.values.allKey()) {
+					nGUI.add_dropmenu_entry(bloc.values.get(par).type + " - " + par, 
+							new nRun(instance) { public void run() {
+						((pInstance)builder).setVar("val_ref", par); }}); }
 				nGUI.open_dropmenu(triggP_w);
 			}})
 			.commande(pTile.getCom(CT.ADD_WATCH))
@@ -565,7 +633,7 @@ public class pFuncBook {
 			if (print_name != null) {
 				for (String br : space.param_pools.get("blueprint").allKey()) {
 					String nm = space.param_pools.get("blueprint")
-							.get(br).get("name", String.class);
+							.get(br).getDt("name", String.class);
 					if (nm != null && nm.equals(print_name)) {
 						bluep = space.param_pools.get("blueprint")
 								.get(br);
@@ -687,6 +755,70 @@ public class pFuncBook {
 		
 		
 		
+
+		
+
+		new Instruction("set_val", "SETV", C.SETV, new nRun() {public Object get() {
+			Boolean active = ask("active", Boolean.class);
+			if (active == null || !active) return pFunc.C.NEXT;
+			Object o2 = ask("data", Object.class);
+			String bloc_ref = ask("bloc_ref", String.class);
+			String val_ref = ask("val_ref", String.class);
+			if (o2 != null) {
+				sValueBloc bloc = PlaneApplet.app.bloc.getBloc(bloc_ref);
+				if (bloc == null) return null;
+				sValue val = bloc.getValue(val_ref);
+				if (val == null) return null;
+				val.set_from_undef(o2);
+			}
+			return pFunc.C.NEXT;
+		}})
+		.setActivated()
+		.addVar("bloc_ref").addVar("val_ref").addArg("data", null)
+		.setStandRun(new nRun() {public void run() {
+			pStandard stand = arg(0,pStandard.class);
+			stand.process()
+			.run(pTile.getRun(CT.OBTAIN_VAR), "bloc_ref", "")
+			.openSec()
+			.param("ref", "bloc_ref_watch", "var_link_ref", "bloc_ref", 
+					"var_link_class", String.class.getName())
+			.param("width", (int)8)
+			.param("run_right", new nRun() {public void run() {
+				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
+						"bloc_ref_watch");
+				if (triggP_w == null) return;
+				
+				for (String par : PlaneApplet.app.bloc.blocs.allKey()) {
+					nGUI.add_dropmenu_entry(par, new nRun(instance) { public void run() {
+						((pInstance)builder).setVar("bloc_ref", par); }});
+				}
+				nGUI.open_dropmenu(triggP_w);
+			}})
+			.commande(pTile.getCom(CT.ADD_WATCH))
+			.closeSec()
+			.run(pTile.getRun(CT.OBTAIN_VAR), "val_ref", "")
+			.openSec()
+			.param("ref", "val_ref_watch", "var_link_ref", "val_ref", 
+					"var_link_class", String.class.getName())
+			.param("width", (int)8)
+			.param("run_right", new nRun() {public void run() {
+				nWidget triggP_w = instance.get("get_mapped_widget", nWidget.class, 
+						"val_ref_watch");
+				if (triggP_w == null) return;
+				String bloc_ref = instance.getVar("bloc_ref", String.class);
+				sValueBloc bloc = PlaneApplet.app.bloc.getBloc(bloc_ref);
+				if (bloc == null) return;
+				for (String par : bloc.values.allKey()) {
+					nGUI.add_dropmenu_entry(bloc.values.get(par).type + " - " + par, 
+							new nRun(instance) { public void run() {
+						((pInstance)builder).setVar("val_ref", par); }}); }
+				nGUI.open_dropmenu(triggP_w);
+			}})
+			.commande(pTile.getCom(CT.ADD_WATCH))
+			.closeSec();
+		}});
+		
+
 		
 		
 		
@@ -859,10 +991,19 @@ public class pFuncBook {
 			if (o1 != null && o2 != null && (o2 instanceof pBody)) {
 				pBody bod = (pBody)o2;
 				pParam par = bod.param(param_ref);
-				if (par != null && par.has(data_ref, o1.getClass())) {
+				if (par == null) return pFunc.C.NEXT;
+				if (par.hasDt(data_ref, o1.getClass())) {
 					if (ask("exec_in_instance", Boolean.class)) 
 						instance.setVar("watch", Utl.to_string(o1));
-					par.set(data_ref, o1);
+					par.setDt(data_ref, o1);
+				} else if (par.hasRef(data_ref) && (o1 instanceof pParam)) {
+					if (ask("exec_in_instance", Boolean.class)) 
+						instance.setVar("watch", ((pParam)o1).pool_ref);
+					par.setRef(data_ref, (pParam)o1);
+				} else if (par.hasBody(data_ref) && (o1 instanceof pBody)) {
+					if (ask("exec_in_instance", Boolean.class)) 
+						instance.setVar("watch", ((pBody)o1).pool_ref);
+					par.setBody(data_ref, (pBody)o1);
 				}
 			}
 			return pFunc.C.NEXT;
@@ -904,12 +1045,23 @@ public class pFuncBook {
 				pProperty prop = pProperty.get(par_ref);
 				if (prop == null) return;
 				for (Map.Entry<Class<?>, nMap<Integer>> me : prop.data_vals.entrySet()) {
-//					Class<?> ct = me.getKey();
+					Class<?> ct = me.getKey(); 
+					String cl_name = ct.getSimpleName() + " - ";
 					for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) {
 						String k = map_me.getKey();
-						nGUI.add_dropmenu_entry(k, new nRun(instance) { public void run() {
+						nGUI.add_dropmenu_entry(cl_name + k, new nRun(instance) { public void run() {
 							((pInstance)builder).setVar("data_ref", k); }});
 					}
+				}
+				for (Map.Entry<String,Integer> map_me : prop.ref_vals.entrySet()) {
+					String k = map_me.getKey();
+					nGUI.add_dropmenu_entry("param - "+k, new nRun(instance) { public void run() {
+						((pInstance)builder).setVar("data_ref", k); }});
+				}
+				for (Map.Entry<String,Integer> map_me : prop.body_vals.entrySet()) {
+					String k = map_me.getKey();
+					nGUI.add_dropmenu_entry("body - "+k, new nRun(instance) { public void run() {
+						((pInstance)builder).setVar("data_ref", k); }});
 				}
 				nGUI.open_dropmenu(triggP_w);
 			}})
@@ -927,10 +1079,10 @@ public class pFuncBook {
 			String data_ref = ask("data_ref", String.class);
 			if (o1 != null && o2 != null && (o2 instanceof pParam)) {
 				pParam par = (pParam)o2;
-				if (par != null && par.has(data_ref, o1.getClass())) {
+				if (par != null && par.hasDt(data_ref, o1.getClass())) {
 					if (ask("exec_in_instance", Boolean.class)) 
 						instance.setVar("watch", Utl.to_string(o1));
-					par.set(data_ref, o1);
+					par.setDt(data_ref, o1);
 				}
 			}
 			return pFunc.C.NEXT;

@@ -278,6 +278,7 @@ public class nRenderer {
 		box.mobspawn.clear();
 		for (Body b : tileLayer.map_bod) box.world.destroyBody(b);
 		tileLayer.map_bod.clear();
+		tileLayer.clear_cells();
 		
 		auraLayer.dispose();
 		solidLayer.dispose();
@@ -285,6 +286,20 @@ public class nRenderer {
 		lightLayer.dispose();
 		visionLayer.dispose();
 
+	}
+	
+	public void clear_particles() {
+		auraLayer.clear_particles();
+		solidLayer.clear_particles();
+		colorLayer.clear_particles();
+		lightLayer.clear_particles();
+	}
+
+	public void tick_particles() {
+		auraLayer.tick_particles();
+		solidLayer.tick_particles();
+		colorLayer.tick_particles();
+		lightLayer.tick_particles();
 	}
 	
 	
@@ -329,15 +344,17 @@ public class nRenderer {
 	}
 	
 	public boolean map_is_setup = false;
+	public String current_map_path = "";
 	
 	public void setupMap(String path) {
 
-		if (map_is_setup) clearMap();
+		if (current_map_path.equals(path)) return;
+		current_map_path = Utl.copy(path);
 		
+		if (map_is_setup) clearMap();
 		map_is_setup = true;
 		
 		map = new TmxMapLoader(new InternalFileHandleResolver()).load(path);
-		
 		processMap(map);
 		
 	}

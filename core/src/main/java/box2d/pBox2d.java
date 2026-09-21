@@ -160,8 +160,6 @@ public class pBox2d extends pSystem {
 			.addRef("def", "bullet")
 			.addData("pos", new Vector2())
 			.addData("rot", 0f)
-			.addData("aura_id", (int)-1)
-			.addData("light_id", (int)-1)
 			;
 
 
@@ -205,7 +203,6 @@ public class pBox2d extends pSystem {
 			.addRef("def", "shape")
 			.addData("pos", new Vector2())
 			.addData("rot", 0f)
-			.addData("body_id", (int)-1)
 			.newRun("get_body", new nRun() { public Object get() {
 				pParam par = contextParam();
 				pBox2d box = par.space.app.getSystem(pBox2d.class);
@@ -453,9 +450,9 @@ public class pBox2d extends pSystem {
 //			if (app.config.STARTUP_MAP_PATH.length() > 0)
 //				renderer.setupMap(app.config.STARTUP_MAP_PATH);
 
-//			app.outputs.put("load_map", new nRun() { public void run() {
-//				String p = arg(0, String.class);
-//				if (p != null) loadMap(p); }});
+			app.outputs.put("load_map", new nRun() { public void run() {
+				String p = arg(0, String.class);
+				if (p != null) loadMap(p); }});
 			
 		}
 		public void loadMap(String p) {
@@ -478,9 +475,13 @@ public class pBox2d extends pSystem {
 			
 			//		if (!app.RELEASE) 
 			tool_setup(true);
-			
+
 			space.addEventSpaceStart(new nRun() { public void run() {
 				space_start();
+			}});
+
+			space.addEventSpaceClear(new nRun() { public void run() {
+				space_clear();
 			}});
 			
 
@@ -549,8 +550,8 @@ public class pBox2d extends pSystem {
 
 		public void frame(float delta) { 
 			val_body_nb.set(bodys.size());
-			val_bullet_nb.set(bullet_units.size());
-			val_shape_nb.set(shape_units.size());
+			val_bullet_nb.set(space.param_pools.get("bullet_unit").size());
+			val_shape_nb.set(space.param_pools.get("shape_unit").size());
 			int c = 0;
 			for (LightLayer l : renderer.rayHandler.layerList) {
 				c += l.lightList.size;
@@ -581,6 +582,7 @@ public class pBox2d extends pSystem {
 				doPhysicsStep(delta);
 				for (pBody b : Utl.duplic(space.familyMember("box_body"))) 
 					update_body(b);
+				renderer.tick_particles();
 			}
 
 		}
@@ -818,11 +820,17 @@ public class pBox2d extends pSystem {
 		
 		
 		public void space_start() {
+			
+		}
+		public void space_clear() {
 			for (pParam p : app.space.param_pools.get("bullet_unit").temp_all())
 				clear_bullet(p);
 			for (pParam p : app.space.param_pools.get("shape_unit").temp_all())
 				clear_shape(p);
+			renderer.clear_particles();
 		}
+		
+		
 		
 		
 
@@ -970,16 +978,9 @@ public class pBox2d extends pSystem {
 		
 		
 		
-		private int get_free_shape_nb() {
-			int n = 0; while (shape_units.get(n) != null) n++; return n; }
-
-		public HashMap<Integer,Body> shape_units = 
-				new HashMap<Integer,Body>();
-		
 		public Body getShapeBody(pParam p) {
-			return shape_units.get(p.getInt("body_id")); }
+			return p != null ? p.object("body", Body.class) : null; }//shape_units.get(p.getInt("body_id")); }
 
-		private FixtureDef fixtDef = new FixtureDef();
 		public void init_shape(pParam par, pParam shape, pParam geom, Vector2 pos, float r) {
 			par.setRef("def",shape);
 			
@@ -991,13 +992,11 @@ public class pBox2d extends pSystem {
 			else if (shape.getBoo("static"))
 				bodyDef.type = BodyType.StaticBody;
 			bodyDef.position.set(pos); bodyDef.angle = r;
-			par.set("pos",pos); par.set("rot", r);
+			par.setDt("pos",pos); par.setDt("rot", r);
 
 			Body body = world.createBody(bodyDef);			
 			body.setUserData(par);
-			int nb = get_free_shape_nb();
-			shape_units.put(nb, body);
-			par.set("body_id", nb);
+			par.setObject("body",body);
 			
 			if (shape.getBoo("transparent"))
 				renderer.rayHandler.transparent.add(body);
@@ -1010,24 +1009,26 @@ public class pBox2d extends pSystem {
 			if (shape.getBoo("body_breaker"))
 				body_breaker.add(body);
 			
+			TrigBatchLight.Unit su = renderer.solidLayer.newTrigBatchUnit();
+			attachToBody(su, body);
+			FixtureDef fixtDef = new FixtureDef();
 			fixtDef.density = shape.getFlt("density");
 			fixtDef.friction = shape.getFlt("friction");
 			fixtDef.restitution = shape.getFlt("restitution");
 			fixtDef.isSensor = shape.getBoo("sensor");
 			PolygonShape polygonshape = new PolygonShape();
-			Vector2[] pl = new Vector2[3];
-			pl[0] = new Vector2(); pl[1] = new Vector2(); pl[2] = new Vector2();
-			TrigBatchLight.Unit su = renderer.solidLayer.newTrigBatchUnit();
-			attachToBody(su, body);
+			fixtDef.shape = polygonshape; 
 			
 			Float[] verts = geom.run_get("get_flt_array", Float[].class);
 			int faceNb = verts.length / 9;
-			for (int i = 0 ; i < faceNb ; i++) {
+			for (int ia = 0 ; ia < faceNb ; ia++) {
+				int i = ia * 9;
+				Vector2[] pl = new Vector2[3];
+				pl[0] = new Vector2(); pl[1] = new Vector2(); pl[2] = new Vector2();
 				pl[0].set(verts[i],verts[i+1]); 
 				pl[1].set(verts[i+3],verts[i+4]); 
 				pl[2].set(verts[i+6],verts[i+7]);
 				polygonshape.set(pl);
-				fixtDef.shape = polygonshape;
 				body.createFixture(fixtDef);
 				su.trig(verts[i], verts[i+1], verts[i+3], verts[i+4], verts[i+6], verts[i+7], 
 						verts[i+2], verts[i+5], verts[i+8]);
@@ -1035,9 +1036,9 @@ public class pBox2d extends pSystem {
 		}
 		
 		public void clear_shape(pParam p) {
-			Body body = shape_units.get(p.getInt("body_id"));
+			if (p == null) return;
+			Body body = getShapeBody(p);
 			if (body != null) {
-				shape_units.remove(p.getInt("body_id"),body);
 				world.destroyBody(body);
 				if (lights.get(body) != null) {
 					for (RayHandler.AbstractLight l : lights.get(body)) l.remove();
@@ -1054,7 +1055,7 @@ public class pBox2d extends pSystem {
 		}
 
 		public void update_shape(pParam par) {
-			Body su = shape_units.get(par.getInt("body_id"));
+			Body su = getShapeBody(par);
 			if (su == null || clearing_bodys.contains(su)) {
 				clearing_bodys.remove(su);
 				clear_shape(par);
@@ -1065,7 +1066,7 @@ public class pBox2d extends pSystem {
 				su.setTransform(p.x,p.y,par.getFlt("rot"));
 			} else {
 				par.setVec("pos",su.getPosition());
-				par.set("rot",su.getAngle());
+				par.setDt("rot",su.getAngle());
 			}
 		}
 
@@ -1166,15 +1167,9 @@ public class pBox2d extends pSystem {
 			}
 		};
 		
-		private int get_free_bullet_nb() {
-			int n = 0; while (bullet_units.get(n) != null) n++; return n; }
-
-		public HashMap<Integer,SwarmLight.Unit> bullet_units = 
-				new HashMap<Integer,SwarmLight.Unit>();
-		
 		public void init_bullet(pParam par, pParam b, Vector2 pos, float rot) {
 			par.setRef("def",b);
-			par.set("pos",pos); par.set("rot",rot);
+			par.setDt("pos",pos); par.setDt("rot",rot);
 			Color col = Utl.color(b.getInt("r"), b.getInt("g"), 
 					b.getInt("b"), b.getInt("a"));
 //			
@@ -1182,33 +1177,23 @@ public class pBox2d extends pSystem {
 				float adist = b.getFlt("aura_dist");
 				SwarmLight.Unit su = renderer.auraLayer.newSwarmLightUnit(
 						new Color(col), adist);
-				int nb = get_free_bullet_nb();
-				bullet_units.put(nb, su);
-				par.set("aura_id", nb);
+				par.setObject("aura",su);
 			}
 			
 			if (b.getBoo("light")) {
 				float ldist = b.getFlt("light_dist");
 				SwarmLight.Unit su = renderer.lightLayer.newSwarmLightUnit(
 						new Color(col), ldist);
-				int nb = get_free_bullet_nb();
-				bullet_units.put(nb, su);
-				par.set("light_id", nb);
+				par.setObject("light",su);
 			}
 		}
 		
 		public void clear_bullet(pParam p) {
-			pParam def = p.getRef("def");
-			if (def.getBoo("light")) {
-				SwarmLight.Unit su = bullet_units.get(p.getInt("light_id"));
-				bullet_units.remove(p.getInt("light_id"),su);
-				if (su != null) su.remove();
-			}
-			if (def.getBoo("aura")) {
-				SwarmLight.Unit su = bullet_units.get(p.getInt("aura_id"));
-				bullet_units.remove(p.getInt("aura_id"),su);
-				if (su != null) su.remove();
-			}
+			if (p == null) return;
+			SwarmLight.Unit su = p.object("light", SwarmLight.Unit.class);
+			if (su != null) su.remove();
+			su = p.object("aura", SwarmLight.Unit.class);
+			if (su != null) su.remove();
 			p.clear();
 		}
 
@@ -1275,14 +1260,12 @@ public class pBox2d extends pSystem {
 				pos.set(m);
 				p.setVec("pos",pos);
 				if (def.getBoo("light")) {
-					SwarmLight.Unit su = bullet_units.get(p.getInt("light_id"));
-//					su.setPos(pos,rot);
+					SwarmLight.Unit su = p.object("light", SwarmLight.Unit.class);
 					if (su != null) su.setPos(ppos,pos);
 					else { clear_bullet(p); return; }
 				}
 				if (def.getBoo("aura")) {
-					SwarmLight.Unit su = bullet_units.get(p.getInt("aura_id"));
-//					su.setPos(pos,rot);
+					SwarmLight.Unit su = p.object("aura", SwarmLight.Unit.class);
 					if (su != null) su.setPos(ppos,pos);
 					else { clear_bullet(p); return; }
 				}
@@ -1361,7 +1344,7 @@ public class pBox2d extends pSystem {
 		private int get_free_bod_nb() {
 			int n = 0; while (bodys.get(""+n) != null) n++; return n; }
 
-		public nMap<Joint> joints = new nMap<Joint>();
+//		public nMap<Joint> joints = new nMap<Joint>();
 		//		private int joint_nb = 0;
 		
 		public HashMap<Body,ArrayList<RayHandler.AbstractLight>> lights = 
@@ -1432,9 +1415,19 @@ public class pBox2d extends pSystem {
 					
 					renderer.newVisionLight(body);
 					
+					// front ray
+//					attachToBody(renderer.colorLayer.newRectLight(
+//							10, new Color(1f,0f,0f,1f), 0f, 0f, 200f, 40f), 
+//							body, 80f, -20f, 0f);
+					
+					// back burner
 					attachToBody(renderer.colorLayer.newRectLight(
-							10, new Color(1f,0f,0f,1f), 0f, 0f, 200f, 40f), 
-							body, 80f, -20f, 0f);
+							10, new Color(1f,0f,0f,1f), 0f, 0f, 50f, 80f), 
+							body, -90f, -40f, 0f);
+					attachToBody(renderer.lightLayer.newRectLight(
+							10, new Color(1f,0f,0f,1f), 0f, 0f, 50f, 80f), 
+							body, -90f, -40f, 0f);
+					
 					
 				}
 

@@ -115,6 +115,14 @@ public class LightLayer extends nRenderer.Layer {
 	public void render() {
 		rayHandler.renderLayer(this);
 	}
+	
+	public void tick_particles() {
+		for (ParticleLight p : parts) p.tick();
+	}
+
+	public void clear_particles() {
+		for (ParticleLight p : parts) p.clear_units();
+	}
 
 	public ArrayList<ParticleLight> parts = new ArrayList<ParticleLight>();
 

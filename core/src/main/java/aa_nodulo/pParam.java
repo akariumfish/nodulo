@@ -556,7 +556,7 @@ public class pParam extends sPoolable {
 				for (Map.Entry<String, Integer> me : 
 						prop.data_vals.get(Utl.data_type[i]).entrySet()) {
 					Object o = getDef(me.getKey(), Utl.data_type[i]);
-					if (o != null) set(me.getKey(), Utl.copy(o));
+					if (o != null) setDt(me.getKey(), Utl.copy(o));
 				}
 		}
 		
@@ -750,6 +750,10 @@ public class pParam extends sPoolable {
 		if (change) signalChangeBody(r, b.pool_ref);
 		return this; 
 	}
+	public boolean hasBody(String r) {
+		if (prop == null) return false;
+		return prop.getBodyValId(r) > -1;
+	}
 	public pBody getBody(String r) {
 		if (prop == null) return null;
 		int bod_id = prop.getBodyValId(r);
@@ -776,6 +780,10 @@ public class pParam extends sPoolable {
 		if (change) signalChangeRef(r, p.pool_ref);
 		return this; 
 	}
+	public boolean hasRef(String r) {
+		if (prop == null) return false;
+		return prop.getRefValId(r) > -1; }
+
 	public pParam getRef(String r) {
 		if (prop == null) return null;
 		int ref_id = prop.getRefValId(r);
@@ -786,11 +794,11 @@ public class pParam extends sPoolable {
 
 	
 
-	public boolean has(String r, Class<?> ct) { 
+	public boolean hasDt(String r, Class<?> ct) { 
 		int val_id = prop.getDataValId(r, ct);
 		if (val_id == -1) return false;
 		return true; }
-	public pParam set(String r, Object o) {
+	public pParam setDt(String r, Object o) {
 		if (r == null || o == null) return this; 
 		int val_id = prop.getDataValId(r, o.getClass());
 		if (val_id == -1) return this;
@@ -806,24 +814,24 @@ public class pParam extends sPoolable {
 		if (change) signalChangeData(r, o);
 		return this; 
 	}
-	public Object get(String r) { 
+	public Object getDt(String r) { 
 		Class<?> ct = prop.getDataValClass(r);
 		int val_id = prop.getDataValId(r, ct);
 		if (val_id == -1) return null;
 		int data_id = Utl.type_class_index.get(ct);
 		return Utl.copy(datas[data_id][val_id]); 
 	}
-	public <T> T get(String r, Class<T> ct) { 
+	public <T> T getDt(String r, Class<T> ct) {
 		int val_id = prop.getDataValId(r, ct);
 		if (val_id == -1) return null;
 		int data_id = Utl.type_class_index.get(ct);
 		return Utl.copy((T)datas[data_id][val_id]); 
 	}
-	public String getStr(String r) { return get(r, String.class); }
-	public int getInt(String r) { return get(r, Integer.class); }
-	public boolean getBoo(String r) { return get(r, Boolean.class); }
-	public float getFlt(String r) { return get(r, Float.class); }
-	public Vector2 getVec(String r) { return get(r, Vector2.class); }
+	public String getStr(String r) { return getDt(r, String.class); }
+	public int getInt(String r) { return getDt(r, Integer.class); }
+	public boolean getBoo(String r) { return getDt(r, Boolean.class); }
+	public float getFlt(String r) { return getDt(r, Float.class); }
+	public Vector2 getVec(String r) { return getDt(r, Vector2.class); }
 	
 	public pParam setVec(String r, Vector2 v) { 
 		int val_id = prop.getDataValId(r, Vector2.class);

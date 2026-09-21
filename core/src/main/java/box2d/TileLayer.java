@@ -118,6 +118,10 @@ public class TileLayer extends nRenderer.Layer {
 		private Texture texture;
 		private float vertices[] = new float[NUM_VERTICES];
 		private float x1,y1,x2,y2,u1,v1,u2,v2;
+		
+		public void clear() {
+			prop = null; region = null; texture = null; maptile = null;
+		}
 
 		public Tile(TiledMapTile t) {
 			maptile = t; id = t.getId();
@@ -235,7 +239,6 @@ public class TileLayer extends nRenderer.Layer {
 
 	protected float unitScale;
 
-
 	public TileLayer(nRenderer tm) { this(tm,0); }
 	public TileLayer(nRenderer tm, int p) {
 		super(tm,p);
@@ -251,6 +254,12 @@ public class TileLayer extends nRenderer.Layer {
 //		this(tm,p);
 //		loadMap(ml);
 //	}
+	
+	public void clear_cells() {
+		for (Tile t : tiles.all()) t.clear();
+		tiles.clear();
+		all_cells.clear();
+	}
 	
 	public void loadMap(TiledMapTileLayer ml) {
 		mapLayer = ml;
