@@ -1036,26 +1036,28 @@ public class pBox2d extends pSystem {
 		
 		public void clear_shape(pParam p) {
 			Body body = shape_units.get(p.getInt("body_id"));
-			shape_units.remove(p.getInt("body_id"),body);
-			world.destroyBody(body);
-			if (lights.get(body) != null) {
-				for (RayHandler.AbstractLight l : lights.get(body)) l.remove();
-				lights.get(body).clear();
+			if (body != null) {
+				shape_units.remove(p.getInt("body_id"),body);
+				world.destroyBody(body);
+				if (lights.get(body) != null) {
+					for (RayHandler.AbstractLight l : lights.get(body)) l.remove();
+					lights.get(body).clear();
+				}
+				renderer.rayHandler.transparent.remove(body);
+				renderer.visionLayer.transparent.remove(body);
+				renderer.lightLayer.transparent.remove(body);
+				renderer.auraLayer.transparent.remove(body);
+				break_bodys.remove(body);
+				clearing_bodys.remove(body);
 			}
-			renderer.rayHandler.transparent.remove(body);
-			renderer.visionLayer.transparent.remove(body);
-			renderer.lightLayer.transparent.remove(body);
-			renderer.auraLayer.transparent.remove(body);
-			break_bodys.remove(body);
-			clearing_bodys.remove(body);
 			p.clear();
 		}
 
 		public void update_shape(pParam par) {
 			Body su = shape_units.get(par.getInt("body_id"));
-			if (clearing_bodys.contains(su)) {
+			if (su == null || clearing_bodys.contains(su)) {
 				clearing_bodys.remove(su);
-				par.clear();
+				clear_shape(par);
 				return;
 			}
 			if (par.getRef("def").getBoo("param_ctrl")) {
@@ -1200,12 +1202,12 @@ public class pBox2d extends pSystem {
 			if (def.getBoo("light")) {
 				SwarmLight.Unit su = bullet_units.get(p.getInt("light_id"));
 				bullet_units.remove(p.getInt("light_id"),su);
-				su.remove();
+				if (su != null) su.remove();
 			}
 			if (def.getBoo("aura")) {
 				SwarmLight.Unit su = bullet_units.get(p.getInt("aura_id"));
 				bullet_units.remove(p.getInt("aura_id"),su);
-				su.remove();
+				if (su != null) su.remove();
 			}
 			p.clear();
 		}
@@ -1275,12 +1277,14 @@ public class pBox2d extends pSystem {
 				if (def.getBoo("light")) {
 					SwarmLight.Unit su = bullet_units.get(p.getInt("light_id"));
 //					su.setPos(pos,rot);
-					su.setPos(ppos,pos);
+					if (su != null) su.setPos(ppos,pos);
+					else { clear_bullet(p); return; }
 				}
 				if (def.getBoo("aura")) {
 					SwarmLight.Unit su = bullet_units.get(p.getInt("aura_id"));
 //					su.setPos(pos,rot);
-					su.setPos(ppos,pos);
+					if (su != null) su.setPos(ppos,pos);
+					else { clear_bullet(p); return; }
 				}
 			}
 		}

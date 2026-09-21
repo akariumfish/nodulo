@@ -68,7 +68,7 @@ public class nDrawer {
 	public final BitmapFont bitmapfont, bitmapfont_2y;
 	public BitmapFont font;
 	public PolygonSpriteBatch spritebatch;
-	public Texture texture;
+//	public Texture texture;
 	public ShapeDrawer drawer;
 	
 	public DrawContext context;
@@ -185,7 +185,7 @@ public class nDrawer {
 		
 		bitmapfont.dispose(); bitmapfont_2y.dispose();
 		spritebatch.dispose();
-		texture.dispose();
+//		texture.dispose();
 		transf.reset();
 	}
 	public void resize(int w, int h) {
