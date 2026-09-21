@@ -23,7 +23,7 @@ Nodulo is intended to be used by anybody and is trying to be as accessible as po
 Please be aware that this project is only a prototype and is currently barely fonctional. It is still in early stage of its development and is released only as a proof of concept.
 
 
- - Dependencies :
+## - Dependencies :
 
 Nodulo is build in java using the libgdx environment and is using the following libgdx libraries as it or as exemple :
 
