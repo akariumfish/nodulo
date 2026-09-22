@@ -1503,7 +1503,10 @@ public class pBox2d extends pSystem {
 						ArrayList<Integer> faceA = geom.getCollecData("faceA", Integer.class);
 						ArrayList<Integer> faceB = geom.getCollecData("faceB", Integer.class);
 						ArrayList<Integer> faceC = geom.getCollecData("faceC", Integer.class);
+						ArrayList<Integer> faceL = geom.getCollecData("faceL", Integer.class);
+						ArrayList<Float> faceT = geom.getCollecData("faceT", Float.class);
 						if (faceA.size() != faceB.size() || faceA.size() != faceC.size() || 
+								faceA.size() != faceL.size() || faceA.size() != faceT.size() || 
 								color.size() != point.size()) return;
 
 						TrigBatchLight.Unit su = renderer.solidLayer.newTrigBatchUnit();
@@ -1515,11 +1518,11 @@ public class pBox2d extends pSystem {
 									p2 < 0 || p2 >= point.size() || 
 									p3 < 0 || p3 >= point.size()) continue;
 							Vector2[] pl = new Vector2[3];
-//							float s = b.getFlt("ref","scale");
+							float s = b.getFlt("ref","scale");
 							pl[0] = Utl.copy(point.get(p1)); 
 							pl[1] = Utl.copy(point.get(p2)); 
 							pl[2] = Utl.copy(point.get(p3));
-//							pl[0].scl(s); pl[1].scl(s); pl[2].scl(s);
+							pl[0].scl(s); pl[1].scl(s); pl[2].scl(s);
 							PolygonShape polygonshape = new PolygonShape();
 							polygonshape.set(pl);
 							FixtureDef fixtureDef2 = new FixtureDef();
@@ -1531,14 +1534,30 @@ public class pBox2d extends pSystem {
 							Fixture fixture = body.createFixture(fixtureDef2);
 //							fixture.setUserData(new LightData(1f));
 
-							float s = 1.1f;
-							pl[0].scl(s); pl[1].scl(s); pl[2].scl(s);
-							su.trig(pl[0].x, pl[0].y, pl[1].x, pl[1].y, pl[2].x, pl[2].y, 
-									new Color(0.1f,0.1f,0.1f,0.3f));
-							s = 1f / 1.1f;
-							pl[0].scl(s); pl[1].scl(s); pl[2].scl(s);
-							su.trig(pl[0].x, pl[0].y, pl[1].x, pl[1].y, pl[2].x, pl[2].y, 
-									Utl.intToColor(color.get(p1)));
+							float lineThick = faceT.get(i);
+							if (lineThick >= 0) {
+								Color coll = Utl.intToColor(faceL.get(i));
+								SolidLight.Unit slu = renderer.solidLayer
+										.newSolidLightUnit(3, lineThick, coll);
+								attachToBody(slu, body);
+								float col1 = Utl.intToColor(color.get(p1)).toFloatBits();
+								float col2 = Utl.intToColor(color.get(p2)).toFloatBits();
+								float col3 = Utl.intToColor(color.get(p3)).toFloatBits();
+								Vector2 cent = new Vector2(pl[0]).add(pl[1]).add(pl[2]).scl(1f/3f);
+								slu.pushCenter(cent.x,cent.y,col1);
+								slu.pushPoint(pl[0].x, pl[0].y, col1);
+								slu.pushPoint(pl[1].x, pl[1].y, col2);
+								slu.pushPoint(pl[2].x, pl[2].y, col3);
+							} else {
+								s = 1.1f;
+								pl[0].scl(s); pl[1].scl(s); pl[2].scl(s);
+								su.trig(pl[0].x, pl[0].y, pl[1].x, pl[1].y, pl[2].x, pl[2].y, 
+										new Color(0.1f,0.1f,0.1f,0.3f));
+								s = 1f / 1.1f;
+								pl[0].scl(s); pl[1].scl(s); pl[2].scl(s);
+								su.trig(pl[0].x, pl[0].y, pl[1].x, pl[1].y, pl[2].x, pl[2].y, 
+										Utl.intToColor(color.get(p1)));
+							}
 						}
 					}
 				}

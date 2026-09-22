@@ -111,6 +111,14 @@ public class pGeom extends pSystem {
 				Color col = arg(0, Color.class);
 				instance.setVar("fill_color", Utl.rgbToInt(col));
 			}});
+			stand.newRun("set_line_color", new nRun() {public void run() {
+				Color col = arg(0, Color.class);
+				instance.setVar("line_color", Utl.rgbToInt(col));
+			}});
+			stand.newRun("set_line_thick", new nRun() {public void run() {
+				float t = arg(0, Float.class);
+				instance.setVar("line_thick", t);
+			}});
 			stand.newRun("add_point", new nRun() {public void run() {
 				float x = arg(0, Float.class);
 				float y = arg(1, Float.class);

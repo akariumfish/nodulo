@@ -54,8 +54,8 @@ public class PlaneApplet extends App {
 //	public static boolean USE_STEAM = true;
 	public static boolean USE_STEAM = false;
 
-//	public static boolean USE_GLPROFILER = true;
-	public static boolean USE_GLPROFILER = false;
+	public static boolean USE_GLPROFILER = true;
+//	public static boolean USE_GLPROFILER = false;
 
 //	public static boolean PROFILER_FOCUS_VIEW = true;
 	public static boolean PROFILER_FOCUS_VIEW = false;

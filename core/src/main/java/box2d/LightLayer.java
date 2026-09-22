@@ -124,6 +124,18 @@ public class LightLayer extends nRenderer.Layer {
 		for (ParticleLight p : parts) p.clear_units();
 	}
 
+	public ArrayList<SolidLight> solids = new ArrayList<SolidLight>();
+
+	public SolidLight.Unit newSolidLightUnit(int ray, float line, Color cl) {
+		if (solids.size() == 0) solids.add(new SolidLight(this));
+		SolidLight.Unit unit = null;
+		for (SolidLight s : solids) {
+			unit = s.newUnit(ray, line, cl);
+			if (unit != null) return unit; }
+		SolidLight swrm = new SolidLight(this);
+		solids.add(swrm);
+		return swrm.newUnit(ray,line,cl); }
+
 	public ArrayList<ParticleLight> parts = new ArrayList<ParticleLight>();
 
 	public ParticleLight.Unit newPartLightUnit(Color col, float dist) {

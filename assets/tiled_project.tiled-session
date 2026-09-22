@@ -87,11 +87,11 @@
             "scaleInDock": 1
         },
         "map.tmx": {
-            "scale": 0.79970703125,
-            "selectedLayer": 0,
+            "scale": 1,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 512.0625228965686,
-                "y": 512.0625228965686
+                "x": 378.5,
+                "y": 495.5
             }
         },
         "tileset.tsx": {

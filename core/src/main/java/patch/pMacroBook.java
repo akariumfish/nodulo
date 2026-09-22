@@ -60,6 +60,7 @@ public class pMacroBook {
 
 			list.get("geom").patch.app.addDelayEvent(2, new nRun() { public void run() {
 				list.get("geom").run("empty_geom");
+				list.get("geom").run("set_line_thick",-1f);
 				list.get("geom").run("set_fill_color",new Color(0.75f,0.8f,0.85f,0.95f));
 				list.get("geom").run("new_face",40f,0f,-30f,-10f,-30f,10f);
 				list.get("geom").run("set_fill_color",new Color(0.5f,0.5f,0.5f,0.7f));
@@ -129,12 +130,18 @@ public class pMacroBook {
 			
 			list.get("geom").patch.app.addDelayEvent(2, new nRun() { public void run() {
 				geom.run("empty_geom");
+				geom.run("set_line_color",new Color(1f,1f,1f,1f));
+				geom.run("set_line_thick",10f);
 				geom.run("new_trig",0f,0f,80f,0f);
+				geom.run("set_line_color",new Color(0f,0f,0f,1f));
 				geom.run("set_fill_color",new Color(0.8f,0.8f,0.8f,1f));
 				geom.run("new_trig",0f,0f,30f,Utl.PI);
 				geom2.run("empty_geom");
+				geom2.run("set_line_thick",10f);
+				geom2.run("set_line_color",new Color(0.87f,0.9f,0.9f,0.9f));
 				geom2.run("set_fill_color",new Color(0.1f,0.1f,0.1f,1f));
 				geom2.run("new_trig",0f,0f,80f,0f);
+				geom2.run("set_line_thick",0f);
 				geom2.run("set_fill_color",new Color(0.7f,0.7f,0.7f,1f));
 				geom2.run("new_trig",0f,0f,30f,0f);
 				geom2.run("new_trig",0f,0f,30f,Utl.PI);
@@ -208,16 +215,19 @@ public class pMacroBook {
 			
 			list.get("geom").patch.app.addDelayEvent(2, new nRun() { public void run() {
 				geom.run("empty_geom");
+				geom.run("set_line_thick",-1f);
 				geom.run("set_fill_color",new Color(1f,1f,1f,1f));
 				geom.run("new_face",-40f,20f,80f,20f,-40f,40f);
 				geom.run("new_face",-40f,-20f,80f,-20f,-40f,-40f);
 				geom.run("set_fill_color",new Color(0.3f,0.3f,0.3f,1f));
 				geom.run("new_trig",-15f,50f,35f,0f);
 				geom.run("new_trig",-15f,-50f,35f,0f);
+				geom.run("set_line_thick",5f);
+				geom.run("set_line_color",new Color(0.1f,0.1f,0.1f,1f));
 				geom.run("set_fill_color",new Color(0.65f,0.65f,0.65f,1f));
 				geom.run("new_trig",0f,0f,80f,0f);
-				geom.run("set_fill_color",new Color(0.4f,0.85f,0.9f,0.85f));
-				geom.run("new_trig",-10f,0f,45f,0f);
+				geom.run("set_line_thick",10f);
+				geom.run("set_line_color",new Color(0.4f,0.85f,0.9f,1f));
 				geom.run("set_fill_color",new Color(0.2f,0.2f,0.2f,1f));
 				geom.run("new_trig",-10f,0f,35f,0f);
 			}});
