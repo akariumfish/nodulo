@@ -809,6 +809,28 @@ public class pBox2d extends pSystem {
 		
 		
 
+		
+		
+		
+		
+		
+		
+		
+		
+		public void space_start() {
+			
+		}
+		public void space_clear() {
+			for (pParam p : app.space.param_pools.get("bullet_unit").temp_all())
+				clear_bullet(p);
+			for (pParam p : app.space.param_pools.get("shape_unit").temp_all())
+				clear_shape(p);
+			renderer.clear_particles();
+		}
+		
+		
+		
+
 		public void particle(float x, float y, float r, Color c, float d) {
 			int l = (int)Utl.rng(10,40);
 			float s = Utl.rng(2f,22f);
@@ -842,28 +864,6 @@ public class pBox2d extends pSystem {
 				particle(x,y,r,c);
 			}
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		public void space_start() {
-			
-		}
-		public void space_clear() {
-			for (pParam p : app.space.param_pools.get("bullet_unit").temp_all())
-				clear_bullet(p);
-			for (pParam p : app.space.param_pools.get("shape_unit").temp_all())
-				clear_shape(p);
-			renderer.clear_particles();
-		}
-		
-		
-		
 		
 
 		public void shootBullet(String name, Vector2 pos, float rot) {

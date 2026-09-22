@@ -1221,7 +1221,7 @@ public class pGeom extends pSystem {
 			if (sel_body != null) { sel_body.clear(); sel_body = null; }
 		}});
 		interf.add_row();
-		nWidgetGroup paramlist = interf.add_treelist(9,8);
+		nWidgetGroup paramlist = interf.add_treelist(10,8);
 		
 		interf.add_col_separator();
 		
