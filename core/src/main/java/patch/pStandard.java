@@ -253,7 +253,7 @@ public class pStandard {
 			Class<?>[] ac = new Class<?>[args.length/2];
 			for (Object a : args) {
 				if (k == null && (a instanceof String)) { k = (String)a; }
-				if (k != null && (a instanceof Class<?>)) { 
+				else if (k != null && (a instanceof Class<?>)) { 
 					ar[cnt] = k; ac[cnt] = (Class<?>)a;
 					k = null; cnt++; } 
 			}
@@ -594,7 +594,7 @@ public class pStandard {
 		String k = null;
 		for (Object a : args) {
 			if (k == null && (a instanceof String)) k = (String)a;
-			if (k != null) { 
+			else if (k != null) { 
 				current_param.set(k,a); 
 				data_pars.replace(ref, new pPar(current_param));
 				k = null; 
@@ -611,7 +611,7 @@ public class pStandard {
 		String k = null;
 		for (Object a : args) {
 			if (k == null && (a instanceof String)) k = (String)a;
-			if (k != null) { 
+			else if (k != null) { 
 				current_param.set(k,a); 
 				data_pars.replace(ref, new pPar(current_param));
 				k = null; 

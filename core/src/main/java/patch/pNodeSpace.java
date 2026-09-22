@@ -209,15 +209,15 @@ public class pNodeSpace {
 				while (pop.hasParam(new_ref)) { 
 					new_ref = need.ref + "_" + cnt2; cnt2++; }
 				pParam np = pop.newParam(need, new_ref);
-//				new_ref = pop.getRef(np);
-//				for (Map.Entry<Class<?>, nMap<Integer>> me : need.data_vals.entrySet()) {
-//					if (me.getValue() != null) {
-//						for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) {
-//							String rf = "def_"+need.ref+"_"+map_me.getKey();
-//							pop.param(new_ref).set(rf, gene_par.get(rf));
-//						}		
-//					}
-//				}
+				new_ref = pop.getRef(np);
+				for (Map.Entry<Class<?>, nMap<Integer>> me : need.data_vals.entrySet()) {
+					if (me.getValue() != null) {
+						for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) {
+							String rf = "def_"+need.ref+"_"+map_me.getKey();
+							pop.param(new_ref).setDt(rf, gene_par.getDt(rf));
+						}		
+					}
+				}
 			}
 			for (pProperty opt : gene_prop.option_props) 
 					if (gene_par.getDt("use_"+opt.ref, Boolean.class)) {
@@ -226,15 +226,15 @@ public class pNodeSpace {
 				while (pop.hasParam(new_ref)) { 
 					new_ref = opt.ref + "_" + cnt2; cnt2++; }
 				pParam np = pop.newParam(opt, new_ref);
-//				new_ref = pop.getRef(np);
-//				for (Map.Entry<Class<?>, nMap<Integer>> me : opt.data_vals.entrySet()) {
-//					if (me.getValue() != null) {
-//						for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) {
-//							String rf = "def_"+opt.ref+"_"+map_me.getKey();
-//							pop.param(new_ref).set(rf, gene_par.get(rf));
-//						}		
-//					}
-//				}
+				new_ref = pop.getRef(np);
+				for (Map.Entry<Class<?>, nMap<Integer>> me : opt.data_vals.entrySet()) {
+					if (me.getValue() != null) {
+						for (Map.Entry<String,Integer> map_me : me.getValue().entrySet()) {
+							String rf = "def_"+opt.ref+"_"+map_me.getKey();
+							pop.param(new_ref).setDt(rf, gene_par.getDt(rf));
+						}		
+					}
+				}
 				
 			}
 		}
@@ -530,6 +530,7 @@ public class pNodeSpace {
 	
 	private static void build_prop_ctrl(pProperty prop, pProcess proc, 
 			String ref, Class<?> clazz, Object ... args) {
+		nMap<Object> settings = Utl.mapArg(args); 
 		proc.commande(pNode.getCom(CT.COM_ADD_ROW));
 		if (clazz == Boolean.class) {
 			proc.openSec()
@@ -599,7 +600,11 @@ public class pNodeSpace {
 					String dt_ref = mr.getKey();
 					Object dt_def = prop.getDataValDef(dt_ref, Utl.data_type[i]);
 					if (dt_def == null) dt_def = Utl.new_object(Utl.data_type[i]);
-					if (!instance.hasVar(dt_ref)) instance.addVar(dt_ref, dt_def);
+					if (!instance.hasVar(dt_ref)) {
+//						if (par == null) 
+							instance.addVar(dt_ref, dt_def);
+//						else instance.addVar(dt_ref, par.getDt(dt_ref));
+					}
 				}
 			}
 			nRun run_frame = new nRun(instance) {public void run() { 

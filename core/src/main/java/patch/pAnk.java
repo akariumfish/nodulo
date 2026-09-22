@@ -17,9 +17,9 @@ public class pAnk {
 	
 	public static void build() {
 		
-		build_book();
-		
-		build_nodes();
+//		build_book();
+//		
+//		build_nodes();
 		
 	}
 	

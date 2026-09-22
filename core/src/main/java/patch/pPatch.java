@@ -63,12 +63,9 @@ public class pPatch {
 		pNodeSpace.build_sheet(data, has_build_statics);
 		
 		if (!has_build_statics) {
-//			pNode.build();
 			pNodeUI.build();
 			pNodeSpace.build_nodes();
 			pNodeAction.build();
-//			pTile.build();
-//			pTileHead.build_nodes();
 			pTileHead.build_tiles();
 			pFunc.build();
 			pAnk.build();

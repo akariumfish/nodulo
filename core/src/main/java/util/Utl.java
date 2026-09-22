@@ -32,6 +32,7 @@ import data.sValue;
 import data.sValueBloc;
 import data.sVec;
 import net.nNetwork;
+import patch.pPar;
 import util.nPool.Poolable;
 
 public class Utl {
@@ -335,6 +336,21 @@ public class Utl {
 		l.clear(); for (Object r : sorting_tmp_list) l.add((T)r);
 		sorting_tmp_list.clear(); }
 	
+	
+	
+	
+	
+	
+	
+	public static nMap<Object> mapArg(Object[] args) {
+		nMap<Object> m = new nMap<Object>();
+		if (args == null || args.length%2 != 0) return m; 
+		String k = null;
+		for (Object a : args) {
+			if (k == null && (a instanceof String)) k = (String)a;
+			else if (k != null) { m.put(k,a); k = null; } }
+		return m;
+	}
 	
 	
 	

@@ -239,12 +239,44 @@ public class pBox2d extends pSystem {
 			;
 			
 			member.newLocalProperty("mem_unit")
+			.addRef("members","member_set")
 			.addRef("shape","shape_unit")
 			.addRef("shape1","shape_unit")
 //			.addRef("shape2","shape_unit")
 //			.addRef("shape3","shape_unit")
 //			.addRef("shape4","shape_unit")
 //			.addRef("shape5","shape_unit")
+			.newRun("get_unit", new nRun() { public Object get() {
+				pParam par = contextParam();
+				if (args.length < 1) return null;
+				Integer id = arg(0,Integer.class);
+				if (id == null || id < 1 || id > 6 || par.getRef("members") == null) return null;
+				pParam p = par.getRef("members").getRef("unit"+id);
+				int i = 1;
+				while (args.length > i) {
+					id = arg(i,Integer.class);
+					if (id == null || id < 1 || id > 6 || p.getRef("members") == null) break;
+					p = p.getRef("members").getRef("unit"+id);
+					i++; }
+				return p;
+			}})
+			;
+
+			pProperty.newProperty("member_set")
+			.setCommon()
+			.addRef("unit1", "mem_unit")
+			.addRef("unit2", "mem_unit")
+			.addRef("unit3", "mem_unit")
+			.addRef("unit4", "mem_unit")
+			.addRef("unit5", "mem_unit")
+			.addRef("unit6", "mem_unit")
+			.newRun("get_unit", new nRun() { public Object get() {
+				pParam par = contextParam();
+				if (args.length < 1) return null;
+				Integer id = arg(0,Integer.class);
+				if (id == null) return null;
+				return par.getRef("unit"+id);
+			}})
 			;
 			
 			

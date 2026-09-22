@@ -775,6 +775,7 @@ public class pGeom extends pSystem {
 
 		pProperty hitpoint = pProperty.newGeneralProperty("hitpoint")
 		.addData("avatar", false).addCtrl("avatar", Boolean.class)
+		.addCtrl("def_hp_hp", Integer.class)
 		;
 		hitpoint.newLocalProperty("hp")
 		.addData("hp", (int)5)
@@ -907,7 +908,7 @@ public class pGeom extends pSystem {
 		.addData("speed", 50f)
 		.addData("spawning", (int)2)
 		.addData("shoot", true)
-		.addData("bullet_par", "bullet_mob")
+		.addData("bullet_par", "bullet_mob")//bullet_mob
 		.addData("shoot_counter", (int)0)
 		.addData("shoot_delay", (int)30)
 		.addData("spawn_pos", new Vector2())
@@ -1021,7 +1022,7 @@ public class pGeom extends pSystem {
 		.setFullSync()
 		.addData("pop", false)
 		.addData("shoot", false)
-		.addData("bullet_par", "bullet_def")
+		.addData("bullet_par", "bullet_def")//bullet_def
 		.addData("shoot_counter", (int)0)
 		.addData("shoot_delay", (int)8)
 //		.addData("pop_pos", new Vector2(150,0))
@@ -1216,7 +1217,11 @@ public class pGeom extends pSystem {
 		interf.add_row_label(5, "Selected Body:");
 		nWidget body_label = interf.add_row_label(5, "");
 		interf.add_row();
-		nWidgetGroup paramlist = interf.add_treelist(8,8);
+		interf.add_row_trigg(5, "Delete", new nRun() { public void run() {
+			if (sel_body != null) { sel_body.clear(); sel_body = null; }
+		}});
+		interf.add_row();
+		nWidgetGroup paramlist = interf.add_treelist(9,8);
 		
 		interf.add_col_separator();
 		
@@ -1236,13 +1241,22 @@ public class pGeom extends pSystem {
 								map.entrySet()) {
 							String dt_ref = mr.getKey();
 							String dt = Utl.to_string(par.getDt(dt_ref, Utl.data_type[i]));
-							nWidget w = interf.add_list_entry("   "+Utl.type_short_names[i]+" " + dt_ref + " = " +dt);
+							nWidget w2 = interf.add_list_entry("   "+Utl.type_short_names[i]+" " + dt_ref);
+							w2.addEventLogic(new nRun(i, dt_ref, par) { public void run() {
+								int i = (int)args[0];
+								String dt_ref = (String)args[1];
+//								pParam par = (pParam)args[2];
+//								String dt = Utl.to_string(par.getDt(dt_ref, Utl.data_type[i]));
+								w2.setText("   "+Utl.type_short_names[i]+" " + dt_ref);
+							}});
+							interf.go_up_tree();
+							nWidget w = interf.add_list_entry("    = " +dt);
 							w.addEventLogic(new nRun(i, dt_ref, par) { public void run() {
 								int i = (int)args[0];
 								String dt_ref = (String)args[1];
 								pParam par = (pParam)args[2];
 								String dt = Utl.to_string(par.getDt(dt_ref, Utl.data_type[i]));
-								w.setText("   "+Utl.type_short_names[i]+" " + dt_ref + " = " +dt);
+								w.setText("    = " +dt);
 							}});
 							interf.go_up_tree();
 						}
