@@ -1,5 +1,5 @@
 {
-    "activeFile": "Map2.tmx",
+    "activeFile": "map.tmx",
     "automapping.whileDrawing": true,
     "expandedProjectPaths": [
         "."
@@ -86,6 +86,14 @@
         "Map4.tmx#Tilemap": {
             "scaleInDock": 1
         },
+        "map.tmx": {
+            "scale": 0.79970703125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 512.0625228965686,
+                "y": 512.0625228965686
+            }
+        },
         "tileset.tsx": {
             "scaleInDock": 2,
             "scaleInEditor": 3
@@ -104,16 +112,16 @@
     "map.tileWidth": 16,
     "map.width": 128,
     "openFiles": [
-        "Map.tmx",
-        "Map2.tmx",
+        "map.tmx",
         "tileset_flags2.tsx"
     ],
     "project": "tiled_project.tiled-project",
     "property.type": "string",
     "recentFiles": [
-        "Map.tmx",
         "tileset_flags2.tsx",
+        "map.tmx",
         "Map2.tmx",
+        "Map.tmx",
         "Map3.tmx",
         "tileset.tsx",
         "Map4.tmx"

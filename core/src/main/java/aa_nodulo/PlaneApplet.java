@@ -108,7 +108,7 @@ public class PlaneApplet extends App {
 		public String STARTUP_MODEL_REF = "exemple";
 //		public String STARTUP_MODEL_REF = "";
 
-		public String STARTUP_MAP_PATH = "Map2.tmx";
+		public String STARTUP_MAP_PATH = "map.tmx";
 //		public String STARTUP_MAP_PATH = "";
 
 		public String STARTUP_LOAD_FILE = "";
