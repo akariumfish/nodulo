@@ -448,7 +448,8 @@ public class pNode {
 			instance.addObject("interf", interf);
 			
 			group.get("back").setText(instance.pool_index + " " + 
-					node_models.getKey(instance.stand));
+					node_models.getKey(instance.stand))
+				.setInfo(T.t("node_"+instance.stand.ref+"_back_infopop",instance.stand.ref));
 
 			instance.addObject("co_cnt", (int)0);
 			instance.addObject("plug_cnt", (int)0);

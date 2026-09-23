@@ -971,7 +971,10 @@ public class pTileHead {
 		
 		
 		
-		
+
+		pTile.tile_models_short.put("stack_start", "");
+		pTile.tile_models_short.put("branch_start", "");
+
 		
 		pTile.newUnpoppableTileModel("stack_start")
 		.append(stack_start_abstract)

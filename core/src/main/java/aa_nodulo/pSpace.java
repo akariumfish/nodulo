@@ -381,6 +381,9 @@ public class pSpace {
 //		app.addDelayEvent(50, new nRun() { public void run() {
 			start_space(); 
 //		}}); 
+		app.addDelayEvent(50, new nRun() { public void run() {
+			start_space();
+		}}); 
 	}
 	
 	

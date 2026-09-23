@@ -891,7 +891,11 @@ public class pTile {
 //					(int)(255*w.color_background.g), 
 //					(int)(255*w.color_background.b),
 //					(int)255));
-			
+
+			if (hasParam("info")) {
+				w.setInfo(getParam("info",String.class));
+				w.setBackground();
+			}
 			if (hasParam("custom_drawer")) {
 				nRun pr = getParam("custom_drawer", nRun.class);
 				nDrawable dr = new nDrawable(instance,param) {public void drawing() { 

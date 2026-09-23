@@ -474,7 +474,7 @@ public class pFuncBook {
 		new Operator("get_pass", "PASS", C.PASS, new nRun() {public Object get() {
 			Integer ind = ask("ind", Integer.class);
 			Object[] passed_arg = ask("passed_arg", Object[].class);
-			if (passed_arg == null || ind >= passed_arg.length) return null;
+			if (passed_arg == null || ind >= passed_arg.length || ind < 0) return null;
 			return passed_arg[ind];
 			}}).addVar("ind")
 		.setStandRun(new nRun() {public void run() {

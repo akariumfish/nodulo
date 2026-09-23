@@ -35,10 +35,14 @@ public class pFunc {
 		
 		for (Operator ope : operators.all()) {
 			
-			pTile.tile_models_short.put(ope.ref, ope.pic);
+			ope.pic = T.t("func_operator_"+ope.ref+"_pic",ope.pic);
+			T.t("func_operator_"+ope.ref+"_infopop",ope.pic);
 
+			pTile.tile_models_short.put(ope.ref, ope.pic);
+			
 			pStandard stand = pTile.newTileModel(ope.ref).process()
-			.openSec().param("ref", "label", "text", ope.pic, "width", (int)3)
+			.openSec().param("ref", "label", "text", ope.pic, "width", (int)3, 
+					"info", T.t("func_operator_"+ope.ref+"_infopop",ope.pic))
 			.commande(pTile.getCom(CT.ADD_WIDGET)).closeSec()
 			.getStand();
 			
@@ -192,6 +196,9 @@ public class pFunc {
 
 		for (Instruction ins : instructions.all()) {
 			
+			ins.pic = T.t("func_instruction_"+ins.ref+"_pic",ins.pic);
+			T.t("func_instruction_"+ins.ref+"_infopop",ins.pic);
+			
 			pTile.tile_models_short.put(ins.ref, ins.pic);
 			
 			if (ins.activated) ins.addPrivVar("active", true);
@@ -199,7 +206,8 @@ public class pFunc {
 			pStandard stand = pTile.newTileModel(ins.ref);
 			pProcess proc = stand.process();
 			
-			proc.openSec().param("ref", ins.ref+"_label", "text", ins.pic, "width", (int)3)
+			proc.openSec().param("ref", ins.ref+"_label", "text", ins.pic, "width", (int)3, 
+					"info", T.t("func_instruction_"+ins.ref+"_infopop",ins.pic))
 			.commande(pTile.getCom(CT.ADD_WIDGET)).closeSec();
 			
 
@@ -550,8 +558,11 @@ public class pFunc {
 		if (parent_inst != null) parent_inst.run("highlight");
 		
 		if (parent_inst != null && result != null && Utl.type_is_used(result.getClass()) && 
+				parent_inst.get("get_plug", pInstance.class, "out") != null && 
 				parent_inst.get("get_plug", pInstance.class, "out")
 				.getInst("plugged") != null && 
+				parent_inst.get("get_plug", pInstance.class, "out")
+				.getInst("plugged").getInst("tile") != null && 
 				parent_inst.get("get_plug", pInstance.class, "out")
 				.getInst("plugged").getInst("tile").hasVar("watch")) {
 			parent_inst.get("get_plug", pInstance.class, "out")

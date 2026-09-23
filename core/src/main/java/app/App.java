@@ -102,7 +102,7 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 		}});
 		addDelayEvent(42, new nRun() { public void run() {
 
-			LOADING_SCREEN_FRAME = 3;
+			LOADING_SCREEN_FRAME = 30;
 
 			addDelayEvent(1, new nRun() { public void run() {
 				gdx.add_nodraw_frame(50); 

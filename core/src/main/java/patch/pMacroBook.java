@@ -264,7 +264,7 @@ public class pMacroBook {
 				nMap<pInstance> list = arg(0, nMap.class);
 				if (Utl.plane.config.SCRIPT_ALL_FUNC) {
 					list.get("startup").setVar("script", true);
-					list.get("avatar").setVar("script", true);
+//					list.get("avatar").setVar("script", true);
 					list.get("gameover").setVar("script", true);
 					for (String r : funcs) { list.get(r).setVar("script", true); }
 				}

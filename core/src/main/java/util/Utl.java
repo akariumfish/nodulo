@@ -37,305 +37,7 @@ import util.nPool.Poolable;
 
 public class Utl {
 	
-	
-//	private class StringRefMap {
-//		private HashMap<String,Integer> str_ref_map = new HashMap<String,Integer>();
-//		private HashMap<Integer,String> ref_str_map = new HashMap<Integer,String>();
-//		int put(String s) { 
-//			int i = 0; while(has(i)) i++; 
-//			str_ref_map.put(s,i); ref_str_map.put(i,s); 
-//			return i; }
-//		int get(String s) { return str_ref_map.get(s); }
-//		String get(int i) { return ref_str_map.get(i); }
-//		boolean has(String s) { return str_ref_map.get(s) != null; }
-//		boolean has(int i) { return ref_str_map.get(i) != null; }
-//	}
-//
-//	private StringRefMap stringRefMap = new StringRefMap();
-//	public int R(String s) {
-//		if (stringRefMap.has(s)) return stringRefMap.get(s);
-//		else return stringRefMap.put(s);
-//	}
-//	public String R(int i) {
-//		if (stringRefMap.has(i)) return stringRefMap.get(i);
-//		else return ""; }
-//	
-//	
-//	
-//	
-//	
-//	
-//	public static class DataManager {
-//		
-//		static {
-//			
-//		}
-//		
-//		
-//		
-//	}
-//	
-//	public interface DataType <T> {
-//		public T newObject();
-//		public T[] newArray(int i);
-////		public T copy(T t);
-////		public T[] copy(T[] t);
-////		public boolean equals(T t1, T t2);
-//		public String to_string(T t);
-//		public T from_string(String s);
-////		public void to_byte(T t, byte[] dest, int offset);
-////		public T from_byte(byte[] src, int offset);
-//	}
-//	
-//	public <T> DataTypeSlice <T> newSlice(DataType<T> t, int l) {
-//		return new DataTypeSlice<T>(t,l);}
-//	
-//	public class DataTypeSlice <T> {
-//		private final T var[];
-//		public DataTypeSlice(DataType<T> t, int l) { var = t.newArray(l); }
-//		public T get(int i) { return var[i]; }
-//		public void set(int i, T t) { var[i] = t; }
-//	}
-//	
-//	private static final Class<?>[] prims = new Class<?>[] {
-//		Byte.class, Integer.class, Float.class, Boolean.class, String.class, Vector2.class };
-//	private static final DataType<?>[] typs = new DataType<?>[] {
-//		new DataType<Byte>() {
-//			public Byte newObject() { return (byte)0; }
-//			public Byte[] newArray(int i) { return new Byte[i]; }
-//			public String to_string(Byte t) { return Utl.to_string(t); }
-//			public Byte from_string(String s) { return Utl.from_string(s, Byte.class); }
-////			public void to_byte(Byte t, byte[] dest, int offset) { return Utl.to_byte(t,dest,offset); }
-////			public Byte from_byte(byte[] src, int offset) { return Utl.from_byte(src,offset); }
-//		}, 
-//		new DataType<Integer>() {
-//			public Integer newObject() { return (Integer)0; }
-//			public Integer[] newArray(int i) { return new Integer[i]; }
-//			public String to_string(Integer t) { return Utl.to_string(t); }
-//			public Integer from_string(String s) { return Utl.from_string(s, Integer.class); }
-//		}, 
-//		new DataType<Float>() {
-//			public Float newObject() { return (Float)0f; }
-//			public Float[] newArray(int i) { return new Float[i]; }
-//			public String to_string(Float t) { return Utl.to_string(t); }
-//			public Float from_string(String s) { return Utl.from_string(s, Float.class); }
-//		}, 
-//		new DataType<Boolean>() {
-//			public Boolean newObject() { return new Boolean(false); }
-//			public Boolean[] newArray(int i) { return new Boolean[i]; }
-//			public String to_string(Boolean t) { return Utl.to_string(t); }
-//			public Boolean from_string(String s) { return Utl.from_string(s, Boolean.class); }
-//		}, 
-//		new DataType<String>() {
-//			public String newObject() { return new String(); }
-//			public String[] newArray(int i) { return new String[i]; }
-//			public String to_string(String t) { return t; }
-//			public String from_string(String s) { return s; }
-//		}, 
-//		new DataType<Vector2>() {
-//			public Vector2 newObject() { return new Vector2(); }
-//			public Vector2[] newArray(int i) { return new Vector2[i]; }
-//			public String to_string(Vector2 t) { return Utl.to_string(t); }
-//			public Vector2 from_string(String s) { return Utl.from_string(s, Vector2.class); }
-//	}};
-//
-//	public static final int PRIMNB = prims.length;
-//	public static final int CHUNK_DEPTH = 2000;
-//	public static final int REQUEST_CAPACITY = 50;
-//	
-//	public class DataChunk {
-//		private final DataTypeSlice<?>[] slices = new DataTypeSlice[PRIMNB];
-//		private final Object[][] var = new Object[PRIMNB][];
-//		public DataChunk() {
-//			for (int i = 0 ; i < PRIMNB ; i++) {
-//				slices[i] = newSlice(typs[i], CHUNK_DEPTH);
-//				var[i] = slices[i].var;
-//			}
-//		}
-//	}
-//	
-//	public class Request {
-//		public final int[] req = new int[REQUEST_CAPACITY];
-//		public final int[] wid = new int[REQUEST_CAPACITY];
-//		public int nb = 0, use = 0;
-//		public Request reset() {
-//			for (int i = 0 ; i < req.length ; i++) req[i] = -1; nb = 0; use = 0;
-//			return this; }
-//		public Request request(int...r) {
-//			if (r == null) return this;
-//			wid[nb] = r.length;
-//			for (int i = 0 ; use < REQUEST_CAPACITY && i < r.length ; i++) { 
-//				req[use++] = r[i]; }
-//			return this; }
-//	}
-//	
-//	public class DataSet {
-//		
-//	}
-//	
-//	public interface DataStore {
-//		public void provide(Request r, DataSet d);
-//	}
-//	
-//	
-//	
-//	
-//	
-//	
-//	
-//	public class Identified {
-//		public final String ref;
-//		public final int id;
-//		public Identified(String r, int i) {
-//			ref = new String(r); id = i; }
-//	}
-//	
-//	public class Composition extends Identified {
-//		public Composition(String ref, int id) {
-//			super(ref, id);
-//		}
-//
-//		public class Entry extends Identified {
-//			public final byte type;
-//			public Entry(String r, int i, byte t) {
-//				super(r, i); type = t; }
-//		}
-//	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	public static class OrderedImplement implements Ordered {
-		protected boolean pre = false, mid = true, post = false;
-		public boolean isOrderedPre() { return pre; }
-		public boolean isOrderedMid() { return mid; }
-		public boolean isOrderedPost() { return post; }
-	}
-	public static class PriorizableImplement implements Priorizable {
-		protected int prio = 0; 
-		public int getSortingPriority() { return prio; }
-	}
-	public static class OrderedPriorizableImplement implements Ordered, Priorizable {
-		protected int prio = 0; protected boolean pre = false, mid = true, post = false;
-		public int getSortingPriority() { return prio; }
-		public boolean isOrderedPre() { return pre; }
-		public boolean isOrderedMid() { return mid; }
-		public boolean isOrderedPost() { return post; }
-	}
-	
-	public interface Priorizable { public int getSortingPriority(); }
-	public interface Ordered { 
-		public boolean isOrderedPre(); 
-		public boolean isOrderedMid(); 
-		public boolean isOrderedPost(); }
 
-
-	public static <T extends Ordered & Priorizable> 
-	ArrayList<T> orderPrioDuplic(ArrayList<T> l) {
-		ArrayList<T> list = new ArrayList<T>();
-		int max_prio = 0;
-		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
-		for (int i = max_prio ; i >= 0 ; i--) 
-			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPre()) list.add(r);
-		for (int i = max_prio ; i >= 0 ; i--) 
-			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedMid()) list.add(r);
-		for (int i = max_prio ; i >= 0 ; i--) 
-			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPost()) list.add(r);
-		return list; }
-	public static <T extends Ordered & Priorizable> ArrayList<T> orderRevPrioDuplic(ArrayList<T> l) {
-		ArrayList<T> list = new ArrayList<T>();
-		int max_prio = 0;
-		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
-		for (int i = 0 ; i <= max_prio ; i++)
-			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPre()) list.add(r);
-		for (int i = 0 ; i <= max_prio ; i++)
-			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedMid()) list.add(r);
-		for (int i = 0 ; i <= max_prio ; i++)
-			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPost()) list.add(r);
-		return list; }
-	
-	public static <T extends Ordered> ArrayList<T> orderDuplic(ArrayList<T> l) {
-		ArrayList<T> list = new ArrayList<T>();
-		for (T r : l) if (r.isOrderedPre()) list.add(r);
-		for (T r : l) if (r.isOrderedMid()) list.add(r);
-		for (T r : l) if (r.isOrderedPost()) list.add(r);
-		return list; }
-
-	public static <T extends Priorizable> ArrayList<T> prioDuplic(ArrayList<T> l) {
-		ArrayList<T> list = new ArrayList<T>();
-		int max_prio = 0;
-		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
-		for (int i = max_prio ; i >= 0 ; i--)
-			for (T r : l) if (r.getSortingPriority() == i) list.add(r);
-		return list; }
-	public static <T extends Priorizable> ArrayList<T> revprioDuplic(ArrayList<T> l) {
-		ArrayList<T> list = new ArrayList<T>();
-		int max_prio = 0;
-		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
-		for (int i = 0 ; i <= max_prio ; i++)
-			for (T r : l) if (r.getSortingPriority() == i) list.add(r);
-		return list; }
-	
-	
-	private static final ArrayList<Object> sorting_tmp_list = new ArrayList<Object>();
-	@SuppressWarnings("unchecked")
-	public static <T extends Ordered> void orderSort(ArrayList<T> l) {
-		sorting_tmp_list.clear();
-		for (T r : l) if (r.isOrderedPre()) sorting_tmp_list.add(r);
-		for (T r : l) if (r.isOrderedMid()) sorting_tmp_list.add(r);
-		for (T r : l) if (r.isOrderedPost()) sorting_tmp_list.add(r);
-		l.clear(); for (Object r : sorting_tmp_list) l.add((T)r);
-		sorting_tmp_list.clear(); }
-	@SuppressWarnings("unchecked")
-	public static <T extends Priorizable> void prioSort(ArrayList<T> l) {
-		sorting_tmp_list.clear();
-		int max_prio = 0;
-		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
-		for (int i = max_prio ; i >= 0 ; i--)
-			for (T r : l) if (r.getSortingPriority() == i) sorting_tmp_list.add(r);
-		l.clear(); for (Object r : sorting_tmp_list) l.add((T)r);
-		sorting_tmp_list.clear(); }
-	@SuppressWarnings("unchecked")
-	public static <T extends Priorizable> void revprioSort(ArrayList<T> l) {
-		sorting_tmp_list.clear();
-		int max_prio = 0;
-		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
-		for (int i = 0 ; i <= max_prio ; i++)
-			for (T r : l) if (r.getSortingPriority() == i) sorting_tmp_list.add(r);
-		l.clear(); for (Object r : sorting_tmp_list) l.add((T)r);
-		sorting_tmp_list.clear(); }
-	@SuppressWarnings("unchecked")
-	public static <T extends Ordered & Priorizable> void orderPrioSort(ArrayList<T> l) {
-		sorting_tmp_list.clear();
-		int max_prio = 0;
-		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
-		for (int i = max_prio ; i >= 0 ; i--) 
-			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPre()) sorting_tmp_list.add(r);
-		for (int i = max_prio ; i >= 0 ; i--) 
-			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedMid()) sorting_tmp_list.add(r);
-		for (int i = max_prio ; i >= 0 ; i--) 
-			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPost()) sorting_tmp_list.add(r);
-		l.clear(); for (Object r : sorting_tmp_list) l.add((T)r);
-		sorting_tmp_list.clear(); }
-	@SuppressWarnings("unchecked")
-	public static <T extends Ordered & Priorizable> void orderRevPrioSort(ArrayList<T> l) {
-		sorting_tmp_list.clear();
-		int max_prio = 0;
-		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
-		for (int i = 0 ; i <= max_prio ; i++)
-			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPre()) sorting_tmp_list.add(r);
-		for (int i = 0 ; i <= max_prio ; i++)
-			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedMid()) sorting_tmp_list.add(r);
-		for (int i = 0 ; i <= max_prio ; i++)
-			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPost()) sorting_tmp_list.add(r);
-		l.clear(); for (Object r : sorting_tmp_list) l.add((T)r);
-		sorting_tmp_list.clear(); }
-	
 	
 	
 	
@@ -702,6 +404,313 @@ public class Utl {
 	
 	
 	
+
+	
+//	private class StringRefMap {
+//		private HashMap<String,Integer> str_ref_map = new HashMap<String,Integer>();
+//		private HashMap<Integer,String> ref_str_map = new HashMap<Integer,String>();
+//		int put(String s) { 
+//			int i = 0; while(has(i)) i++; 
+//			str_ref_map.put(s,i); ref_str_map.put(i,s); 
+//			return i; }
+//		int get(String s) { return str_ref_map.get(s); }
+//		String get(int i) { return ref_str_map.get(i); }
+//		boolean has(String s) { return str_ref_map.get(s) != null; }
+//		boolean has(int i) { return ref_str_map.get(i) != null; }
+//	}
+//
+//	private StringRefMap stringRefMap = new StringRefMap();
+//	public int R(String s) {
+//		if (stringRefMap.has(s)) return stringRefMap.get(s);
+//		else return stringRefMap.put(s);
+//	}
+//	public String R(int i) {
+//		if (stringRefMap.has(i)) return stringRefMap.get(i);
+//		else return ""; }
+//	
+//	
+//	
+//	
+//	
+//	
+//	public static class DataManager {
+//		
+//		static {
+//			
+//		}
+//		
+//		
+//		
+//	}
+//	
+//	public interface DataType <T> {
+//		public T newObject();
+//		public T[] newArray(int i);
+////		public T copy(T t);
+////		public T[] copy(T[] t);
+////		public boolean equals(T t1, T t2);
+//		public String to_string(T t);
+//		public T from_string(String s);
+////		public void to_byte(T t, byte[] dest, int offset);
+////		public T from_byte(byte[] src, int offset);
+//	}
+//	
+//	public <T> DataTypeSlice <T> newSlice(DataType<T> t, int l) {
+//		return new DataTypeSlice<T>(t,l);}
+//	
+//	public class DataTypeSlice <T> {
+//		private final T var[];
+//		public DataTypeSlice(DataType<T> t, int l) { var = t.newArray(l); }
+//		public T get(int i) { return var[i]; }
+//		public void set(int i, T t) { var[i] = t; }
+//	}
+//	
+//	private static final Class<?>[] prims = new Class<?>[] {
+//		Byte.class, Integer.class, Float.class, Boolean.class, String.class, Vector2.class };
+//	private static final DataType<?>[] typs = new DataType<?>[] {
+//		new DataType<Byte>() {
+//			public Byte newObject() { return (byte)0; }
+//			public Byte[] newArray(int i) { return new Byte[i]; }
+//			public String to_string(Byte t) { return Utl.to_string(t); }
+//			public Byte from_string(String s) { return Utl.from_string(s, Byte.class); }
+////			public void to_byte(Byte t, byte[] dest, int offset) { return Utl.to_byte(t,dest,offset); }
+////			public Byte from_byte(byte[] src, int offset) { return Utl.from_byte(src,offset); }
+//		}, 
+//		new DataType<Integer>() {
+//			public Integer newObject() { return (Integer)0; }
+//			public Integer[] newArray(int i) { return new Integer[i]; }
+//			public String to_string(Integer t) { return Utl.to_string(t); }
+//			public Integer from_string(String s) { return Utl.from_string(s, Integer.class); }
+//		}, 
+//		new DataType<Float>() {
+//			public Float newObject() { return (Float)0f; }
+//			public Float[] newArray(int i) { return new Float[i]; }
+//			public String to_string(Float t) { return Utl.to_string(t); }
+//			public Float from_string(String s) { return Utl.from_string(s, Float.class); }
+//		}, 
+//		new DataType<Boolean>() {
+//			public Boolean newObject() { return new Boolean(false); }
+//			public Boolean[] newArray(int i) { return new Boolean[i]; }
+//			public String to_string(Boolean t) { return Utl.to_string(t); }
+//			public Boolean from_string(String s) { return Utl.from_string(s, Boolean.class); }
+//		}, 
+//		new DataType<String>() {
+//			public String newObject() { return new String(); }
+//			public String[] newArray(int i) { return new String[i]; }
+//			public String to_string(String t) { return t; }
+//			public String from_string(String s) { return s; }
+//		}, 
+//		new DataType<Vector2>() {
+//			public Vector2 newObject() { return new Vector2(); }
+//			public Vector2[] newArray(int i) { return new Vector2[i]; }
+//			public String to_string(Vector2 t) { return Utl.to_string(t); }
+//			public Vector2 from_string(String s) { return Utl.from_string(s, Vector2.class); }
+//	}};
+//
+//	public static final int PRIMNB = prims.length;
+//	public static final int CHUNK_DEPTH = 2000;
+//	public static final int REQUEST_CAPACITY = 50;
+//	
+//	public class DataChunk {
+//		private final DataTypeSlice<?>[] slices = new DataTypeSlice[PRIMNB];
+//		private final Object[][] var = new Object[PRIMNB][];
+//		public DataChunk() {
+//			for (int i = 0 ; i < PRIMNB ; i++) {
+//				slices[i] = newSlice(typs[i], CHUNK_DEPTH);
+//				var[i] = slices[i].var;
+//			}
+//		}
+//	}
+//	
+//	public class Request {
+//		public final int[] req = new int[REQUEST_CAPACITY];
+//		public final int[] wid = new int[REQUEST_CAPACITY];
+//		public int nb = 0, use = 0;
+//		public Request reset() {
+//			for (int i = 0 ; i < req.length ; i++) req[i] = -1; nb = 0; use = 0;
+//			return this; }
+//		public Request request(int...r) {
+//			if (r == null) return this;
+//			wid[nb] = r.length;
+//			for (int i = 0 ; use < REQUEST_CAPACITY && i < r.length ; i++) { 
+//				req[use++] = r[i]; }
+//			return this; }
+//	}
+//	
+//	public class DataSet {
+//		
+//	}
+//	
+//	public interface DataStore {
+//		public void provide(Request r, DataSet d);
+//	}
+//	
+//	
+//	
+//	
+//	
+//	
+//	
+//	public class Identified {
+//		public final String ref;
+//		public final int id;
+//		public Identified(String r, int i) {
+//			ref = new String(r); id = i; }
+//	}
+//	
+//	public class Composition extends Identified {
+//		public Composition(String ref, int id) {
+//			super(ref, id);
+//		}
+//
+//		public class Entry extends Identified {
+//			public final byte type;
+//			public Entry(String r, int i, byte t) {
+//				super(r, i); type = t; }
+//		}
+//	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static class OrderedImplement implements Ordered {
+		protected boolean pre = false, mid = true, post = false;
+		public boolean isOrderedPre() { return pre; }
+		public boolean isOrderedMid() { return mid; }
+		public boolean isOrderedPost() { return post; }
+	}
+	public static class PriorizableImplement implements Priorizable {
+		protected int prio = 0; 
+		public int getSortingPriority() { return prio; }
+	}
+	public static class OrderedPriorizableImplement implements Ordered, Priorizable {
+		protected int prio = 0; protected boolean pre = false, mid = true, post = false;
+		public int getSortingPriority() { return prio; }
+		public boolean isOrderedPre() { return pre; }
+		public boolean isOrderedMid() { return mid; }
+		public boolean isOrderedPost() { return post; }
+	}
+	
+	public interface Priorizable { public int getSortingPriority(); }
+	public interface Ordered { 
+		public boolean isOrderedPre(); 
+		public boolean isOrderedMid(); 
+		public boolean isOrderedPost(); }
+
+
+	public static <T extends Ordered & Priorizable> 
+	ArrayList<T> orderPrioDuplic(ArrayList<T> l) {
+		ArrayList<T> list = new ArrayList<T>();
+		int max_prio = 0;
+		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
+		for (int i = max_prio ; i >= 0 ; i--) 
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPre()) list.add(r);
+		for (int i = max_prio ; i >= 0 ; i--) 
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedMid()) list.add(r);
+		for (int i = max_prio ; i >= 0 ; i--) 
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPost()) list.add(r);
+		return list; }
+	public static <T extends Ordered & Priorizable> ArrayList<T> orderRevPrioDuplic(ArrayList<T> l) {
+		ArrayList<T> list = new ArrayList<T>();
+		int max_prio = 0;
+		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
+		for (int i = 0 ; i <= max_prio ; i++)
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPre()) list.add(r);
+		for (int i = 0 ; i <= max_prio ; i++)
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedMid()) list.add(r);
+		for (int i = 0 ; i <= max_prio ; i++)
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPost()) list.add(r);
+		return list; }
+	
+	public static <T extends Ordered> ArrayList<T> orderDuplic(ArrayList<T> l) {
+		ArrayList<T> list = new ArrayList<T>();
+		for (T r : l) if (r.isOrderedPre()) list.add(r);
+		for (T r : l) if (r.isOrderedMid()) list.add(r);
+		for (T r : l) if (r.isOrderedPost()) list.add(r);
+		return list; }
+
+	public static <T extends Priorizable> ArrayList<T> prioDuplic(ArrayList<T> l) {
+		ArrayList<T> list = new ArrayList<T>();
+		int max_prio = 0;
+		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
+		for (int i = max_prio ; i >= 0 ; i--)
+			for (T r : l) if (r.getSortingPriority() == i) list.add(r);
+		return list; }
+	public static <T extends Priorizable> ArrayList<T> revprioDuplic(ArrayList<T> l) {
+		ArrayList<T> list = new ArrayList<T>();
+		int max_prio = 0;
+		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
+		for (int i = 0 ; i <= max_prio ; i++)
+			for (T r : l) if (r.getSortingPriority() == i) list.add(r);
+		return list; }
+	
+	
+	private static final ArrayList<Object> sorting_tmp_list = new ArrayList<Object>();
+	@SuppressWarnings("unchecked")
+	public static <T extends Ordered> void orderSort(ArrayList<T> l) {
+		sorting_tmp_list.clear();
+		for (T r : l) if (r.isOrderedPre()) sorting_tmp_list.add(r);
+		for (T r : l) if (r.isOrderedMid()) sorting_tmp_list.add(r);
+		for (T r : l) if (r.isOrderedPost()) sorting_tmp_list.add(r);
+		l.clear(); for (Object r : sorting_tmp_list) l.add((T)r);
+		sorting_tmp_list.clear(); }
+	@SuppressWarnings("unchecked")
+	public static <T extends Priorizable> void prioSort(ArrayList<T> l) {
+		sorting_tmp_list.clear();
+		int max_prio = 0;
+		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
+		for (int i = max_prio ; i >= 0 ; i--)
+			for (T r : l) if (r.getSortingPriority() == i) sorting_tmp_list.add(r);
+		l.clear(); for (Object r : sorting_tmp_list) l.add((T)r);
+		sorting_tmp_list.clear(); }
+	@SuppressWarnings("unchecked")
+	public static <T extends Priorizable> void revprioSort(ArrayList<T> l) {
+		sorting_tmp_list.clear();
+		int max_prio = 0;
+		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
+		for (int i = 0 ; i <= max_prio ; i++)
+			for (T r : l) if (r.getSortingPriority() == i) sorting_tmp_list.add(r);
+		l.clear(); for (Object r : sorting_tmp_list) l.add((T)r);
+		sorting_tmp_list.clear(); }
+	@SuppressWarnings("unchecked")
+	public static <T extends Ordered & Priorizable> void orderPrioSort(ArrayList<T> l) {
+		sorting_tmp_list.clear();
+		int max_prio = 0;
+		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
+		for (int i = max_prio ; i >= 0 ; i--) 
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPre()) sorting_tmp_list.add(r);
+		for (int i = max_prio ; i >= 0 ; i--) 
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedMid()) sorting_tmp_list.add(r);
+		for (int i = max_prio ; i >= 0 ; i--) 
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPost()) sorting_tmp_list.add(r);
+		l.clear(); for (Object r : sorting_tmp_list) l.add((T)r);
+		sorting_tmp_list.clear(); }
+	@SuppressWarnings("unchecked")
+	public static <T extends Ordered & Priorizable> void orderRevPrioSort(ArrayList<T> l) {
+		sorting_tmp_list.clear();
+		int max_prio = 0;
+		for (T r : l) if (r.getSortingPriority() < max_prio) max_prio = r.getSortingPriority();
+		for (int i = 0 ; i <= max_prio ; i++)
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPre()) sorting_tmp_list.add(r);
+		for (int i = 0 ; i <= max_prio ; i++)
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedMid()) sorting_tmp_list.add(r);
+		for (int i = 0 ; i <= max_prio ; i++)
+			for (T r : l) if (r.getSortingPriority() == i && r.isOrderedPost()) sorting_tmp_list.add(r);
+		l.clear(); for (Object r : sorting_tmp_list) l.add((T)r);
+		sorting_tmp_list.clear(); } 
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 //
@@ -935,6 +944,8 @@ public class Utl {
 		new_type(Boolean.class, "boo", "BOO", sBoo.class, 1);
 		new_type(String.class, "str", "STR", sStr.class, 1);
 		new_type(Vector2.class, "vec", "VEC", sVec.class, 2);
+
+		T.build();
 		
 		nScripted.build_codes();
 

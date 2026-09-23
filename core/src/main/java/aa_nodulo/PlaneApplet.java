@@ -24,6 +24,7 @@ import gui.nInterface;
 import gui.nWidgetGroup;
 import patch.pPatch;
 import patch.pStandard;
+import util.T;
 import util.Utl;
 import util.nMap;
 import util.nPainting;
@@ -108,7 +109,7 @@ public class PlaneApplet extends App {
 		public String STARTUP_MODEL_REF = "exemple";
 //		public String STARTUP_MODEL_REF = "";
 
-		public String STARTUP_MAP_PATH = "map3.tmx";
+		public String STARTUP_MAP_PATH = T.t("plane_startup_map_path","map.tmx");
 //		public String STARTUP_MAP_PATH = "";
 
 		public String STARTUP_LOAD_FILE = "";
@@ -132,10 +133,14 @@ public class PlaneApplet extends App {
 		public boolean PATCH_START_WALLPAPER = false;
 		public boolean PATCH_START_COLLAPSED = true;
 		public boolean PATCH_START_GRID = false;
-		public float DEF_PATCH_ZOOM = 0.1f;
+		public float DEF_PATCH_ZOOM = 0.15f;
 		public Vector2 DEF_PATCH_POS = new Vector2(0f,0f);
+		//def
 		public Vector2 DEF_PATCH_WIN_POS = new Vector2(370f,915f);
 		public Vector2 DEF_PATCH_WIN_SZ = new Vector2(910f,450f);
+		// release
+		public Vector2 FS_DEF_PATCH_WIN_POS = new Vector2(60f,1030f);
+		public Vector2 FS_DEF_PATCH_WIN_SZ = new Vector2(1800f,400f);
 //		public boolean PATCH_TOOL_AUTOCOLLAPSE = true;
 		public boolean PATCH_SHEET_COLLAPSE = true;
 		public boolean TOOLBOX_OPEN = true;
@@ -145,7 +150,7 @@ public class PlaneApplet extends App {
 
 		public boolean POP_BODY_EDITOR = false;
 
-		public boolean SCRIPT_ALL_FUNC = true;
+		public boolean SCRIPT_ALL_FUNC = false;
 
 		public boolean AVATAR_VIEW_MODE = false; //false = def
 		public boolean AVATAR_CAM = true;

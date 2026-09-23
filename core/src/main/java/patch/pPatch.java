@@ -386,7 +386,9 @@ public class pPatch {
 	static ArrayList<nRun> eventInit = new ArrayList<nRun>();
 
 	public static void addEventInit(nRun n) { eventInit.add(n); }
-	
+
+	private void set_viewspace(Vector2 p, Vector2 s, float scale) {
+		set_viewspace(p.x,p.y,s.x,s.y,scale); }
 	private void set_viewspace(float posx, float posy, float sx, float sy, float scale) {
 		sVec val_pos = view.object("val_pos", sVec.class);
 		val_pos.set(posx,posy);
@@ -463,12 +465,13 @@ public class pPatch {
 			} else {
 				if (app.config.start_solo) {
 					if (GdxApp.START_FULLSCREEN) 
-						set_viewspace(20f,1030f,660f,950f,app.config.DEF_PATCH_ZOOM);
+						set_viewspace(
+								app.config.FS_DEF_PATCH_WIN_POS,
+								app.config.FS_DEF_PATCH_WIN_SZ,
+								app.config.DEF_PATCH_ZOOM);
 					else set_viewspace(
-							app.config.DEF_PATCH_WIN_POS.x,
-							app.config.DEF_PATCH_WIN_POS.y,
-							app.config.DEF_PATCH_WIN_SZ.x,
-							app.config.DEF_PATCH_WIN_SZ.y,
+							app.config.DEF_PATCH_WIN_POS,
+							app.config.DEF_PATCH_WIN_SZ,
 							app.config.DEF_PATCH_ZOOM);
 				} else set_viewspace(370f,815f,510f,330f,app.config.DEF_PATCH_ZOOM);
 			}

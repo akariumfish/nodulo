@@ -25,6 +25,7 @@ import aa_nodulo.PlaneApplet;
 import app.nDrawer;
 import data.sData;
 import gui.nDrawable;
+import util.T;
 import util.Utl;
 
 /** First screen of the application. Displayed after the application is created. */
@@ -65,7 +66,7 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 
 		title_effect = new TitleEffect(this);
 
-		skin = new Skin(Gdx.files.internal("ui/skin.json"));
+		skin = new Skin(Gdx.files.internal(T.t("title_ui_skin_loc","ui/skin.json")));
 		stage = new Stage(new ScreenViewport());
 		Gdx.input.setInputProcessor(stage);
 
@@ -106,10 +107,10 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 		loadtable.setPosition(m.conf.WIDTH * 0f / 4f,0);
 		loadtable.layout();
 
-		makeButton("New", titletable).addListener(new InputListener() { public boolean touchDown (
+		makeButton(T.t("title_new_bp","New"), titletable).addListener(new InputListener() { public boolean touchDown (
 				InputEvent event, float x, float y, int pointer, int button) {
 			show_new(); return false; }});
-		makeButton("Load", titletable).addListener(new InputListener() { public boolean touchDown (
+		makeButton(T.t("title_load_bp","Load"), titletable).addListener(new InputListener() { public boolean touchDown (
 				InputEvent event, float x, float y, int pointer, int button) {
 			show_load(); return false; }});
 //		makeButton("Join", table1).addListener(new InputListener() { public boolean touchDown (
@@ -121,7 +122,7 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 //		makeButton("About", titletable).addListener(new InputListener() { public boolean touchDown (
 //				InputEvent event, float x, float y, int pointer, int button) {
 //			return false; }});
-		makeButton("Exit", titletable).addListener(new InputListener() { public boolean touchDown (
+		makeButton(T.t("title_exit_bp","Exit"), titletable).addListener(new InputListener() { public boolean touchDown (
 				InputEvent event, float x, float y, int pointer, int button) {
 			main.exit(); return false; }});
 
@@ -129,7 +130,7 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 //		themeCheckBox.setChecked(!PlaneApplet.RELEASE);
 //		titletable.row().fill().pad(100,10,10,10).minWidth(main.conf.WIDTH / 5f);
 //		titletable.add(themeCheckBox);
-		fullScreenCheckBox = new CheckBox("Fullscreen", skin);
+		fullScreenCheckBox = new CheckBox(T.t("title_fullscreen_checkbox","Fullscreen"), skin);
 		fullScreenCheckBox.setChecked(PlaneApplet.START_FULLSCREEN);
 		titletable.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
 		titletable.add(fullScreenCheckBox);
@@ -154,13 +155,13 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 			i++; }
 		
 		newtable.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
-		newtable.add(new Label("New file name:", skin));
+		newtable.add(new Label(T.t("title_newfilename_label","New file name:"), skin));
 		newtable.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
 		TextField textfield = new TextField(new_name, skin);
 		newtable.add(textfield);
 		
 		newtable.row().fill().pad(10).minWidth(main.conf.WIDTH / 5f);
-		newtable.add(new Label("Build Models :", skin));
+		newtable.add(new Label(T.t("title_buildmodel_label","Build Models :"), skin));
 		
 		for (String nm : app_models) {
 			makeButton(nm, newtable).addListener(new InputListener() { public boolean touchDown (
@@ -170,7 +171,7 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 				main.launch_nodulo(nm, file, true, //themeCheckBox.isChecked()
 						fullScreenCheckBox.isChecked()); return false; }}); }
 		
-		makeButton("Back", newtable, true).addListener(new InputListener() { public boolean touchDown (
+		makeButton(T.t("title_back_bp","Back"), newtable, true).addListener(new InputListener() { public boolean touchDown (
 				InputEvent event, float x, float y, int pointer, int button) {
 			new_to_title(); return false; }});
 		
@@ -195,7 +196,7 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 			}
 		}
 		
-		makeButton("Back", loadtable, true).addListener(new InputListener() { public boolean touchDown (
+		makeButton(T.t("title_back_bp","Back"), loadtable, true).addListener(new InputListener() { public boolean touchDown (
 				InputEvent event, float x, float y, int pointer, int button) {
 			load_to_title(); return false; }});
 		
@@ -257,7 +258,7 @@ public class TitleScreen implements Screen ,nDrawer.DrawContext {
 				0f + sy / 6f, 
 				sx, sy);
 		drawer.fill(255); drawer.stroke(0,3f); drawer.setLargeFont();
-		drawer.text("NODULO",screenrect.width / 2f, screenrect.height * 4f / 5f, 120);
+		drawer.text(T.t("title_nodulo_title","NODULO"),screenrect.width / 2f, screenrect.height * 4f / 5f, 120);
 		drawer.setDefaultFont();
 		
 		drawer.draw_end();

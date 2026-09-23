@@ -1,6 +1,7 @@
 package aa_nodulo;
 
 import gui.nGUI;
+import util.T;
 import util.Utl;
 import util.nRun;
 
@@ -22,7 +23,7 @@ public class nMenu {
 				.setStacked(true)
 				.setFont(20)
 				.setTrigger()
-				.setText("Exit")
+				.setText(T.t("mainmenu_exit_bp","Exit"))
 				.asWidget()
 				.setParent(gui.menu_right)
 				.addEventTrigger(new nRun() { public void run() {
@@ -35,7 +36,7 @@ public class nMenu {
 				.setStacked(true)
 				.setFont(20)
 				.setSwitch()
-				.setText("Fs")
+				.setText(T.t("mainmenu_fullscreen_switch","Fs"))
 				.asWidget()
 				.setParent(gui.menu_right)
 				.setLink(app.input.val_fullscreen)
@@ -47,7 +48,7 @@ public class nMenu {
 				.setStacked(true)
 				.setFont(20)
 				.setSwitch()
-				.setText("Mn")
+				.setText(T.t("mainmenu_collapse_menu_switch","Mn"))
 				.asWidget()
 				.setParent(gui.menu_right)
 				.setLink(gui.val_hide_bar)
@@ -59,7 +60,7 @@ public class nMenu {
 				.setStacked(true)
 				.setFont(20)
 				.setSwitch()
-				.setText("I")
+				.setText(T.t("mainmenu_show_info_switch","I"))
 				.asWidget()
 				.setParent(gui.menu_right)
 				.setLink(gui.val_hide_info)
@@ -71,7 +72,7 @@ public class nMenu {
 				.setStacked(true)
 				.setFont(20)
 				.setSwitch()
-				.setText("FX")
+				.setText(T.t("mainmenu_vfx_switch","FX"))
 				.asWidget()
 				.setParent(gui.menu_right)
 				.setLink(gui.val_fx)
@@ -90,11 +91,11 @@ public class nMenu {
 				;
 
 
-		gui.add_menu_trigg("Save", new nRun() { public void run() { 
+		gui.add_menu_trigg(T.t("mainmenu_save_bp","Save"), new nRun() { public void run() { 
 			gui.data.full_save(); }});
-		gui.add_menu_trigg("Save to", new nRun() { public void run() {
+		gui.add_menu_trigg(T.t("mainmenu_saveto_bp","Save to"), new nRun() { public void run() {
 			gui.pop_saveas(); }});
-		gui.add_menu_trigg("Shortcut", new nRun() { public void run() {
+		gui.add_menu_trigg(T.t("mainmenu_shortcut_bp","Shortcut"), new nRun() { public void run() {
 			gui.pop_shortcut(); }});
 
 
