@@ -1,6 +1,7 @@
 package box2d;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -9,6 +10,10 @@ import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.Mesh.VertexDataType;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Frustum;
 import com.badlogic.gdx.math.MathUtils;
@@ -22,7 +27,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-//import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
 import com.noodle.nodulo.GdxApp;
 
 import aa_nodulo.PlaneApplet;
@@ -31,6 +35,7 @@ import gui.nGUI;
 import shaders.BlendFunc;
 import shaders.LightShader;
 import util.Utl;
+import util.nMap;
 import util.nRun;
 
 /**
@@ -39,6 +44,12 @@ import util.nRun;
  * @author kalle_h
  */
 public class RayHandler implements Disposable {
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -364,7 +375,10 @@ public class RayHandler implements Disposable {
 				if (light instanceof BaseLight) 
 //					if (((BaseLight)light).active) 
 						((BaseLight)light).render();
-
+			
+			box.renderer.batch.setRenderGroup(layer.unitList);
+			box.renderer.batch.render(lightShader);
+			
 			if (useLightMap) {
 				lightMap.frameBuffer.end();
 			}

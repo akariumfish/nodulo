@@ -5,6 +5,9 @@ import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.noodle.nodulo.GdxApp;
@@ -16,6 +19,7 @@ import aa_nodulo.pSpace;
 import aa_nodulo.pTime;
 import aa_nodulo.pView;
 import app.App;
+import box2d.VfxFrameBuffer;
 import box2d.pBox2d;
 import data.*;
 import gui.*;
@@ -371,6 +375,54 @@ public class pPatch {
 	
 	nRun run_del,run_sel,run_cut,run_copy,run_paste;
 	
+	
+//	VfxFrameBuffer linkbuffer;
+	
+	private void init_linkbuffer() {
+
+//		linkbuffer = new VfxFrameBuffer(Format.RGBA8888);
+//		linkbuffer.initialize((int)app.gdx.getscreenwidth(),
+//				(int)app.gdx.getscreenheight());
+//
+//		app.gdx.addEventScreen(new nRun() { public void run() {
+//			linkbuffer.reset();
+//			linkbuffer.initialize((int)app.gdx.getscreenwidth(),
+//					(int)app.gdx.getscreenheight());
+//		}});
+
+	}
+	
+	public void sheet_link_draw_start() {
+//		app.gdx.drawer.spritebatch.end();
+//		app.box.removeScissors();
+//		linkbuffer.begin();
+//		Color c = Utl.color(0,0);
+//		Gdx.gl.glClearColor(c.r,c.g,c.b,c.a);
+//		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+//		app.gdx.drawer.spritebatch.begin();
+
+	}
+	public void sheet_link_draw_end() {
+		
+//		app.gdx.drawer.spritebatch.end();
+//		
+//		linkbuffer.end();
+//		
+//		app.box.gaussianBlur(linkbuffer, 1);
+//
+//		app.box.restoreScissors();
+//		
+//		app.gdx.drawer.spritebatch.begin();
+//
+//		app.gdx.drawer.spritebatch.draw(linkbuffer.getTexture(), 0, 0, 
+//				app.gdx.getscreenwidth(), 
+//				app.gdx.getscreenheight(), 
+//				0, 0, 1, 1);
+//		
+	}
+
+
+	
 	public void clear() {
 
 		unselect_all();
@@ -448,6 +500,8 @@ public class pPatch {
 //		build_inst_database(val_inst_database);
 		
 //		patch_dropmenu = app.gui.addWidgetGroup("dropmenu");
+		
+		init_linkbuffer();
 		
 		view = app.gui.addWidgetGroup("viewspace");
 		bloc.addObject("viewspaceGroup", view);

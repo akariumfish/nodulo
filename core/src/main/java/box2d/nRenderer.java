@@ -19,6 +19,7 @@ import util.Utl;
 import util.nRun;
 import app.App;
 import box2d.TileLayer.Cell;
+import box2d.nBatch.Unit;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -146,6 +147,8 @@ public class nRenderer {
 
 		rayHandler.beginRender();
 		
+		batch.begin();
+		
 		ArrayList<Layer> all = Utl.duplic(layers);
 		
 		for (int prio = 0 ; prio <= max_prio ; prio++)
@@ -153,9 +156,11 @@ public class nRenderer {
 				if (prios.get(d) == prio) { d.render(); all.remove(d); }
 		
 		for (Layer d : all) if (!d.grouped) d.render(); 
-		
+
+		batch.end();
+				
 		rayHandler.endLayeredRender();
-		
+
 	}
 	
 	GroupLayer roomGroup;
@@ -327,7 +332,7 @@ public class nRenderer {
 		this.cam = new OrthographicCamera(GdxApp.WIDTH, GdxApp.HEIGHT);
 
 		rayHandler = new RayHandler(app, world);
-
+		
 		FileHandle[] files = Gdx.files.local("/").list();
 		for(FileHandle fl : files) {
 			if (fl.extension().equals("tmx")) {
@@ -340,6 +345,11 @@ public class nRenderer {
 //		map = new TmxMapLoader(new InternalFileHandleResolver()).load(path);
 //		
 //		processMap(map);
+		
+		
+		
+		batch_test();
+		
 		
 	}
 	
@@ -361,7 +371,73 @@ public class nRenderer {
 	
 	public void dispose() {
 		rayHandler.dispose();
+		batch.dispose();
 	}
+	
+	
+	
+	
+	
+
+	public nBatch batch;
+	
+	void batch_test() {
+
+		batch = new nBatch()
+				.positionAttribute("vertex_positions")
+				.colorAttribute("quad_colors")
+				.genericAttribute("s")
+				.finish();
+		
+		ParticleModel part = newParticleModel("part");
+		part.useLayer(auraLayer).useLayer(colorLayer).useLayer(lightLayer);
+	}
+	
+	public nBatch.Unit newParticle(String model, float x, float y, float r, float c) {
+		nBatch.Unit u = batch.newUnit(model,x,y,r,c,0);
+		return u;
+	}
+	
+	public ParticleModel newParticleModel(String ref) {
+		ParticleModel m = new ParticleModel(); batch.addModel(ref, m); return m; }
+	
+	public static class ParticleModel extends nBatch.Model {
+
+		public int life = 50;
+		public float speed_x = 20;
+		public float speed_y = 0;
+		public ParticleModel() {
+			super(3, 3, 5);
+			
+		}
+
+		@Override public void update(Unit u) {
+			if (u.a(4,u.a(4)+1) > life) u.clear();
+//			u.setTransform(u.a(0)+speed_x*u.a(4),u.a(1)+speed_y*u.a(4),u.a(2));
+			
+		}
+//TODO
+		@Override public void create(Unit u) {
+			u.setTransform(u.a(0),u.a(1),u.a(2));
+			u.beginPush();
+//			short s = u.pushVert(0,0,u.a(3),1f);
+//			u.pushVert(0,10,u.a(3),1f);
+//			u.pushVert(10,0,u.a(3),1f);
+//			u.pushTrig(s,s+1,s+2);
+		}
+
+		@Override public void destroy(Unit u) {
+			
+		}
+		
+		
+	}
+	
+	
+	
+	
+	
+	
 
 	public PointLight newAuraLight(Color col, float dist, float x, float y) {
 		return auraLayer.newPointLight(col, dist, x, y); }

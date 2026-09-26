@@ -202,6 +202,7 @@ public class pSheet {
 //		sheet_bound.get("fx").setVFX();
 		sheet_bound.addWidget("sheet_link_draw", sheet_link_draw);
 		sheet_link_draw.setCustomDrawer(new nDrawable() { public void drawing() {
+			patch.sheet_link_draw_start();
 			Vector2 m = new Vector2(app.input.mouse);
 			m.set(sheet_link_draw.revertWarp(m));
 			for (pInstance c : cos) c.run("draw"); 
@@ -215,6 +216,7 @@ public class pSheet {
 					patch.linking_node_co = null;
 					for (pInstance c : patch.cos) c.run("light_down"); }
 			}
+			patch.sheet_link_draw_end();
 		}});
 		sheet_link_draw.toFront();
 

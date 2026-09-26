@@ -342,8 +342,12 @@ public class pBox2d extends pSystem {
 		}
 		
 		
-		
-		
+
+		public void gaussianBlur(VfxFrameBuffer buffer, int blurNum) {
+			renderer.rayHandler.lightMap.gaussianBlur(buffer, blurNum); }
+
+		public void removeScissors() { renderer.rayHandler.removeScissors(); }
+		public void restoreScissors() { renderer.rayHandler.restoreScissors(); }
 		
 
 		ArrayList<nDrawable> drawRun = new ArrayList<nDrawable>();
