@@ -125,6 +125,8 @@ public class VfxFrameBuffer implements Disposable {
         fbo = null;
     }
 
+    public VfxFrameBuffer resize(int w, int h) { reset(); initialize(w,h); return this; }
+
     public FrameBuffer getFbo() {
         return fbo;
     }

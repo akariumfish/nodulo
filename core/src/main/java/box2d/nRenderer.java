@@ -17,13 +17,9 @@ import aa_nodulo.PlaneApplet;
 import aa_nodulo.pView;
 import util.Utl;
 import util.nRun;
-import app.App;
-import box2d.TileLayer.Cell;
-import box2d.nBatch.Unit;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 public class nRenderer {
 	
@@ -35,45 +31,31 @@ public class nRenderer {
 	public static class RunLayer extends Layer {
 
 		ArrayList<nRun> runs = new ArrayList<nRun>();
-		HashMap<nRun, Integer> prios = new HashMap<nRun, Integer>();
-		private int max_prio = 0;
+		HashMap<nRun, Integer> rprios = new HashMap<nRun, Integer>();
+		private int rmax_prio = 0;
 		
 		public void addRun(nRun r) { addRun(0,r); }
 		public void addRun(int prio, nRun r) { 
-			runs.add(r); prios.put(r, prio); max_prio = Math.max(max_prio, prio); }
+			runs.add(r); rprios.put(r, prio); rmax_prio = Math.max(rmax_prio, prio); }
 		public void removeRun(nRun r) { runs.remove(r); }
 		public void clearRuns() { runs.clear(); }
 
 		public RunLayer(nRenderer m) { this(m,0); }
-		public RunLayer(nRenderer m, int p) {
-			super(m,p);
-		}
+		public RunLayer(nRenderer m, int p) { super(m,p); }
 		
 		public void render() {
 
-			ArrayList<nRun> all = Utl.duplic(runs);
+//			ArrayList<nRun> all = Utl.duplic(runs);
 			
-			for (int prio = 0 ; prio <= max_prio ; prio++)
+			for (int prio = 0 ; prio <= rmax_prio ; prio++)
 				for (nRun d : runs) 
-					if (prios.get(d) == prio) { d.run(); all.remove(d); }
+					if (rprios.get(d) == prio) { d.run(); }//all.remove(d); }
 			
-			for (nRun d : all) d.run(); 
+//			for (nRun d : all) d.run(); 
 			
 		}
 	}
 
-	
-
-	public GroupLayer newGroupLayer() { return new GroupLayer(this); }
-	public GroupLayer newGroupLayer(int p) { return new GroupLayer(this,p); }
-	public RunLayer newRunLayer() { return new RunLayer(this); }
-	public RunLayer newRunLayer(int p) { return new RunLayer(this,p); }
-	public ThreeDLayer new3DLayer(int p) { return new ThreeDLayer(this,p); }
-	public LightLayer newLightLayer(LightLayer.MODE m) { return new LightLayer(this, m); }
-	public LightLayer newLightLayer(LightLayer.MODE m, int p) { return new LightLayer(this, m,p); }
-	public TileLayer newTileLayer() { return new TileLayer(this); }
-	public TileLayer newTileLayer(int p) { return new TileLayer(this,p); }
-	
 	public static class GroupLayer extends Layer {
 		
 		public ArrayList<Layer> layers = new ArrayList<Layer>();
@@ -83,10 +65,7 @@ public class nRenderer {
 		
 		public void addLayer(Layer r) { addLayer(0,r); }
 		public void addLayer(int prio, Layer r) { 
-			r.grouped = true; layers.add(r); 
-			prios.put(r, prio); max_prio = Math.max(max_prio, prio); }
-		public void removeLayer(Layer r) { r.grouped = false; layers.remove(r); }
-		public void clearLayer() { for (Layer l : layers) l.grouped = false; layers.clear(); }
+			layers.add(r); prios.put(r, prio); if (prio > max_prio) max_prio = prio; }
 		
 		public GroupLayer newGroupLayer() { return (GroupLayer) new GroupLayer(rend).addTo(this); }
 		public GroupLayer newGroupLayer(int p) { return (GroupLayer) new GroupLayer(rend).addTo(this,p); }
@@ -101,14 +80,10 @@ public class nRenderer {
 		public GroupLayer(nRenderer m, int p) { super(m,p); }
 		
 		public void render() {
-
-			ArrayList<Layer> all = Utl.duplic(layers);
-			
+			if (!active) return;
 			for (int prio = 0 ; prio <= max_prio ; prio++)
 				for (Layer d : layers) 
-					if (prios.get(d) == prio) { d.render(); all.remove(d); }
-			
-			for (Layer d : all) if (!d.grouped) d.render(); 
+					if (prios.get(d) == prio && d.active) { d.render(); }
 			
 		}
 	}
@@ -120,15 +95,10 @@ public class nRenderer {
 
 		public nRenderer rend;
 		public int prio;
-		public boolean grouped = false;
+		public boolean active = true;
 
 		public Layer(nRenderer m) { this(m,0); }
-		public Layer(nRenderer m, int p) {
-			rend = m;
-			rend.layers.add(this);
-			prio = p;
-			rend.prios.put(this, p);
-		}
+		public Layer(nRenderer m, int p) { rend = m; prio = p; }
 
 		public abstract void render();
 
@@ -137,32 +107,13 @@ public class nRenderer {
 		
 	}
 	
-	public final ArrayList<Layer> layers = new ArrayList<Layer>();
-
-	HashMap<Layer, Integer> prios = new HashMap<Layer, Integer>();
-	private int max_prio = 0;
-	
-
 	public void render() {
-
 		rayHandler.beginRender();
-		
-		batch.begin();
-		
-		ArrayList<Layer> all = Utl.duplic(layers);
-		
-		for (int prio = 0 ; prio <= max_prio ; prio++)
-			for (Layer d : layers) if (!d.grouped)
-				if (prios.get(d) == prio) { d.render(); all.remove(d); }
-		
-		for (Layer d : all) if (!d.grouped) d.render(); 
-
-		batch.end();
-				
+		main.render();
 		rayHandler.endLayeredRender();
-
 	}
-	
+
+	GroupLayer main;
 	GroupLayer roomGroup;
 
 	public LightLayer visionLayer;
@@ -171,16 +122,21 @@ public class nRenderer {
 	public LightLayer auraLayer;
 	public LightLayer solidLayer;
 	public TileLayer tileLayer;
+	LightLayer groundLayer;
+	LightLayer fogLayer;
+	RunLayer updateLayer;
 	
 	public void prepareLayers() {
+		main = new GroupLayer(this);
 		
-		RunLayer updateLayer = newRunLayer(0);
-		LightLayer groundLayer = newLightLayer(LightLayer.MODE.SOLID,1);
+		updateLayer = main.newRunLayer(0);
+		groundLayer = main.newLightLayer(LightLayer.MODE.SOLID,1);
 		
 //		new3DLayer(2);
+
+		roomGroup = main.newGroupLayer(3);
 		
-		roomGroup = newGroupLayer(3);
-		LightLayer fogLayer = newLightLayer(LightLayer.MODE.SOLID,4);
+		fogLayer = main.newLightLayer(LightLayer.MODE.SOLID,4);
 		
 		GroundLight grnd = new GroundLight(groundLayer, false);
 		GroundLight fog = new GroundLight(fogLayer, true);
@@ -334,22 +290,9 @@ public class nRenderer {
 		rayHandler = new RayHandler(app, world);
 		
 		FileHandle[] files = Gdx.files.local("/").list();
-		for(FileHandle fl : files) {
-			if (fl.extension().equals("tmx")) {
-				map_files.add(fl.name());
-			}
-		}
+		for(FileHandle fl : files) if (fl.extension().equals("tmx")) map_files.add(fl.name()); 
 		
 		prepareLayers();
-		
-//		map = new TmxMapLoader(new InternalFileHandleResolver()).load(path);
-//		
-//		processMap(map);
-		
-		
-		
-		batch_test();
-		
 		
 	}
 	
@@ -371,72 +314,7 @@ public class nRenderer {
 	
 	public void dispose() {
 		rayHandler.dispose();
-		batch.dispose();
 	}
-	
-	
-	
-	
-	
-
-	public nBatch batch;
-	
-	void batch_test() {
-
-		batch = new nBatch()
-				.positionAttribute("vertex_positions")
-				.colorAttribute("quad_colors")
-				.genericAttribute("s")
-				.finish();
-		
-		ParticleModel part = newParticleModel("part");
-		part.useLayer(auraLayer).useLayer(colorLayer).useLayer(lightLayer);
-	}
-	
-	public nBatch.Unit newParticle(String model, float x, float y, float r, float c) {
-		nBatch.Unit u = batch.newUnit(model,x,y,r,c,0);
-		return u;
-	}
-	
-	public ParticleModel newParticleModel(String ref) {
-		ParticleModel m = new ParticleModel(); batch.addModel(ref, m); return m; }
-	
-	public static class ParticleModel extends nBatch.Model {
-
-		public int life = 50;
-		public float speed_x = 20;
-		public float speed_y = 0;
-		public ParticleModel() {
-			super(3, 3, 5);
-			
-		}
-
-		@Override public void update(Unit u) {
-			if (u.a(4,u.a(4)+1) > life) u.clear();
-//			u.setTransform(u.a(0)+speed_x*u.a(4),u.a(1)+speed_y*u.a(4),u.a(2));
-			
-		}
-//TODO
-		@Override public void create(Unit u) {
-			u.setTransform(u.a(0),u.a(1),u.a(2));
-			u.beginPush();
-//			short s = u.pushVert(0,0,u.a(3),1f);
-//			u.pushVert(0,10,u.a(3),1f);
-//			u.pushVert(10,0,u.a(3),1f);
-//			u.pushTrig(s,s+1,s+2);
-		}
-
-		@Override public void destroy(Unit u) {
-			
-		}
-		
-		
-	}
-	
-	
-	
-	
-	
 	
 
 	public PointLight newAuraLight(Color col, float dist, float x, float y) {
@@ -451,9 +329,6 @@ public class nRenderer {
 
 	public void newVisionLight(Body body) {
 		visionLayer.newVisionLight(body); }
-
-
-
 
 
 

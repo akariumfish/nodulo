@@ -376,8 +376,8 @@ public class RayHandler implements Disposable {
 //					if (((BaseLight)light).active) 
 						((BaseLight)light).render();
 			
-			box.renderer.batch.setRenderGroup(layer.unitList);
-			box.renderer.batch.render(lightShader);
+//			box.renderer.batch.setRenderGroup(layer.unitList);
+//			box.renderer.batch.render(lightShader);
 			
 			if (useLightMap) {
 				lightMap.frameBuffer.end();

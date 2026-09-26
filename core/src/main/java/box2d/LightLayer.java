@@ -20,8 +20,8 @@ public class LightLayer extends nRenderer.Layer {
 	public final Array<RayHandler.AbstractLight> 
 			lightList = new Array<RayHandler.AbstractLight>(false, 16);
 
-	public final Array<nBatch.Unit> 
-			unitList = new Array<nBatch.Unit>(false, 16);
+//	public final Array<nBatch.Unit> 
+//			unitList = new Array<nBatch.Unit>(false, 16);
 	
 	public ArrayList<Body> transparent = new ArrayList<Body>();
 

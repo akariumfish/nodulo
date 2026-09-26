@@ -1,4 +1,4 @@
-package box2d;
+package box_render;
 
 import java.util.ArrayList;
 
@@ -13,56 +13,48 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
+import util.Utl;
 import util.nMap;
 
 public class nBatch {
 	
-	
-	private ArrayList<VertexAttributeDef> attribDefs = 
-			new ArrayList<VertexAttributeDef>();
+	private VertexDataType type; 
+	private boolean isStatic; 
+	private int maxVertices, maxIndices;
 	private int vertex_flt_nb = 0;
-	private class VertexAttributeDef {
-		final int usage, componentNb; final String ref; 
-		VertexAttributeDef(int _usage, int _componentNb, String _ref) {
-			usage = _usage; componentNb = _componentNb; ref = _ref; }
-	}
-	void prepareAttribute() {
-		attributes = new VertexAttribute[attribDefs.size()];
-		for (int i = 0 ; i < attribDefs.size() ; i++) {
-			VertexAttributeDef def = attribDefs.get(i);
-			attributes[i] = new VertexAttribute(def.usage,def.componentNb,def.ref);
-		}
-	}
+	private VertexAttribute[] attributes;
 	
-	VertexDataType type; 
-	boolean isStatic; 
-	int maxVertices; 
-	int maxIndices;
-	VertexAttribute[] attributes;
-	
-	public nBatch() {
-		this((Gdx.gl30 != null ? 	VertexDataType.VertexBufferObjectWithVAO : 
-									VertexDataType.VertexArray), 
-				false, 256, 4096, 4096); }
+	public nBatch() { this(256, 4096, 2048); }
+	public nBatch(int _unitCapacity, int _maxVertices, int _maxTriangles) {
+		this(Gdx.gl30 != null ? 
+				VertexDataType.VertexBufferObjectWithVAO : VertexDataType.VertexArray, 
+				false, _unitCapacity, _maxVertices, _maxTriangles); }
 	public nBatch(VertexDataType _type, boolean _isStatic, int unitCapacity, 
-			int _maxVertices, int _maxIndices) {
+			int _maxVertices, int _maxTriangles) {
 		type = _type;
 		isStatic = _isStatic;
 		maxVertices = _maxVertices; 
-		maxIndices = _maxIndices;
+		maxIndices = _maxTriangles * 3;
 		
-		// Array (boolean ordered, int capacity)
-		/** ordered : If false, methods that remove elements may change the order of other elements in the array, which avoids a
-		 *           memory copy.
-		 * capacity : Any elements added beyond this will cause the backing array to be grown. */
 		unitList = new Array<Unit>(false, unitCapacity);
-		tmpunit = new Array<Unit>(false, unitCapacity);
 		freeUnit = new Array<Unit>(false, unitCapacity);
 		clearingUnit = new Array<Unit>(false, unitCapacity);
+		tmpunit = new Array<Unit>(false, unitCapacity);
 
 		beshs = new Array<Besh>(true, 10);
 	}
 
+	private ArrayList<VertexAttributeDef> attribDefs = new ArrayList<VertexAttributeDef>();
+	private class VertexAttributeDef {
+		final int usage, componentNb; final String ref; 
+		VertexAttributeDef(int _usage, int _componentNb, String _ref) {
+			usage = _usage; componentNb = _componentNb; ref = _ref; } }
+	private void prepareAttribute() {
+		attributes = new VertexAttribute[attribDefs.size()];
+		for (int i = 0 ; i < attribDefs.size() ; i++) {
+			VertexAttributeDef def = attribDefs.get(i);
+			attributes[i] = new VertexAttribute(def.usage,def.componentNb,def.ref); } }
+	
 	private void attrib(int usage, int componentNb, int floatNb, String ref) {
 		attribDefs.add(new VertexAttributeDef(usage, componentNb, ref));
 		vertex_flt_nb += floatNb; }
@@ -87,51 +79,30 @@ public class nBatch {
 		for (Besh b : beshs) b.dispose(); beshs.clear();
 		for (Model m : models.tmp_all()) m.dispose();
 		tmpunit.clear(); for (Unit u : unitList) tmpunit.add(u);
-		for (Unit u : tmpunit) u.clear(); tmpunit.clear(); freeUnit.clear();
+		for (Unit u : tmpunit) u.do_clear(); tmpunit.clear(); freeUnit.clear();
 		attribDefs.clear();
 	}
 
-	private float vertices[];
-	private short indices[];
-
-	private int flt_cnt = 0, ind_cnt = 0, besh_cnt = 0;
-	private short vert_cnt = 0;
-	
-	private void reset_cnt() { flt_cnt = 0; vert_cnt = 0; ind_cnt = 0; besh_cnt = 0; }
-
 
 	private final Array<Besh> beshs;
-
 	private class Besh {
-
 		Mesh mesh;
-
 		private int besh_ind = 0;
-
-		public Besh() {
-			beshs.add(this);
+		Besh() { beshs.add(this);
 			prepareAttribute();
-			mesh = new Mesh(type, isStatic, maxVertices, maxIndices, attributes);
-		}
+			mesh = new Mesh(type, isStatic, maxVertices, maxIndices, attributes); }
+		void dispose() { mesh.dispose(); }
 		
-		public void dispose() {
-			mesh.dispose();
-		}
-		
-		public void pushStackToMesh() {
+		void pushStackToMesh() {
 			if (flt_cnt <= 0 || ind_cnt <= 0) { besh_ind = 0; return; }
 			mesh.setVertices(vertices, 0, flt_cnt);
 			mesh.setIndices(indices, 0, ind_cnt);
-			besh_ind = ind_cnt; ind_cnt = 0; flt_cnt = 0;
-		}
-		
-		public void render(final ShaderProgram shader) {
-			if (besh_ind > 0) mesh.render(shader, GL20.GL_TRIANGLES, 0, besh_ind);
-		}
-
+			besh_ind = ind_cnt; ind_cnt = 0; flt_cnt = 0; }
+		void render(final ShaderProgram shader) {
+			if (besh_ind > 0) mesh.render(shader, GL20.GL_TRIANGLES, 0, besh_ind); }
 	}
 	
-	public void request(int vertex, int indice) {
+	private void request(int vertex, int indice) {
 		if (vert_cnt + vertex >= maxVertices || 
 				ind_cnt + indice >= maxIndices ) {
 			if (beshs.size == 0) new Besh();
@@ -141,11 +112,8 @@ public class nBatch {
 	}
 
 
-	public final nMap<Model> models = new nMap<Model>();
+	private final nMap<Model> models = new nMap<Model>();
 	
-	public <T extends Model> void addModel(String ref, T mod) {
-		mod.addToBatch(ref,this); }
-
 	public static abstract class Model {
 
 		private nBatch batch;
@@ -163,17 +131,23 @@ public class nBatch {
 			batch.models.remove(ref,this); }
 		
 		public abstract void update(Unit u);
-		public void create(Unit u) {}
+		public void make(Unit u) {}
 		public void destroy(Unit u) {}
 		
-		private ArrayList<LightLayer> layers = new ArrayList<LightLayer>();
-		public Model useLayer(LightLayer l) {
-			layers.add(l);
-			return this;
-		}
+		private ArrayList<Integer> groups = new ArrayList<Integer>();
+		public Model useGroup(int...gs) {
+			if (gs != null) for (int i : gs) groups.add(i); return this; }
 		
 	}
+
+	private float vertices[];
+	private short indices[];
+
+	private int flt_cnt = 0, ind_cnt = 0, besh_cnt = 0;
+	private short vert_cnt = 0;
 	
+	private void reset_cnt() { flt_cnt = 0; vert_cnt = 0; ind_cnt = 0; besh_cnt = 0; }
+
 	private void transform(float x, float y, float cos, float sin) { 
 		transf.set(x,y); trcos = cos; trsin = sin; }
 	private Vector2 transf = new Vector2();
@@ -205,15 +179,14 @@ public class nBatch {
 	public class Unit {
 
 		public void setTransform(float x, float y, float r) {
-			pos.set(x,y); rot = r; dirty = true; }
+			pos.set(x,y); rot = r; cos = MathUtils.cos(rot); sin = MathUtils.sin(rot); }
 		public void setArg(float...a) {
 			if (a != null) {
-				for (int i = 0 ; i < a.length ; i++) args[i] = a[i];
-			}
+				for (int i = 0 ; i < a.length ; i++) args[i] = a[i]; }
+			model.make(this);
 		}
 
 		public float a(int i) { return args[i]; }
-
 		public float a(int i, float f) { args[i] = f; return args[i]; }
 
 		public void beginPush() {
@@ -233,7 +206,8 @@ public class nBatch {
 		private final Vector2 pos = new Vector2();
 		private float rot = 0;
 		private float cos = 0f, sin = 0f;
-		private boolean dirty = true;
+		public float rX(float x, float y) { return x * cos - y * sin; }
+		public float rY(float x, float y) { return x * sin + y * cos; }
 
 		private float args[] = null;
 		private float verts[] = null;
@@ -254,22 +228,16 @@ public class nBatch {
 			if (args == null || args.length < model.argUse)
 				args = new float[model.argUse];
 			if (a != null) setArg(a);
-			model.create(this);
-			for (LightLayer l : model.layers) l.unitList.add(this);
+			else model.make(this);
+			for (Integer l : model.groups) getGroup(l).add(this);
 			return this;
 		}
 
+		public void clear() { if (!clearing) { clearing = true; clearingUnit.add(this); } }
 		private boolean clearing = false;
-		public void clear() {
-			if (!clearing) {
-				clearing = true;
-				clearingUnit.add(this);
-			}
-		}
-
 		public void do_clear() {
 			model.destroy(this);
-			for (LightLayer l : model.layers) l.unitList.removeValue(this, true);
+			for (Integer l : model.groups) getGroup(l).removeValue(this, true);
 			unitList.removeValue(this, true);
 			freeUnit.add(this);
 		}
@@ -281,30 +249,41 @@ public class nBatch {
 		
 		boolean updated = false;
 		void begin() { updated = false; } 
-		void update() { 
-			if (!updated) { 
-				model.update(this); updated = true; } }
+		void update() { if (!updated) { model.update(this); updated = true; } }
 
-		void pushToMesh() {
+		void push() {
 			if (!updated) update();
 			if (clearing) return;
 			if (v_cnt == 0 || t_cnt == 0) return;
-			if (dirty) { dirty = false; 
-				cos = MathUtils.cos(rot); sin = MathUtils.sin(rot); }
 			transform(pos.x,pos.y,cos,sin);
 			request(v_cnt, i_cnt);
 			tmpi = pushVertices(verts, v_cnt);
 			pushTrigs(inds, tmpi, t_cnt);
 		}
 		
-		
-		
 	}
 
+	private void test_clearing() {
+		tmpunit.clear(); for (Unit u : unitList) if (u.clearing) tmpunit.add(u);
+		for (Unit u : tmpunit) u.do_clear(); tmpunit.clear(); }
+	
 	public final Array<Unit> unitList;
 	final Array<Unit> tmpunit;
 	private final Array<Unit> clearingUnit;
 	private final Array<Unit> freeUnit;
+
+	private Array<Unit> getGroup(int i) { return groups.get(i).units; }
+	private final Array<RenderGroup> groups = new Array<RenderGroup>(true, 10);
+	private class RenderGroup {
+		int id; final Array<Unit> units = new Array<Unit>(false, 16);
+		RenderGroup() { id = groups.size; groups.add(this); } }
+
+
+	public int newGroup() { RenderGroup g = new RenderGroup(); return g.id; }
+	
+	public <T extends Model> void addModel(String ref, T mod) {
+		mod.addToBatch(ref,this); }
+	public <T extends Model> T getModel(String ref, Class<T> cl) { return (T)models.get(ref); }
 
 	public Unit newUnit(String model_ref, float...a) {
 		if (models.hasKey(model_ref)) {
@@ -313,48 +292,25 @@ public class nBatch {
 			else return new Unit().init(models.get(model_ref),a); 
 		} else return null; 
 	}
-	
+
 	
 
 	//begin frame
-	private boolean mesh_pushed = false;
-	public void begin() {
-		mesh_pushed = false; render_group = null;
-		for (Unit u : unitList) { u.begin(); }
-	}
+	public void begin() { for (Unit u : unitList) { u.begin(); } }
 
-	public void end() {
-		tmpunit.clear(); for (Unit u : unitList) if (u.clearing) tmpunit.add(u);
-		for (Unit u : tmpunit) u.do_clear(); tmpunit.clear(); 
-	}
-
-	public void push() {
-		reset_cnt();
-		for (Unit u : unitList) { u.pushToMesh(); }
-		beshs.get(besh_cnt).pushStackToMesh();
-		mesh_pushed = true;
-	}
-	
 	private Array<Unit> render_group = null;
-	public void setRenderGroup(Array<Unit> arr) { render_group = arr; mesh_pushed = false; }
-
-	public void updateGroup() {
+	public void push(int i) {
+		render_group = getGroup(i);
 		for (Unit u : render_group) { u.update(); }
-	}
-
-	public void pushGroup() {
+		test_clearing();
 		reset_cnt();
-		for (Unit u : render_group) { u.pushToMesh(); }
+		for (Unit u : render_group) { u.push(); }
 		beshs.get(besh_cnt).pushStackToMesh();
-		mesh_pushed = true;
 	}
 	
 	public void render(final ShaderProgram shader) {
-		if (!mesh_pushed) { if (render_group == null) push(); else pushGroup(); }
-		for (int i = 0 ; i <= besh_cnt ; i++) beshs.get(i).render(shader);
-	}
-	
-	
-	
+		for (int i = 0 ; i <= besh_cnt ; i++) beshs.get(i).render(shader); }
+
+
 	
 }
