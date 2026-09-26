@@ -298,11 +298,14 @@ public class nBatch {
 	//begin frame
 	public void begin() { for (Unit u : unitList) { u.begin(); } }
 
+	public void update() {
+		for (Unit u : unitList) { u.update(); }
+		test_clearing();
+	}
+
 	private Array<Unit> render_group = null;
 	public void push(int i) {
 		render_group = getGroup(i);
-		for (Unit u : render_group) { u.update(); }
-		test_clearing();
 		reset_cnt();
 		for (Unit u : render_group) { u.push(); }
 		beshs.get(besh_cnt).pushStackToMesh();

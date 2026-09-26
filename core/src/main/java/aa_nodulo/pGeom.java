@@ -1395,9 +1395,9 @@ public class pGeom extends pSystem {
 
 //		if (!app.RELEASE) 
 			tool_setup(false);
-		app.addDelayEvent(1,new nRun() { public void run() {
-			app.getSystem(pBox2d.class).addDrawable(5, draw_run);
-		}});		
+//		app.addDelayEvent(1,new nRun() { public void run() {
+//			app.getSystem(pBox2d.class).addDrawable(5, draw_run);
+//		}});		
 //		plane.addEventSave(new nRun() { public void run() {
 //			
 //		}});
@@ -1447,8 +1447,8 @@ public class pGeom extends pSystem {
 	public void system_clear() {
 		app.time.removeEventTick(tick_run);
 		app.time.removeEventNetTick(net_tick_run);
-		if (app.getSystem(pBox2d.class) != null) 
-			app.getSystem(pBox2d.class).removeDrawable(draw_run);
+//		if (app.getSystem(pBox2d.class) != null) 
+//			app.getSystem(pBox2d.class).removeDrawable(draw_run);
 //		app.view.removeDrawable(draw_run);
 		app.view.removeDrawable(draw_aabb_run);
 	}

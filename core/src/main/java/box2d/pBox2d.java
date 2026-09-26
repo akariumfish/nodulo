@@ -3,14 +3,7 @@ package box2d;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Mesh;
-import com.badlogic.gdx.graphics.VertexAttribute;
-import com.badlogic.gdx.graphics.Mesh.VertexDataType;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -40,7 +33,9 @@ import aa_nodulo.pProperty;
 import aa_nodulo.pSpace;
 import aa_nodulo.pSystem;
 import aa_nodulo.pView;
+import box_render.nBatch;
 import box_render.nRender;
+import box_render.nBatch.Unit;
 import data.sBloc_Builder;
 import data.sBoo;
 import data.sData;
@@ -49,7 +44,6 @@ import data.sValueBloc;
 import gui.nDrawable;
 import gui.nGUI;
 import gui.nInterface;
-import shaders.BlendFunc;
 import util.Utl;
 import util.nMap;
 import util.nPool;
@@ -351,15 +345,15 @@ public class pBox2d extends pSystem {
 		public void restoreScissors() { renderer.rayHandler.restoreScissors(); }
 		
 
-		ArrayList<nDrawable> drawRun = new ArrayList<nDrawable>();
-		HashMap<nDrawable, Integer> drawPrio = new HashMap<nDrawable, Integer>();
-		int max_prio = 0;
-		
-		public pBox2d addDrawable(nDrawable r) { addDrawable(0,r); return this; }
-		public pBox2d addDrawable(int prio, nDrawable r) { 
-			drawRun.add(r); drawPrio.put(r, prio); max_prio = Math.max(max_prio, prio); return this; }
-		public pBox2d removeDrawable(nDrawable r) { drawRun.remove(r); return this; }
-		public pBox2d clearDrawable() { drawRun.clear(); return this; }
+//		ArrayList<nDrawable> drawRun = new ArrayList<nDrawable>();
+//		HashMap<nDrawable, Integer> drawPrio = new HashMap<nDrawable, Integer>();
+//		int max_prio = 0;
+//		
+//		public pBox2d addDrawable(nDrawable r) { addDrawable(0,r); return this; }
+//		public pBox2d addDrawable(int prio, nDrawable r) { 
+//			drawRun.add(r); drawPrio.put(r, prio); max_prio = Math.max(max_prio, prio); return this; }
+//		public pBox2d removeDrawable(nDrawable r) { drawRun.remove(r); return this; }
+//		public pBox2d clearDrawable() { drawRun.clear(); return this; }
 
 		
 		
@@ -408,10 +402,10 @@ public class pBox2d extends pSystem {
 		public World world;
 		public Box2DRenderer boxRenderer;
 
-		nRenderer renderer;
+		public nRenderer renderer;
 		nRender nrend;
 
-		pView view;
+		public pView view;
 		
 		public void system_init() {
 			bloc.addObject("box2d", this);
@@ -439,7 +433,7 @@ public class pBox2d extends pSystem {
 			val_bullet_nb = bloc.obtainInt("val_bullet_nb", 0);
 			val_shape_nb = bloc.obtainInt("val_shape_nb", 0);
 			
-			val_use_nbatch = bloc.obtainBoo("val_use_nbatch", true);
+			val_use_nbatch = bloc.obtainBoo("val_use_nbatch", app.config.USE_NEW_RENDER);
 			
 
 			app.outputs.put("reset_mob_spawn", new nRun() { public void run() {
@@ -489,6 +483,8 @@ public class pBox2d extends pSystem {
 			renderer = new nRenderer(this, world);
 			
 			nrend = new nRender(this);
+			
+			test_part();
 			
 //			if (app.config.STARTUP_MAP_PATH.length() > 0)
 //				renderer.setupMap(app.config.STARTUP_MAP_PATH);
@@ -662,21 +658,21 @@ public class pBox2d extends pSystem {
 		public boolean drawvision() { return 
 				has_vision_bod && val_draw_vision.get(); }
 		
-		public void draw_drawer() {
-
-			view.app.gdx.drawer.begin();
-			
-			ArrayList<nDrawable> alldraw = Utl.duplic(drawRun);
-			
-			for (int prio = 0 ; prio <= max_prio ; prio++)
-				for (nDrawable d : drawRun) 
-					if (drawPrio.get(d) == prio) { d.drawing(); alldraw.remove(d); } 
-			
-			for (nDrawable d : alldraw) d.drawing(); 
-
-			view.app.gdx.drawer.end();
-			
-		}
+//		public void draw_drawer() {
+//
+//			view.app.gdx.drawer.begin();
+//			
+//			ArrayList<nDrawable> alldraw = Utl.duplic(drawRun);
+//			
+//			for (int prio = 0 ; prio <= max_prio ; prio++)
+//				for (nDrawable d : drawRun) 
+//					if (drawPrio.get(d) == prio) { d.drawing(); alldraw.remove(d); } 
+//			
+//			for (nDrawable d : alldraw) d.drawing(); 
+//
+//			view.app.gdx.drawer.end();
+//			
+//		}
 		
 		public void draw() { 
 
@@ -701,14 +697,61 @@ public class pBox2d extends pSystem {
 			}
 		}
 		
+
+		
+		
+		
+		public void test_part() {
+
+			newParticleModel("part");
+
+		}
+
+		public void space_start() {
+			newParticle("part", 0, 0, 0, Color.RED.toFloatBits());
+			newParticle("part", 0, 400, 0, Color.GREEN.toFloatBits());
+			newParticle("part", 400, 400, 0, Color.BLUE.toFloatBits());
+			newParticle("part", 400, 0, 0, Color.YELLOW.toFloatBits());
+		}
+		
+		public nBatch.Unit newParticle(String model, float x, float y, float r, float c) {
+			return nrend.batch.newUnit(model,x,y,r,c,0); }
+		
+		public ParticleModel newParticleModel(String ref) {
+			nrend.batch.addModel(ref, new ParticleModel(nrend)); return nrend.batch.getModel(ref, ParticleModel.class); }
+		
+		public static class ParticleModel extends nBatch.Model {
+			private nRender rend;
+			public int life = 1000;
+			public float speed = 1;
+			public ParticleModel(nRender _rend) {
+				super(3, 3, 5); rend = _rend;
+				useGroup(rend.AURA,rend.SOLID,rend.COLOR,rend.LIGHT);
+			}
+
+			@Override public void update(Unit u) {
+				if (u.a(4,u.a(4)+1) > life) { u.clear(); return; }
+				u.setTransform(u.a(0),u.a(1),u.a(2));
+				u.setTransform(u.a(0)+u.rX(speed,0)*u.a(4),u.a(1)+u.rY(speed,0)*u.a(4),u.a(2));
+			}
+			@Override public void make(Unit u) {
+				u.beginPush();
+				u.pushVert(0,0,u.a(3),1f);
+				u.pushVert(0,200,u.a(3),1f);
+				u.pushVert(200,0,u.a(3),1f);
+				u.pushTrig(0,1,2);
+			}
+
+			@Override public void destroy(Unit u) {
+				
+			}
+			
+		}
 		
 		
 
 		
 		
-		public void space_start() {
-			nrend.space_start();
-		}
 		public void space_clear() {
 			for (pParam p : app.space.param_pools.get("bullet_unit").temp_all())
 				clear_bullet(p);

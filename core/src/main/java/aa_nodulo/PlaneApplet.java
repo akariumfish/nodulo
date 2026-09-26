@@ -150,6 +150,8 @@ public class PlaneApplet extends App {
 
 		public boolean POP_BODY_EDITOR = false;
 
+		public boolean USE_NEW_RENDER = true;
+
 		public boolean SCRIPT_ALL_FUNC = true;
 
 		public boolean AVATAR_VIEW_MODE = false; //false = def
