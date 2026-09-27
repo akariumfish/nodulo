@@ -144,7 +144,7 @@ public class nBatch {
 	private short indices[];
 
 	private int flt_cnt = 0, ind_cnt = 0, besh_cnt = 0;
-	private short vert_cnt = 0;
+	private int vert_cnt = 0;
 	
 	private void reset_cnt() { flt_cnt = 0; vert_cnt = 0; ind_cnt = 0; besh_cnt = 0; }
 
@@ -153,21 +153,18 @@ public class nBatch {
 	private Vector2 transf = new Vector2();
 	private float trsin = 0, trcos = 0;
 	private static int tmpi = 0;
-	private static short tmps = 0;
+	private static int tmps = 0;
 	private float rotX(float x, float y) { return x * trcos - y * trsin; }
 	private float rotY(float x, float y) { return x * trsin + y * trcos; }
 	private void pushFloat(float f) { vertices[flt_cnt++] = f; }
 	private void pushPos(float x, float y) { 
 		vertices[flt_cnt++] = rotX(x,y) + transf.x;
 		vertices[flt_cnt++] = rotY(x,y) + transf.y; }
-	private short pushVertices(float[] fs, int nb) {
-		if (fs == null) return -1;
+	private int pushVertices(float[] fs, int nb) {
 		tmps = vert_cnt++;
 		for (int i = 0 ; i < nb * vertex_flt_nb ; i += vertex_flt_nb) {
-			pushPos(fs[i],fs[i+1]);
-			if (vertex_flt_nb > 2) 
-				for (int j = 2 ; j < vertex_flt_nb ; j++) pushFloat(fs[i+j]);
-		}
+			if (i != 0) vert_cnt++; pushPos(fs[i],fs[i+1]);
+			for (int j = 2 ; j < vertex_flt_nb ; j++) pushFloat(fs[i+j]); }
 		return tmps;
 	}
 	private void pushTrigs(short[] p, int offset, int trignb) {
@@ -181,8 +178,7 @@ public class nBatch {
 		public void setTransform(float x, float y, float r) {
 			pos.set(x,y); rot = r; cos = MathUtils.cos(rot); sin = MathUtils.sin(rot); }
 		public void setArg(float...a) {
-			if (a != null) {
-				for (int i = 0 ; i < a.length ; i++) args[i] = a[i]; }
+			if (a != null) { for (int i = 0 ; i < a.length ; i++) args[i] = a[i]; }
 			model.make(this);
 		}
 
@@ -247,14 +243,10 @@ public class nBatch {
 		public Object getData() { return userData; }
 		public <K> K getData(Class<K> cl) { if (userData == null) return null; else return (K)userData; }
 		
-		boolean updated = false;
-		void begin() { updated = false; } 
-		void update() { if (!updated) { model.update(this); updated = true; } }
+		void update() { model.update(this); }
 
 		void push() {
-			if (!updated) update();
 			if (clearing) return;
-			if (v_cnt == 0 || t_cnt == 0) return;
 			transform(pos.x,pos.y,cos,sin);
 			request(v_cnt, i_cnt);
 			tmpi = pushVertices(verts, v_cnt);
@@ -295,25 +287,30 @@ public class nBatch {
 
 	
 
-	//begin frame
-	public void begin() { for (Unit u : unitList) { u.begin(); } }
-
 	public void update() {
 		for (Unit u : unitList) { u.update(); }
 		test_clearing();
 	}
 
 	private Array<Unit> render_group = null;
-	public void push(int i) {
-		render_group = getGroup(i);
+	public void push(int g) {
+		render_group = getGroup(g);
 		reset_cnt();
 		for (Unit u : render_group) { u.push(); }
 		beshs.get(besh_cnt).pushStackToMesh();
 	}
-	
+
 	public void render(final ShaderProgram shader) {
 		for (int i = 0 ; i <= besh_cnt ; i++) beshs.get(i).render(shader); }
 
+	public void render(int g, final ShaderProgram shader) {
+		render_group = getGroup(g);
+		reset_cnt();
+		for (Unit u : render_group) { u.push(); }
+		beshs.get(besh_cnt).pushStackToMesh();
+		for (int i = 0 ; i <= besh_cnt ; i++) beshs.get(i).render(shader);
+	}
+	
 
 	
 }

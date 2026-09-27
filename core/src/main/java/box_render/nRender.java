@@ -3,14 +3,25 @@ package box_render;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -18,15 +29,358 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.noodle.nodulo.GdxApp;
 
+import aa_nodulo.PlaneApplet;
 import aa_nodulo.pView;
 import box2d.VfxFrameBuffer;
 import box2d.pBox2d;
 import gui.nGUI;
 import shaders.BlendFunc;
 import util.Utl;
+import util.iMap;
 import util.nRun;
 
 public class nRender {
+	
+
+	static private int n = 0;
+	static private int n() { n++; return n-1; }
+	static private final int NUM_VERTICES = 20;
+	static private final int X1 = n(), Y1 = n(), C1 = n(), U1 = n(), V1 = n();
+	static private final int X2 = n(), Y2 = n(), C2 = n(), U2 = n(), V2 = n();
+	static private final int X3 = n(), Y3 = n(), C3 = n(), U3 = n(), V3 = n();
+	static private final int X4 = n(), Y4 = n(), C4 = n(), U4 = n(), V4 = n();
+	
+	class TileLayer extends Layer {
+	
+		class Tile {
+			public int id;
+			public TiledMapTile maptile;
+			public MapProperties prop;
+			private TextureRegion region;
+			private Texture texture;
+			private float vertices[] = new float[NUM_VERTICES];
+			private float x1,y1,x2,y2,u1,v1,u2,v2;
+			
+			public void clear() { prop = null; region = null; texture = null; maptile = null; }	
+			public Tile(TiledMapTile t) {
+				maptile = t; id = t.getId();
+				prop = maptile.getProperties();
+				region = maptile.getTextureRegion();
+				texture = region.getTexture();
+				
+				x1 = maptile.getOffsetX() * unitScale - getMapWidth() / 2f;
+				y1 = maptile.getOffsetY() * unitScale - getMapHeight() / 2f;
+				x2 = x1 + region.getRegionWidth() * unitScale;
+				y2 = y1 + region.getRegionHeight() * unitScale;
+				u1 = region.getU(); v1 = region.getV2();
+				u2 = region.getU2(); v2 = region.getV();
+	
+				float color = new Color(1f,1f,1f,1f).toFloatBits();
+				vertices[C1] = color; vertices[U1] = u1; vertices[V1] = v1;
+				vertices[C2] = color; vertices[U2] = u1; vertices[V2] = v2;
+				vertices[C3] = color; vertices[U3] = u2; vertices[V3] = v2;
+				vertices[C4] = color; vertices[U4] = u2; vertices[V4] = v1;
+			}
+			
+			public void setVert(float x, float y) {
+				vertices[X1] = x1 + x; vertices[Y1] = y1 + y;
+				vertices[X2] = x1 + x; vertices[Y2] = y2 + y;
+				vertices[X3] = x2 + x; vertices[Y3] = y2 + y;
+				vertices[X4] = x2 + x; vertices[Y4] = y1 + y;
+			}
+			public void render(float x, float y) {
+				setVert(x,y);
+				renderbatch.draw(texture, vertices, 0, NUM_VERTICES);
+			}
+			
+		}
+		Tile getTile(TiledMapTile mt) {
+			int i = mt.getId();
+			if (tiles.hasKey(i)) return tiles.get(i);
+			Tile t = new Tile(mt);
+			tiles.put(i,t);
+			return t;
+		}
+		
+		private iMap<Tile> tiles = new iMap<Tile>();
+		
+		class Cell {
+			private Tile tile;
+//			private TiledMapTileLayer.Cell cell;
+			public boolean wall = false;
+			public boolean light = false;
+			public boolean ground = false;
+			public boolean empty = false;
+			public boolean build = false;
+			public int x, y;
+			public Cell(int i, int j, TiledMapTileLayer.Cell c) { 
+//				cell = c; 
+				x = i; y = j;
+				if (c == null) return;
+				all_cells.add(this);
+				tile = getTile(c.getTile());
+				ground = Utl.getBoo(tile.prop,"ground");
+				light = Utl.getBoo(tile.prop,"light");
+				wall = Utl.getBoo(tile.prop,"wall");
+				empty = !ground && !wall;
+	
+//				if (!wall) build = true;
+//				if (ground) build = true;
+//				if (light) build = true;
+			}
+			
+			public void render() {
+				if (empty) return;
+				this.tile.render(x,y);
+			}
+		}
+	
+		TiledMapTileLayer mapLayer;
+		final ArrayList<Cell> all_cells = new ArrayList<Cell>();
+		
+		Cell[][] cells;
+		Cell getcell(int i, int j) { return ((i >= 0 && j >= 0 && i < map_width && j < map_height) ? cells[i][j] : null); }
+		
+		public int map_width = 0, map_height = 0;
+		public int tile_width = 0, tile_height = 0;
+		public final int tile_scale = 200;
+	
+		private final pView view;
+		private final OrthographicCamera cam;
+		private final Batch renderbatch;
+		private float unitScale;
+		
+		@Override public void dispose() {
+			super.dispose();
+		}
+	
+		public TileLayer() {
+			super(0);
+			view = PlaneApplet.app.view;
+			this.cam = new OrthographicCamera(GdxApp.WIDTH, GdxApp.HEIGHT);
+			renderbatch = GdxApp.app.drawer.spritebatch;
+			blur = 0;
+		}
+	
+		public void clear_cells() {
+			for (Tile t : tiles.all()) t.clear();
+			tiles.clear();
+			all_cells.clear();
+		}
+		
+		public void loadMap(TiledMapTileLayer ml) {
+			mapLayer = ml;
+			map_width = ml.getWidth(); map_height = ml.getHeight();
+			tile_width = ml.getTileWidth(); tile_height = ml.getTileHeight();
+			unitScale = 1f / tile_width;
+			loadCell();
+		}
+		
+		public void loadCell() {
+			clear_cells();
+			cells = new Cell[map_width][map_height];
+			for (int i = 0 ; i < map_width ; i++)
+				for (int j = 0 ; j < map_height ; j++) {
+					cells[i][j] = new Cell(i,j,mapLayer.getCell(i,j)); }
+		}
+		
+		@Override public void buffer() { }		
+		@Override public void blur() { }
+		@Override public void render() {
+			if (box.val_draw_tile.get()) {
+				prepareRenderer();
+
+				tmp_transf.set(renderbatch.getTransformMatrix());
+				tmp_proj.set(renderbatch.getProjectionMatrix());
+				renderbatch.setTransformMatrix(transform);
+				renderbatch.setProjectionMatrix(projection);
+				
+				renderbatch.begin();
+
+				for (Cell c : all_cells) if (!c.empty) c.render();
+
+				renderbatch.end();
+				
+				transform.setToTranslation(0f,0f,0f);
+				renderbatch.setTransformMatrix(tmp_transf);
+				renderbatch.setProjectionMatrix(tmp_proj);
+
+				Gdx.gl.glEnable(GL20.GL_BLEND); 
+				
+			}
+		}
+
+		Matrix4 transform = new Matrix4().setToTranslation(0f,0f,0f);
+		Matrix4 projection = new Matrix4().setToTranslation(0f,0f,0f);
+		Matrix4 tmp_proj = new Matrix4().setToTranslation(0f,0f,0f);
+		Matrix4 tmp_transf = new Matrix4().setToTranslation(0f,0f,0f);
+		private void prepareRenderer() {
+			float scale = view.val_cam_scale.get();
+			float sclinv = 1f / scale;
+	
+			Vector2 screen_center = new Vector2(view.app.gdx.getscreenwidth() / 2f, 
+					view.app.gdx.getscreenheight() / 2f);
+			Vector2 view_center = new Vector2(view.val_pos.get());
+			view_center.x += view.val_view_size.x() / 2.0f;
+			view_center.y -= view.val_view_size.y() / 2.0f + nGUI.book.RS;
+	
+			transform = new Matrix4()
+					.setToTranslation(0f,0f,0f);
+	
+			Vector2 sv = new Vector2(view_center).sub(screen_center);
+			sv.scl(1f/view.val_cam_scale.get());
+			sv.scl(1f/tile_scale);
+			transform.translate(sv.x,sv.y,0f);
+	
+			transform.rotateRad(0f,0f,-1f, -view.val_cam_rot.get());
+	
+			Vector2 m = new Vector2();
+			m.add(view.val_cam_pos.get());
+			m.scl(1/tile_scale);
+			transform.translate(m.x,m.y,0f);
+	
+			cam.setToOrtho(false, (int)(view.app.gdx.getscreenwidth()), 
+					(int)(view.app.gdx.getscreenheight()));
+			cam.zoom = sclinv / tile_scale;
+			cam.position.set(0f, 0f, 0f);
+			cam.direction.set(0f, 0f, -1f);
+			Vector2 u = new Vector2(0f,1f);
+			cam.up.set(u.x, u.y, 0f);
+			cam.update();
+			projection.set(cam.projection);
+		}
+		
+		
+	
+		public float getWidth() { return map_width * tile_scale; }
+		public float getHeight() { return map_height * tile_scale; }
+		public int getMapWidth() { return map_width; }
+		public int getMapHeight() { return map_height; }
+		public float getTileWidth() { return tile_scale; }
+		public float getTileHeight() { return tile_scale; }
+		public int getMapTileWidth() { return tile_width; }
+		public int getMapTileHeight() { return tile_height; }
+	
+		
+	
+//		public Vector2 getCellPos(int x, int y) {
+//			final int layerWidth = getMapWidth();
+//			final int layerHeight = getMapHeight();
+//			Vector2 p = new Vector2(x,y)
+//					.sub(layerWidth/2f,layerHeight/2f)
+//					.scl(getTileWidth(),getTileHeight());
+//			return p;
+//		}
+//		public Vector2 mapToSpace(float x, float y) { return mapToSpace(new Vector2(x,y)); }
+//		public Vector2 mapToSpace(Vector2 v) {
+//			Vector2 p = new Vector2(v)
+//					.scl(getTileWidth(),getTileHeight())
+//					.scl(1f/getMapTileWidth(),1f/getMapTileHeight())
+//					.sub(getWidth()/2f,getHeight()/2f);
+//			return p;
+//		}
+		
+	}
+	private void processMap(TiledMap tilemap) {
+		int layer_cnt = tilemap.getLayers().getCount();
+		for (int id = 0 ; id < layer_cnt ; id++) {
+			MapLayer layer = tilemap.getLayers().get(id);
+			if (!layer.isVisible()) continue;
+			MapProperties prop = layer.getProperties();
+			if (!Utl.getBoo(prop,"flags") && (layer instanceof TiledMapTileLayer)) {
+				tile.loadMap((TiledMapTileLayer)layer);
+			} 
+		}
+	}
+
+	public boolean map_is_setup = false;
+	public String current_map_path = "";
+
+	private TiledMap map;
+	
+	public void setupMap(String path) {
+		if (current_map_path.equals(path)) return;
+		current_map_path = Utl.copy(path);
+		if (map_is_setup) clearMap();
+		map_is_setup = true;
+		map = new TmxMapLoader(new InternalFileHandleResolver()).load(path);
+		processMap(map);
+	}
+
+	public void clearMap() {
+		tile.clear_cells();
+	}
+
+	public nBatch.Unit newUnit(String model, float...a) {
+		return batch.newUnit(model,a); }
+
+	public <K extends nBatch.Model> void addModel(String ref, K mod) {
+		batch.addModel(ref, mod); }
+	public <K extends nBatch.Model> K getModel(String ref, Class<K> cl) {
+		return batch.getModel(ref,cl); }
+	
+	
+	
+	
+	
+	private ArrayList<Layer> layers = new ArrayList<Layer>();
+	class Layer {
+		private BlendFunc unitblend = unitBlend;
+		private BlendFunc renderblend;
+		private ShaderProgram rendershader;
+		private Color ambiant = new Color(0f, 0f, 0f, 0f);
+		protected int blur = 2;
+		protected VfxFrameBuffer buffer;
+		private int pix_size = BUFFER_PIX_SIZE;
+		private int group;
+
+		Layer setup(final BlendFunc u, final ShaderProgram s, final BlendFunc b) {
+			unitblend = u; renderblend = b; rendershader = s; return this; }
+		Layer ambiant(final Color a) { ambiant.set(a); return this; }
+		Layer blur(int b) { blur = b; return this; }
+		int group() { return group; }
+
+		Layer() { this(BUFFER_PIX_SIZE); }
+		Layer(int pix) {
+			group = batch.newGroup();
+			layers.add(this);
+			pix_size = pix; 
+			if (pix > 0) buffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);
+			resize();
+		}
+
+		void dispose() {
+			if (pix_size > 0) buffer.dispose();
+		}
+
+		void resize() {
+			if (pix_size > 0) buffer.resize((int)(box.app.gdx.getscreenwidth() / pix_size),
+					(int)(box.app.gdx.getscreenheight() / pix_size)); }
+
+		public void buffer() {
+			if (pix_size <= 0) return; 
+			buffer.begin();
+			Gdx.gl.glClearColor(buffer_clear_color.r, buffer_clear_color.g, 
+					buffer_clear_color.b, buffer_clear_color.a);
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			unitblend.apply();
+			batch.render(group, unitShader);
+			buffer.end();
+		}
+
+		public void blur() { 
+			if (pix_size <= 0) return; if (blur > 0) gaussianBlur(buffer,blur); }
+		public void render() {
+			if (pix_size <= 0) return;
+			buffer.getTexture().bind(0);
+			renderblend.apply();
+			rendershader.bind();
+			if (rendershader == colorShader || rendershader == lightShader) 
+				rendershader.setUniformf("ambient", ambiant.r * ambiant.a, 
+						ambiant.g * ambiant.a, ambiant.b * ambiant.a, 1f - ambiant.a);
+			screenMesh.render(rendershader, GL20.GL_TRIANGLE_FAN); 
+		}
+	}
 	
 	static int BUFFER_PIX_SIZE = 2;
 	
@@ -55,6 +409,181 @@ public class nRender {
 
 	
 	
+
+	pBox2d box;
+
+	public final nBatch batch;
+	public final int AURA,SOLID,COLOR,LIGHT;
+	public final TileLayer tile;
+	private final Mesh screenMesh;
+	private final ShaderProgram unitShader = createUnitShader();
+	private final ShaderProgram colorShader = createColorShader();
+	private final ShaderProgram lightShader = createLightShader();
+	private final ShaderProgram auraShader = createAuraShader();
+	private final ShaderProgram solidShader = createSolidShader();
+	private ShaderProgram blurShader;
+	private VfxFrameBuffer frameBuffer;
+//	private VfxFrameBuffer fxBuffer;
+	private VfxFrameBuffer pingPongBuffer;
+
+	public void dispose() {
+		batch.dispose();
+		screenMesh.dispose();
+		frameBuffer.dispose();
+//		fxBuffer.dispose();
+		pingPongBuffer.dispose();
+		unitShader.dispose();
+		colorShader.dispose();
+		lightShader.dispose();
+		blurShader.dispose();
+		for (Layer l : layers) l.dispose(); layers.clear();
+	}
+
+	public nRender(pBox2d _box) {
+		box = _box;
+		cam = new FalseCam(GdxApp.WIDTH, GdxApp.HEIGHT, this);
+		
+		// unitCapacity, maxVertices, maxTriangles
+		batch = new nBatch(256, 4096, 2048)
+				.positionAttribute("vertex_positions")
+				.colorAttribute("quad_colors")
+				.genericAttribute("s")
+				.finish();
+
+		tile = new TileLayer(); 
+		AURA = new Layer(2).setup(unitBlend, auraShader, auraRenderBlend)
+				.ambiant(auraAmbiant).group(); 
+		SOLID = new Layer(2).setup(solidUnitBlend, solidShader, solidRenderBlend)
+				.ambiant(solidAmbiant).blur(1).group(); 
+		COLOR = new Layer(2).setup(unitBlend, colorShader, colorRenderBlend)
+				.ambiant(colorAmbiant).blur(1).group(); 
+		LIGHT = new Layer(2).setup(unitBlend, lightShader, lightRenderBlend)
+				.ambiant(lightAmbiant).group(); 
+		
+		screenMesh = createScreenMesh();
+		
+		create_buffers(Gdx.graphics.getWidth() / BUFFER_PIX_SIZE, Gdx.graphics
+				.getHeight() / BUFFER_PIX_SIZE);
+
+		box.app.gdx.addEventScreen(new nRun() { public void run() {
+			resize(Gdx.graphics.getWidth() / BUFFER_PIX_SIZE, 
+					Gdx.graphics.getHeight() / BUFFER_PIX_SIZE); 
+			for (Layer l : layers) l.resize(); }});
+		
+	}
+
+	private void create_buffers(int fboWidth, int fboHeight) {
+		blurShader = createBlurShader(DIFFUSE_BLUR, fboWidth, fboHeight);
+		pingPongBuffer = new VfxFrameBuffer(Format.RGBA8888);
+		pingPongBuffer.initialize(fboWidth, fboHeight);
+//		fxBuffer = new VfxFrameBuffer(Format.RGBA8888);
+//		fxBuffer.initialize(fboWidth, fboHeight);
+		frameBuffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);
+		frameBuffer.initialize((int)box.app.gdx.getscreenwidth(),
+				(int)box.app.gdx.getscreenheight());
+		cam.update((int)box.app.gdx.getscreenwidth(),
+			(int)box.app.gdx.getscreenheight());
+	}
+
+	public void resize(int fboWidth, int fboHeight) {
+		frameBuffer.resize((int)box.app.gdx.getscreenwidth(),
+				(int)box.app.gdx.getscreenheight());
+		blurShader = createBlurShader(DIFFUSE_BLUR, fboWidth, fboHeight);
+		pingPongBuffer.resize(fboWidth, fboHeight);
+//		fxBuffer.resize(fboWidth, fboHeight);
+	}
+
+	private Mesh createScreenMesh() {
+		float[] verts = new float[VERT_SIZE];
+		verts[TX1] = -1; 	verts[TY1] = -1;		verts[TU1] = 0f; verts[TV1] = 0f;
+		verts[TX2] = 1; 		verts[TY2] = -1;		verts[TU2] = 1f; verts[TV2] = 0f;
+		verts[TX3] = 1; 		verts[TY3] = 1;		verts[TU3] = 1f; verts[TV3] = 1f;
+		verts[TX4] = -1; 	verts[TY4] = 1;		verts[TU4] = 0f; verts[TV4] = 1f;
+		return new Mesh(true, 4, 0, 
+				new VertexAttribute(Usage.Position, 2, "a_position"), 
+				new VertexAttribute(Usage.TextureCoordinates, 2, "a_texCoord"))
+			.setVertices(verts);
+	}
+
+	static public final int VERT_SIZE = 16;
+	static public final int TX1 = 0, TY1 = 1, TU1 = 2, TV1 = 3;
+	static public final int TX2 = 4, TY2 = 5, TU2 = 6, TV2 = 7;
+	static public final int TX3 = 8, TY3 = 9, TU3 = 10, TV3 = 11;
+	static public final int TX4 = 12, TY4 = 13, TU4 = 14, TV4 = 15;
+	
+	public void render() {
+		box.app.gdx.drawer.pause_batch();
+		
+		batch.update();
+		
+		prepareCombined();
+		removeScissors();
+
+		Gdx.gl.glDepthMask(false);
+		Gdx.gl.glEnable(GL20.GL_BLEND); 
+
+		unitShader.bind();
+		unitShader.setUniformMatrix("u_projTrans", combined);
+		for (Layer l : layers) l.buffer();
+		for (Layer l : layers) l.blur();
+
+		frameBuffer.begin(); 
+
+		Gdx.gl20.glDisable(GL20.GL_BLEND);
+		Gdx.gl.glClearColor(0f,0f,0f,0f);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glEnable(GL20.GL_BLEND); 
+		
+		for (Layer l : layers) l.render();
+
+		frameBuffer.end();
+
+		Gdx.gl20.glDisable(GL20.GL_BLEND);
+		
+		restoreScissors();
+
+		box.app.gdx.drawer.spritebatch.begin();
+
+		box.app.gdx.drawer.spritebatch.draw(frameBuffer.getTexture(), 0, 0, 
+				box.app.gdx.getscreenwidth(), 
+				box.app.gdx.getscreenheight(), 
+				0, 0, 1, 1);
+
+	}
+	
+	private void gaussianBlur(VfxFrameBuffer buffer, int blurNum) {
+		Gdx.gl20.glDisable(GL20.GL_BLEND);
+		for (int i = 0; i < blurNum; i++) {
+			// horizontal
+			buffer.getTexture().bind(0);
+			pingPongBuffer.begin(); {
+				blurShader.bind();
+				blurShader.setUniformf("dir", 1f, 0f);
+				screenMesh.render(blurShader, GL20.GL_TRIANGLE_FAN, 0, 4);
+			} pingPongBuffer.end();
+			// vertical
+			pingPongBuffer.getTexture().bind(0);
+			buffer.begin(); {
+				blurShader.bind();
+				blurShader.setUniformf("dir", 0f, 1f);
+				screenMesh.render(blurShader, GL20.GL_TRIANGLE_FAN, 0, 4);
+			} buffer.end();
+		}
+		Gdx.gl20.glEnable(GL20.GL_BLEND);
+	}
+
+	private final ArrayList<Rectangle> scissors = new ArrayList<Rectangle>();
+	private void removeScissors() {
+		for (Rectangle r : Utl.duplic(box.app.gui.scissors)) {
+			scissors.add(r); ScissorStack.popScissors(); }
+		box.app.gui.scissors.clear();
+	}
+	private void restoreScissors() {
+		for (Rectangle r : Utl.duplic(scissors)) {
+			box.app.gui.scissors.add(r); ScissorStack.pushScissors(r); }
+		scissors.clear();
+	}
+
 	private final Matrix4 combined = new Matrix4();
 	private final FalseCam cam;
 	private void prepareCombined() {
@@ -114,210 +643,6 @@ public class nRender {
 		}
 	}
 	
-
-	pBox2d box;
-
-	public final nBatch batch;
-	public final int AURA,SOLID,COLOR,LIGHT;
-	private final Mesh screenMesh;
-	private final ShaderProgram unitShader = createUnitShader();
-	private final ShaderProgram colorShader = createColorShader();
-	private final ShaderProgram lightShader = createLightShader();
-	private final ShaderProgram auraShader = createAuraShader();
-	private final ShaderProgram solidShader = createSolidShader();
-	private ShaderProgram blurShader;
-	private VfxFrameBuffer frameBuffer;
-	private VfxFrameBuffer fxBuffer;
-	private VfxFrameBuffer pingPongBuffer;
-
-	public void dispose() {
-		batch.dispose();
-		screenMesh.dispose();
-		frameBuffer.dispose();
-		fxBuffer.dispose();
-		pingPongBuffer.dispose();
-		unitShader.dispose();
-		colorShader.dispose();
-		lightShader.dispose();
-		blurShader.dispose();
-	}
-
-	public nRender(pBox2d _box) {
-		box = _box;
-		cam = new FalseCam(GdxApp.WIDTH, GdxApp.HEIGHT, this);
-		
-		// unitCapacity, maxVertices, maxTriangles
-		batch = new nBatch(256, 4096, 2048)
-				.positionAttribute("vertex_positions")
-				.colorAttribute("quad_colors")
-				.genericAttribute("s")
-				.finish();
-		
-		AURA = batch.newGroup(); SOLID = batch.newGroup(); 
-		COLOR = batch.newGroup(); LIGHT = batch.newGroup(); 
-		
-		screenMesh = createScreenMesh();
-		
-		create_buffers(Gdx.graphics.getWidth() / BUFFER_PIX_SIZE, Gdx.graphics
-				.getHeight() / BUFFER_PIX_SIZE);
-
-		box.app.gdx.addEventScreen(new nRun() { public void run() {
-			resize(Gdx.graphics.getWidth() / BUFFER_PIX_SIZE, 
-					Gdx.graphics.getHeight() / BUFFER_PIX_SIZE); }});
-		
-	}
-
-	private void create_buffers(int fboWidth, int fboHeight) {
-		blurShader = createBlurShader(DIFFUSE_BLUR, fboWidth, fboHeight);
-		pingPongBuffer = new VfxFrameBuffer(Format.RGBA8888);
-		pingPongBuffer.initialize(fboWidth, fboHeight);
-		fxBuffer = new VfxFrameBuffer(Format.RGBA8888);
-		fxBuffer.initialize(fboWidth, fboHeight);
-		frameBuffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);
-		frameBuffer.initialize((int)box.app.gdx.getscreenwidth(),
-				(int)box.app.gdx.getscreenheight());
-		cam.update((int)box.app.gdx.getscreenwidth(),
-			(int)box.app.gdx.getscreenheight());
-	}
-
-	public void resize(int fboWidth, int fboHeight) {
-		frameBuffer.resize((int)box.app.gdx.getscreenwidth(),
-				(int)box.app.gdx.getscreenheight());
-		blurShader = createBlurShader(DIFFUSE_BLUR, fboWidth, fboHeight);
-		pingPongBuffer.resize(fboWidth, fboHeight);
-		fxBuffer.resize(fboWidth, fboHeight);
-	}
-
-	private Mesh createScreenMesh() {
-		float[] verts = new float[VERT_SIZE];
-		verts[X1] = -1; 	verts[Y1] = -1;	verts[U1] = 0f; verts[V1] = 0f;
-		verts[X2] = 1; 	verts[Y2] = -1;	verts[U2] = 1f; verts[V2] = 0f;
-		verts[X3] = 1; 	verts[Y3] = 1;	verts[U3] = 1f; verts[V3] = 1f;
-		verts[X4] = -1; 	verts[Y4] = 1;	verts[U4] = 0f; verts[V4] = 1f;
-		return new Mesh(true, 4, 0, 
-				new VertexAttribute(Usage.Position, 2, "a_position"), 
-				new VertexAttribute(Usage.TextureCoordinates, 2, "a_texCoord"))
-			.setVertices(verts);
-	}
-
-	static public final int VERT_SIZE = 16;
-	static public final int X1 = 0, Y1 = 1, U1 = 2, V1 = 3;
-	static public final int X2 = 4, Y2 = 5, U2 = 6, V2 = 7;
-	static public final int X3 = 8, Y3 = 9, U3 = 10, V3 = 11;
-	static public final int X4 = 12, Y4 = 13, U4 = 14, V4 = 15;
-	
-	public void render() {
-		box.app.gdx.drawer.pause_batch();
-
-		batch.begin();
-		batch.update();
-		
-		prepareCombined();
-		removeScissors();
-		
-		frameBuffer.begin(); 
-		Gdx.gl.glClearColor(0f,0f,0f,0f);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
-		//ground
-		
-		frameBuffer.end();
-		
-		Gdx.gl.glDepthMask(false);
-		Gdx.gl.glEnable(GL20.GL_BLEND); 
-
-		groupRender(AURA, unitBlend, auraShader, auraRenderBlend, 
-				auraAmbiant, 2);
-		groupRender(SOLID, solidUnitBlend, solidShader, solidRenderBlend, 
-				solidAmbiant, 1);
-		groupRender(COLOR, unitBlend, colorShader, colorRenderBlend, 
-				colorAmbiant, 1);
-		groupRender(LIGHT, unitBlend, lightShader, lightRenderBlend, 
-				lightAmbiant, 2);
-		
-		Gdx.gl20.glDisable(GL20.GL_BLEND);
-		
-		restoreScissors();
-
-		box.app.gdx.drawer.spritebatch.begin();
-
-		box.app.gdx.drawer.spritebatch.draw(frameBuffer.getTexture(), 0, 0, 
-				box.app.gdx.getscreenwidth(), 
-				box.app.gdx.getscreenheight(), 
-				0, 0, 1, 1);
-
-	}
-	
-	private void groupRender(int g, final BlendFunc unitblend,
-			final ShaderProgram rendshader, final BlendFunc rendblend, 
-			final Color ambiant, int blur) {
-		renderGroupToBuffer(g, unitblend, buffer_clear_color);
-		if (blur > 0) gaussianBlur(fxBuffer,blur);
-		frameBuffer.begin(); 
-		fxrender(rendshader, rendblend, ambiant);
-		frameBuffer.end();
-	}
-
-	private void renderGroupToBuffer(int g, final BlendFunc blend, final Color buff_clr_color) {
-		fxBuffer.begin();
-		Gdx.gl.glClearColor(buff_clr_color.r, buff_clr_color.g, 
-				buff_clr_color.b, buff_clr_color.a);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		blend.apply();
-		unitShader.bind();
-		unitShader.setUniformMatrix("u_projTrans", combined);
-		batch.push(g);
-		batch.render(unitShader);
-		fxBuffer.end();
-	}
-
-	private void fxrender(final ShaderProgram shader, 
-			final BlendFunc blend, final Color c) {
-		fxBuffer.getTexture().bind(0);
-		blend.apply();
-		shader.bind();
-		if (shader == colorShader) 
-			colorShader.setUniformf("ambient", c.r * c.a, c.g * c.a,
-				c.b * c.a, 1f - c.a);
-		if (shader == lightShader) 
-			lightShader.setUniformf("ambient", c.r * c.a, c.g * c.a,
-				c.b * c.a, 1f - c.a);
-		screenMesh.render(shader, GL20.GL_TRIANGLE_FAN); 
-	}
-
-	private void gaussianBlur(VfxFrameBuffer buffer, int blurNum) {
-		Gdx.gl20.glDisable(GL20.GL_BLEND);
-		for (int i = 0; i < blurNum; i++) {
-			// horizontal
-			buffer.getTexture().bind(0);
-			pingPongBuffer.begin(); {
-				blurShader.bind();
-				blurShader.setUniformf("dir", 1f, 0f);
-				screenMesh.render(blurShader, GL20.GL_TRIANGLE_FAN, 0, 4);
-			} pingPongBuffer.end();
-			// vertical
-			pingPongBuffer.getTexture().bind(0);
-			buffer.begin(); {
-				blurShader.bind();
-				blurShader.setUniformf("dir", 0f, 1f);
-				screenMesh.render(blurShader, GL20.GL_TRIANGLE_FAN, 0, 4);
-			} buffer.end();
-		}
-		Gdx.gl20.glEnable(GL20.GL_BLEND);
-	}
-
-	private final ArrayList<Rectangle> scissors = new ArrayList<Rectangle>();
-	private void removeScissors() {
-		for (Rectangle r : Utl.duplic(box.app.gui.scissors)) {
-			scissors.add(r); ScissorStack.popScissors(); }
-		box.app.gui.scissors.clear();
-	}
-	private void restoreScissors() {
-		for (Rectangle r : Utl.duplic(scissors)) {
-			box.app.gui.scissors.add(r); ScissorStack.pushScissors(r); }
-		scissors.clear();
-	}
-
 	private static final ShaderProgram createUnitShader() {
 		final String vertexShader = "#version 330 core\n"
 			+ "attribute vec4 vertex_positions;\n" //

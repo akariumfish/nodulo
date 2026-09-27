@@ -1,5 +1,5 @@
 {
-    "activeFile": "map3.tmx",
+    "activeFile": "map.tmx",
     "automapping.whileDrawing": true,
     "expandedProjectPaths": [
         "."
@@ -93,8 +93,8 @@
             "scale": 1,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 199.5,
-                "y": 824.5
+                "x": 515.5,
+                "y": 680.5
             }
         },
         "map2.tmx": {
@@ -104,8 +104,8 @@
             "scale": 1,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 357.5,
-                "y": 372.5
+                "x": 384,
+                "y": 384.5
             }
         },
         "map3.tmx": {
@@ -141,9 +141,9 @@
     "project": "tiled_project.tiled-project",
     "property.type": "string",
     "recentFiles": [
-        "map.tmx",
-        "map2.tmx",
         "map3.tmx",
+        "map2.tmx",
+        "map.tmx",
         "tileset_flags2.tsx",
         "Map2.tmx",
         "Map.tmx",

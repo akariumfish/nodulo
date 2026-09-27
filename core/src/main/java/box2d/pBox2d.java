@@ -345,16 +345,6 @@ public class pBox2d extends pSystem {
 		public void restoreScissors() { renderer.rayHandler.restoreScissors(); }
 		
 
-//		ArrayList<nDrawable> drawRun = new ArrayList<nDrawable>();
-//		HashMap<nDrawable, Integer> drawPrio = new HashMap<nDrawable, Integer>();
-//		int max_prio = 0;
-//		
-//		public pBox2d addDrawable(nDrawable r) { addDrawable(0,r); return this; }
-//		public pBox2d addDrawable(int prio, nDrawable r) { 
-//			drawRun.add(r); drawPrio.put(r, prio); max_prio = Math.max(max_prio, prio); return this; }
-//		public pBox2d removeDrawable(nDrawable r) { drawRun.remove(r); return this; }
-//		public pBox2d clearDrawable() { drawRun.clear(); return this; }
-
 		
 		
 		MobSpawn avatarSpawn;
@@ -495,13 +485,13 @@ public class pBox2d extends pSystem {
 			
 		}
 		public void loadMap(String p) {
-			renderer.setupMap(p);
+			if (!val_use_nbatch.get()) renderer.setupMap(p); 
+			else nrend.setupMap(p);
 		}
 		public ArrayList<String> getMapFile() {
 			return renderer.map_files;
 		}
 		public void system_load() {
-
 
 			space = app.space;
 			view = app.view;
@@ -522,17 +512,6 @@ public class pBox2d extends pSystem {
 			space.addEventSpaceClear(new nRun() { public void run() {
 				space_clear();
 			}});
-			
-
-//			app.term.register("sim", bloc, this);
-//			
-//			app.term.addExecutor(new CommandExecutor("sim", bloc, this) {
-//				
-//			});
-
-			
-//			test_setup(); // TODO
-			
 			
 		}
 		public void system_clear() {
@@ -658,22 +637,6 @@ public class pBox2d extends pSystem {
 		public boolean drawvision() { return 
 				has_vision_bod && val_draw_vision.get(); }
 		
-//		public void draw_drawer() {
-//
-//			view.app.gdx.drawer.begin();
-//			
-//			ArrayList<nDrawable> alldraw = Utl.duplic(drawRun);
-//			
-//			for (int prio = 0 ; prio <= max_prio ; prio++)
-//				for (nDrawable d : drawRun) 
-//					if (drawPrio.get(d) == prio) { d.drawing(); alldraw.remove(d); } 
-//			
-//			for (nDrawable d : alldraw) d.drawing(); 
-//
-//			view.app.gdx.drawer.end();
-//			
-//		}
-		
 		public void draw() { 
 
 			if (val_edit_tile.get()) {
@@ -715,10 +678,10 @@ public class pBox2d extends pSystem {
 		}
 		
 		public nBatch.Unit newParticle(String model, float x, float y, float r, float c) {
-			return nrend.batch.newUnit(model,x,y,r,c,0); }
+			return nrend.newUnit(model,x,y,r,c,0); }
 		
 		public ParticleModel newParticleModel(String ref) {
-			nrend.batch.addModel(ref, new ParticleModel(nrend)); return nrend.batch.getModel(ref, ParticleModel.class); }
+			nrend.addModel(ref, new ParticleModel(nrend)); return nrend.getModel(ref, ParticleModel.class); }
 		
 		public static class ParticleModel extends nBatch.Model {
 			private nRender rend;
@@ -736,14 +699,14 @@ public class pBox2d extends pSystem {
 			}
 			@Override public void make(Unit u) {
 				u.beginPush();
-				u.pushVert(0,0,u.a(3),1f);
-				u.pushVert(0,200,u.a(3),1f);
-				u.pushVert(200,0,u.a(3),1f);
-				u.pushTrig(0,1,2);
+				int p1 = u.pushVert(0,0,u.a(3),1f);
+				int p2 = u.pushVert(0,200,u.a(3),1f);
+				int p3 = u.pushVert(200,0,u.a(3),1f);
+				u.pushTrig(p1,p2,p3);
 			}
 
 			@Override public void destroy(Unit u) {
-				
+				u.beginPush();
 			}
 			
 		}
