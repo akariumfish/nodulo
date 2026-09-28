@@ -50,7 +50,7 @@ public class nRender {
 	static private final int X3 = n(), Y3 = n(), C3 = n(), U3 = n(), V3 = n();
 	static private final int X4 = n(), Y4 = n(), C4 = n(), U4 = n(), V4 = n();
 	
-	class TileLayer extends Layer {
+	public class TileLayer extends Layer {
 	
 		class Tile {
 			public int id;
@@ -402,6 +402,7 @@ public class nRender {
 
 	private final Color colorAmbiant = new Color(0.1f, 0.1f, 0.1f, 1f);
 	private final Color lightAmbiant = new Color(0.2f, 0.2f, 0.2f, 1f);
+//	private final Color lightAmbiant = new Color(1f, 1f, 1f, 1f);
 	private final Color auraAmbiant = new Color(0.1f, 0.1f, 0.1f, 1f);
 	private final Color solidAmbiant = new Color(0f, 0f, 0f, 0f);
 
@@ -444,8 +445,8 @@ public class nRender {
 		cam = new FalseCam(GdxApp.WIDTH, GdxApp.HEIGHT, this);
 		
 		// unitCapacity, maxVertices, maxTriangles
-		batch = new nBatch(256, 4096, 2048)
-				.positionAttribute("vertex_positions")
+		batch = new nBatch(256, 4096, 2048, 0)
+				.positionAttribute("pos")
 				.colorAttribute("quad_colors")
 				.genericAttribute("s")
 				.finish();
@@ -516,7 +517,7 @@ public class nRender {
 		
 		batch.update();
 		
-		prepareCombined();
+		prepareCombinedMatrix(box.view);
 		removeScissors();
 
 		Gdx.gl.glDepthMask(false);
@@ -524,6 +525,12 @@ public class nRender {
 
 		unitShader.bind();
 		unitShader.setUniformMatrix("u_projTrans", combined);
+//		unitShader.setUniformf("u_trans", u_trans);
+//		unitShader.setUniformf("u_x", u_x);
+//		unitShader.setUniformf("u_y", u_y);
+//		unitShader.setUniformf("u_cos", u_cos);
+//		unitShader.setUniformf("u_sin", u_sin);
+//		unitShader.setUniformf("u_scale", u_scale);
 		for (Layer l : layers) l.buffer();
 		for (Layer l : layers) l.blur();
 
@@ -584,15 +591,28 @@ public class nRender {
 		scissors.clear();
 	}
 
+//	private final Vector2 u_trans = new Vector2();
+//	private float u_x, u_y, u_cos, u_sin, u_scale;
+	
 	private final Matrix4 combined = new Matrix4();
 	private final FalseCam cam;
-	private void prepareCombined() {
-		prepareCombinedMatrix(box.view);
-		combined.set(getCombinedMatrix()); }
 	private void prepareCombinedMatrix(pView pview) {
 		cam.prepareCombinedMatrix(pview.val_pos.get(), pview.val_view_size.get(), 
-				pview.val_cam_pos.get(), pview.val_cam_scale.get(), pview.val_cam_rot.get()); }
-	private Matrix4 getCombinedMatrix() { return cam.combined; }
+				pview.val_cam_pos.get(), pview.val_cam_scale.get(), pview.val_cam_rot.get()); 
+		combined.set(cam.combined); 
+		
+//		u_x = pview.val_cam_pos.x();
+//		u_y = pview.val_cam_pos.y();
+//		u_scale = pview.val_cam_scale.get();
+//		u_cos = (float) Math.cos(pview.val_cam_rot.get());
+//		u_sin = (float) Math.sin(pview.val_cam_rot.get());
+//		u_trans.set(pview.val_pos.get());
+//		u_trans.x += pview.val_view_size.x() / 2.0f;
+//		u_trans.y -= pview.val_view_size.y() / 2.0f + nGUI.book.RS;
+//		u_trans.sub(box.app.gdx.getscreenwidth() / 2.0f, box.app.gdx.getscreenheight() / 2.0f);
+		
+	}
+//	private Matrix4 getCombinedMatrix() { return cam.combined; }
 	private class FalseCam {
 		private final Vector2 position2 = new Vector2();
 		private final Vector3 position = new Vector3();
@@ -643,9 +663,227 @@ public class nRender {
 		}
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static class Shader {
+		private String vertexShader, fragShader;
+		public Shader vertexShader(String s) { vertexShader = Utl.copy(s); return this; }
+		public Shader fragShader(String s) { fragShader = Utl.copy(s); compute(); return this; }
+		public ShaderProgram shader;
+		private void compute() {
+			ShaderProgram.pedantic = false;
+			shader = new ShaderProgram(vertexShader, fragShader);
+			if(!shader.isCompiled()) { Gdx.app.log("ERROR : shader not compiled", shader.getLog()); }
+		}
+		
+		public Shader fxShader() {
+			vertexShader = "#version 330 core\n"
+				+ "attribute vec4 a_position;\n" //
+				+ "attribute vec2 a_texCoord;\n" //
+				+ "varying vec2 v_texCoords;\n" //
+				+ "void main() {\n" //
+				+ "   v_texCoords = a_texCoord;\n" //
+				+ "   gl_Position = a_position;\n" //
+				+ "}\n";
+			fragShader = "#version 330 core\n"
+				+ "#ifdef GL_ES\n" //
+				+ "precision lowp float;\n" //
+				+ "#define MED mediump\n"
+				+ "#else\n"
+				+ "#define MED \n"
+				+ "#endif\n" //
+				+ "varying MED vec2 v_texCoords;\n" //
+				+ "uniform sampler2D u_texture;\n" //
+				+ "uniform vec4 ambient;\n"		
+				+ "uniform float mode;\n"				
+				+ "void main() {\n" //
+				+ "  vec4 c = texture2D(u_texture, v_texCoords);\n"//
+				+ "  if (mode == 1) {\n" //COLOR
+				+ "    gl_FragColor.rgb = c.rgb * c.a + ambient.rgb;\n"//
+				+ "    gl_FragColor.a = ambient.a - c.a;\n"//	
+				+ "  }\n"
+				+ "  else if (mode == 2) {\n" //LIGHT
+				+ "    gl_FragColor.rgb = (ambient.rgb + c.rgb);\n"
+				+ "    gl_FragColor.a = 1.0;\n"
+				+ "  }\n"
+				+ "  else if (mode == 3) {\n" //AURA
+				+ "    gl_FragColor.rgb = ambient.rgb - c.rgb;\n"//
+				+ "    gl_FragColor.a = ambient.a;\n"//
+				+ "  }\n"
+				+ "  else {\n" //SOLID
+				+ "    gl_FragColor = c;\n"//
+				+ "  }\n"			
+				+ "}\n";
+			compute();
+			return this;
+		}
+	}
+	
+	
+	
+
+	private static final ShaderProgram createHaloShader() {
+		final String vertexShader = "#version 330 core\n"
+			+ "attribute vec4 a_pos;\n" //
+			+ "attribute vec4 a_summit;\n"
+			+ "attribute vec4 inst_pos;\n" //
+			+ "attribute float inst_rad;\n" //
+			+ "attribute vec4 inst_color;\n" //
+			+ "uniform mat4 u_transf;\n" //
+			+ "uniform mat4 u_proj;\n" //	
+			+ "varying vec4 v_color;\n" //
+			+ "varying vec4 v_summit;\n" //			
+			+ "void main()\n" //
+			+ "{\n" //
+			+ "   v_color = inst_color;\n" //		
+			+ "   v_summit = a_summit;\n" //		
+			+ "   vec4 v = (a_pos * inst_rad) + inst_pos;\n" //				
+			+ "   gl_Position =  u_proj * (u_transf * v);\n" //
+			+ "}\n";
+		final String fragmentShader = "#version 330 core\n"
+			+ "#ifdef GL_ES\n" //
+			+ "precision lowp float;\n" //
+			+ "#define MED mediump\n"
+			+ "#else\n"
+			+ "#define MED \n"
+			+ "#endif\n" //
+			+ "varying vec4 v_color;\n" //
+			+ "varying vec4 v_summit;\n" //
+			+ "void main()\n"//
+			+ "{\n" //
+			+ "  float s1 = v_summit.x;\n" //
+			+ "  float s2 = v_summit.y;\n" //
+			+ "  float s3 = v_summit.z;\n" //
+			+ "  float fact = 1.0 - ( abs(s1-0.3) + abs(s2-0.3) + abs(s3-0.3) ) / 1.2;\n" //
+			+ "  gl_FragColor.rgb = v_color.rgb;\n" //
+			+ "  gl_FragColor.a = fact;\n" //
+			+ "}";
+		ShaderProgram.pedantic = false;
+		ShaderProgram shader = new ShaderProgram(vertexShader, fragmentShader);
+		if(!shader.isCompiled()){ Gdx.app.log("ERROR : shader not compiled", shader.getLog()); }
+		return shader;
+	}
+
+	
+	
+	
+	
+//	private static final ShaderProgram createRenderShader() {
+//		final String vertexShader = "#version 330 core\n"
+//			+ "attribute vec2 pos;\n" //
+//			+ "attribute vec4 quad_colors;\n" //
+//			+ "attribute float s;\n"
+//			+ "uniform vec2 u_trans;\n" //
+//			+ "uniform float u_x;\n" //
+//			+ "uniform float u_y;\n" //
+//			+ "uniform float u_cos;\n" //
+//			+ "uniform float u_sin;\n" //
+//			+ "uniform float u_scale;\n" //
+//			+ "varying vec4 v_color;\n" //				
+//			+ "void main()\n" //
+//			+ "{\n" //
+//			+ "   v_color = s * quad_colors;\n" //	
+//			+ "   vec2 v = u_scale * vec2((pos.x + u_x) * u_cos - (pos.y + u_y) * u_sin, (pos.x + u_x) * u_sin + (pos.y + u_y) * u_cos);\n" //	
+//			+ "   gl_Position =  vec4(v.x + u_trans.x,v.y + u_trans.y,0.0,0.0);\n" //
+//			+ "}\n";
+//		final String fragmentShader = "#version 330 core\n"
+//			+ "#ifdef GL_ES\n" //
+//			+ "precision lowp float;\n" //
+//			+ "#define MED mediump\n"
+//			+ "#else\n"
+//			+ "#define MED \n"
+//			+ "#endif\n" //
+//			+ "varying vec4 v_color;\n" //
+//			+ "void main()\n"//
+//			+ "{\n" //
+//			+ "  gl_FragColor = v_color;\n" //
+//			+ "}";
+//		ShaderProgram.pedantic = false;
+//		ShaderProgram shader = new ShaderProgram(vertexShader, fragmentShader);
+//		if(!shader.isCompiled()){ Gdx.app.log("ERROR : shader not compiled", shader.getLog()); }
+//		return shader;
+//	}
+
+//	private static final ShaderProgram createFXShader() {
+//		final String vertexShader = "#version 330 core\n"
+//			+ "attribute vec4 a_position;\n" //
+//			+ "attribute vec2 a_texCoord;\n" //
+//			+ "varying vec2 v_texCoords;\n" //
+//			+ "\n" //
+//			+ "void main()\n" //
+//			+ "{\n" //
+//			+ "   v_texCoords = a_texCoord;\n" //
+//			+ "   gl_Position = a_position;\n" //
+//			+ "}\n";
+//		final String fragmentShader = "#version 330 core\n"
+//			+ "#ifdef GL_ES\n" //
+//			+ "precision lowp float;\n" //
+//			+ "#define MED mediump\n"
+//			+ "#else\n"
+//			+ "#define MED \n"
+//			+ "#endif\n" //
+//			+ "varying MED vec2 v_texCoords;\n" //
+//			+ "uniform sampler2D u_texture;\n" //
+//			+ "uniform vec4 ambient;\n"		
+//			+ "uniform float mode;\n"				
+//			+ "void main()\n"//
+//			+ "{\n" //
+//			+ "  vec4 c = texture2D(u_texture, v_texCoords);\n"//
+//			+ "  if (mode == 0)\n"// SOLID
+//			+ "  {\n" //
+//			+ "    gl_FragColor = c;\n"
+//			+ "  }\n"
+//			+ "  else if (mode == 1)\n"//COLOR
+//			+ "  {\n" //
+//			+ "    gl_FragColor.rgb = c.rgb * c.a + ambient.rgb;\n"//
+//			+ "    gl_FragColor.a = ambient.a - c.a;\n"//	
+//			+ "  }\n"
+//			+ "  else if (mode == 2)\n"//LIGHT
+//			+ "  {\n" //
+//			+ "    gl_FragColor.rgb = (ambient.rgb + c.rgb);\n"
+//			+ "    gl_FragColor.a = 1.0;\n"
+//			+ "  }\n"
+//			+ "  else if (mode == 3)\n"//AURA
+//			+ "  {\n" //
+//			+ "    gl_FragColor.rgb = ambient.rgb - c.rgb;\n"//
+//			+ "    gl_FragColor.a = ambient.a;\n"//
+//			+ "  }\n"
+//			+ "  else\n"//
+//			+ "  {\n" //
+//			+ "    gl_FragColor.rgb = ambient.rgb;\n"//
+//			+ "    gl_FragColor.a = 1.0;\n"//
+//			+ "  }\n"			
+//			+ "}\n";
+//		ShaderProgram.pedantic = false;
+//		ShaderProgram shader = new ShaderProgram(vertexShader, fragmentShader);
+//		if(!shader.isCompiled()) { Gdx.app.log("ERROR : shader not compiled", shader.getLog()); }
+//		return shader;
+//	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	private static final ShaderProgram createUnitShader() {
 		final String vertexShader = "#version 330 core\n"
-			+ "attribute vec4 vertex_positions;\n" //
+			+ "attribute vec4 pos;\n" //
 			+ "attribute vec4 quad_colors;\n" //
 			+ "attribute float s;\n"
 			+ "uniform mat4 u_projTrans;\n" //
@@ -653,7 +891,7 @@ public class nRender {
 			+ "void main()\n" //
 			+ "{\n" //
 			+ "   v_color = s * quad_colors;\n" //				
-			+ "   gl_Position =  u_projTrans * vertex_positions;\n" //
+			+ "   gl_Position =  u_projTrans * pos;\n" //
 			+ "}\n";
 		final String fragmentShader = "#version 330 core\n"
 			+ "#ifdef GL_ES\n" //
@@ -672,7 +910,7 @@ public class nRender {
 		if(!shader.isCompiled()){ Gdx.app.log("ERROR : shader not compiled", shader.getLog()); }
 		return shader;
 	}
-	
+
 	private static final String vertexShader() {
 		return new String("#version 330 core\n"
 			+ "attribute vec4 a_position;\n" //
@@ -727,7 +965,6 @@ public class nRender {
 		if(!shader.isCompiled()) { Gdx.app.log("ERROR : shader not compiled", shader.getLog()); }
 		return shader;
 	}
-	
 
 	private static final ShaderProgram createLightShader() {
 		// this is always perfect precision

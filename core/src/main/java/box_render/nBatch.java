@@ -20,21 +20,23 @@ public class nBatch {
 	
 	private VertexDataType type; 
 	private boolean isStatic; 
-	private int maxVertices, maxIndices;
+	private int maxVertices, maxIndices, maxInstances;
 	private int vertex_flt_nb = 0;
+	private int inst_flt_nb = 0;
 	private VertexAttribute[] attributes;
 	
-	public nBatch() { this(256, 4096, 2048); }
-	public nBatch(int _unitCapacity, int _maxVertices, int _maxTriangles) {
+	public nBatch() { this(256, 4096, 2048, 0); }
+	public nBatch(int _unitCapacity, int _maxVertices, int _maxTriangles, int _maxInstances) {
 		this(Gdx.gl30 != null ? 
 				VertexDataType.VertexBufferObjectWithVAO : VertexDataType.VertexArray, 
-				false, _unitCapacity, _maxVertices, _maxTriangles); }
+				false, _unitCapacity, _maxVertices, _maxTriangles, _maxInstances); }
 	public nBatch(VertexDataType _type, boolean _isStatic, int unitCapacity, 
-			int _maxVertices, int _maxTriangles) {
+			int _maxVertices, int _maxTriangles, int _maxInstances) {
 		type = _type;
 		isStatic = _isStatic;
 		maxVertices = _maxVertices; 
 		maxIndices = _maxTriangles * 3;
+		maxInstances = _maxInstances;
 		
 		unitList = new Array<Unit>(false, unitCapacity);
 		freeUnit = new Array<Unit>(false, unitCapacity);
@@ -45,6 +47,7 @@ public class nBatch {
 	}
 
 	private ArrayList<VertexAttributeDef> attribDefs = new ArrayList<VertexAttributeDef>();
+	private ArrayList<VertexAttributeDef> instanceAttribDefs = new ArrayList<VertexAttributeDef>();
 	private class VertexAttributeDef {
 		final int usage, componentNb; final String ref; 
 		VertexAttributeDef(int _usage, int _componentNb, String _ref) {
@@ -54,10 +57,18 @@ public class nBatch {
 		for (int i = 0 ; i < attribDefs.size() ; i++) {
 			VertexAttributeDef def = attribDefs.get(i);
 			attributes[i] = new VertexAttribute(def.usage,def.componentNb,def.ref); } }
-	
+	private void prepareInstanceAttribute() {
+		attributes = new VertexAttribute[instanceAttribDefs.size()];
+		for (int i = 0 ; i < instanceAttribDefs.size() ; i++) {
+			VertexAttributeDef def = instanceAttribDefs.get(i);
+			attributes[i] = new VertexAttribute(def.usage,def.componentNb,def.ref); } }
+
 	private void attrib(int usage, int componentNb, int floatNb, String ref) {
 		attribDefs.add(new VertexAttributeDef(usage, componentNb, ref));
 		vertex_flt_nb += floatNb; }
+	private void instAttrib(int usage, int componentNb, int floatNb, String ref) {
+		instanceAttribDefs.add(new VertexAttributeDef(usage, componentNb, ref));
+		inst_flt_nb += floatNb; }
 
 	public nBatch positionAttribute(String ref) {
 		attrib(Usage.Position, 2, 2, ref); return this; }
@@ -67,6 +78,15 @@ public class nBatch {
 		attrib(Usage.TextureCoordinates, 2, 2, ref); return this; }
 	public nBatch genericAttribute(String ref) {
 		attrib(Usage.Generic, 1, 1, ref); return this; }
+
+	public nBatch positionInstAttribute(String ref) {
+		instAttrib(Usage.Position, 2, 2, ref); return this; }
+	public nBatch colorInstAttribute(String ref) {
+		instAttrib(Usage.ColorPacked, 4, 1, ref); return this; }
+	public nBatch textureInstCoordAttribute(String ref) {
+		instAttrib(Usage.TextureCoordinates, 2, 2, ref); return this; }
+	public nBatch genericInstAttribute(String ref) {
+		instAttrib(Usage.Generic, 1, 1, ref); return this; }
 
 	public nBatch finish() {
 		vertices = new float[maxVertices * vertex_flt_nb];
@@ -90,7 +110,11 @@ public class nBatch {
 		private int besh_ind = 0;
 		Besh() { beshs.add(this);
 			prepareAttribute();
-			mesh = new Mesh(type, isStatic, maxVertices, maxIndices, attributes); }
+			mesh = new Mesh(type, isStatic, maxVertices, maxIndices, attributes); 
+			if (inst_flt_nb > 0 && maxInstances > 0) {
+				prepareInstanceAttribute();
+				mesh.enableInstancedRendering(isStatic, maxInstances, attributes); }
+		}
 		void dispose() { mesh.dispose(); }
 		
 		void pushStackToMesh() {

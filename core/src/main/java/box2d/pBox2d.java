@@ -36,6 +36,7 @@ import aa_nodulo.pView;
 import box_render.nBatch;
 import box_render.nRender;
 import box_render.nBatch.Unit;
+import box_render.nEngine;
 import data.sBloc_Builder;
 import data.sBoo;
 import data.sData;
@@ -71,6 +72,8 @@ public class pBox2d extends pSystem {
 
 
 		public static void build_prop() {
+			
+			nEngine.build();
 
 			float RS = nGUI.book.RS;
 
@@ -393,7 +396,8 @@ public class pBox2d extends pSystem {
 		public Box2DRenderer boxRenderer;
 
 		public nRenderer renderer;
-		nRender nrend;
+		public nRender nrend;
+		nEngine engine;
 
 		public pView view;
 		
@@ -474,7 +478,7 @@ public class pBox2d extends pSystem {
 			
 			nrend = new nRender(this);
 			
-			test_part();
+			engine = new nEngine(this);
 			
 //			if (app.config.STARTUP_MAP_PATH.length() > 0)
 //				renderer.setupMap(app.config.STARTUP_MAP_PATH);
@@ -520,11 +524,11 @@ public class pBox2d extends pSystem {
 			app.view.removeDrawable(draw_run);
 
 			renderer.dispose();
-			
+
 			nrend.dispose();
+
+			engine.dispose();
 			
-//			modelBatch.dispose();
-//			model.dispose();
 		}
 
 		public void tool_init(nInterface interf) {
@@ -580,6 +584,7 @@ public class pBox2d extends pSystem {
 		}
 
 		public void frame(float delta) { 
+			engine.frame();
 			val_body_nb.set(bodys.size());
 			val_bullet_nb.set(space.param_pools.get("bullet_unit").size());
 			val_shape_nb.set(space.param_pools.get("shape_unit").size());
@@ -614,6 +619,7 @@ public class pBox2d extends pSystem {
 				for (pBody b : Utl.duplic(space.familyMember("box_body"))) 
 					update_body(b);
 				renderer.tick_particles();
+				engine.tick();
 			}
 
 		}
@@ -660,67 +666,27 @@ public class pBox2d extends pSystem {
 			}
 		}
 		
+		
 
+		public nBatch.Unit newUnit(String model, float...args) {
+			return nrend.newUnit(model,args); }
 		
 		
 		
-		public void test_part() {
 
-			newParticleModel("part");
-
-		}
+		
 
 		public void space_start() {
-			newParticle("part", 0, 0, 0, Color.RED.toFloatBits());
-			newParticle("part", 0, 400, 0, Color.GREEN.toFloatBits());
-			newParticle("part", 400, 400, 0, Color.BLUE.toFloatBits());
-			newParticle("part", 400, 0, 0, Color.YELLOW.toFloatBits());
+			engine.restart();
 		}
-		
-		public nBatch.Unit newParticle(String model, float x, float y, float r, float c) {
-			return nrend.newUnit(model,x,y,r,c,0); }
-		
-		public ParticleModel newParticleModel(String ref) {
-			nrend.addModel(ref, new ParticleModel(nrend)); return nrend.getModel(ref, ParticleModel.class); }
-		
-		public static class ParticleModel extends nBatch.Model {
-			private nRender rend;
-			public int life = 1000;
-			public float speed = 1;
-			public ParticleModel(nRender _rend) {
-				super(3, 3, 5); rend = _rend;
-				useGroup(rend.AURA,rend.SOLID,rend.COLOR,rend.LIGHT);
-			}
 
-			@Override public void update(Unit u) {
-				if (u.a(4,u.a(4)+1) > life) { u.clear(); return; }
-				u.setTransform(u.a(0),u.a(1),u.a(2));
-				u.setTransform(u.a(0)+u.rX(speed,0)*u.a(4),u.a(1)+u.rY(speed,0)*u.a(4),u.a(2));
-			}
-			@Override public void make(Unit u) {
-				u.beginPush();
-				int p1 = u.pushVert(0,0,u.a(3),1f);
-				int p2 = u.pushVert(0,200,u.a(3),1f);
-				int p3 = u.pushVert(200,0,u.a(3),1f);
-				u.pushTrig(p1,p2,p3);
-			}
-
-			@Override public void destroy(Unit u) {
-				u.beginPush();
-			}
-			
-		}
-		
-		
-
-		
-		
 		public void space_clear() {
 			for (pParam p : app.space.param_pools.get("bullet_unit").temp_all())
 				clear_bullet(p);
 			for (pParam p : app.space.param_pools.get("shape_unit").temp_all())
 				clear_shape(p);
 			renderer.clear_particles();
+			engine.empty();
 		}
 		
 		
