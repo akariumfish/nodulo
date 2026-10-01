@@ -20,14 +20,46 @@ import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
+import aa_nodulo.PlaneApplet;
+import aa_nodulo.pBody;
+import aa_nodulo.pFamily;
+import aa_nodulo.pProperty;
 import box2d.pBox2d;
 import box_render.nBatch.Unit;
 import box_render.nRender.TileLayer.Cell;
 import util.Utl;
+import util.nRun;
 
 public class nEngine {
 	
 	public static void build() {
+
+//		pProperty def = pProperty.newGeneralProperty("deff");
+//
+//		def.addBodyInitRun(new nRun() {public void run() {
+////			pBody bod = arg(0,pBody.class);
+////			pBox2d b2d = PlaneApplet.app.getSystem(pBox2d.class);
+////			if (b2d == null || bod == null) return;
+////			b2d.init_body(bod);
+//		}});
+//
+//		def.addBodyClearRun(new nRun() {public void run() {
+////			pBody bod = arg(0,pBody.class);
+////			pBox2d box = bod.space.app.getSystem(pBox2d.class);
+////			if (box == null || bod == null) return;
+////			box.clear_body(bod);
+//		}});
+
+//		def
+//		.addData("density", 10f).addCtrl("density", Float.class)
+//		.addData("filter", (int)0).addCtrl("filter", Integer.class)
+//		.addData("aura", false).addCtrl("aura", Boolean.class)
+//		;
+//
+//		def.newLocalProperty("def_bod")
+//		.addData("pos", new Vector2())
+//		.addData("rot", 0f)
+//		;
 		
 	}
 
@@ -45,61 +77,61 @@ public class nEngine {
 	public ArrayList<Body> ground_bod = new ArrayList<Body>();
 	public ArrayList<Body> map_bod = new ArrayList<Body>();
 
-	public void buildBodys() {
-		for (int w = map_width ; w > 0 ; w--)
-			for (int h = map_height ; h > 0 ; h--) {
-				search_place(w,h,false,true); search_place(h,w,false,true); }
-		for (int i = 0 ; i < map_width ; i++)
-			for (int j = 0 ; j < map_height ; j++) {
-				cells[i][j].build = true;
-				if (cells[i][j].wall && cells[i][j].light) cells[i][j].build = false; }
-		for (int w = map_width ; w > 0 ; w--)
-			for (int h = map_height ; h > 0 ; h--) {
-				search_place(w,h,false,false); search_place(h,w,false,false); }
-		for (int i = 0 ; i < map_width ; i++)
-			for (int j = 0 ; j < map_height ; j++) {
-				cells[i][j].build = !cells[i][j].empty; }
-		for (int w = map_width ; w > 0 ; w--)
-			for (int h = map_height ; h > 0 ; h--) {
-				search_place(w,h,true,false); search_place(h,w,true,false); }
-	}
-	private void search_place(int w, int h, boolean transp, boolean blocview) {
-		for (int i = 0 ; i < map_width ; i++) for (int j = 0 ; j < map_height ; j++) 
-			build_wall(i,j,w,h,transp,blocview); }
-	private boolean test_place(int x, int y, int w, int h) {
-		for (int i = x ; i < x + w ; i++) for (int j = y ; j < y + h ; j++) 
-			if (i >= map_width || j >= map_height || cells[i][j].build) return false;
-		return true; }
-	private void build_wall(int x, int y, int w, int h, boolean transp, boolean blocview) {
-		if (!test_place(x,y,w,h)) return;
-		Vector2 p = render.tile.getCellPos(x,y);
-		p.add(w*render.tile.tile_scale/2f,h*render.tile.tile_scale/2f);
-		BodyDef groundBodyDef = new BodyDef();  
-		groundBodyDef.position.set(p);  
-		Body groundBody = world.createBody(groundBodyDef);  
-		map_bod.add(groundBody);
-		
+//	public void buildBodys() {
+//		for (int w = map_width ; w > 0 ; w--)
+//			for (int h = map_height ; h > 0 ; h--) {
+//				search_place(w,h,false,true); search_place(h,w,false,true); }
+//		for (int i = 0 ; i < map_width ; i++)
+//			for (int j = 0 ; j < map_height ; j++) {
+//				cells[i][j].build = true;
+//				if (cells[i][j].wall && cells[i][j].light) cells[i][j].build = false; }
+//		for (int w = map_width ; w > 0 ; w--)
+//			for (int h = map_height ; h > 0 ; h--) {
+//				search_place(w,h,false,false); search_place(h,w,false,false); }
+//		for (int i = 0 ; i < map_width ; i++)
+//			for (int j = 0 ; j < map_height ; j++) {
+//				cells[i][j].build = !cells[i][j].empty; }
+//		for (int w = map_width ; w > 0 ; w--)
+//			for (int h = map_height ; h > 0 ; h--) {
+//				search_place(w,h,true,false); search_place(h,w,true,false); }
+//	}
+//	private void search_place(int w, int h, boolean transp, boolean blocview) {
+//		for (int i = 0 ; i < map_width ; i++) for (int j = 0 ; j < map_height ; j++) 
+//			build_wall(i,j,w,h,transp,blocview); }
+//	private boolean test_place(int x, int y, int w, int h) {
+//		for (int i = x ; i < x + w ; i++) for (int j = y ; j < y + h ; j++) 
+//			if (i >= map_width || j >= map_height || cells[i][j].build) return false;
+//		return true; }
+//	private void build_wall(int x, int y, int w, int h, boolean transp, boolean blocview) {
+//		if (!test_place(x,y,w,h)) return;
+//		Vector2 p = render.tile.getCellPos(x,y);
+//		p.add(w*render.tile.tile_scale/2f,h*render.tile.tile_scale/2f);
+//		BodyDef groundBodyDef = new BodyDef();  
+//		groundBodyDef.position.set(p);  
+//		Body groundBody = world.createBody(groundBodyDef);  
+//		map_bod.add(groundBody);
+//		
 //		if (!transp && blocview) ground_bod.add(groundBody); //bloc vision
 //		if (!transp) box.body_breaker.add(groundBody);
-
-//		if (!transp && !blocview) rend.visionLayer.transparent.add(groundBody);
-//		if (!transp && !blocview) rend.lightLayer.transparent.add(groundBody);
-//		if (!transp && !blocview) rend.colorLayer.transparent.add(groundBody);
+//
+////		if (!transp && !blocview) rend.visionLayer.transparent.add(groundBody);
+////		if (!transp && !blocview) rend.lightLayer.transparent.add(groundBody);
+////		if (!transp && !blocview) rend.colorLayer.transparent.add(groundBody);
+////		
+////		if (transp) rend.lightLayer.transparent.add(groundBody);
+////		if (transp) rend.visionLayer.transparent.add(groundBody);
+////		if (transp) rend.colorLayer.transparent.add(groundBody);
+////		if (transp) rend.auraLayer.transparent.add(groundBody);
 //		
-//		if (transp) rend.lightLayer.transparent.add(groundBody);
-//		if (transp) rend.visionLayer.transparent.add(groundBody);
-//		if (transp) rend.colorLayer.transparent.add(groundBody);
-//		if (transp) rend.auraLayer.transparent.add(groundBody);
-		
-		PolygonShape groundBox = new PolygonShape();  
-		groundBox.setAsBox(w*render.tile.tile_scale/2f,h*render.tile.tile_scale/2f);
-		Fixture fixture = groundBody.createFixture(groundBox, 0.0f);
-//		fixture.setUserData(new LightData(1f, true));
-		
-		groundBox.dispose();
-		for (int i = x ; i < x + w ; i++) for (int j = y ; j < y + h ; j++) 
-			cells[i][j].build = true;
-	}
+//		PolygonShape groundBox = new PolygonShape();  
+//		groundBox.setAsBox(w*render.tile.tile_scale/2f,h*render.tile.tile_scale/2f);
+//		Fixture fixture = groundBody.createFixture(groundBox, 0.0f);
+////		fixture.setUserData(new LightData(1f, true));
+//		
+//		groundBox.dispose();
+//		for (int i = x ; i < x + w ; i++) for (int j = y ; j < y + h ; j++) 
+//			cells[i][j].build = true;
+//	}
 
 	private void processMap(TiledMap tilemap) {
 		int layer_cnt = tilemap.getLayers().getCount();
@@ -114,46 +146,46 @@ public class nEngine {
 		cells = render.tile.cells;
 		map_width = render.tile.map_width; map_height = render.tile.map_height;
 		tile_width = render.tile.tile_width; tile_height = render.tile.tile_height;
-
-		buildBodys();
-		
-		for (int id = 0 ; id < layer_cnt ; id++) {
-			MapLayer layer = map.getLayers().get(id);
-			if (!layer.isVisible()) continue;
-			if (!(layer instanceof TiledMapTileLayer)) {
-				loadLayerObject(layer); }
-		}
-//		for (Body body : tileLayer.ground_bod) {
-//			visionLayer.light_blocker.add(body); }
+//
+//		buildBodys();
 //		
-//		lightLayer.newCrossAmbiantLight(Utl.color(255), tileLayer);
-		
-		for (int id = 0 ; id < layer_cnt ; id++) {
-			MapLayer layer = map.getLayers().get(id);
-			if (!layer.isVisible()) continue;
-			MapProperties prop = layer.getProperties();
-			if (Utl.getBoo(prop,"flags") && (layer instanceof TiledMapTileLayer)) {
-				TiledMapTileLayer tl = (TiledMapTileLayer) layer;
-				for (int i = 0 ; i < map_width ; i++)
-					for (int j = 0 ; j < map_height ; j++) {
-						TiledMapTileLayer.Cell c = tl.getCell(i,j);
-						if (c == null) continue;
-						MapProperties prp = c.getTile().getProperties();
-						if (prp.get("id", Integer.class) != null) {
-							int cellid = prp.get("id", Integer.class);
-							int dir = prp.get("dir", Integer.class);
-							String col = prp.get("color", String.class);
-							float rot = (float)Math.PI * 2f * dir / 360f;
-							Vector2 pos = new Vector2(render.tile.getCellPos(i,j))
-									.add(render.tile.tile_scale / 2f, render.tile.tile_scale / 2f);
-							if (cellid == 0 && col.equals("green")) 
-								box.setAvatarSpawn(pos, rot);
-							else box.addMobSpawn(pos, rot, cellid, col);
-						}
-					}
-				
-			} 
-		}
+//		for (int id = 0 ; id < layer_cnt ; id++) {
+//			MapLayer layer = map.getLayers().get(id);
+//			if (!layer.isVisible()) continue;
+//			if (!(layer instanceof TiledMapTileLayer)) {
+//				loadLayerObject(layer); }
+//		}
+////		for (Body body : tileLayer.ground_bod) {
+////			visionLayer.light_blocker.add(body); }
+////		
+////		lightLayer.newCrossAmbiantLight(Utl.color(255), tileLayer);
+//		
+//		for (int id = 0 ; id < layer_cnt ; id++) {
+//			MapLayer layer = map.getLayers().get(id);
+//			if (!layer.isVisible()) continue;
+//			MapProperties prop = layer.getProperties();
+//			if (Utl.getBoo(prop,"flags") && (layer instanceof TiledMapTileLayer)) {
+//				TiledMapTileLayer tl = (TiledMapTileLayer) layer;
+//				for (int i = 0 ; i < map_width ; i++)
+//					for (int j = 0 ; j < map_height ; j++) {
+//						TiledMapTileLayer.Cell c = tl.getCell(i,j);
+//						if (c == null) continue;
+//						MapProperties prp = c.getTile().getProperties();
+//						if (prp.get("id", Integer.class) != null) {
+//							int cellid = prp.get("id", Integer.class);
+//							int dir = prp.get("dir", Integer.class);
+//							String col = prp.get("color", String.class);
+//							float rot = (float)Math.PI * 2f * dir / 360f;
+//							Vector2 pos = new Vector2(render.tile.getCellPos(i,j))
+//									.add(render.tile.tile_scale / 2f, render.tile.tile_scale / 2f);
+//							if (cellid == 0 && col.equals("green")) 
+//								box.setAvatarSpawn(pos, rot);
+//							else box.addMobSpawn(pos, rot, cellid, col);
+//						}
+//					}
+//				
+//			} 
+//		}
 	}
 
 	private MapLayer objectLayer;
@@ -223,10 +255,6 @@ public class nEngine {
 	
 	
 
-	public nBatch.Unit newUnit(String model, float...args) {
-		return render.newUnit(model,args); }
-	
-	
 	
 
 	public nBatch.Unit newParticle(String model, float x, float y, float rot, float radius, float len, float color) {
@@ -234,9 +262,22 @@ public class nEngine {
 	
 	public ParticleModel newParticleModel(String ref) {
 		render.addModel(ref, new ParticleModel(12)); return render.getModel(ref, ParticleModel.class); }
+
+	
+
+	public nBatch.Unit newUnit(String model, float...args) {
+		return render.newUnit(model,args); }
 	
 	public <M extends nBatch.Model> M newModel(String ref, M mod) {
 		render.addModel(ref, mod); return render.getModel(ref); }
+
+
+	
+	public nBatch.Unit newInst(String model, float...args) {
+		return render.newInst(model,args); }
+	
+	public <M extends nBatch.Model> M newInstModel(String ref, M mod) {
+		render.addInstModel(ref, mod); return render.getInstModel(ref); }
 	
 	
 	
@@ -275,6 +316,8 @@ public class nEngine {
 		newModel("point_color", new LightModel(128,1f)).useGroup(render.COLOR);
 		newModel("spot_light", new LightModel(64)).useGroup(render.LIGHT);
 		newModel("spot_color", new LightModel(64)).useGroup(render.COLOR);
+
+//		newInstModel("halo", new HaloModel()).useGroup(render.HALO);
 		
 	}
 
@@ -287,6 +330,11 @@ public class nEngine {
 	}
 	public void restart() {
 		pcnt = pper;
+		
+		
+//		newInst("halo", -800, 800, 100, Color.YELLOW.toFloatBits());
+		
+		
 //		newUnit("spot",100f,200f,0f,3000f,Color.WHITE.toFloatBits());
 		if (objectLayer != null) loadLayerObject(objectLayer);
 	}
@@ -295,10 +343,10 @@ public class nEngine {
 		for (EngineModel p : enginemodels) p.frame(); 
 		if (pcnt >= pper) {
 			pcnt = 0; 
-			newParticle("paura", 0, 0, 0, 40, 100, Color.RED.toFloatBits());
+			newParticle("paura", 0, 800, 0, 40, 100, Color.RED.toFloatBits());
 			newParticle("pcolor", 0, 400, -0.5f, 40, 100, Color.GREEN.toFloatBits());
 			newParticle("plight", 400, 400, 1, 40, 100, Color.WHITE.toFloatBits());
-			newParticle("psolid", 400, 0, 0.5f, 40, 100, Color.YELLOW.toFloatBits());
+			newParticle("psolid", 400, 800, 0.5f, 40, 100, Color.YELLOW.toFloatBits());
 		}
 	}
 	public void tick() {
@@ -307,6 +355,25 @@ public class nEngine {
 	}
 	
 
+
+	class HaloModel extends EngineModel {
+		
+		public HaloModel() {
+			super(1, 0, 4); 
+			
+		}
+		public void frame() { }
+		@Override public void update(Unit u) {
+			u.setTransform(u.a(0),u.a(1));
+		}
+		private float rad,col;
+		@Override public void make(Unit u) {
+			super.make(u);
+			u.setTransform(u.a(0),u.a(1));
+			rad = u.a(2); col = u.a(3); 
+			u.pushVert(0,0,rad,col);
+		}
+	}
 	
 	
 	
@@ -318,8 +385,8 @@ public class nEngine {
 
 	class ShapeModel extends EngineModel {
 		
-		public ShapeModel() {
-			super(3, 3, 3); 
+		public ShapeModel(int trignb) {
+			super(3*trignb, 3*trignb, 3); 
 		}
 		@Override public void dispose() { 
 			super.dispose();
@@ -376,8 +443,8 @@ public class nEngine {
 			px = u.a(0); py = u.a(1); rot = u.a(2); 
 			if (iscone) {
 				con = u.a(3); rad = u.a(4); col = u.a(5); tvec.set(0,rad);
-				strt_ang = (con * Utl.DPI) / 2f;
-				ang = -(con * Utl.DPI) / rayNb; } 
+				strt_ang = (con * Utl.DPI);
+				ang = -(con * Utl.DPI * 2f) / rayNb; } 
 			else { rad = u.a(3); col = u.a(4); tvec.set(0,rad); }
 			tvec.rotateRad(rot);
 			tvec.rotateRad(strt_ang);
@@ -542,6 +609,13 @@ public class nEngine {
 		public abstract void tick();
 	}
 	
+	
+	
+	
+	
+	
+	
+
 	
 	
 	

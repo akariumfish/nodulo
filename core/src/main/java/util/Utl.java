@@ -924,6 +924,7 @@ public class Utl {
 	public static final float PI = (float)Math.PI;
 	public static final float HPI = (float)Math.PI / 2f;
 	public static final float TPI = (float)Math.PI / 3f;
+	public static final float TDPI = (float)Math.PI * 2f / 3f;
 	public static final float DPI = (float)Math.PI * 2f;
 	
 	public static float revAngle(float r) { return (r + PI) < PI ? (r + PI) : (r - PI); }

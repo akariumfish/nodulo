@@ -137,21 +137,15 @@ public class nBatch {
 	}
 
 	private void request(int vertex, int indice) {
-		if (vert_cnt + vertex >= maxVertices || 
-				ind_cnt + indice >= maxIndices ) {
-//			if (beshs.size == 0) new Besh();
-//			else { 
-				beshs.get(besh_cnt).pushStackToMesh();
-				if (besh_cnt++ >= beshs.size) new Besh(); 
-//			}
-		}
+		if (vert_cnt + vertex >= maxVertices || ind_cnt + indice >= maxIndices ) {
+			beshs.get(besh_cnt).pushStackToMesh();
+			if (besh_cnt++ >= beshs.size) new Besh();  }
 	}
 
 	private void request(int instance) {
 		if (inst_cnt + instance >= maxInstances ) {
 			beshs.get(besh_cnt).pushStackToMesh();
-			if (besh_cnt++ >= beshs.size) new Besh(); 
-		}
+			if (besh_cnt++ >= beshs.size) new Besh();  }
 	}
 
 
@@ -230,10 +224,17 @@ public class nBatch {
 				indices[ind_cnt++] = (short)(offset + p[i]);
 	}
 
+	public nBatch pushIndice(short...fs) { 
+		if (fs != null) for (short f : fs) indices[ind_cnt++] = f; return this; }
+	public nBatch pushVertice(float...fs) { 
+		if (fs != null) for (float f : fs) vertices[flt_cnt++] = f; vert_cnt++; return this; }
+
 	public class Unit {
 
 		public void setTransform(float x, float y, float r) {
 			pos.set(x,y); rot = r; cos = MathUtils.cos(rot); sin = MathUtils.sin(rot); }
+		public void setTransform(float x, float y) {
+			pos.set(x,y); rot = 0.0f; cos = MathUtils.cos(rot); sin = MathUtils.sin(rot); }
 		public void setArg(float...a) {
 			if (a != null) { for (int i = 0 ; i < a.length ; i++) args[i] = a[i]; }
 			model.make(this);
@@ -275,7 +276,8 @@ public class nBatch {
 			unitList.add(this);
 			pos.set(0,0); rot = 0f; userData = null;
 			if (verts == null || verts.length < model.verticesUse * vertex_flt_nb)
-				verts = new float[model.verticesUse * vertex_flt_nb];
+				if (instantiated) verts = new float[model.verticesUse * inst_flt_nb];
+				else verts = new float[model.verticesUse * vertex_flt_nb];
 			if (inds == null || inds.length < model.indicesUse)
 				inds = new short[model.indicesUse];
 			if (args == null || args.length < model.argUse)
@@ -358,7 +360,7 @@ public class nBatch {
 	private Array<Unit> render_group = null;
 	public void push(int g) {
 		render_group = getGroup(g);
-		reset_cnt();
+		reset_cnt(); transform();
 		for (Unit u : render_group) { u.push(); }
 		beshs.get(besh_cnt).pushStackToMesh();
 	}
@@ -368,7 +370,7 @@ public class nBatch {
 
 	public void render(int g, final ShaderProgram shader) {
 		render_group = getGroup(g);
-		reset_cnt();
+		reset_cnt(); transform();
 		for (Unit u : render_group) { u.push(); }
 		beshs.get(besh_cnt).pushStackToMesh();
 		for (int i = 0 ; i <= besh_cnt ; i++) beshs.get(i).render(shader);

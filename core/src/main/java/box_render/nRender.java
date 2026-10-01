@@ -294,6 +294,10 @@ public class nRender {
 		tile.clear_cells();
 	}
 
+	
+	
+	
+	
 	public nBatch.Unit newUnit(String model, float...a) {
 		return batch.newUnit(model,a); }
 
@@ -304,6 +308,16 @@ public class nRender {
 	public <K extends nBatch.Model> K getModel(String ref) {
 		return batch.getModel(ref); }
 	
+
+	public nBatch.Unit newInst(String model, float...a) {
+		return ibatch.newUnit(model,a); }
+
+	public <K extends nBatch.Model> void addInstModel(String ref, K mod) {
+		ibatch.addModel(ref, mod); }
+	public <K extends nBatch.Model> K getInstModel(String ref, Class<K> cl) {
+		return ibatch.getModel(ref,cl); }
+	public <K extends nBatch.Model> K getInstModel(String ref) {
+		return ibatch.getModel(ref); }
 	
 	
 	
@@ -312,20 +326,31 @@ public class nRender {
 	class Layer {
 		private BlendFunc unitblend = unitBlend;
 		private BlendFunc renderblend;
+		private Shader unitshader = unitShader;
 		private Shader rendershader;
 		protected int blur = 2;
 		protected VfxFrameBuffer buffer;
 		private int pix_size = BUFFER_PIX_SIZE;
 		private int group;
-		
+		private boolean renderToFrame = true;
+		private Layer to_combine = null;
+		private nBatch layerbatch = null;
+
+		Layer combined() { renderToFrame = false; return this; }
+		Layer combine(Layer l) { to_combine = l; return this; }
+
+		Layer setup(final Shader us, final BlendFunc u, final Shader s, final BlendFunc b) {
+			unitshader = us; unitblend = u; renderblend = b; rendershader = s; return this; }
 		Layer setup(final BlendFunc u, final Shader s, final BlendFunc b) {
 			unitblend = u; renderblend = b; rendershader = s; return this; }
 		Layer blur(int b) { blur = b; return this; }
 		int group() { return group; }
 
-		Layer() { this(BUFFER_PIX_SIZE); }
-		Layer(int pix) {
-			group = batch.newGroup();
+		Layer() { this(batch, BUFFER_PIX_SIZE); }
+		Layer(int pix) { this(batch, pix); }
+		Layer(nBatch lb, int pix) {
+			layerbatch = lb;
+			group = layerbatch.newGroup();
 			layers.add(this);
 			pix_size = pix; 
 			if (pix > 0) buffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);
@@ -346,22 +371,34 @@ public class nRender {
 			Gdx.gl.glClearColor(buffer_clear_color.r, buffer_clear_color.g, 
 					buffer_clear_color.b, buffer_clear_color.a);
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			
+			if (to_combine != null) {
+				to_combine.rendercomb();
+				unitshader.bind(); }
+			if (unitshader != unitShader) { unitshader.bind(); }
 			unitblend.apply();
-			batch.render(group, unitShader.shader);
+			layerbatch.render(group, unitshader.shader);
 			buffer.end();
+			if (unitshader != unitShader) { unitShader.bind(); }
 		}
 
 		public void blur() { 
 			if (pix_size <= 0) return; if (blur > 0) gaussianBlur(buffer,blur); }
 		public void render() {
-			if (pix_size <= 0) return;
+			if (pix_size <= 0 || !renderToFrame) return;
+			buffer.getTexture().bind(0);
+			renderblend.apply();
+			rendershader.bind();
+			screenMesh.render(rendershader.shader, GL20.GL_TRIANGLE_FAN); 
+		}
+		public void rendercomb() {
 			buffer.getTexture().bind(0);
 			renderblend.apply();
 			rendershader.bind();
 			screenMesh.render(rendershader.shader, GL20.GL_TRIANGLE_FAN); 
 		}
 	}
-	
+
 	static int BUFFER_PIX_SIZE = 2;
 	
 	static final boolean DIFFUSE_BLUR = false;
@@ -385,12 +422,14 @@ public class nRender {
 	
 	pBox2d box;
 
-	public final nBatch batch;
-	public final int AURA,SOLID,COLOR,LIGHT;
+	public nBatch batch, ibatch;
+	public int AURA,SOLID,HALO,COLOR,DARK,LIGHT;
 	public final TileLayer tile;
 	private final Mesh screenMesh;
-	
+
 	private final Shader unitShader = new Shader().unitShader();
+
+	private final Shader haloShader = new Shader().haloShader();
 	
 	private final Shader colorShader = new Shader().colorShader()
 			.setUniform("ambient", new Color(0.1f, 0.1f, 0.1f, 1f));
@@ -398,8 +437,8 @@ public class nRender {
 	private final Shader lightShader = new Shader().lightShader()
 			.setUniform("ambient", new Color(0.2f, 0.2f, 0.2f, 1f));
 	
-//	private final Shader darkShader = new Shader().darkShader()
-//			.setUniform("ambient", new Color(1f, 1f, 1f, 1f));
+	private final Shader darkShader = new Shader().darkShader()
+			.setUniform("ambient", new Color(0.75f, 0.75f, 0.75f, 1f));
 	
 	private final Shader auraShader = new Shader().auraShader()
 			.setUniform("ambient", new Color(0.1f, 0.1f, 0.1f, 1f));
@@ -416,8 +455,12 @@ public class nRender {
 		frameBuffer.dispose();
 		pingPongBuffer.dispose();
 		unitShader.dispose();
+		haloShader.dispose();
+		auraShader.dispose();
 		colorShader.dispose();
 		lightShader.dispose();
+		darkShader.dispose();
+		solidShader.dispose();
 		blurShader.dispose();
 		for (Layer l : layers) l.dispose(); layers.clear();
 	}
@@ -432,19 +475,44 @@ public class nRender {
 				.colorAttribute("quad_colors")
 				.genericAttribute("s")
 				.finish();
-
+		
+//		ibatch = new nBatch(256, 3, 0, 4096)
+//				.positionAttribute("a_pos")
+//				.genericAttribute("a_summit1")
+//				.genericAttribute("a_summit2")
+//				.genericAttribute("a_summit3")
+//				.positionInstAttribute("inst_pos")
+//				.genericInstAttribute("inst_rad")
+//				.colorInstAttribute("inst_color")
+//				.finish();
+//		
+//		Vector2 v = new Vector2(1f,0f);
+//		ibatch.pushVertice(v.x,v.y,1f,0f,0f);
+//		v.rotateRad(Utl.TDPI);
+//		ibatch.pushVertice(v.x,v.y,0f,1f,0f);
+//		v.rotateRad(Utl.TDPI);
+//		ibatch.pushVertice(v.x,v.y,0f,0f,1f);
+		
+		
 		tile = new TileLayer(); 
 		AURA = new Layer(2).setup(unitBlend, auraShader, auraRenderBlend)
 				.group(); 
 		
-		SOLID = new Layer(2).setup(solidUnitBlend, solidShader, solidRenderBlend)
+		SOLID = new Layer(1).setup(solidUnitBlend, solidShader, solidRenderBlend)
 				.blur(1).group(); 
+
+//		HALO = new Layer(ibatch,2).setup(haloShader, unitBlend, auraShader, auraRenderBlend)
+//				.group(); 
 		
 		COLOR = new Layer(2).setup(unitBlend, colorShader, colorRenderBlend)
 				.blur(1).group(); 
-		
+
+		Layer drk = new Layer(2).setup(unitBlend, darkShader, unitBlend)
+				.combined().blur(0); 
+		DARK = drk.group(); 
+
 		LIGHT = new Layer(2).setup(unitBlend, lightShader, lightRenderBlend)
-				.group(); 
+				.combine(drk).group(); 
 		
 		screenMesh = createScreenMesh();
 		
@@ -505,6 +573,8 @@ public class nRender {
 		Gdx.gl.glDepthMask(false);
 		Gdx.gl.glEnable(GL20.GL_BLEND); 
 
+		haloShader.setUniform("u_proj", combined);
+//		haloShader.setUniform("u_transf", );
 		unitShader.setUniform("u_projTrans", combined);
 		unitShader.bind();
 //		unitShader.setUniformMatrix("u_projTrans", combined);
@@ -819,28 +889,28 @@ public class nRender {
 			return this;
 		}
 
-//		public Shader darkShader() {
-//			fxVertexShader();
-//			fragShader = "#version 330 core\n"
-//				+ "#ifdef GL_ES\n" //
-//				+ "precision lowp float;\n" //
-//				+ "#define MED mediump\n"				
-//				+ "#else\n"				
-//				+ "#define MED \n"
-//				+ "#endif\n" //
-//				+ "varying MED vec2 v_texCoords;\n" //
-//				+ "uniform sampler2D u_texture;\n" //
-//				+ "uniform vec4 ambient;\n"
-//				+ "void main()\n"//
-//				+ "{\n" //
-//				+ "  gl_FragColor.rgb = (ambient.rgb - texture2D(u_texture, v_texCoords).rgb);\n"
-//				+ "  gl_FragColor.a = 1.0;\n"
-//				+ "}\n";
-//			compute();
-//			addUniformColor("ambient", new Color());
-//			addUniformInt("u_texture", 0);
-//			return this;
-//		}
+		public Shader darkShader() {
+			fxVertexShader();
+			fragShader = "#version 330 core\n"
+				+ "#ifdef GL_ES\n" //
+				+ "precision lowp float;\n" //
+				+ "#define MED mediump\n"				
+				+ "#else\n"				
+				+ "#define MED \n"
+				+ "#endif\n" //
+				+ "varying MED vec2 v_texCoords;\n" //
+				+ "uniform sampler2D u_texture;\n" //
+				+ "uniform vec4 ambient;\n"
+				+ "void main()\n"//
+				+ "{\n" //
+				+ "  gl_FragColor.rgb = (ambient.rgb - texture2D(u_texture, v_texCoords).rgb);\n"
+				+ "  gl_FragColor.a = 1.0;\n"
+				+ "}\n";
+			compute();
+			addUniformColor("ambient", new Color());
+			addUniformInt("u_texture", 0);
+			return this;
+		}
 
 		public Shader lightShader() {
 			fxVertexShader();
@@ -925,52 +995,58 @@ public class nRender {
 			addUniformInt("u_texture", 0);
 			return this;
 		}
+
+		public Shader haloShader() {
+			vertexShader = "#version 330 core\n"
+				+ "attribute vec4 a_pos;\n" //
+				+ "attribute float a_summit1;\n"
+				+ "attribute float a_summit2;\n"
+				+ "attribute float a_summit3;\n"
+				+ "attribute vec4 inst_pos;\n" //
+				+ "attribute float inst_rad;\n" //
+				+ "attribute vec4 inst_color;\n" //
+				+ "uniform mat4 u_transf;\n" //
+				+ "uniform mat4 u_proj;\n" //	
+				+ "varying vec4 v_color;\n" //
+				+ "varying vec4 v_summit;\n" //			
+				+ "void main()\n" //
+				+ "{\n" //
+				+ "   v_color = inst_color;\n" //		
+				+ "   v_summit = vec4(a_summit1,a_summit2,a_summit3,0.0);\n" //		
+				+ "   vec4 v = vec4((a_pos * inst_rad) + inst_pos, 0.0, 0.0);\n" //				
+				+ "   gl_Position =  u_proj * (u_transf * v);\n" //
+				+ "}\n";
+			fragShader = "#version 330 core\n"
+				+ "#ifdef GL_ES\n" //
+				+ "precision lowp float;\n" //
+				+ "#define MED mediump\n"
+				+ "#else\n"
+				+ "#define MED \n"
+				+ "#endif\n" //
+				+ "varying vec4 v_color;\n" //
+				+ "varying vec4 v_summit;\n" //
+				+ "void main()\n"//
+				+ "{\n" //
+				+ "  float s1 = v_summit.x - 0.3;\n" //
+				+ "  float s2 = v_summit.y - 0.3;\n" //
+				+ "  float s3 = v_summit.z - 0.3;\n" //
+				+ "  if (s1 < 0) s1 = s1 * -1.0;\n" //
+				+ "  if (s2 < 0) s2 = s2 * -1.0;\n" //
+				+ "  if (s3 < 0) s3 = s3 * -1.0;\n" //
+				+ "  float fact = 1.0 - ( ( s1 + s2 + s3 ) / 1.2 );\n" //
+				+ "  gl_FragColor.rgb = v_color.rgb;\n" //
+				+ "  gl_FragColor.a = fact;\n" //
+				+ "}";
+			compute();
+			addUniformMatrix4("u_transf", new Matrix4());
+			addUniformMatrix4("u_proj", new Matrix4());
+			return this;
+		}
 	}
 	
 	
 	
 
-	private static final ShaderProgram createHaloShader() {
-		final String vertexShader = "#version 330 core\n"
-			+ "attribute vec4 a_pos;\n" //
-			+ "attribute vec4 a_summit;\n"
-			+ "attribute vec4 inst_pos;\n" //
-			+ "attribute float inst_rad;\n" //
-			+ "attribute vec4 inst_color;\n" //
-			+ "uniform mat4 u_transf;\n" //
-			+ "uniform mat4 u_proj;\n" //	
-			+ "varying vec4 v_color;\n" //
-			+ "varying vec4 v_summit;\n" //			
-			+ "void main()\n" //
-			+ "{\n" //
-			+ "   v_color = inst_color;\n" //		
-			+ "   v_summit = a_summit;\n" //		
-			+ "   vec4 v = (a_pos * inst_rad) + inst_pos;\n" //				
-			+ "   gl_Position =  u_proj * (u_transf * v);\n" //
-			+ "}\n";
-		final String fragmentShader = "#version 330 core\n"
-			+ "#ifdef GL_ES\n" //
-			+ "precision lowp float;\n" //
-			+ "#define MED mediump\n"
-			+ "#else\n"
-			+ "#define MED \n"
-			+ "#endif\n" //
-			+ "varying vec4 v_color;\n" //
-			+ "varying vec4 v_summit;\n" //
-			+ "void main()\n"//
-			+ "{\n" //
-			+ "  float s1 = v_summit.x;\n" //
-			+ "  float s2 = v_summit.y;\n" //
-			+ "  float s3 = v_summit.z;\n" //
-			+ "  float fact = 1.0 - ( abs(s1-0.3) + abs(s2-0.3) + abs(s3-0.3) ) / 1.2;\n" //
-			+ "  gl_FragColor.rgb = v_color.rgb;\n" //
-			+ "  gl_FragColor.a = fact;\n" //
-			+ "}";
-		ShaderProgram.pedantic = false;
-		ShaderProgram shader = new ShaderProgram(vertexShader, fragmentShader);
-		if(!shader.isCompiled()){ Gdx.app.log("ERROR : shader not compiled", shader.getLog()); }
-		return shader;
-	}
 
 	
 	
