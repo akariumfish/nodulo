@@ -24,6 +24,7 @@ public class nBatch {
 	private int vertex_flt_nb = 0;
 	private int inst_flt_nb = 0;
 	private VertexAttribute[] attributes;
+	private boolean instantiated = false;
 	
 	public nBatch() { this(256, 4096, 2048, 0); }
 	public nBatch(int _unitCapacity, int _maxVertices, int _maxTriangles, int _maxInstances) {
@@ -68,7 +69,7 @@ public class nBatch {
 		vertex_flt_nb += floatNb; }
 	private void instAttrib(int usage, int componentNb, int floatNb, String ref) {
 		instanceAttribDefs.add(new VertexAttributeDef(usage, componentNb, ref));
-		inst_flt_nb += floatNb; }
+		inst_flt_nb += floatNb; instantiated = true; }
 
 	public nBatch positionAttribute(String ref) {
 		attrib(Usage.Position, 2, 2, ref); return this; }
@@ -91,6 +92,7 @@ public class nBatch {
 	public nBatch finish() {
 		vertices = new float[maxVertices * vertex_flt_nb];
 		indices = new short[maxIndices];
+		instances = new float[maxInstances * inst_flt_nb];
 		new Besh();
 		return this;
 	}
@@ -111,27 +113,44 @@ public class nBatch {
 		Besh() { beshs.add(this);
 			prepareAttribute();
 			mesh = new Mesh(type, isStatic, maxVertices, maxIndices, attributes); 
-			if (inst_flt_nb > 0 && maxInstances > 0) {
+			if (instantiated && inst_flt_nb > 0 && maxInstances > 0) {
 				prepareInstanceAttribute();
 				mesh.enableInstancedRendering(isStatic, maxInstances, attributes); }
 		}
 		void dispose() { mesh.dispose(); }
 		
 		void pushStackToMesh() {
-			if (flt_cnt <= 0 || ind_cnt <= 0) { besh_ind = 0; return; }
-			mesh.setVertices(vertices, 0, flt_cnt);
-			mesh.setIndices(indices, 0, ind_cnt);
-			besh_ind = ind_cnt; ind_cnt = 0; flt_cnt = 0; }
+			if (instantiated) {
+				if (flt_cnt <= 0 || inst_cnt <= 0) { besh_ind = 0; return; }
+				mesh.setVertices(vertices, 0, flt_cnt);
+				if (ind_cnt > 0) mesh.setIndices(indices, 0, ind_cnt);
+				mesh.setInstanceData(instances, 0, inst_cnt);
+				besh_ind = inst_cnt; inst_cnt = 0; 
+			} else {
+				if (flt_cnt <= 0 || ind_cnt <= 0) { besh_ind = 0; return; }
+				mesh.setVertices(vertices, 0, flt_cnt);
+				mesh.setIndices(indices, 0, ind_cnt);
+				besh_ind = ind_cnt; ind_cnt = 0; flt_cnt = 0; }
+		}
 		void render(final ShaderProgram shader) {
 			if (besh_ind > 0) mesh.render(shader, GL20.GL_TRIANGLES, 0, besh_ind); }
 	}
-	
+
 	private void request(int vertex, int indice) {
 		if (vert_cnt + vertex >= maxVertices || 
 				ind_cnt + indice >= maxIndices ) {
-			if (beshs.size == 0) new Besh();
-			else { beshs.get(besh_cnt).pushStackToMesh();
-				if (besh_cnt++ >= beshs.size) new Besh(); }
+//			if (beshs.size == 0) new Besh();
+//			else { 
+				beshs.get(besh_cnt).pushStackToMesh();
+				if (besh_cnt++ >= beshs.size) new Besh(); 
+//			}
+		}
+	}
+
+	private void request(int instance) {
+		if (inst_cnt + instance >= maxInstances ) {
+			beshs.get(besh_cnt).pushStackToMesh();
+			if (besh_cnt++ >= beshs.size) new Besh(); 
 		}
 	}
 
@@ -165,13 +184,18 @@ public class nBatch {
 	}
 
 	private float vertices[];
+	private float instances[];
 	private short indices[];
 
 	private int flt_cnt = 0, ind_cnt = 0, besh_cnt = 0;
 	private int vert_cnt = 0;
+	private int inst_cnt = 0;
 	
-	private void reset_cnt() { flt_cnt = 0; vert_cnt = 0; ind_cnt = 0; besh_cnt = 0; }
+	private void reset_cnt() { 
+		if (instantiated) { inst_cnt = 0; besh_cnt = 0; } 
+		else { flt_cnt = 0; vert_cnt = 0; ind_cnt = 0; besh_cnt = 0; } }
 
+	private void transform() { transf.set(0,0); trcos = 1f; trsin = 0f; }
 	private void transform(float x, float y, float cos, float sin) { 
 		transf.set(x,y); trcos = cos; trsin = sin; }
 	private Vector2 transf = new Vector2();
@@ -180,15 +204,24 @@ public class nBatch {
 	private static int tmps = 0;
 	private float rotX(float x, float y) { return x * trcos - y * trsin; }
 	private float rotY(float x, float y) { return x * trsin + y * trcos; }
-	private void pushFloat(float f) { vertices[flt_cnt++] = f; }
-	private void pushPos(float x, float y) { 
+	private void pushInstFloat(float f) { instances[inst_cnt++] = f; }
+	private void pushInstPos(float x, float y) { 
+		instances[inst_cnt++] = rotX(x,y) + transf.x;
+		instances[inst_cnt++] = rotY(x,y) + transf.y; }
+	private void pushInstances(float[] fs, int nb) {
+		for (int i = 0 ; i < nb * inst_flt_nb ; i += inst_flt_nb) {
+			pushInstPos(fs[i],fs[i+1]);
+			for (int j = 2 ; j < inst_flt_nb ; j++) pushInstFloat(fs[i+j]); }
+	}
+	private void pushVertFloat(float f) { vertices[flt_cnt++] = f; }
+	private void pushVertPos(float x, float y) { 
 		vertices[flt_cnt++] = rotX(x,y) + transf.x;
 		vertices[flt_cnt++] = rotY(x,y) + transf.y; }
 	private int pushVertices(float[] fs, int nb) {
 		tmps = vert_cnt++;
 		for (int i = 0 ; i < nb * vertex_flt_nb ; i += vertex_flt_nb) {
-			if (i != 0) vert_cnt++; pushPos(fs[i],fs[i+1]);
-			for (int j = 2 ; j < vertex_flt_nb ; j++) pushFloat(fs[i+j]); }
+			if (i != 0) vert_cnt++; pushVertPos(fs[i],fs[i+1]);
+			for (int j = 2 ; j < vertex_flt_nb ; j++) pushVertFloat(fs[i+j]); }
 		return tmps;
 	}
 	private void pushTrigs(short[] p, int offset, int trignb) {
@@ -272,9 +305,14 @@ public class nBatch {
 		void push() {
 			if (clearing) return;
 			transform(pos.x,pos.y,cos,sin);
-			request(v_cnt, i_cnt);
-			tmpi = pushVertices(verts, v_cnt);
-			pushTrigs(inds, tmpi, t_cnt);
+			if (instantiated) {
+				request(v_cnt);
+				pushInstances(verts, v_cnt);
+			} else {
+				request(v_cnt, i_cnt);
+				tmpi = pushVertices(verts, v_cnt);
+				pushTrigs(inds, tmpi, t_cnt);
+			}
 		}
 		
 	}
@@ -300,6 +338,7 @@ public class nBatch {
 	public <T extends Model> void addModel(String ref, T mod) {
 		mod.addToBatch(ref,this); }
 	public <T extends Model> T getModel(String ref, Class<T> cl) { return (T)models.get(ref); }
+	public <T extends Model> T getModel(String ref) { return (T)models.get(ref); }
 
 	public Unit newUnit(String model_ref, float...a) {
 		if (models.hasKey(model_ref)) {

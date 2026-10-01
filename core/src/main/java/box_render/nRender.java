@@ -37,6 +37,7 @@ import gui.nGUI;
 import shaders.BlendFunc;
 import util.Utl;
 import util.iMap;
+import util.nMap;
 import util.nRun;
 
 public class nRender {
@@ -104,9 +105,8 @@ public class nRender {
 		
 		private iMap<Tile> tiles = new iMap<Tile>();
 		
-		class Cell {
+		public class Cell {
 			private Tile tile;
-//			private TiledMapTileLayer.Cell cell;
 			public boolean wall = false;
 			public boolean light = false;
 			public boolean ground = false;
@@ -114,7 +114,6 @@ public class nRender {
 			public boolean build = false;
 			public int x, y;
 			public Cell(int i, int j, TiledMapTileLayer.Cell c) { 
-//				cell = c; 
 				x = i; y = j;
 				if (c == null) return;
 				all_cells.add(this);
@@ -124,9 +123,9 @@ public class nRender {
 				wall = Utl.getBoo(tile.prop,"wall");
 				empty = !ground && !wall;
 	
-//				if (!wall) build = true;
-//				if (ground) build = true;
-//				if (light) build = true;
+				if (!wall) build = true;
+				if (ground) build = true;
+				if (light) build = true;
 			}
 			
 			public void render() {
@@ -136,10 +135,10 @@ public class nRender {
 		}
 	
 		TiledMapTileLayer mapLayer;
-		final ArrayList<Cell> all_cells = new ArrayList<Cell>();
+		public final ArrayList<Cell> all_cells = new ArrayList<Cell>();
 		
 		Cell[][] cells;
-		Cell getcell(int i, int j) { return ((i >= 0 && j >= 0 && i < map_width && j < map_height) ? cells[i][j] : null); }
+		public Cell getcell(int i, int j) { return ((i >= 0 && j >= 0 && i < map_width && j < map_height) ? cells[i][j] : null); }
 		
 		public int map_width = 0, map_height = 0;
 		public int tile_width = 0, tile_height = 0;
@@ -153,7 +152,12 @@ public class nRender {
 		@Override public void dispose() {
 			super.dispose();
 		}
-	
+
+//		@Override void resize() {
+//			this.cam.setToOrtho(false, (int)(box.app.gdx.getscreenwidth()),
+//					(int)(box.app.gdx.getscreenheight())); 
+//		}
+
 		public TileLayer() {
 			super(0);
 			view = PlaneApplet.app.view;
@@ -201,7 +205,7 @@ public class nRender {
 
 				renderbatch.end();
 				
-				transform.setToTranslation(0f,0f,0f);
+//				transform.setToTranslation(0f,0f,0f);
 				renderbatch.setTransformMatrix(tmp_transf);
 				renderbatch.setProjectionMatrix(tmp_proj);
 
@@ -236,7 +240,7 @@ public class nRender {
 	
 			Vector2 m = new Vector2();
 			m.add(view.val_cam_pos.get());
-			m.scl(1/tile_scale);
+			m.scl(1f/tile_scale);
 			transform.translate(m.x,m.y,0f);
 	
 			cam.setToOrtho(false, (int)(view.app.gdx.getscreenwidth()), 
@@ -263,48 +267,27 @@ public class nRender {
 	
 		
 	
-//		public Vector2 getCellPos(int x, int y) {
-//			final int layerWidth = getMapWidth();
-//			final int layerHeight = getMapHeight();
-//			Vector2 p = new Vector2(x,y)
-//					.sub(layerWidth/2f,layerHeight/2f)
-//					.scl(getTileWidth(),getTileHeight());
-//			return p;
-//		}
-//		public Vector2 mapToSpace(float x, float y) { return mapToSpace(new Vector2(x,y)); }
-//		public Vector2 mapToSpace(Vector2 v) {
-//			Vector2 p = new Vector2(v)
-//					.scl(getTileWidth(),getTileHeight())
-//					.scl(1f/getMapTileWidth(),1f/getMapTileHeight())
-//					.sub(getWidth()/2f,getHeight()/2f);
-//			return p;
-//		}
+		public Vector2 getCellPos(int x, int y) {
+			final int layerWidth = getMapWidth();
+			final int layerHeight = getMapHeight();
+			Vector2 p = new Vector2(x,y)
+					.sub(layerWidth/2f,layerHeight/2f)
+					.scl(getTileWidth(),getTileHeight());
+			return p;
+		}
+		public Vector2 mapToSpace(float x, float y) { return mapToSpace(new Vector2(x,y)); }
+		public Vector2 mapToSpace(Vector2 v) {
+			Vector2 p = new Vector2(v)
+					.scl(getTileWidth(),getTileHeight())
+					.scl(1f/getMapTileWidth(),1f/getMapTileHeight())
+					.sub(getWidth()/2f,getHeight()/2f);
+			return p;
+		}
 		
 	}
-	private void processMap(TiledMap tilemap) {
-		int layer_cnt = tilemap.getLayers().getCount();
-		for (int id = 0 ; id < layer_cnt ; id++) {
-			MapLayer layer = tilemap.getLayers().get(id);
-			if (!layer.isVisible()) continue;
-			MapProperties prop = layer.getProperties();
-			if (!Utl.getBoo(prop,"flags") && (layer instanceof TiledMapTileLayer)) {
-				tile.loadMap((TiledMapTileLayer)layer);
-			} 
-		}
-	}
 
-	public boolean map_is_setup = false;
-	public String current_map_path = "";
-
-	private TiledMap map;
-	
-	public void setupMap(String path) {
-		if (current_map_path.equals(path)) return;
-		current_map_path = Utl.copy(path);
-		if (map_is_setup) clearMap();
-		map_is_setup = true;
-		map = new TmxMapLoader(new InternalFileHandleResolver()).load(path);
-		processMap(map);
+	public void processMap(TiledMapTileLayer tilemap) {
+		tile.loadMap(tilemap);
 	}
 
 	public void clearMap() {
@@ -318,6 +301,8 @@ public class nRender {
 		batch.addModel(ref, mod); }
 	public <K extends nBatch.Model> K getModel(String ref, Class<K> cl) {
 		return batch.getModel(ref,cl); }
+	public <K extends nBatch.Model> K getModel(String ref) {
+		return batch.getModel(ref); }
 	
 	
 	
@@ -327,16 +312,14 @@ public class nRender {
 	class Layer {
 		private BlendFunc unitblend = unitBlend;
 		private BlendFunc renderblend;
-		private ShaderProgram rendershader;
-		private Color ambiant = new Color(0f, 0f, 0f, 0f);
+		private Shader rendershader;
 		protected int blur = 2;
 		protected VfxFrameBuffer buffer;
 		private int pix_size = BUFFER_PIX_SIZE;
 		private int group;
-
-		Layer setup(final BlendFunc u, final ShaderProgram s, final BlendFunc b) {
+		
+		Layer setup(final BlendFunc u, final Shader s, final BlendFunc b) {
 			unitblend = u; renderblend = b; rendershader = s; return this; }
-		Layer ambiant(final Color a) { ambiant.set(a); return this; }
 		Layer blur(int b) { blur = b; return this; }
 		int group() { return group; }
 
@@ -364,7 +347,7 @@ public class nRender {
 					buffer_clear_color.b, buffer_clear_color.a);
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			unitblend.apply();
-			batch.render(group, unitShader);
+			batch.render(group, unitShader.shader);
 			buffer.end();
 		}
 
@@ -375,10 +358,7 @@ public class nRender {
 			buffer.getTexture().bind(0);
 			renderblend.apply();
 			rendershader.bind();
-			if (rendershader == colorShader || rendershader == lightShader) 
-				rendershader.setUniformf("ambient", ambiant.r * ambiant.a, 
-						ambiant.g * ambiant.a, ambiant.b * ambiant.a, 1f - ambiant.a);
-			screenMesh.render(rendershader, GL20.GL_TRIANGLE_FAN); 
+			screenMesh.render(rendershader.shader, GL20.GL_TRIANGLE_FAN); 
 		}
 	}
 	
@@ -400,38 +380,40 @@ public class nRender {
 	public final BlendFunc auraRenderBlend =
 			new BlendFunc(GL20.GL_SRC_COLOR, GL20.GL_ONE);
 
-	private final Color colorAmbiant = new Color(0.1f, 0.1f, 0.1f, 1f);
-	private final Color lightAmbiant = new Color(0.2f, 0.2f, 0.2f, 1f);
-//	private final Color lightAmbiant = new Color(1f, 1f, 1f, 1f);
-	private final Color auraAmbiant = new Color(0.1f, 0.1f, 0.1f, 1f);
-	private final Color solidAmbiant = new Color(0f, 0f, 0f, 0f);
-
 	private final Color buffer_clear_color = new Color(0f, 0f, 0f, 0f);
 
 	
-	
-
 	pBox2d box;
 
 	public final nBatch batch;
 	public final int AURA,SOLID,COLOR,LIGHT;
 	public final TileLayer tile;
 	private final Mesh screenMesh;
-	private final ShaderProgram unitShader = createUnitShader();
-	private final ShaderProgram colorShader = createColorShader();
-	private final ShaderProgram lightShader = createLightShader();
-	private final ShaderProgram auraShader = createAuraShader();
-	private final ShaderProgram solidShader = createSolidShader();
+	
+	private final Shader unitShader = new Shader().unitShader();
+	
+	private final Shader colorShader = new Shader().colorShader()
+			.setUniform("ambient", new Color(0.1f, 0.1f, 0.1f, 1f));
+	
+	private final Shader lightShader = new Shader().lightShader()
+			.setUniform("ambient", new Color(0.2f, 0.2f, 0.2f, 1f));
+	
+//	private final Shader darkShader = new Shader().darkShader()
+//			.setUniform("ambient", new Color(1f, 1f, 1f, 1f));
+	
+	private final Shader auraShader = new Shader().auraShader()
+			.setUniform("ambient", new Color(0.1f, 0.1f, 0.1f, 1f));
+	
+	private final Shader solidShader = new Shader().solidShader();
+	
 	private ShaderProgram blurShader;
 	private VfxFrameBuffer frameBuffer;
-//	private VfxFrameBuffer fxBuffer;
 	private VfxFrameBuffer pingPongBuffer;
 
 	public void dispose() {
 		batch.dispose();
 		screenMesh.dispose();
 		frameBuffer.dispose();
-//		fxBuffer.dispose();
 		pingPongBuffer.dispose();
 		unitShader.dispose();
 		colorShader.dispose();
@@ -444,7 +426,7 @@ public class nRender {
 		box = _box;
 		cam = new FalseCam(GdxApp.WIDTH, GdxApp.HEIGHT, this);
 		
-		// unitCapacity, maxVertices, maxTriangles
+		// unitCapacity, maxVertices, maxTriangles, maxInstances
 		batch = new nBatch(256, 4096, 2048, 0)
 				.positionAttribute("pos")
 				.colorAttribute("quad_colors")
@@ -453,13 +435,16 @@ public class nRender {
 
 		tile = new TileLayer(); 
 		AURA = new Layer(2).setup(unitBlend, auraShader, auraRenderBlend)
-				.ambiant(auraAmbiant).group(); 
+				.group(); 
+		
 		SOLID = new Layer(2).setup(solidUnitBlend, solidShader, solidRenderBlend)
-				.ambiant(solidAmbiant).blur(1).group(); 
+				.blur(1).group(); 
+		
 		COLOR = new Layer(2).setup(unitBlend, colorShader, colorRenderBlend)
-				.ambiant(colorAmbiant).blur(1).group(); 
+				.blur(1).group(); 
+		
 		LIGHT = new Layer(2).setup(unitBlend, lightShader, lightRenderBlend)
-				.ambiant(lightAmbiant).group(); 
+				.group(); 
 		
 		screenMesh = createScreenMesh();
 		
@@ -477,8 +462,6 @@ public class nRender {
 		blurShader = createBlurShader(DIFFUSE_BLUR, fboWidth, fboHeight);
 		pingPongBuffer = new VfxFrameBuffer(Format.RGBA8888);
 		pingPongBuffer.initialize(fboWidth, fboHeight);
-//		fxBuffer = new VfxFrameBuffer(Format.RGBA8888);
-//		fxBuffer.initialize(fboWidth, fboHeight);
 		frameBuffer = new VfxFrameBuffer(Pixmap.Format.RGBA8888);
 		frameBuffer.initialize((int)box.app.gdx.getscreenwidth(),
 				(int)box.app.gdx.getscreenheight());
@@ -491,7 +474,6 @@ public class nRender {
 				(int)box.app.gdx.getscreenheight());
 		blurShader = createBlurShader(DIFFUSE_BLUR, fboWidth, fboHeight);
 		pingPongBuffer.resize(fboWidth, fboHeight);
-//		fxBuffer.resize(fboWidth, fboHeight);
 	}
 
 	private Mesh createScreenMesh() {
@@ -523,14 +505,15 @@ public class nRender {
 		Gdx.gl.glDepthMask(false);
 		Gdx.gl.glEnable(GL20.GL_BLEND); 
 
+		unitShader.setUniform("u_projTrans", combined);
 		unitShader.bind();
-		unitShader.setUniformMatrix("u_projTrans", combined);
-//		unitShader.setUniformf("u_trans", u_trans);
-//		unitShader.setUniformf("u_x", u_x);
-//		unitShader.setUniformf("u_y", u_y);
-//		unitShader.setUniformf("u_cos", u_cos);
-//		unitShader.setUniformf("u_sin", u_sin);
-//		unitShader.setUniformf("u_scale", u_scale);
+//		unitShader.setUniformMatrix("u_projTrans", combined);
+////		unitShader.setUniformf("u_trans", u_trans);
+////		unitShader.setUniformf("u_x", u_x);
+////		unitShader.setUniformf("u_y", u_y);
+////		unitShader.setUniformf("u_cos", u_cos);
+////		unitShader.setUniformf("u_sin", u_sin);
+////		unitShader.setUniformf("u_scale", u_scale);
 		for (Layer l : layers) l.buffer();
 		for (Layer l : layers) l.blur();
 
@@ -675,6 +658,69 @@ public class nRender {
 	
 	
 	public static class Shader {
+
+		private nMap<Uniform> uniforms = new nMap<Uniform>();
+
+		private abstract class Uniform {
+			String ref; Uniform(String _ref) { ref = _ref; }
+			abstract void bind(ShaderProgram p); 
+			abstract void set(Object o); }
+		private class UniformFloat extends Uniform {
+			float val; UniformFloat(String _ref, float def) {
+				super(_ref); val = def; }
+			void bind(ShaderProgram p) { p.setUniformf(ref,val); }
+			void set(Object o) { if (o instanceof Float) val = (float)o; } }
+		private class UniformInt extends Uniform {
+			int val; UniformInt(String _ref, int def) {
+				super(_ref); val = def; }
+			void bind(ShaderProgram p) { p.setUniformi(ref,val); }
+			void set(Object o) { if (o instanceof Integer) val = (int)o; } }
+		private class UniformVec2 extends Uniform {
+			Vector2 val = new Vector2();
+			UniformVec2(String _ref, Vector2 def) {
+				super(_ref); val.set(def); }
+			void bind(ShaderProgram p) { p.setUniformf(ref,val); }
+			void set(Object o) { if (o instanceof Vector2) val.set((Vector2)o); } }
+		private class UniformColor extends Uniform {
+			Color val = new Color();
+			UniformColor(String _ref, Color def) {
+				super(_ref); val.set(def); }
+			void bind(ShaderProgram p) { p.setUniformf(ref,val.r,val.g,val.b,val.a); }
+			void set(Object o) { if (o instanceof Color) val.set((Color)o); } }
+		private class UniformMat4 extends Uniform {
+			Matrix4 val = new Matrix4();
+			UniformMat4(String _ref, Matrix4 def) {
+				super(_ref); val.set(def); }
+			void bind(ShaderProgram p) { p.setUniformMatrix(ref,val); }
+			void set(Object o) { if (o instanceof Matrix4) val.set((Matrix4)o); } }
+
+		public Shader addUniformFloat(String ref) {
+			uniforms.put(ref, new UniformFloat(ref,0f)); return this; }
+		public Shader addUniformFloat(String ref, float def) {
+			uniforms.put(ref, new UniformFloat(ref,def)); return this; }
+		public Shader addUniformInt(String ref) {
+			uniforms.put(ref, new UniformInt(ref,(int)0)); return this; }
+		public Shader addUniformInt(String ref, int def) {
+			uniforms.put(ref, new UniformInt(ref,def)); return this; }
+		public Shader addUniformVec2(String ref) {
+			uniforms.put(ref, new UniformVec2(ref,new Vector2())); return this; }
+		public Shader addUniformVec2(String ref, Vector2 def) {
+			uniforms.put(ref, new UniformVec2(ref,def)); return this; }
+		public Shader addUniformColor(String ref) {
+			uniforms.put(ref, new UniformColor(ref,new Color())); return this; }
+		public Shader addUniformColor(String ref, Color def) {
+			uniforms.put(ref, new UniformColor(ref,def)); return this; }
+		public Shader addUniformMatrix4(String ref) {
+			uniforms.put(ref, new UniformMat4(ref,new Matrix4())); return this; }
+		public Shader addUniformMatrix4(String ref, Matrix4 def) {
+			uniforms.put(ref, new UniformMat4(ref,def)); return this; }
+
+		public Shader setUniform(String ref, Object val) {
+			if (uniforms.hasKey(ref)) uniforms.get(ref).set(val); return this; }
+		
+		public void bind() {
+			shader.bind(); for (Uniform u : uniforms.all()) u.bind(shader); }
+		
 		private String vertexShader, fragShader;
 		public Shader vertexShader(String s) { vertexShader = Utl.copy(s); return this; }
 		public Shader fragShader(String s) { fragShader = Utl.copy(s); compute(); return this; }
@@ -684,16 +730,166 @@ public class nRender {
 			shader = new ShaderProgram(vertexShader, fragShader);
 			if(!shader.isCompiled()) { Gdx.app.log("ERROR : shader not compiled", shader.getLog()); }
 		}
-		
-		public Shader fxShader() {
+		public void dispose() {
+			shader.dispose();
+		}
+
+		public Shader unitShader() {
+			vertexShader = "#version 330 core\n"
+					+ "attribute vec4 pos;\n" //
+					+ "attribute vec4 quad_colors;\n" //
+					+ "attribute float s;\n"
+					+ "uniform mat4 u_projTrans;\n" //
+					+ "varying vec4 v_color;\n" //				
+					+ "void main()\n" //
+					+ "{\n" //
+					+ "   v_color = s * quad_colors;\n" //				
+					+ "   gl_Position =  u_projTrans * pos;\n" //
+					+ "}\n";
+			fragShader = "#version 330 core\n"
+					+ "#ifdef GL_ES\n" //
+					+ "precision lowp float;\n" //
+					+ "#define MED mediump\n"
+					+ "#else\n"
+					+ "#define MED \n"
+					+ "#endif\n" //
+					+ "varying vec4 v_color;\n" //
+					+ "void main()\n"//
+					+ "{\n" //
+					+ "  gl_FragColor = v_color;\n" //
+					+ "}";
+			compute();
+			addUniformMatrix4("u_projTrans", new Matrix4());
+			return this;
+		}
+
+		public Shader fxVertexShader() {
 			vertexShader = "#version 330 core\n"
 				+ "attribute vec4 a_position;\n" //
 				+ "attribute vec2 a_texCoord;\n" //
 				+ "varying vec2 v_texCoords;\n" //
-				+ "void main() {\n" //
+				+ "\n" //
+				+ "void main()\n" //
+				+ "{\n" //
 				+ "   v_texCoords = a_texCoord;\n" //
 				+ "   gl_Position = a_position;\n" //
+				+ "}\n"; return this; }
+
+		public Shader solidShader() {
+			fxVertexShader();
+			fragShader = "#version 330 core\n"
+				+ "#ifdef GL_ES\n" //
+				+ "precision lowp float;\n" //
+				+ "#define MED mediump\n"
+				+ "#else\n"
+				+ "#define MED \n"
+				+ "#endif\n" //
+				+ "varying MED vec2 v_texCoords;\n" //
+				+ "uniform sampler2D u_texture;\n" //
+				+ "void main()\n"//
+				+ "{\n" //
+				+ "    gl_FragColor = texture2D(u_texture, v_texCoords);\n"				
 				+ "}\n";
+			compute();
+			addUniformInt("u_texture", 0);
+			return this;
+		}
+
+		public Shader colorShader() {
+			fxVertexShader();
+			fragShader = "#version 330 core\n"
+				+ "#ifdef GL_ES\n" //
+				+ "precision lowp float;\n" //
+				+ "#define MED mediump\n"
+				+ "#else\n"
+				+ "#define MED \n"
+				+ "#endif\n" //
+				+ "varying MED vec2 v_texCoords;\n" //
+				+ "uniform sampler2D u_texture;\n" //
+				+ "uniform vec4 ambient;\n"				
+				+ "void main()\n"//
+				+ "{\n" //
+				+ "  vec4 c = texture2D(u_texture, v_texCoords);\n"//
+				+ "  gl_FragColor.rgb = c.rgb * c.a + ambient.rgb;\n"//
+				+ "  gl_FragColor.a = ambient.a - c.a;\n"//				
+				+ "}\n";
+			compute();
+			addUniformColor("ambient", new Color());
+			addUniformInt("u_texture", 0);
+			return this;
+		}
+
+//		public Shader darkShader() {
+//			fxVertexShader();
+//			fragShader = "#version 330 core\n"
+//				+ "#ifdef GL_ES\n" //
+//				+ "precision lowp float;\n" //
+//				+ "#define MED mediump\n"				
+//				+ "#else\n"				
+//				+ "#define MED \n"
+//				+ "#endif\n" //
+//				+ "varying MED vec2 v_texCoords;\n" //
+//				+ "uniform sampler2D u_texture;\n" //
+//				+ "uniform vec4 ambient;\n"
+//				+ "void main()\n"//
+//				+ "{\n" //
+//				+ "  gl_FragColor.rgb = (ambient.rgb - texture2D(u_texture, v_texCoords).rgb);\n"
+//				+ "  gl_FragColor.a = 1.0;\n"
+//				+ "}\n";
+//			compute();
+//			addUniformColor("ambient", new Color());
+//			addUniformInt("u_texture", 0);
+//			return this;
+//		}
+
+		public Shader lightShader() {
+			fxVertexShader();
+			fragShader = "#version 330 core\n"
+				+ "#ifdef GL_ES\n" //
+				+ "precision lowp float;\n" //
+				+ "#define MED mediump\n"				
+				+ "#else\n"				
+				+ "#define MED \n"
+				+ "#endif\n" //
+				+ "varying MED vec2 v_texCoords;\n" //
+				+ "uniform sampler2D u_texture;\n" //
+				+ "uniform vec4 ambient;\n"
+				+ "void main()\n"//
+				+ "{\n" //
+				+ "  gl_FragColor.rgb = (ambient.rgb + texture2D(u_texture, v_texCoords).rgb);\n"
+				+ "  gl_FragColor.a = 1.0;\n"
+				+ "}\n";
+			compute();
+			addUniformColor("ambient", new Color());
+			addUniformInt("u_texture", 0);
+			return this;
+		}
+
+		public Shader auraShader() {
+			fxVertexShader();
+			fragShader = "#version 330 core\n"
+				+ "#ifdef GL_ES\n" //
+				+ "precision lowp float;\n" //
+				+ "#define MED mediump\n"
+				+ "#else\n"
+				+ "#define MED \n"
+				+ "#endif\n" //
+				+ "varying MED vec2 v_texCoords;\n" //
+				+ "uniform sampler2D u_texture;\n" //
+				+ "uniform vec4 ambient;\n"
+				+ "void main()\n"//
+				+ "{\n" //
+				+ "    vec4 c = texture2D(u_texture, v_texCoords);\n"//
+				+ "    gl_FragColor.rgb = ambient.rgb + c.rgb * c.a * c.a;\n"//
+				+ "    gl_FragColor.a = 1.0 - ambient.a - c.a;\n"//
+				+ "}\n";
+			compute();
+			addUniformColor("ambient", new Color());
+			addUniformInt("u_texture", 0);
+			return this;
+		}
+		public Shader fxShader() {
+			fxVertexShader();
 			fragShader = "#version 330 core\n"
 				+ "#ifdef GL_ES\n" //
 				+ "precision lowp float;\n" //
@@ -724,6 +920,9 @@ public class nRender {
 				+ "  }\n"			
 				+ "}\n";
 			compute();
+			addUniformFloat("mode", 0f);
+			addUniformColor("ambient", new Color());
+			addUniformInt("u_texture", 0);
 			return this;
 		}
 	}
@@ -881,138 +1080,6 @@ public class nRender {
 	
 	
 	
-	private static final ShaderProgram createUnitShader() {
-		final String vertexShader = "#version 330 core\n"
-			+ "attribute vec4 pos;\n" //
-			+ "attribute vec4 quad_colors;\n" //
-			+ "attribute float s;\n"
-			+ "uniform mat4 u_projTrans;\n" //
-			+ "varying vec4 v_color;\n" //				
-			+ "void main()\n" //
-			+ "{\n" //
-			+ "   v_color = s * quad_colors;\n" //				
-			+ "   gl_Position =  u_projTrans * pos;\n" //
-			+ "}\n";
-		final String fragmentShader = "#version 330 core\n"
-			+ "#ifdef GL_ES\n" //
-			+ "precision lowp float;\n" //
-			+ "#define MED mediump\n"
-			+ "#else\n"
-			+ "#define MED \n"
-			+ "#endif\n" //
-			+ "varying vec4 v_color;\n" //
-			+ "void main()\n"//
-			+ "{\n" //
-			+ "  gl_FragColor = v_color;\n" //
-			+ "}";
-		ShaderProgram.pedantic = false;
-		ShaderProgram shader = new ShaderProgram(vertexShader, fragmentShader);
-		if(!shader.isCompiled()){ Gdx.app.log("ERROR : shader not compiled", shader.getLog()); }
-		return shader;
-	}
-
-	private static final String vertexShader() {
-		return new String("#version 330 core\n"
-			+ "attribute vec4 a_position;\n" //
-			+ "attribute vec2 a_texCoord;\n" //
-			+ "varying vec2 v_texCoords;\n" //
-			+ "\n" //
-			+ "void main()\n" //
-			+ "{\n" //
-			+ "   v_texCoords = a_texCoord;\n" //
-			+ "   gl_Position = a_position;\n" //
-			+ "}\n"); }
-
-	private static final ShaderProgram createSolidShader() {
-		final String fragmentShader = "#version 330 core\n"
-			+ "#ifdef GL_ES\n" //
-			+ "precision lowp float;\n" //
-			+ "#define MED mediump\n"
-			+ "#else\n"
-			+ "#define MED \n"
-			+ "#endif\n" //
-			+ "varying MED vec2 v_texCoords;\n" //
-			+ "uniform sampler2D u_texture;\n" //
-			+ "void main()\n"//
-			+ "{\n" //
-			+ "    gl_FragColor = texture2D(u_texture, v_texCoords);\n"				
-			+ "}\n";
-		ShaderProgram.pedantic = false;
-		ShaderProgram shader = new ShaderProgram(vertexShader(), fragmentShader);
-		if(!shader.isCompiled()){ Gdx.app.log("ERROR : shader not compiled", shader.getLog()); }
-		return shader;
-	}
-
-	private static final ShaderProgram createColorShader() {
-		final String fragmentShader = "#version 330 core\n"
-			+ "#ifdef GL_ES\n" //
-			+ "precision lowp float;\n" //
-			+ "#define MED mediump\n"
-			+ "#else\n"
-			+ "#define MED \n"
-			+ "#endif\n" //
-			+ "varying MED vec2 v_texCoords;\n" //
-			+ "uniform sampler2D u_texture;\n" //
-			+ "uniform vec4 ambient;\n"				
-			+ "void main()\n"//
-			+ "{\n" //
-			+ "  vec4 c = texture2D(u_texture, v_texCoords);\n"//
-			+ "  gl_FragColor.rgb = c.rgb * c.a + ambient.rgb;\n"//
-			+ "  gl_FragColor.a = ambient.a - c.a;\n"//				
-			+ "}\n";
-		ShaderProgram.pedantic = false;
-		ShaderProgram shader = new ShaderProgram(vertexShader(), fragmentShader);
-		if(!shader.isCompiled()) { Gdx.app.log("ERROR : shader not compiled", shader.getLog()); }
-		return shader;
-	}
-
-	private static final ShaderProgram createLightShader() {
-		// this is always perfect precision
-		final String fragmentShader = "#version 330 core\n"
-			+ "#ifdef GL_ES\n" //
-			+ "precision lowp float;\n" //
-			+ "#define MED mediump\n"				
-			+ "#else\n"				
-			+ "#define MED \n"
-			+ "#endif\n" //
-			+ "varying MED vec2 v_texCoords;\n" //
-			+ "uniform sampler2D u_texture;\n" //
-			+ "uniform vec4 ambient;\n"
-			+ "void main()\n"//
-			+ "{\n" //
-			+ "  gl_FragColor.rgb = (ambient.rgb + texture2D(u_texture, v_texCoords).rgb);\n"
-			+ "  gl_FragColor.a = 1.0;\n"
-			+ "}\n";
-		ShaderProgram.pedantic = false;
-		ShaderProgram shader = new ShaderProgram(vertexShader(), fragmentShader);
-		if(!shader.isCompiled()) { Gdx.app.log("ERROR : shader not compiled", shader.getLog()); }
-		return shader;
-	}
-
-	static final public ShaderProgram createAuraShader() {
-		// this is always perfect precision
-		final String fragmentShader = "#version 330 core\n"
-			+ "#ifdef GL_ES\n" //
-			+ "precision lowp float;\n" //
-			+ "#define MED mediump\n"
-			+ "#else\n"
-			+ "#define MED \n"
-			+ "#endif\n" //
-			+ "varying MED vec2 v_texCoords;\n" //
-			+ "uniform sampler2D u_texture;\n" //
-			+ "uniform vec4 ambient;\n"
-			+ "void main()\n"//
-			+ "{\n" //
-			+ "    vec4 c = texture2D(u_texture, v_texCoords);\n"//
-			+ "    gl_FragColor.rgb = ambient.rgb - c.rgb;\n"//
-			+ "    gl_FragColor.a = ambient.a;\n"//
-			+ "}\n";
-		ShaderProgram.pedantic = false;
-		ShaderProgram shader = new ShaderProgram(vertexShader(), fragmentShader);
-		if(!shader.isCompiled()){ Gdx.app.log("ERROR : shader not compiled", shader.getLog()); }
-		return shader;
-	}
-
 	private static final ShaderProgram createBlurShader(boolean diffuse, int width, int heigth) {
 		final String FBO_W = Integer.toString(width);
 		final String FBO_H = Integer.toString(heigth);

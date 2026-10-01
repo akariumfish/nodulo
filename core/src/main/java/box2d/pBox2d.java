@@ -358,7 +358,7 @@ public class pBox2d extends pSystem {
 			MobSpawn(Vector2 v, float r, int i, String c) { 
 				pos = new Vector2(v); rot = r; id = i; color = Utl.copy(c); } }
 		int mobCnt = 0;
-		ArrayList<MobSpawn> mobspawn = new ArrayList<MobSpawn>();
+		public ArrayList<MobSpawn> mobspawn = new ArrayList<MobSpawn>();
 		public void addMobSpawn(Vector2 v, float r, int i, String c) { 
 			mobspawn.add(new MobSpawn(v,r,i,c)); }
 
@@ -490,7 +490,7 @@ public class pBox2d extends pSystem {
 		}
 		public void loadMap(String p) {
 			if (!val_use_nbatch.get()) renderer.setupMap(p); 
-			else nrend.setupMap(p);
+			else engine.setupMap(p);
 		}
 		public ArrayList<String> getMapFile() {
 			return renderer.map_files;
