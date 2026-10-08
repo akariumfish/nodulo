@@ -178,10 +178,12 @@ public class RectLight extends Light {
 
 		lightMesh.render(
 				rayHandler.lightShader, GL20.GL_TRIANGLE_STRIP, 0, vertexNum);
+		Utl.mesh_render(vertexNum);
 
 		if (soft && !xray && !rayHandler.pseudo3d) {
 			softShadowMesh.render(
 					rayHandler.lightShader, GL20.GL_TRIANGLE_STRIP, 0, vertexNum);
+			Utl.mesh_render(vertexNum);
 		}
 	}
 

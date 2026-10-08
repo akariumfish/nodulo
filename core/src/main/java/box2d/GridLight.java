@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 
+import util.Utl;
+
 
 public class GridLight extends RayHandler.BaseLight {
 	
@@ -97,6 +99,7 @@ public class GridLight extends RayHandler.BaseLight {
 		rayHandler.lightRenderedLastFrame++;
 		lightMesh.render(
 				rayHandler.lightShader, GL20.GL_TRIANGLES, 0, pointCnt);
+		Utl.mesh_render(pointCnt);
 	}
 
 	protected void updateMesh() {

@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Pools;
 
 import app.nDrawer;
+import util.Utl;
 
 /**
  * A light whose ray starting points are evenly distributed along a chain of
@@ -175,6 +176,7 @@ public class ChainLight extends Light {
 		rayHandler.lightRenderedLastFrame++;
 		lightMesh.render(
 			rayHandler.lightShader, GL20.GL_TRIANGLE_STRIP, 0, vertexNum);
+		Utl.mesh_render(vertexNum);
 
 //		if (rayBidirectional) {
 //			lightMesh2.render(
@@ -183,6 +185,7 @@ public class ChainLight extends Light {
 		if (soft && !xray) {
 			softShadowMesh.render(
 				rayHandler.lightShader, GL20.GL_TRIANGLE_STRIP, 0, vertexNum);
+			Utl.mesh_render(vertexNum);
 //			if (rayBidirectional) {
 //				softShadowMesh2.render(
 //						rayHandler.lightShader, GL20.GL_TRIANGLE_STRIP, 0, vertexNum);

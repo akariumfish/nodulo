@@ -337,6 +337,7 @@ public class GdxApp implements Screen ,nDrawer.DrawContext {
 			glprofiler.reset();
 		}
 		drawer.spritebatch.renderCalls = 0;
+		Utl.mesh_render_reset();
 	}
 
 	public void store_profiler() {

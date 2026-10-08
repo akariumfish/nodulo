@@ -106,7 +106,9 @@ public class nInput implements InputProcessor {
 		val_drawCalls = app.data.system_bloc.newInt("val_drawCalls", 0);
 		val_shaderSwitch = app.data.system_bloc.newInt("val_shaderSwitch", 0);
 		val_batchCalls = app.data.system_bloc.newInt("val_batchCalls", 0);
-			
+		val_meshRender = app.data.system_bloc.newInt("val_meshRender", 0);
+		val_meshVert = app.data.system_bloc.newInt("val_meshVert", 0);
+		
 		app.addEventNextFrame(new nRun() { public void run() {
 			run_fs.run();
 			val_fullscreen.addEventChangeLastFrame(run_fs); 
@@ -141,7 +143,8 @@ public class nInput implements InputProcessor {
 	public sVec val_mouse_pos, val_mouse_prev, val_mouse_move;
 	
 	public sInt val_seed, val_javaHeap, val_nativeHeap, 
-		val_glCalls, val_textureBindings, val_drawCalls, val_shaderSwitch, val_batchCalls;
+		val_glCalls, val_textureBindings, val_drawCalls, 
+		val_shaderSwitch, val_batchCalls, val_meshRender, val_meshVert;
 	public Random rng;
 	
 	public void reset_rng() { rng.setSeed(val_seed.get()); }
@@ -202,6 +205,8 @@ public class nInput implements InputProcessor {
 			val_shaderSwitch.set(app.gdx.shaderSwitch);
 		}
 		val_batchCalls.set(app.gdx.drawer.spritebatch.renderCalls);
+		val_meshRender.set(Utl.mesh_render_call());
+		val_meshVert.set(Utl.mesh_vert_render());
 	}
 	
 	public void frame_str() {
@@ -225,8 +230,11 @@ public class nInput implements InputProcessor {
 				val_shaderSwitch.set(app.gdx.shaderSwitch);
 			}
 			val_batchCalls.set(app.gdx.drawer.spritebatch.renderCalls);
+			val_meshRender.set(Utl.mesh_render_call());
+			val_meshVert.set(Utl.mesh_vert_render());
 		}
 		prof_stored = false;
+		Utl.mesh_render_reset();
 		
 		pmouse.x = mouse.x; 
 		pmouse.y = mouse.y;

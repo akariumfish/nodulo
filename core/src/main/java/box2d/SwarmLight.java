@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
 
 import app.nDrawer;
+import util.Utl;
 
 
 public class SwarmLight extends RayHandler.BaseLight {
@@ -258,6 +259,7 @@ public class SwarmLight extends RayHandler.BaseLight {
 //				rayHandler.lightShader, GL20.GL_TRIANGLES, 0, (unit_nb * unitRay) * 3);
 		lightMesh.render(
 				rayHandler.lightShader, GL20.GL_TRIANGLES, 0, trig_cnt * 3);
+		Utl.mesh_render(trig_cnt*3);
 	}
 
 	public void debugRender(nDrawer.Drawer draw) {

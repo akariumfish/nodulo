@@ -669,6 +669,10 @@ public class PlaneApplet extends App {
 				interf.add_row_watch(4,"drawCalls: ","val_drawCalls");
 				interf.add_row_label(1,"");
 				interf.add_row_watch(4,"shaderSwtch: ","val_shaderSwitch");
+				interf.add_row();
+				interf.add_row_watch(4,"meshCalls: ","val_meshRender");
+				interf.add_row_label(1,"");
+				interf.add_row_watch(4,"meshVerts: ","val_meshVert");
 			}
 		}});
 		

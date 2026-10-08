@@ -330,6 +330,7 @@ public class ParticleLight extends RayHandler.BaseLight {
 		rayHandler.lightRenderedLastFrame++;
 		lightMesh.render(
 				rayHandler.lightShader, GL20.GL_TRIANGLES, 0, trig_cnt * 3);
+		Utl.mesh_render(trig_cnt*3);
 	}
 
 	public void debugRender(nDrawer.Drawer draw) {

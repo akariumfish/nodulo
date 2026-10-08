@@ -133,7 +133,8 @@ public class nBatch {
 				besh_ind = ind_cnt; ind_cnt = 0; flt_cnt = 0; }
 		}
 		void render(final ShaderProgram shader) {
-			if (besh_ind > 0) mesh.render(shader, GL20.GL_TRIANGLES, 0, besh_ind); }
+			if (besh_ind > 0) mesh.render(shader, GL20.GL_TRIANGLES, 0, besh_ind);
+			Utl.mesh_render(besh_ind); }
 	}
 
 	private void request(int vertex, int indice) {

@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
 
 import app.nDrawer;
+import util.Utl;
 
 
 public class SolidLight extends RayHandler.BaseLight {
@@ -221,6 +222,7 @@ public class SolidLight extends RayHandler.BaseLight {
 		rayHandler.lightRenderedLastFrame++;
 		lightMesh.render(
 				rayHandler.lightShader, GL20.GL_TRIANGLES, 0, ind_cnt);
+		Utl.mesh_render(ind_cnt);
 	}
 
 	public void debugRender(nDrawer.Drawer draw) {

@@ -14,17 +14,14 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import com.noodle.nodulo.GdxApp;
 import com.noodle.nodulo.Main;
 
 import aa_nodulo.PlaneApplet;
 import aa_nodulo.PlaneApplet.AppletConfig;
 import aa_proto.Proto;
-import aa_nodulo.pProperty;
 import app.App;
 import app.Conf;
-import data.File_Bloc;
 import data.sBoo;
 import data.sFlt;
 import data.sInt;
@@ -32,9 +29,6 @@ import data.sStr;
 import data.sValue;
 import data.sValueBloc;
 import data.sVec;
-import net.nNetwork;
-import patch.pPar;
-import util.nPool.Poolable;
 
 public class Utl {
 	

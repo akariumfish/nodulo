@@ -390,12 +390,14 @@ public class nRender {
 			renderblend.apply();
 			rendershader.bind();
 			screenMesh.render(rendershader.shader, GL20.GL_TRIANGLE_FAN); 
+			Utl.mesh_render(4);
 		}
 		public void rendercomb() {
 			buffer.getTexture().bind(0);
 			renderblend.apply();
 			rendershader.bind();
 			screenMesh.render(rendershader.shader, GL20.GL_TRIANGLE_FAN); 
+			Utl.mesh_render(4);
 		}
 	}
 
@@ -620,6 +622,7 @@ public class nRender {
 				blurShader.bind();
 				blurShader.setUniformf("dir", 1f, 0f);
 				screenMesh.render(blurShader, GL20.GL_TRIANGLE_FAN, 0, 4);
+				Utl.mesh_render(4);
 			} pingPongBuffer.end();
 			// vertical
 			pingPongBuffer.getTexture().bind(0);
@@ -627,6 +630,7 @@ public class nRender {
 				blurShader.bind();
 				blurShader.setUniformf("dir", 0f, 1f);
 				screenMesh.render(blurShader, GL20.GL_TRIANGLE_FAN, 0, 4);
+				Utl.mesh_render(4);
 			} buffer.end();
 		}
 		Gdx.gl20.glEnable(GL20.GL_BLEND);

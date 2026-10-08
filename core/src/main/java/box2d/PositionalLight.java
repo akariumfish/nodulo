@@ -9,6 +9,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
+import util.Utl;
+
 /**
  * Abstract base class for all positional lights
  * 
@@ -89,6 +91,7 @@ public abstract class PositionalLight extends Light {
 
 		rayHandler.lightRenderedLastFrame++;
 		lightMesh.render(rayHandler.lightShader, GL20.GL_TRIANGLE_FAN, 0, vertexNum);
+		Utl.mesh_render(vertexNum);
 
 		if (soft && !xray && !rayHandler.pseudo3d) {
 			softShadowMesh.render(
@@ -96,6 +99,7 @@ public abstract class PositionalLight extends Light {
 				GL20.GL_TRIANGLE_STRIP,
 				0,
 				(vertexNum - 1) * 2);
+			Utl.mesh_render((vertexNum-1)*2);
 		}
 	}
 	

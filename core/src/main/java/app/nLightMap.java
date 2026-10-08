@@ -265,6 +265,8 @@ class nLightMap {
 			}
 
 			lightMapMesh.render(shader, GL20.GL_TRIANGLE_FAN);
+
+			Utl.mesh_render(4);
 		} else 
 //			if (needed) 
 			{
@@ -272,6 +274,7 @@ class nLightMap {
 			withoutShadowShader.bind();
 
 			lightMapMesh.render(withoutShadowShader, GL20.GL_TRIANGLE_FAN);
+			Utl.mesh_render(4);
 		}
 
 		Gdx.gl20.glDisable(GL20.GL_BLEND);
@@ -287,6 +290,7 @@ class nLightMap {
 				blurShader.bind();
 				blurShader.setUniformf("dir", 1f, 0f);
 				lightMapMesh.render(blurShader, GL20.GL_TRIANGLE_FAN, 0, 4);
+				Utl.mesh_render(4);
 
 			}
 			pingPongBuffer.end();
