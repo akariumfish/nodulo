@@ -20,6 +20,7 @@ import com.noodle.nodulo.Main;
 
 import aa_nodulo.PlaneApplet;
 import aa_nodulo.PlaneApplet.AppletConfig;
+import aa_proto.Proto;
 import aa_nodulo.pProperty;
 import app.App;
 import app.Conf;
@@ -38,7 +39,17 @@ import util.nPool.Poolable;
 public class Utl {
 	
 
+	private static int mesh_vert_render = 0;
+	private static int mesh_render_call = 0;
 	
+	public static void mesh_render(int v) { mesh_render_call++; mesh_vert_render += v; }
+	public static void mesh_render_reset() { mesh_render_call = 0; mesh_vert_render = 0; }
+	public static int mesh_render_call() { return mesh_render_call; }
+	public static int mesh_vert_render() { return mesh_vert_render; }
+	
+	
+	
+	public static float intpl(float fact, float a, float b) { return fact * (b - a) + a; }
 	
 	
 	
@@ -911,6 +922,7 @@ public class Utl {
 //	public static Conf conf = null;
 	public static Main main = null;
 	public static GdxApp gdx = null;
+	public static Proto proto = null;
 	public static App app = null;
 	public static PlaneApplet plane = null;
 	public static AppletConfig conf = null;

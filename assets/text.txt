@@ -1,5 +1,5 @@
 void void
-plane_startup_map_path map.tmx
+plane_startup_map_path small_map.tmx
 mainmenu_exit_bp Exit
 mainmenu_fullscreen_switch Fs
 mainmenu_collapse_menu_switch Mn
@@ -134,3 +134,5 @@ title_nodulo_title NODULO
 title_newfilename_label New file name:
 title_buildmodel_label Build Models :
 title_back_bp Back
+node_node_model_joint_def_back_infopop node_model_joint_def
+node_node_model_particleDef_back_infopop node_model_particleDef

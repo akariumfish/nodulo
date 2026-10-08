@@ -15,19 +15,79 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
 
-import aa_nodulo.PlaneApplet;
 import app.nDrawer;
 import util.Utl;
 
 
 public class ParticleLight extends RayHandler.BaseLight {
 	
+	public static class ParticleDef {
+		public ParticleDef setStepA(float sp, float rad, int r, int g, int b) {
+			stepA.set(sp,rad,((float)r/255f),((float)g/255f),((float)b/255f)); return this; } 
+		public ParticleDef setStepB(float sp, float rad, int r, int g, int b) {
+			stepB.set(sp,rad,((float)r/255f),((float)g/255f),((float)b/255f)); return this; } 
+		public ParticleDef setStepC(float sp, float rad, int r, int g, int b) {
+			stepC.set(sp,rad,((float)r/255f),((float)g/255f),((float)b/255f)); return this; } 
+		public ParticleDef setStepA(float sp, float rad, float r, float g, float b) {
+			stepA.set(sp,rad,r,g,b); return this; } 
+		public ParticleDef setStepB(float sp, float rad, float r, float g, float b) {
+			stepB.set(sp,rad,r,g,b); return this; } 
+		public ParticleDef setStepC(float sp, float rad, float r, float g, float b) {
+			stepC.set(sp,rad,r,g,b); return this; } 
+		public ParticleDef setLife(int lab, int lbc) { lifeAB = lab; lifeBC = lbc; return this; }
+
+		int lifeAB = 50, lifeBC = 50;
+		Step stepA = new Step(), stepB = new Step(), stepC = new Step(); 
+		int maxLife() { return lifeAB + lifeBC; }
+		Step step(int life, Step step) {
+			life = lifeAB + lifeBC - life;
+			if (life <= lifeAB) {
+				step.set(life / lifeAB, stepA, stepB);
+			} else if (life - lifeAB <= lifeBC) {
+				step.set((life - lifeAB) / lifeBC, stepB, stepC);
+			} else { step.set(stepC); }
+			return step; }
+	}
+	
+	static class Step { 
+		Step set(float sp, float rad, float r, float g, float b) { 
+			speed = sp; radius = rad; red = r; green = g; blue = b; return this; }
+		float speed = 1.0f, radius = 10f, 
+				red = 1f, green = 0f, blue = 0f; 
+		Step() {}
+		Step(Step s) { speed = s.speed; radius = s.radius; 
+			red = s.red; green = s.green; blue = s.blue; }
+		Step(float f, Step s1, Step s2) { 
+			speed = Utl.intpl(f,s1.speed,s2.speed); 
+			radius = Utl.intpl(f,s1.radius,s2.radius); 
+			red = Utl.intpl(f,s1.red,s2.red); 
+			green = Utl.intpl(f,s1.green,s2.green); 
+			blue = Utl.intpl(f,s1.blue,s2.blue); }
+		Step set(Step s) { speed = s.speed; radius = s.radius; 
+			red = s.red; green = s.green; blue = s.blue; return this; }
+		Step set(float f, Step s1, Step s2) { 
+			speed = Utl.intpl(f,s1.speed,s2.speed); 
+			radius = Utl.intpl(f,s1.radius,s2.radius); 
+			red = Utl.intpl(f,s1.red,s2.red); 
+			green = Utl.intpl(f,s1.green,s2.green); 
+			blue = Utl.intpl(f,s1.blue,s2.blue); return this; }
+		float color() { return new Color(red,green,blue,1.0f).toFloatBits(); }
+	}
+	
 	private static int life_def = 100;
 	
 	public class Unit extends RayHandler.AbstractLight {
+		
+		ParticleDef def = null;
+		Step step = new Step();
+		float diverg = 0f;
+		
+		
+		
 
 		public void set(float x, float y, float r, int l, float s) {
 			pos.set(x,y); rot = r; life = l; speed = s; dirty = true; }
+		public void set(float x, float y, float r) { pos.set(x,y); rot = r; dirty = true; }
 		
 		final Color color = new Color(0f,0f,0f,0f); 
 		float colorF;
@@ -41,29 +101,32 @@ public class ParticleLight extends RayHandler.BaseLight {
 		float sin = 0f;
 		boolean dirty = true;
 
-		Unit(Color col, float dist) {
-			color.set(col);
-			colorF = color.toFloatBits();
-			distance = dist;
+		Unit(Color col, float dist) { init(col, dist); }
+		Unit(ParticleDef df, float div) { init(df, div); }
+		private void _init() {
 			unitList.add(this);
 			unit_nb++;
-			pos.set(0,0); 
-			rot = 0;
+			pos.set(0,0); rot = 0;
 			dirty = true;
 			life = life_def;
+			def = null; divstack = 0;
 		}
 		Unit init(Color col, float dist) {
+			_init();
 			color.set(col);
 			colorF = color.toFloatBits();
 			distance = dist;
-			unitList.add(this);
-			unit_nb++;
-			pos.set(0,0); 
-			rot = 0;
-			dirty = true;
-			life = life_def;
 			return this;
 		}
+		Unit init(ParticleDef df, float div) { // div 0 = no divergence
+			_init(); def = df; life = def.maxLife(); diverg = div; getstep();
+			return this;
+		}
+		
+		private void getstep() { step = def.step(life,step); 
+			colorF = step.color(); 
+			distance = step.radius * (1f + diverg); 
+			speed = step.speed * (1f + diverg); }
 		
 		@Override public void setActive(boolean active) { }
 		
@@ -76,6 +139,8 @@ public class ParticleLight extends RayHandler.BaseLight {
 		
 
 		public void render() { }
+		
+		private float divstack;
 		public void tick() { 
 			if (dirty) {
 				cos = MathUtils.cos(rot);
@@ -85,7 +150,14 @@ public class ParticleLight extends RayHandler.BaseLight {
 				pos.add(rotX(speed,0),rotY(speed,0));
 			} 
 			life--;
+			if (def != null) {
+				divstack += diverg;
+				while (divstack > 1f) { life--; divstack--; }
+				while (divstack < -1f) { life--; divstack++; }
+				getstep();
+			}
 		}
+		
 		public void update() {
 			if (dirty) {
 				cos = MathUtils.cos(rot);
@@ -125,12 +197,19 @@ public class ParticleLight extends RayHandler.BaseLight {
 		trig_cnt++;
 	}
 	
-	
+
 	public Unit newUnit(Color c, float d) {
 		if (freeUnit.size > 0) 
 			return freeUnit.removeIndex(freeUnit.size - 1).init(c, d);
 		else if (unit_nb >= unitMax) return null;
 		else return new Unit(c, d);
+	}
+
+	public Unit newUnit(ParticleDef df, float div) {
+		if (freeUnit.size > 0) 
+			return freeUnit.removeIndex(freeUnit.size - 1).init(df, div);
+		else if (unit_nb >= unitMax) return null;
+		else return new Unit(df, div);
 	}
 
 	private ArrayList<Unit> tmpunit = new ArrayList<Unit>();
@@ -268,40 +347,40 @@ public class ParticleLight extends RayHandler.BaseLight {
 	}
 
 //	private static ShaderProgram shader = null;
-	public static ShaderProgram createShader() {
-		final String vertexShader = "#version 330 core\n"
-			+ "attribute vec2 vertex_positions;\n" //
-			+ "attribute vec4 quad_colors;\n" //
-			+ "attribute vec2 i_position;\n" //
-			+ "uniform mat4 u_projTrans;\n" //
-			+ "varying vec4 v_color;\n" //				
-			+ "void main()\n" //
-			+ "{\n" //
-			+ "   v_color = quad_colors;\n" //		
-//			+ "   vec4 v = vec4(-500 + vertex_positions.x + 200 * gl_InstanceID, "
-//			+ "			vertex_positions.y, 0.0, 1.0);\n"	
-			+ "   vec4 v = vec4(i_position.x + vertex_positions.x, "
-			+ "			i_position.y + vertex_positions.y, 0.0, 1.0);\n"	
-			+ "   gl_Position = u_projTrans * v;\n" //
-			+ "}\n";
-		final String fragmentShader = "#version 330 core\n"
-			+ "#ifdef GL_ES\n" //
-			+ "precision lowp float;\n" //
-			+ "#define MED mediump\n"
-			+ "#else\n"
-			+ "#define MED \n"
-			+ "#endif\n" //
-			+ "varying vec4 v_color;\n" //
-			+ "void main()\n"//
-			+ "{\n" //
-			+ "  gl_FragColor = v_color;\n" //
-			+ "}";
-		ShaderProgram.pedantic = true;
-		ShaderProgram shader = new ShaderProgram(vertexShader, fragmentShader);
-//		if (!shader.isCompiled()) {
-//			shader = new ShaderProgram("#version 330 core\n" +vertexShader, "#version 330 core\n" +fragmentShader);
-			if(!shader.isCompiled()) { Utl.logn("ERROR : ParticleLight.createShader : " + shader.getLog()); }
-//		}
-		return shader;
-	}
+//	public static ShaderProgram createShader() {
+//		final String vertexShader = "#version 330 core\n"
+//			+ "attribute vec2 vertex_positions;\n" //
+//			+ "attribute vec4 quad_colors;\n" //
+//			+ "attribute vec2 i_position;\n" //
+//			+ "uniform mat4 u_projTrans;\n" //
+//			+ "varying vec4 v_color;\n" //				
+//			+ "void main()\n" //
+//			+ "{\n" //
+//			+ "   v_color = quad_colors;\n" //		
+////			+ "   vec4 v = vec4(-500 + vertex_positions.x + 200 * gl_InstanceID, "
+////			+ "			vertex_positions.y, 0.0, 1.0);\n"	
+//			+ "   vec4 v = vec4(i_position.x + vertex_positions.x, "
+//			+ "			i_position.y + vertex_positions.y, 0.0, 1.0);\n"	
+//			+ "   gl_Position = u_projTrans * v;\n" //
+//			+ "}\n";
+//		final String fragmentShader = "#version 330 core\n"
+//			+ "#ifdef GL_ES\n" //
+//			+ "precision lowp float;\n" //
+//			+ "#define MED mediump\n"
+//			+ "#else\n"
+//			+ "#define MED \n"
+//			+ "#endif\n" //
+//			+ "varying vec4 v_color;\n" //
+//			+ "void main()\n"//
+//			+ "{\n" //
+//			+ "  gl_FragColor = v_color;\n" //
+//			+ "}";
+//		ShaderProgram.pedantic = true;
+//		ShaderProgram shader = new ShaderProgram(vertexShader, fragmentShader);
+////		if (!shader.isCompiled()) {
+////			shader = new ShaderProgram("#version 330 core\n" +vertexShader, "#version 330 core\n" +fragmentShader);
+//			if(!shader.isCompiled()) { Utl.logn("ERROR : ParticleLight.createShader : " + shader.getLog()); }
+////		}
+//		return shader;
+//	}
 }

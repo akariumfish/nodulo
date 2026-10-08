@@ -163,7 +163,7 @@ public class pNodeSpace {
 			.openSec().param("def", "blueprint").run(pNode.getRun(CT.RUNP_VAR_STR_LAB_FIELD), 
 					"name", "print name:", (int)8).closeSec()
 			.commande(pNode.getCom(CT.COM_ADD_ROW))
-			;
+			; 
 		}};
 		
 		pProperty bp_prop = pProperty.newGeneralProperty("blueprint")
@@ -514,7 +514,7 @@ public class pNodeSpace {
 			pProcess proc = stand.process();
 			
 			for (pProperty.Ctrl c : prop.controls.all()) {
-				build_prop_ctrl(prop, proc, c.ref, c.clazz, c.args);
+				build_prop_ctrl(prop, stand, proc, c.ref, c.clazz, c.args);
 			}
 			
 			for (nRun rn : prop.node_run) {
@@ -528,8 +528,8 @@ public class pNodeSpace {
 		
 	}
 	
-	private static void build_prop_ctrl(pProperty prop, pProcess proc, 
-			String ref, Class<?> clazz, Object ... args) {
+	private static void build_prop_ctrl(pProperty prop, pStandard stand, pProcess proc, 
+			final String ref, Class<?> clazz, Object ... args) {
 		nMap<Object> settings = Utl.mapArg(args); 
 		proc.commande(pNode.getCom(CT.COM_ADD_ROW));
 		if (clazz == Boolean.class) {
@@ -557,6 +557,37 @@ public class pNodeSpace {
 //				.param("def", (int)1, "min", 1f, "max", 60f, "granulo", 1f)
 				.run(pNode.getRun(pNode.CT.RUNP_VAR_VEC_LAB_FIELD), ref, ref, (int)8)
 			.closeSec();
+		} else if (clazz == pParam.class) {
+			stand.openSec()
+				.param("keys", new String[] {"param", "in"}) 
+				.param("filters", new String[] {"param", "out"})
+				.run(pNode.getRun(CT.RUNS_ADD_CO_IN), ref)
+			.closeSec();
+			proc.commande(new nRun() {public void run() {
+				nRun run_frame = new nRun(instance) {public void run() { 
+					pInstance inst = (pInstance)builder;
+					pParam par = inst.object("param", pParam.class);
+					if (par == null) return;
+					pInstance co = inst.get("get_co", pInstance.class, ref);
+					Object op = co.get("obtain", Object.class);
+					if (op == null || !(op instanceof pParam)) return;
+					pParam p = (pParam)op;
+					par.setRef(ref,p);
+				}};
+				instance.addObject("run_frame_"+ref, run_frame);
+				instance.patch.addEventFrame(run_frame);
+			}})
+			.useClear().commande(new nRun() {public void run() { 
+				instance.patch.removeEventFrame(
+						instance.object("run_frame_"+ref, nRun.class));
+			}}).useInit()
+			;
+			
+//			proc.commande(pNode.getCom(CT.COM_ADD_ROW))
+//			.openSec().param("def", "blueprint").run(pNode.getRun(CT.RUNP_VAR_STR_LAB_FIELD), 
+//					"name", "print name:", (int)8).closeSec()
+//			.commande(pNode.getCom(CT.COM_ADD_ROW))
+//			;
 		} 
 	}
 	

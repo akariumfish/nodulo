@@ -33,6 +33,11 @@ public class T {
 			return def; }
 		return map.get(ref);
 	}
+
+	public static String t(String ref) {
+		if (!map.hasKey(ref)) { Utl.logn("ERROR : T.t( "+ref+" ) dont exist"); return ""; }
+		return map.get(ref);
+	}
 	
 
 //	private static void replace(String...data) {

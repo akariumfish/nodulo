@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 import aa_nodulo.PlaneApplet;
-import aa_nodulo.pBody;
 import app.App;
 import patch.pMacro.Macro;
 import patch.pMacro.MacroScript;
@@ -40,6 +39,13 @@ public class pMacroBook {
 		
 
 		Macro common_param = new Macro("common_param")
+		.addNode("particleDef", "particleDef", 	0f, 	2100f).getMacro()
+		.addNode("particleDef2", "particleDef", 	600f, 	2100f)
+			.addSetVar("dispertion", 0.5f)
+			.addSetVar("radiusB", 30f)
+			.addSetVar("greenB", (int)5)
+			.addSetVar("name", "particle2")
+			.getMacro()
 		.addNode("space", "space", 				0f, 	1200f).getMacro()
 		.addNode("bullet_def", "bullet", 		0f, 	600f)
 			.addSetVar("len", 90f)
@@ -52,11 +58,13 @@ public class pMacroBook {
 			.addSetVar("filter", (int)1).getMacro()
 		.addNode("shape", "shape", 		0f, 	-600f).getMacro()
 		.addNode("geom", "geom", 		0f, 	-1200f).getMacro()
+//		.addNode("joint_def", "joint_def", 		0f, 	-1800f).getMacro()
 		.addRun(new nRun() { public void run() {
 			nMap<pInstance> list = arg(0, nMap.class);
 			list.get("bullet_def").setVar("name", "bullet_def");
 			list.get("bullet_mob").setVar("name", "bullet_mob");
 			list.get("geom").setVar("name", "geom_def");
+//			list.get("particleDef2").setVar("name", "particle2");
 
 			list.get("geom").patch.app.addDelayEvent(2, new nRun() { public void run() {
 				list.get("geom").run("empty_geom");
@@ -156,7 +164,9 @@ public class pMacroBook {
 //			.addSetVar("def_ctrl_bullet_bullet_par", "bullet_def")
 			.addSetVar("use_ctrl_time", true)
 			.getMacro()
-		.addNode("interactif", "interactif", -600f, 	300f).getMacro()
+		.addNode("interactif", "interactif", -600f, 	300f)
+//			.addSetVar("use_ank", true)
+			.getMacro()
 		.addNode("logic", "logic", 			-600f, 	-300f)
 			.addSetVar("use_ctrl_func", true)
 			.addSetVar("tick_func_ref", "func_avatar")
@@ -264,7 +274,7 @@ public class pMacroBook {
 				nMap<pInstance> list = arg(0, nMap.class);
 				if (Utl.plane.config.SCRIPT_ALL_FUNC) {
 					list.get("startup").setVar("script", true);
-//					list.get("avatar").setVar("script", true);
+					list.get("avatar").setVar("script", true);
 					list.get("gameover").setVar("script", true);
 					for (String r : funcs) { list.get(r).setVar("script", true); }
 				}
@@ -352,7 +362,15 @@ public class pMacroBook {
 		;
 
 		newMacroScript("frame")
-		
+
+		.com("add_if")
+			.com("add_get_input_at", "test", "key_i_click")
+
+			.com("add_set_output", "screenshot")
+			.com("add_boo_at", "data", true)
+			
+		.com("add_close")
+
 		;
 
 		newMacroScript("pop_body")
@@ -502,13 +520,13 @@ public class pMacroBook {
 		.com("add_get_input_at", "in", "keycross_press")
 		.com("get_last")
 
-		.com("add_if")
-			.com("add_get_input_at", "test", "key_i_click")
-
-			.com("add_set_output", "screenshot")
-			.com("add_boo_at", "data", true)
-			
-		.com("add_close")
+//		.com("add_if")
+//			.com("add_get_input_at", "test", "key_i_click")
+//
+//			.com("add_set_output", "screenshot")
+//			.com("add_boo_at", "data", true)
+//			
+//		.com("add_close")
 
 		.com("add_if")
 			.com("add_not_at", "test")

@@ -33,6 +33,9 @@ import util.nScripted;
 
 public class PlaneApplet extends App {
 
+//	public static boolean PROTO = true; 
+	public static boolean PROTO = false;
+
 
 	public static boolean OPENGLES3 = true; 
 //	public static boolean OPENGLES3 = false;
@@ -119,7 +122,7 @@ public class PlaneApplet extends App {
 		public boolean VIEW_START_COLLAPSED = false;
 		public boolean VIEW_START_GRID = false;
 //		public float DEF_VIEW_ZOOM = 0.07f;
-		public float DEF_VIEW_ZOOM = 0.7f;
+		public float DEF_VIEW_ZOOM = 0.3f;
 		public Vector2 DEF_VIEW_POS = new Vector2(0f,0f);
 		// DEFAULT
 		public Vector2 DEF_VIEW_WIN_POS = new Vector2(370f,425f);
@@ -150,7 +153,9 @@ public class PlaneApplet extends App {
 
 		public boolean POP_BODY_EDITOR = false;
 
-		public boolean USE_NEW_RENDER = true;
+		public boolean SETUP_NEW_RENDER = false;
+		public boolean USE_NEW_RENDER = false;
+		public boolean LOAD_BOTH_RENDER_MAP = false;
 
 		public boolean SCRIPT_ALL_FUNC = true;
 

@@ -117,7 +117,7 @@ public class pBox2d extends pSystem {
 			physic.newLocalProperty("box_body")
 			.addData("pos", new Vector2())
 			.addData("rot", 0f)
-			.addData("body_ref", "")
+//			.addData("body_ref", "")
 			;
 			pFamily.newFamily("box_body")
 			.addProp("box_body")
@@ -139,6 +139,8 @@ public class pBox2d extends pSystem {
 
 			bullet
 			.addData("name", "bullet_par").addCtrl("name", String.class)
+			.addData("shoot_particle", "particle").addCtrl("shoot_particle", String.class)
+			.addData("hit_particle", "particle2").addCtrl("hit_particle", String.class)
 			.addData("speed", 2.75f).addCtrl("speed", Float.class)
 			.addData("len", 70f).addCtrl("len", Float.class)
 			.addData("damage", (int)1).addCtrl("damage", Integer.class)
@@ -161,6 +163,58 @@ public class pBox2d extends pSystem {
 			;
 
 
+			
+			
+			
+			
+			pProperty particleDef = pProperty.newGeneralProperty("particleDef");
+			
+			particleDef.newRun("pop",new nRun() {public void run() {
+				pParam partdef = contextParam();
+				pBox2d box = partdef.space.app.getSystem(pBox2d.class);
+				if (box == null || partdef == null) return;
+				if (args.length < 3) return;
+				int nb = arg(0,Integer.class);
+				Vector2 pos = arg(1,Vector2.class);
+				float rot = arg(2,Float.class);
+				box.pop_particle(partdef,nb,pos,rot);
+			}})
+			.addFrameRun(new nRun() {public void run() {
+				pParam partdef = arg(0,pParam.class);
+				pBox2d box = partdef.space.app.getSystem(pBox2d.class);
+				if (box == null || partdef == null) return;
+				box.updatePartDef(partdef);
+			}});
+
+			particleDef
+			.addData("name", "particle").addCtrl("name", String.class)
+			.addData("dispertion", 1.0f).addCtrl("dispertion", Float.class)
+			.addData("divergence", 1.5f).addCtrl("divergence", Float.class)
+			.addData("lifeAB", (int)30).addCtrl("lifeAB", Integer.class)
+			.addData("lifeBC", (int)50).addCtrl("lifeBC", Integer.class)
+			.addData("speedA", 3.75f).addCtrl("speedA", Float.class)
+			.addData("speedB", 4.75f).addCtrl("speedB", Float.class)
+			.addData("speedC", 1.00f).addCtrl("speedC", Float.class)
+			.addData("radiusA", 20f).addCtrl("radiusA", Float.class)
+			.addData("radiusB", 30f).addCtrl("radiusB", Float.class)
+			.addData("radiusC", 5f).addCtrl("radiusC", Float.class)
+			.addData("redA", (int)255).addCtrl("redA", Integer.class)
+			.addData("redB", (int)255).addCtrl("redB", Integer.class)
+			.addData("redC", (int)200).addCtrl("redC", Integer.class)
+			.addData("greenA", (int)155).addCtrl("greenA", Integer.class)
+			.addData("greenB", (int)105).addCtrl("greenB", Integer.class)
+			.addData("greenC", (int)55).addCtrl("greenC", Integer.class)
+			.addData("blueA", (int)55).addCtrl("blueA", Integer.class)
+			.addData("blueB", (int)5).addCtrl("blueB", Integer.class)
+			.addData("blueC", (int)5).addCtrl("blueC", Integer.class)
+			.addData("auraFX", false).addCtrl("auraFX", Boolean.class)
+			.addData("lightFX", true).addCtrl("lightFX", Boolean.class)
+			.addData("colorFX", true).addCtrl("colorFX", Boolean.class)
+			;
+
+			
+			
+			
 			
 			
 			
@@ -234,6 +288,7 @@ public class pBox2d extends pSystem {
 			.addData("geom_name","geom_def").addCtrl("geom_name", String.class)
 			.addData("pop_pos",new Vector2(-60,0)).addCtrl("pop_pos", Vector2.class)
 			.addData("rot_pos",new Vector2(-30,0)).addCtrl("rot_pos", Vector2.class)
+			
 			;
 			
 			member.newLocalProperty("mem_unit")
@@ -274,6 +329,11 @@ public class pBox2d extends pSystem {
 				return par.getRef("unit"+id);
 			}})
 			;
+
+//			pProperty.newGeneralProperty("joint_def")
+//			.addRef("shape", "shape").addCtrl("shape", pParam.class)
+//			
+//			;
 			
 			
 
@@ -474,9 +534,9 @@ public class pBox2d extends pSystem {
 			
 			renderer = new nRenderer(this, world);
 			
-			nrend = new nRender(this);
+			if (app.config.SETUP_NEW_RENDER) nrend = new nRender(this);
 			
-			engine = new nEngine(this);
+			if (app.config.SETUP_NEW_RENDER) engine = new nEngine(this);
 			
 //			if (app.config.STARTUP_MAP_PATH.length() > 0)
 //				renderer.setupMap(app.config.STARTUP_MAP_PATH);
@@ -487,10 +547,13 @@ public class pBox2d extends pSystem {
 			
 		}
 		public void loadMap(String p) {
-//			if (!val_use_nbatch.get()) 
+			if (app.config.LOAD_BOTH_RENDER_MAP) {
 				renderer.setupMap(p); 
-//			else 
-				engine.setupMap(p);
+				if (app.config.SETUP_NEW_RENDER) engine.setupMap(p);
+			} else {
+				if (!val_use_nbatch.get()) renderer.setupMap(p); 
+				else if (app.config.SETUP_NEW_RENDER) engine.setupMap(p);
+			}
 		}
 		public ArrayList<String> getMapFile() {
 			return renderer.map_files;
@@ -525,9 +588,9 @@ public class pBox2d extends pSystem {
 
 			renderer.dispose();
 
-			nrend.dispose();
+			if (app.config.SETUP_NEW_RENDER) nrend.dispose();
 
-			engine.dispose();
+			if (app.config.SETUP_NEW_RENDER) engine.dispose();
 			
 		}
 
@@ -583,16 +646,16 @@ public class pBox2d extends pSystem {
 			
 		}
 
+		private int lightcnt = 0;
 		public void frame(float delta) { 
-			engine.frame();
-			val_body_nb.set(bodys.size());
+			if (app.config.SETUP_NEW_RENDER) engine.frame();
+//			val_body_nb.set(bodys.size());
+			val_body_nb.set(space.param_pools.get("box_body").size());
 			val_bullet_nb.set(space.param_pools.get("bullet_unit").size());
 			val_shape_nb.set(space.param_pools.get("shape_unit").size());
-			int c = 0;
-			for (LightLayer l : renderer.rayHandler.layerList) {
-				c += l.lightList.size;
-			}
-			val_light_nb.set(c);
+			lightcnt = 0;
+			for (LightLayer l : renderer.rayHandler.layerList) { lightcnt += l.lightList.size; }
+			val_light_nb.set(lightcnt);
 		}
 
 		private float accumulator = 0;
@@ -619,7 +682,7 @@ public class pBox2d extends pSystem {
 				for (pBody b : Utl.duplic(space.familyMember("box_body"))) 
 					update_body(b);
 				renderer.tick_particles();
-				engine.tick();
+				if (app.config.SETUP_NEW_RENDER) engine.tick();
 			}
 
 		}
@@ -654,7 +717,7 @@ public class pBox2d extends pSystem {
 					renderer.tileLayer.delCell(app.view.mouse_in_view()); }
 			}
 
-			if (val_use_nbatch.get()) nrend.render();
+			if (val_use_nbatch.get() && app.config.SETUP_NEW_RENDER) nrend.render();
 			else renderer.render(); 
 			
 
@@ -677,7 +740,7 @@ public class pBox2d extends pSystem {
 		
 
 		public void space_start() {
-			engine.restart();
+			if (app.config.SETUP_NEW_RENDER) engine.restart();
 		}
 
 		public void space_clear() {
@@ -686,53 +749,115 @@ public class pBox2d extends pSystem {
 			for (pParam p : app.space.param_pools.get("shape_unit").temp_all())
 				clear_shape(p);
 			renderer.clear_particles();
-			engine.empty();
+			if (app.config.SETUP_NEW_RENDER) engine.empty();
 		}
 		
 		
 		
 
-		public void particle(float x, float y, float r, Color c, float d) {
-			int l = (int)Utl.rng(10,40);
-			float s = Utl.rng(2f,22f);
-			ParticleLight.Unit p = renderer.colorLayer.newPartLightUnit(c,d);
-			p.set(x,y,r,l,s);
-			p = renderer.lightLayer.newPartLightUnit(c,d);
-			p.set(x,y,r,l,s);
+		public void pop_particle(String name, int nb, Vector2 pos, float rot) {
+			for (pParam p : app.space.param_pools.get("particleDef").all())
+				if (p.getStr("name").equals(name)) { p.run("pop",nb,pos,rot); return; }
 		}
-		public void particle(float x, float y, float r, Color c) {
-			float d = Utl.rng(10,30);
-			particle(x,y,r,c,d);
-		}
-		public void particle(float x, float y, float r, float d) {
-			float b = Utl.rng(0.7f,0.9f);
-			Color c = new Color(b,b*0.75f,0.1f,1f);
-			particle(x,y,r,c,d);
-		}
-		public void particle(float x, float y, float r) {
-			float d = Utl.rng(10,30);
-			particle(x,y,r,d);
-		}
-		public void particles(float x, float y, int n) {
-			for (int i = 0 ; i < n ; i++) {
-				float r = Utl.rng(-Utl.PI,Utl.PI);
-				particle(x,y,r);
+
+
+		public void pop_particle(pParam part, int nb, Vector2 pos, float rot) {
+			if (part == null) return;
+			ParticleLight.ParticleDef def = getPartDef(part);
+			boolean aurafx = part.getBoo("auraFX");
+			boolean lightfx = part.getBoo("lightFX");
+			boolean colorfx = part.getBoo("colorFX");
+			ParticleLight.Unit p = null;
+			float disp = part.getFlt("dispertion");
+			float diverg = part.getFlt("divergence");
+			disp *= Utl.DPI;
+			float r = rot;
+			float d = diverg;
+			for (int i = 0 ; i < nb ; i++) {
+				r = rot + (Utl.rng() * disp) - (disp / 2f);
+				d = (Utl.rng() * diverg) - (diverg / 2f);
+				if (aurafx) {
+					p = renderer.auraLayer.newPartLightUnit(def,d);
+					p.set(pos.x,pos.y,r); }
+				if (lightfx) {
+					p = renderer.lightLayer.newPartLightUnit(def,d);
+					p.set(pos.x,pos.y,r); }
+				if (colorfx) {
+					p = renderer.colorLayer.newPartLightUnit(def,d);
+					p.set(pos.x,pos.y,r); }
 			}
 		}
-		public void particles(float x, float y, Color c, int n) {
-			for (int i = 0 ; i < n ; i++) {
-				float r = Utl.rng(-Utl.PI,Utl.PI);
-				particle(x,y,r,c);
-			}
+
+		
+		
+		private ParticleLight.ParticleDef getPartDef(pParam part) {
+			if (!part.hasObject("def",ParticleLight.ParticleDef.class)) {
+				updatePartDef(part); }
+			return part.object("def",ParticleLight.ParticleDef.class);
 		}
+
+		private void updatePartDef(pParam part) {
+			ParticleLight.ParticleDef def = null;
+			if (!part.hasObject("def",ParticleLight.ParticleDef.class)) {
+				def = new ParticleLight.ParticleDef();
+				part.addObject("def",def); }
+			else def = part.object("def",ParticleLight.ParticleDef.class);
+			def.setLife(part.getInt("lifeAB"), part.getInt("lifeBC"));
+			def.setStepA(part.getFlt("speedA"), part.getFlt("radiusA"), 
+					part.getInt("redA"), part.getInt("greenA"), part.getInt("blueA"));
+			def.setStepB(part.getFlt("speedB"), part.getFlt("radiusB"), 
+					part.getInt("redB"), part.getInt("greenB"), part.getInt("blueB"));
+			def.setStepC(part.getFlt("speedC"), part.getFlt("radiusC"), 
+					part.getInt("redC"), part.getInt("greenC"), part.getInt("blueC"));
+			part.setObject("def",def); 
+		}
+
+		
+		
+		
+
+//		public void particle(float x, float y, float r, Color c, float d) {
+//			int l = (int)Utl.rng(10,40);
+//			float s = Utl.rng(2f,22f);
+//			ParticleLight.Unit p = renderer.colorLayer.newPartLightUnit(c,d);
+//			p.set(x,y,r,l,s);
+//			p = renderer.lightLayer.newPartLightUnit(c,d);
+//			p.set(x,y,r,l,s);
+//		}
+//		public void particle(float x, float y, float r, Color c) {
+//			float d = Utl.rng(10,30);
+//			particle(x,y,r,c,d);
+//		}
+//		public void particle(float x, float y, float r, float d) {
+//			float b = Utl.rng(0.7f,0.9f);
+//			Color c = new Color(b,b*0.75f,0.1f,1f);
+//			particle(x,y,r,c,d);
+//		}
+//		public void particle(float x, float y, float r) {
+//			float d = Utl.rng(10,30);
+//			particle(x,y,r,d);
+//		}
+//		public void particles(float x, float y, int n) {
+//			for (int i = 0 ; i < n ; i++) {
+//				float r = Utl.rng(-Utl.PI,Utl.PI);
+//				particle(x,y,r);
+//			}
+//		}
+//		public void particles(float x, float y, Color c, int n) {
+//			for (int i = 0 ; i < n ; i++) {
+//				float r = Utl.rng(-Utl.PI,Utl.PI);
+//				particle(x,y,r,c);
+//			}
+//		}
 		
 
 		public void shootBullet(String name, Vector2 pos, float rot) {
 			for (pParam p : app.space.param_pools.get("bullet").all())
 				if (p.getStr("name").equals(name)) { 
 					p.run("pop",pos,rot); 
-					particles(pos.x,pos.y,6);
-					particles(pos.x,pos.y,new Color(1f,1f,1f,1f),6); 
+					pop_particle(p.getStr("shoot_particle"),6,pos,rot);
+//					particles(pos.x,pos.y,6);
+//					particles(pos.x,pos.y,new Color(1f,1f,1f,1f),6); 
 					return; }
 		}
 
@@ -798,7 +923,7 @@ public class pBox2d extends pSystem {
 			jointDef.maxMotorTorque = 20.0f;
 			jointDef.motorSpeed = 1.0f;
 			
-			world.createJoint(jointDef); 
+			RevoluteJoint joint = (RevoluteJoint)world.createJoint(jointDef); 
 			
 			
 			
@@ -1037,7 +1162,8 @@ public class pBox2d extends pSystem {
 			world.rayCast(ray, pos, m);
 			if (coll != null) {
 
-				particles(end.x,end.y,6);
+//				particles(end.x,end.y,6);
+				pop_particle(def.getStr("hit_particle"),5,end,rot);
 				
 				if (coll.getUserData() != null && 
 						(coll.getUserData() instanceof pBody)) {
@@ -1048,18 +1174,22 @@ public class pBox2d extends pSystem {
 						int filterB = bod.getInt("physic","filter");
 						if (filterA == filterB) {
 
-							particles(end.x,end.y,12);
-							particles(end.x,end.y,new Color(1f,0.4f,0.15f,1f),12);
-							particles(end.x,end.y,new Color(1f,0f,0f,1f),12);
+//							particles(end.x,end.y,12);
+//							particles(end.x,end.y,new Color(1f,0.4f,0.15f,1f),12);
+//							particles(end.x,end.y,new Color(1f,0f,0f,1f),12);
+							pop_particle(def.getStr("hit_particle"),18,end,rot);
 							
 							bod.setInt("hp", "hp", bod.getInt("hp", "hp") - damage);
 							if (bod.getInt("hp", "hp") <= 0) {
-								Body body = bodys.get(bod.getStr("box_body", "body_ref"));
+//								Body body = bodys.get(bod.getStr("box_body", "body_ref"));
+								Body body = bod.param("box_body").object("body", Body.class);
 								if (body != null) {
 
-									particles(end.x,end.y,60);
-									particles(end.x,end.y,new Color(1f,0.4f,0.15f,1f),60);
-									particles(end.x,end.y,new Color(1f,0f,0f,1f),60);
+//									particles(end.x,end.y,60);
+//									particles(end.x,end.y,new Color(1f,0.4f,0.15f,1f),60);
+//									particles(end.x,end.y,new Color(1f,0f,0f,1f),60);
+									pop_particle(def.getStr("hit_particle"),40,end,rot);
+									pop_particle(def.getStr("shoot_particle"),40,end,rot);
 									
 									if (!clearing_bodys.contains(body)) 
 										clearing_bodys.add(body);
@@ -1157,9 +1287,9 @@ public class pBox2d extends pSystem {
 		
 		public boolean has_vision_bod = false;
 		
-		public nMap<Body> bodys = new nMap<Body>();
-		private int get_free_bod_nb() {
-			int n = 0; while (bodys.get(""+n) != null) n++; return n; }
+//		public nMap<Body> bodys = new nMap<Body>();
+//		private int get_free_bod_nb() {
+//			int n = 0; while (bodys.get(""+n) != null) n++; return n; }
 
 //		public nMap<Joint> joints = new nMap<Joint>();
 		//		private int joint_nb = 0;
@@ -1347,23 +1477,26 @@ public class pBox2d extends pSystem {
 					}
 				}
 
-				int bod_nb = get_free_bod_nb();
-				bodys.put(""+bod_nb, body);
-				b.setStr("box_body", "body_ref", ""+bod_nb);
+//				int bod_nb = get_free_bod_nb();
+//				bodys.put(""+bod_nb, body);
+//				b.setStr("box_body", "body_ref", ""+bod_nb);
+				b.param("box_body").setObject("body",body);
 			}});
 		}
 		
 		public Body getBody(pBody b) {
 			if (b.param("box_body") == null) return null;
-			return bodys.get(b.getStr("box_body", "body_ref"));
+//			return bodys.get(b.getStr("box_body", "body_ref"));
+			return b.param("box_body").object("body", Body.class);
 		}
 
 		public void clear_body(pBody b) {
 			if (b.param("box_body") == null) return;
-			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+//			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+			Body body = getBody(b);
 			if (body == null) return;
 			if (b.getBoo("physic", "view_light")) has_vision_bod = false;
-			bodys.remove(b.getStr("box_body", "body_ref"), body);
+//			bodys.remove(b.getStr("box_body", "body_ref"), body);
 			world.destroyBody(body);
 			if (lights.get(body) != null) {
 				for (RayHandler.AbstractLight l : lights.get(body)) l.remove();
@@ -1379,7 +1512,8 @@ public class pBox2d extends pSystem {
 
 		public void move_body(pBody b, float x, float y) {
 			if (b.param("box_body") == null) return;
-			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+//			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+			Body body = getBody(b);
 			if (body == null) return;
 //			Vector2 pos = body.getPosition();
 			float rot = body.getAngle();
@@ -1388,14 +1522,16 @@ public class pBox2d extends pSystem {
 
 		public void move_body(pBody b, float x, float y, float r) {
 			if (b.param("box_body") == null) return;
-			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+//			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+			Body body = getBody(b);
 			if (body == null) return;
 			body.setTransform(x,y,r);
 		}
 
 		public void accel_body(pBody b, boolean glob, float x, float y, float max) {
 			if (b.param("box_body") == null) return;
-			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+//			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+			Body body = getBody(b);
 			if (body == null) return;
 //			Vector2 pos = body.getPosition();
 			Vector2 vel = body.getLinearVelocity();
@@ -1423,7 +1559,8 @@ public class pBox2d extends pSystem {
 
 		public void decel_body_move(pBody b, float s) {
 			if (b.param("box_body") == null) return;
-			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+//			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+			Body body = getBody(b);
 			if (body == null) return;
 			Vector2 pos = body.getPosition();
 			Vector2 vel = body.getLinearVelocity();
@@ -1436,7 +1573,8 @@ public class pBox2d extends pSystem {
 
 		public void rot_body_toward(pBody b, float targ, float r, float max) {
 			if (b.param("box_body") == null) return;
-			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+//			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+			Body body = getBody(b);
 			if (body == null) return;
 			float vel = body.getAngularVelocity();
 			float rot = body.getAngle();
@@ -1456,7 +1594,8 @@ public class pBox2d extends pSystem {
 
 		public void rot_body(pBody b, float r, float max) {
 			if (b.param("box_body") == null) return;
-			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+//			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+			Body body = getBody(b);
 			if (body == null) return;
 			float vel = body.getAngularVelocity();
 			if (vel > 0f && vel > max) return;
@@ -1466,7 +1605,8 @@ public class pBox2d extends pSystem {
 
 		public void decel_body_rot(pBody b, float s) {
 			if (b.param("box_body") == null) return;
-			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+//			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+			Body body = getBody(b);
 			if (body == null) return;
 			float vel = body.getAngularVelocity();
 			if (vel > 0f && vel > s) vel = s;
@@ -1476,7 +1616,8 @@ public class pBox2d extends pSystem {
 
 		public void update_body(pBody b) {
 			if (b.param("box_body") == null) return;
-			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+//			Body body = bodys.get(b.getStr("box_body", "body_ref"));
+			Body body = getBody(b);
 			if (body == null) return;
 			if (clearing_bodys.contains(body)) {
 				clearing_bodys.remove(body);

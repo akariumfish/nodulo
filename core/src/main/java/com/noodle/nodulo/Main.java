@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 //import com.kotcrab.vis.ui.VisUI;
 
 import aa_nodulo.PlaneApplet;
+import aa_proto.Proto;
 import util.Utl;
 import app.AppConfig;
 import app.Conf;
@@ -39,8 +40,9 @@ public class Main extends Game {
 		Utl.build();
 		
 		PlaneApplet.build_setup();
-		
+
 		if (PlaneApplet.TITLE_SCREEN) launch_title(); 
+		else if (PlaneApplet.PROTO) launch_proto(); 
 		else launch_nodulo();
 		
 	}
@@ -52,7 +54,16 @@ public class Main extends Game {
 	GdxApp nodulo_app = null;
 
 	GdxApp editor_app = null;
-	
+
+	Proto proto_app = null;
+
+	public void launch_proto() {
+		if (proto_app == null)
+			proto_app = new Proto(this);
+		proto_app.setInputProcessor();
+		setScreen(proto_app); 
+	}
+
 	public void launch_title() {
 		if (titleScreen == null)
 			titleScreen = new TitleScreen(this);
@@ -110,6 +121,8 @@ public class Main extends Game {
 			nodulo_app.dispose(); nodulo_app = null; }
 		if (editor_app != null) {
 			editor_app.dispose(); editor_app = null; }
+		if (proto_app != null) {
+			proto_app.dispose(); proto_app = null; }
 	}
 
 	

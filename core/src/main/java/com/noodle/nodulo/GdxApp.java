@@ -1,5 +1,7 @@
 package com.noodle.nodulo;
 
+import static com.badlogic.gdx.graphics.profiling.GLInterceptor.resolveErrorNumber;
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.zip.Deflater;
@@ -18,6 +20,7 @@ import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.graphics.profiling.GLErrorListener;
 import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -108,6 +111,32 @@ public class GdxApp implements Screen ,nDrawer.DrawContext {
 		
 		if (USE_GLPROFILER) {
 			glprofiler = new GLProfiler(Gdx.graphics);
+			glprofiler.setListener(new GLErrorListener() {
+				@Override
+				public void onError (int error) {
+					String place = null;
+					try {
+						final StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+						for (int i = 0; i < stack.length; i++) {
+							if ("check".equals(stack[i].getMethodName())) {
+								if (i + 1 < stack.length) {
+									final StackTraceElement glMethod = stack[i + 1];
+									place = glMethod.getMethodName();
+								}
+								break;
+							}
+						}
+					} catch (Exception ignored) {
+					}
+
+					if (place != null) {
+						Utl.logn("GLProfiler : Error " + resolveErrorNumber(error) + " from " + place);
+					} else {
+						Utl.logn("GLProfiler : Error " + resolveErrorNumber(error) + " at: " + new Exception());
+						// This will capture current stack trace for logging, if possible
+					}
+				}
+			});
 			glprofiler.enable();
 		}
 		

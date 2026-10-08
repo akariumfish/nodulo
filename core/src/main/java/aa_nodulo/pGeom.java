@@ -793,9 +793,9 @@ public class pGeom extends pSystem {
 		.addData("damage", (int)1).addCtrl("damage", Integer.class)
 		;
 		
-		pFamily.newFamily("hitpoint")
-		.addProp("hp")
-		;
+//		pFamily.newFamily("hitpoint")
+//		.addProp("hp")
+//		;
 		
 		
 		
@@ -846,8 +846,59 @@ public class pGeom extends pSystem {
 		;
 
 		
-		
 
+//		interactif.newOptionalLocalProperty("ank")
+//		.setLocalVal()
+//		.addRef("gui", "space_gui")
+//		.addRef("ref", "ref")
+//		.addFrameRun(new nRun() {public void run() {
+//			pParam par = arg(0,pParam.class);
+//			pParam gui = par.getRef("gui");
+//			pParam ref = par.getRef("ref");
+//			if (gui == null || ref == null) return;
+//			gui.setVec("pos",ref.getVec("pos"));
+//		}})
+//		;
+//
+//		interactif.addBodyInitRun(new nRun() {public void run() {
+//			pBody bod = arg(0,pBody.class);
+//			pGeom geo = PlaneApplet.app.getSystem(pGeom.class);
+//			if (geo == null || bod == null) return;
+//			if (bod.hasParam("ank")) {
+//				pParam ank = bod.param("ank");
+//				pParam gui = bod.space.new_param("space_gui");
+//				ank.setRef("gui",gui);
+//				if (bod.hasParam("ref")) ank.setRef("ref",bod.param("ref"));
+//			}
+//		}});
+//
+//		interactif.addBodyClearRun(new nRun() {public void run() {
+//			pBody bod = arg(0,pBody.class);
+//			pGeom geo = PlaneApplet.app.getSystem(pGeom.class);
+//			if (geo == null || bod == null) return;
+//			if (bod.hasParam("ank")) {
+//				pParam ank = bod.param("ank");
+//				pParam gui = ank.getRef("gui");
+//				if (gui != null) gui.clear();
+//			}
+//		}});
+//
+//		pProperty.newProperty("space_gui")
+//		.setCommon()
+//		.addData("pos", new Vector2())
+//		.newRun("draw", new nRun() { public void run() {
+//			pParam par = contextParam();
+//			Vector2 pos = par.getVec("pos");
+//			App app = App.ap;
+////			app.push();
+////			app.translate(pos.x,pos.y);
+////			app.noStroke();
+////			app.fill(255);
+////			float s = nGUI.book.RS;
+////			app.rect(-s,-s,2f*s,2f*s);
+////			app.pop();
+//		}})
+//		;
 		
 		
 		
@@ -1321,7 +1372,9 @@ public class pGeom extends pSystem {
 		draw_aabb_run = new nDrawable() { public void drawing() { draw_aabb(); }}; }
 
 	nRun tick_run, net_tick_run;
-	nDrawable draw_run, draw_aabb_run;
+	nDrawable 
+		draw_run, 
+		draw_aabb_run;
 	
 	public pGeom init(sValueBloc b) { return (pGeom) super.init(b); }
 	
@@ -1389,7 +1442,7 @@ public class pGeom extends pSystem {
 		app.time.addEventTick(tick_run);
 		app.time.addEventNetTick(net_tick_run);
 		
-//		app.view.addDrawable(5, draw_run);
+		app.view.addDrawable(15, draw_run);
 		app.view.addDrawable(20, draw_aabb_run);
 		space = app.space;
 
@@ -1449,7 +1502,7 @@ public class pGeom extends pSystem {
 		app.time.removeEventNetTick(net_tick_run);
 //		if (app.getSystem(pBox2d.class) != null) 
 //			app.getSystem(pBox2d.class).removeDrawable(draw_run);
-//		app.view.removeDrawable(draw_run);
+		app.view.removeDrawable(draw_run);
 		app.view.removeDrawable(draw_aabb_run);
 	}
 	
@@ -1535,9 +1588,11 @@ public class pGeom extends pSystem {
 		calc_ref();
 	}
 	public void draw() { 
-		if (val_do_draw.get())
+		if (val_do_draw.get()) {
+//			for (pParam b : Utl.duplic(space.param_pools.get("space_gui").all())) 
+//				b.run("draw");
 			for (pBody b : space.familyMember("drawable")) draw_body(app, b);
-		
+		}
 	}
 	public void draw_aabb() { 
 		if (val_do_click_draw.get())
@@ -1580,8 +1635,8 @@ public class pGeom extends pSystem {
 	
 
 	public void draw_body(PlaneApplet app, pBody b) {
-		if (!b.hasParam("ref") || !b.hasParam("geom")) return;
-		draw_geom(app, b, b.param("geom"));
+		if (!b.hasParam("ref") || !b.hasParam("geom")) return; 
+//		draw_geom(app, b, b.param("geom"));
 		if (!b.hasParam("hp")) return;
 		Vector2 p = b.getVec("ref", "pos");
 		int hp = b.getInt("hp", "hp");

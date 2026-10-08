@@ -1,5 +1,5 @@
 {
-    "activeFile": "map.tmx",
+    "activeFile": "small_map.tmx",
     "automapping.whileDrawing": true,
     "expandedProjectPaths": [
         "."
@@ -90,11 +90,11 @@
             "expandedObjectLayers": [
                 14
             ],
-            "scale": 1,
+            "scale": 0.75,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 515.5,
-                "y": 680.5
+                "x": 512,
+                "y": 511.33333333333326
             }
         },
         "map2.tmx": {
@@ -109,11 +109,22 @@
             }
         },
         "map3.tmx": {
+            "expandedGroupLayers": [
+                19
+            ],
             "scale": 1.0662760416666666,
-            "selectedLayer": 2,
+            "selectedLayer": 0,
             "viewCenter": {
                 "x": 383.5779704481622,
                 "y": 384.04689217242645
+            }
+        },
+        "small_map.tmx": {
+            "scale": 1.0662760416666666,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 296.82745145927464,
+                "y": 158.9644645255831
             }
         },
         "tileset.tsx": {
@@ -136,14 +147,16 @@
     "openFiles": [
         "map.tmx",
         "map2.tmx",
-        "map3.tmx"
+        "map3.tmx",
+        "small_map.tmx"
     ],
     "project": "tiled_project.tiled-project",
     "property.type": "string",
     "recentFiles": [
-        "map3.tmx",
-        "map2.tmx",
         "map.tmx",
+        "map2.tmx",
+        "map3.tmx",
+        "small_map.tmx",
         "tileset_flags2.tsx",
         "Map2.tmx",
         "Map.tmx",

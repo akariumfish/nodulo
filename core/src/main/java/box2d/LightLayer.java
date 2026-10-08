@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
 
+import box2d.ParticleLight.ParticleDef;
 import box2d.RayHandler.AbstractLight;
 import util.Utl;
 
@@ -150,6 +151,16 @@ public class LightLayer extends nRenderer.Layer {
 		ParticleLight swrm = new ParticleLight(this);
 		parts.add(swrm);
 		return swrm.newUnit(col, dist); }
+
+	public ParticleLight.Unit newPartLightUnit(ParticleDef df, float div) {
+		if (parts.size() == 0) parts.add(new ParticleLight(this));
+		ParticleLight.Unit unit = null;
+		for (ParticleLight s : parts) {
+			unit = s.newUnit(df, div);
+			if (unit != null) return unit; }
+		ParticleLight swrm = new ParticleLight(this);
+		parts.add(swrm);
+		return swrm.newUnit(df, div); }
 
 	public ArrayList<SwarmLight> swarms = new ArrayList<SwarmLight>();
 
