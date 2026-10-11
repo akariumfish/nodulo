@@ -1,10 +1,12 @@
 package util;
 
+import java.util.Iterator;
+
 import patch.pInstance;
 import patch.pPar;
 
 @SuppressWarnings("serial")
-public class nRuns extends nSortedArray<nRun> {
+public class nRuns extends nSortedArray<nRun> { // implement Iterable<nRun>
 	public nRuns() { super(); }
 	
 	public void do_run(Object ... v) { nRun.runList(this,v); }
@@ -24,5 +26,18 @@ public class nRuns extends nSortedArray<nRun> {
 	public nRuns setAutoSorted() { super.setAutoSorted(); return this; }
 
 	public boolean add(nRun n) { if (sorted) n.setSorted(); return super.add(n); }
+	
+	
+	
+	
+//	@Override public Iterator<nRun> iterator() { return new RunIterator(); }
+//		
+//	class RunIterator implements Iterator<nRun> {
+//		private int cnt = 0;
+//		@Override public boolean hasNext() { return cnt < size(); }
+//		@Override public nRun next() { cnt++; return get(cnt-1); }
+//	}
+//	
+	
 	
 }

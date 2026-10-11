@@ -2,29 +2,26 @@ package util;
 
 import java.util.ArrayList;
 
-import patch.pInstance;
-import patch.pPar;
-
 @SuppressWarnings("serial")
-public class nSortedArray <T extends Utl.Ordered & Utl.Priorizable> extends ArrayList<T> {
+public class nSortedArray <K extends Utl.Ordered & Utl.Priorizable> extends ArrayList<K> {
 	public nSortedArray() { super(); }
 	
 	protected boolean sorted = false, ordered = false, prioritized = false, 
 			reverse_prioritized = false, auto_sorted = false;
-	public nSortedArray<T> setOrdered() { sorted = true; ordered = true; dirty(); return this; }
-	public nSortedArray<T> setPrioritized() { sorted = true; prioritized = true; dirty(); return this; }
-	public nSortedArray<T> setReversePrioritized() { sorted = true; reverse_prioritized = true; dirty(); return this; }
-	public nSortedArray<T> setAutoSorted() { sorted = true; auto_sorted = true; dirty(); return this; }
+	public nSortedArray<K> setOrdered() { sorted = true; ordered = true; dirty(); return this; }
+	public nSortedArray<K> setPrioritized() { sorted = true; prioritized = true; dirty(); return this; }
+	public nSortedArray<K> setReversePrioritized() { sorted = true; reverse_prioritized = true; dirty(); return this; }
+	public nSortedArray<K> setAutoSorted() { sorted = true; auto_sorted = true; dirty(); return this; }
 
 	public void update() { if (dirty) clean(); }
 
-	public boolean add(T n) { boolean r = super.add(n); if (r) dirty(); return r; }
-	public void add(int i, T n) { super.add(i,n); dirty(); }
-	public boolean addOne(T n) { if (Utl.has(this, n)) return false;
+	public boolean add(K n) { boolean r = super.add(n); if (r) dirty(); return r; }
+	public void add(int i, K n) { super.add(i,n); dirty(); }
+	public boolean addOne(K n) { if (Utl.has(this, n)) return false;
 		boolean r = super.add(n); if (r) dirty(); return r; }
-	public boolean addOne(int i, T n) { if (Utl.has(this, n)) return false;
+	public boolean addOne(int i, K n) { if (Utl.has(this, n)) return false;
 		super.add(i,n); dirty(); return true; }
-	public boolean remove(T n) { boolean r = super.remove(n); if (r) dirty(); return r; }
+	public boolean remove(K n) { boolean r = super.remove(n); if (r) dirty(); return r; }
 	public void clear() { super.clear(); dirty(); }
 	
 	private boolean dirty = true;

@@ -941,8 +941,29 @@ public class Utl {
 	public static final String[] type_names = new String[data_type_nb];
 	public static final String[] type_short_names = new String[data_type_nb];
 	public static final byte[] type_id = new byte[data_type_nb];
+	
+//	private static class TTT {
+//		
+//		static int i = 0;
+//		
+//		static {
+//			logn("stat TTT");
+//		}
+//		TTT() {
+//			logn("make TTT");
+//		}
+//	}
 
 	public static void build() {
+
+//		logn("z");
+//		logn("class TTT : "+TTT.class);
+//		logn("a");
+//		//do static block here
+//		logn("const TTT : "+TTT.i);
+//		logn("b");
+//		new TTT();
+//		logn("c");
 		
 //		build_prim();
 
