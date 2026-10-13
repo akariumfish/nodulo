@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" pages="2">
   <diagram name="Main" id="xXF5mDllR8MrahNOpVaN">
-    <mxGraphModel dx="5900" dy="7133" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+    <mxGraphModel grid="1" page="0" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -437,10 +437,25 @@
     </mxGraphModel>
   </diagram>
   <diagram id="3miyMOb6A6nkPWRY7Zh5" name="Dump">
-    <mxGraphModel dx="982" dy="2012" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+    <mxGraphModel dx="790" dy="1620" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
-        <mxCell id="1" parent="0" />
+        <mxCell id="1" parent="0" style="locked=0;" />
+        <mxCell id="bvlxicmgVaCrd0gt2czq-7" parent="1" style="swimlane;collapsible=1;startSize=80;foldingIconSize=80;" value="SMARTPHONE SCREEN" vertex="1">
+          <mxGeometry height="910" width="390" x="150" y="10" as="geometry">
+            <mxRectangle height="80" width="370" x="150" y="10" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bvlxicmgVaCrd0gt2czq-11" parent="bvlxicmgVaCrd0gt2czq-7" style="whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="830" width="10" x="-10" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="bvlxicmgVaCrd0gt2czq-9" parent="bvlxicmgVaCrd0gt2czq-7" style="whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="10" width="400" x="-10" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="bvlxicmgVaCrd0gt2czq-15" parent="bvlxicmgVaCrd0gt2czq-7" style="whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="10" width="10" x="380" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="bvlxicmgVaCrd0gt2czq-3" parent="0" value="Untitled Layer" />
       </root>
     </mxGraphModel>
   </diagram>
