@@ -1,10 +1,10 @@
 <mxfile host="app.diagrams.net" pages="3">
-  <diagram name="Root" id="Wkpykkc9GwP7MDXB8yx8">
-    <mxGraphModel dx="498" dy="1022" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+  <diagram name="root" id="Wkpykkc9GwP7MDXB8yx8">
+    <mxGraphModel dx="2160" dy="5327" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="8e7DPJo_BcMe0NDpQiM2-3" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=150;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;foldingIconSize=150;rotatable=1;deletable=1;movable=1;resizable=1;editable=1;locked=0;connectable=1;" value="" vertex="1">
+        <mxCell id="8e7DPJo_BcMe0NDpQiM2-3" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=150;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;foldingIconSize=150;rotatable=1;deletable=1;movable=1;resizable=1;editable=1;locked=0;connectable=1;" value="" vertex="1">
           <mxGeometry height="3450" width="1560" x="10" y="-150" as="geometry">
             <mxRectangle height="150" width="1570" x="10" y="-150" as="alternateBounds" />
           </mxGeometry>
@@ -141,9 +141,6 @@
             <mxRectangle height="150" width="1560" y="1050" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="VMvRc8jwAjRBSNfL5RKQ-9" parent="VMvRc8jwAjRBSNfL5RKQ-26" style="text;strokeColor=none;fillColor=none;html=1;fontSize=84;fontStyle=1;verticalAlign=middle;align=center;autosizeText=1;" value="AUTO" vertex="1">
-          <mxGeometry height="170" width="430" x="430" y="610" as="geometry" />
-        </mxCell>
         <UserObject label="TP &amp;lt;-" link="data:action/json,{&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;cells&quot;:[&quot;7gk7YY2y4I_YehI1hOI8-5&quot;]}}],&quot;title&quot;:&quot;Trigger&quot;}" id="VMvRc8jwAjRBSNfL5RKQ-8">
           <mxCell parent="VMvRc8jwAjRBSNfL5RKQ-26" style="labelPosition=center;verticalLabelPosition=middle;align=center;html=1;shape=mxgraph.basic.shaded_button;dx=8.12;fillColor=#E6E6E6;strokeColor=none;whiteSpace=wrap;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" vertex="1">
             <mxGeometry height="310" width="280" x="930" y="410" as="geometry" />
@@ -160,7 +157,7 @@
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="GadqymL0BfwiKE2hplHM" name="Bench">
+  <diagram id="GadqymL0BfwiKE2hplHM" name="bin">
     <mxGraphModel dx="324" dy="664" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
@@ -168,11 +165,17 @@
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="71KNeGuu4Nmp__-DLKbQ" name="Computer">
-    <mxGraphModel dx="1906" dy="3906" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+  <diagram id="71KNeGuu4Nmp__-DLKbQ" name="exe">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="_4h56ORwZqPVMb4Zs28j-1" parent="1" style="rounded=0;absoluteArcSize=1;html=1;arcSize=0;fontColor=light-dark(#33FF99,#00CC66);fillStyle=cross-hatch;fillColor=light-dark(#006633,#99FFCC);strokeWidth=10;strokeColor=light-dark(#33FF99,#00CC66);perimeterSpacing=0;dashed=1;hachureGap=0;miterlimit=4;hachureAngle=0;fillWeight=0;dashPattern=8 8;connectable=1;allowArrows=1;snapToPoint=0;lockedGroup=1;lockedGroupIcon=0;rotatable=0;" value="" vertex="1">
+          <mxGeometry height="530" width="910" x="320" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="_4h56ORwZqPVMb4Zs28j-2" parent="_4h56ORwZqPVMb4Zs28j-1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=top;rounded=0;fontSize=84;fontColor=inherit;" value="JUMP" vertex="1">
+          <mxGeometry height="146.2068965517241" width="873.6000000000001" x="18.199999999999996" y="-91.37931034482757" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
