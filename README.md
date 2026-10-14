@@ -1,5 +1,5 @@
 <img width="1300" height="200" alt="13556" src="https://github.com/user-attachments/assets/535c6d6f-40b9-4087-9350-56dfc8e31346" />
-Nodulo Copyright 2026 colin childz
+< Nodulo > Copyright : 2026 ; colin childz
 <br/>
 <br/>
 <br/>
