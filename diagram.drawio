@@ -1,17 +1,17 @@
 <mxfile host="app.diagrams.net" pages="2">
   <diagram name="Root" id="xXF5mDllR8MrahNOpVaN">
-    <mxGraphModel dx="4820" dy="5120" grid="0" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+    <mxGraphModel dx="2492" dy="5108" grid="0" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="8cLzy_2F8G0vyAUW_IYA-5" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=288;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;foldingIconSize=160;strokeColor=light-dark(#000000,#CCCCFF);swimlaneBody=1;whiteSpace=wrap;fontSize=256;fontColor=light-dark(#000000,#FFFFFF);strokeWidth=10;verticalAlign=middle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="ROOT" vertex="1">
+        <mxCell id="8cLzy_2F8G0vyAUW_IYA-5" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=288;fillColor=default;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;foldingIconSize=160;strokeColor=light-dark(#000000,#CCCCFF);swimlaneBody=1;whiteSpace=wrap;fontSize=256;fontColor=light-dark(#000000,#FFFFFF);strokeWidth=10;verticalAlign=middle;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fillStyle=solid;" value="ROOT" vertex="1">
           <mxGeometry height="2838" width="1544" x="-1569" y="-1785" as="geometry">
             <mxRectangle height="480" width="520" x="-680" y="-1400" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="B_4yEoZcekU8tCrgffyM-1" parent="8cLzy_2F8G0vyAUW_IYA-5" style="swimlane;startSize=160;fontSize=96;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;foldingIconSize=160;cloneable=0;noLabel=0;portConstraintRotation=0;allowArrows=0;fixDash=0;container=1;expand=1;moveIcon=0;movableLabel=0;editIcon=0;resizeWidth=0;resizeHeight=0;fixedWidth=0;autosize=0;pointerEvents=0;enumerate=0;fixedHeader=1;dropTarget=1;collapsible=1;strokeWidth=3;strokeColor=light-dark(#000000,#CCCCFF);perimeterSpacing=1;fillStyle=solid;fillColor=inherit;fontColor=inherit;" value="SYMBOLIC " vertex="1">
-          <mxGeometry height="1220" y="288" as="geometry">
-            <mxRectangle height="160" y="288" as="alternateBounds" />
+        <mxCell id="B_4yEoZcekU8tCrgffyM-1" parent="8cLzy_2F8G0vyAUW_IYA-5" style="swimlane;startSize=160;fontSize=96;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;foldingIconSize=160;cloneable=0;noLabel=0;portConstraintRotation=0;allowArrows=0;fixDash=0;container=1;expand=1;moveIcon=0;movableLabel=0;editIcon=0;resizeWidth=0;resizeHeight=0;fixedWidth=0;autosize=0;pointerEvents=0;enumerate=0;fixedHeader=1;dropTarget=1;collapsible=1;strokeWidth=3;strokeColor=light-dark(#000000,#CCCCFF);perimeterSpacing=1;fillStyle=solid;" value="SYMBOLIC " vertex="1">
+          <mxGeometry height="1220" width="1544" y="288" as="geometry">
+            <mxRectangle height="160" width="1544" y="288" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
         <mxCell id="B_4yEoZcekU8tCrgffyM-2" parent="B_4yEoZcekU8tCrgffyM-1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=50;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;foldingIconSize=20;strokeColor=default;swimlaneBody=1;whiteSpace=wrap;fontSize=32;fontColor=light-dark(#000000,#FFFFFF);movable=1;direction=east;rotatable=0;deletable=0;" value="SUMMARY AND DEFINITION" vertex="1">
@@ -26,7 +26,7 @@
         <mxCell id="B_4yEoZcekU8tCrgffyM-5" parent="B_4yEoZcekU8tCrgffyM-2" style="text;html=1;whiteSpace=wrap;verticalAlign=top;overflow=hidden;fontSize=10;horizontal=1;labelPosition=center;verticalLabelPosition=middle;align=left;strokeColor=none;spacingLeft=-25;spacingTop=-15;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontColor=light-dark(#000000,#CCCCCC);" value="&lt;ul&gt;&lt;li&gt;&lt;br&gt;&lt;/li&gt;&lt;/ul&gt;" vertex="1">
           <mxGeometry height="170" width="620" y="280" as="geometry" />
         </mxCell>
-        <mxCell id="B_4yEoZcekU8tCrgffyM-6" parent="B_4yEoZcekU8tCrgffyM-1" style="text;html=1;fontSize=84;fontStyle=1;verticalAlign=middle;align=center;autosizeText=1;fillColor=inherit;fillStyle=solid;movable=0;rotatable=0;deletable=0;resizable=0;resizeWidth=0;backgroundOutline=0;lockedGroup=1;allowArrows=0;connectable=0;" value="&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; SYMBOLIC&amp;nbsp;" vertex="1">
+        <mxCell id="B_4yEoZcekU8tCrgffyM-6" parent="B_4yEoZcekU8tCrgffyM-1" style="text;html=1;fontSize=84;fontStyle=1;verticalAlign=middle;align=center;autosizeText=1;fillStyle=solid;movable=0;rotatable=0;deletable=0;resizable=0;resizeWidth=0;backgroundOutline=0;lockedGroup=1;allowArrows=0;connectable=0;fillColor=inherit;" value="&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; SYMBOLIC&amp;nbsp;" vertex="1">
           <mxGeometry height="130" width="1093" x="164" y="20" as="geometry" />
         </mxCell>
         <mxCell id="latIEHJAd5-pHsaHZytg-1" collapsed="1" parent="8cLzy_2F8G0vyAUW_IYA-5" style="swimlane;startSize=160;fontSize=96;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;foldingIconSize=160;cloneable=0;noLabel=0;portConstraintRotation=0;allowArrows=0;fixDash=0;container=1;expand=1;moveIcon=0;movableLabel=0;editIcon=0;resizeWidth=0;resizeHeight=0;fixedWidth=0;autosize=0;pointerEvents=0;enumerate=0;fixedHeader=1;dropTarget=1;collapsible=1;strokeWidth=3;strokeColor=light-dark(#000000,#CCCCFF);perimeterSpacing=1;fillStyle=solid;fillColor=light-dark(#FFFFFF,#003366);" value="TEMPLATE" vertex="1">
