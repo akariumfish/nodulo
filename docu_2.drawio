@@ -1,13 +1,16 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Page-1" id="Wkpykkc9GwP7MDXB8yx8">
-    <mxGraphModel dx="1906" dy="3906" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+    <mxGraphModel dx="1906" dy="3906" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="APMBoODwbxI06vZBq_GU-1" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=150;verticalAlign=middle;fontSize=72;foldingIconSize=150;align=left;spacingLeft=200;" value="Vertical Container" vertex="1">
-          <mxGeometry height="870" width="1580" x="10" y="10" as="geometry">
+        <mxCell id="APMBoODwbxI06vZBq_GU-1" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=150;verticalAlign=middle;fontSize=72;foldingIconSize=150;align=left;spacingLeft=200;fillStyle=solid;fillColor=light-dark(#A20025,#000033);fontColor=#ffffff;strokeColor=#6F0000;" value="SHEET" vertex="1">
+          <mxGeometry height="880" width="1580" x="10" y="10" as="geometry">
             <mxRectangle height="150" width="1570" x="10" y="10" as="alternateBounds" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="8e7DPJo_BcMe0NDpQiM2-1" parent="APMBoODwbxI06vZBq_GU-1" style="whiteSpace=wrap;html=1;fontSize=72;strokeColor=none;rotatable=0;deletable=0;editIcon=0;align=left;resizable=0;movable=1;fontStyle=1;fillColor=inherit;" value="SHEET" vertex="1">
+          <mxGeometry height="130" width="930" x="200" y="10" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
