@@ -1,13 +1,13 @@
 <mxfile host="app.diagrams.net" pages="3">
   <diagram id="GadqymL0BfwiKE2hplHM" name="root">
-    <mxGraphModel dx="4080" dy="23280" grid="1" gridSize="50" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+    <mxGraphModel dx="5680" dy="26080" grid="1" gridSize="50" guides="0" tooltips="1" connect="1" arrows="0" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <UserObject label="     - BIN -     " tags="BIN_PAGE PAGE" id="v6V_Ixp-654C9olEGou_-35">
-          <mxCell parent="1" style="swimlane;startSize=800;fontSize=128;rotatable=0;foldingIconSize=800;swimlaneFillColor=light-dark(#FFFFFF,#1A1A1A);fillStyle=solid;opacity=60;opacityGroup=1;fontColor=light-dark(#000000,#007FFF);labelBorderColor=none;textShadow=1;fontStyle=1;labelBackgroundColor=default;verticalAlign=top;align=right;spacing=10;spacingRight=20;strokeWidth=6;strokeColor=light-dark(#007FFF,#007FFF);" vertex="1">
-            <mxGeometry height="3350" width="2110" x="6400" y="-8450" as="geometry">
-              <mxRectangle height="800" width="1600" x="6400" y="-8450" as="alternateBounds" />
+          <mxCell collapsed="1" parent="1" style="swimlane;startSize=800;fontSize=128;rotatable=0;foldingIconSize=800;swimlaneFillColor=light-dark(#FFFFFF,#1A1A1A);fillStyle=solid;opacity=60;opacityGroup=1;fontColor=light-dark(#000000,#007FFF);labelBorderColor=none;textShadow=1;fontStyle=1;labelBackgroundColor=default;verticalAlign=top;align=right;spacing=10;spacingRight=20;strokeWidth=6;strokeColor=light-dark(#007FFF,#007FFF);" vertex="1">
+            <mxGeometry height="800" width="1600" x="6400" y="-8450" as="geometry">
+              <mxRectangle height="3350" width="2110" x="6400" y="-8450" as="alternateBounds" />
             </mxGeometry>
           </mxCell>
         </UserObject>
@@ -202,9 +202,9 @@
           <mxGeometry height="320" width="320" x="320" y="120" as="geometry" />
         </mxCell>
         <UserObject label="     - PAGE A -     " tags="PAGE_A PAGE" id="h8aCak-TWN-9865rwDpR-2">
-          <mxCell parent="1" style="swimlane;startSize=800;fontSize=128;rotatable=0;foldingIconSize=800;swimlaneFillColor=light-dark(#FFFFFF,#1A1A1A);fillStyle=solid;opacity=60;opacityGroup=1;fontColor=light-dark(#CC99FF,#CC99FF);labelBorderColor=none;textShadow=1;fontStyle=1;labelBackgroundColor=default;verticalAlign=top;align=right;spacing=10;spacingRight=20;strokeWidth=6;strokeColor=light-dark(#CC99FF,#CC99FF);" vertex="1">
-            <mxGeometry height="3850" width="2750" x="4800" y="-4000" as="geometry">
-              <mxRectangle height="800" width="1800" x="4800" y="-4000" as="alternateBounds" />
+          <mxCell collapsed="1" parent="1" style="swimlane;startSize=800;fontSize=128;rotatable=0;foldingIconSize=800;swimlaneFillColor=light-dark(#FFFFFF,#1A1A1A);fillStyle=solid;opacity=60;opacityGroup=1;fontColor=light-dark(#CC99FF,#CC99FF);labelBorderColor=none;textShadow=1;fontStyle=1;labelBackgroundColor=default;verticalAlign=top;align=right;spacing=10;spacingRight=20;strokeWidth=6;strokeColor=light-dark(#CC99FF,#CC99FF);" vertex="1">
+            <mxGeometry height="800" width="1800" x="4800" y="-4000" as="geometry">
+              <mxRectangle height="3850" width="2750" x="4800" y="-4000" as="alternateBounds" />
             </mxGeometry>
           </mxCell>
         </UserObject>
@@ -295,9 +295,9 @@
           </mxCell>
         </UserObject>
         <UserObject label="     - HOME -     " tags="PAGE HOME_PAGE" id="h8aCak-TWN-9865rwDpR-36">
-          <mxCell parent="1" style="swimlane;startSize=800;fontSize=128;rotatable=0;foldingIconSize=800;swimlaneFillColor=default;fillStyle=solid;opacity=60;opacityGroup=1;fontColor=light-dark(#000000,#80FF00);labelBorderColor=none;textShadow=1;fontStyle=1;labelBackgroundColor=default;verticalAlign=top;align=right;spacing=10;spacingRight=20;fillColor=light-dark(#FFFFFF,#666666);strokeWidth=5;strokeColor=light-dark(#99FF33,#B3FF66);" vertex="1">
-            <mxGeometry height="2600" width="2000" x="2800" y="-7000" as="geometry">
-              <mxRectangle height="800" width="1800" x="2800" y="-7000" as="alternateBounds" />
+          <mxCell collapsed="1" parent="1" style="swimlane;startSize=800;fontSize=128;rotatable=0;foldingIconSize=800;swimlaneFillColor=default;fillStyle=solid;opacity=60;opacityGroup=1;fontColor=light-dark(#000000,#80FF00);labelBorderColor=none;textShadow=1;fontStyle=1;labelBackgroundColor=default;verticalAlign=top;align=right;spacing=10;spacingRight=20;fillColor=light-dark(#FFFFFF,#666666);strokeWidth=5;strokeColor=light-dark(#99FF33,#B3FF66);" vertex="1">
+            <mxGeometry height="800" width="1800" x="2800" y="-7000" as="geometry">
+              <mxRectangle height="2600" width="2000" x="2800" y="-7000" as="alternateBounds" />
             </mxGeometry>
           </mxCell>
         </UserObject>
@@ -396,9 +396,9 @@
           </mxCell>
         </UserObject>
         <UserObject label="  BOOK  " tags="PAGE BOOK_PAGE" id="Jfz4mgrfD9D5-eKf58on-70">
-          <mxCell parent="1" style="swimlane;startSize=600;fontSize=128;rotatable=0;foldingIconSize=600;swimlaneFillColor=light-dark(#FFFFFF,#1A1A1A);fillStyle=solid;opacity=60;opacityGroup=1;fontColor=light-dark(#994C00,#FF9933);labelBorderColor=none;textShadow=1;fontStyle=1;labelBackgroundColor=default;verticalAlign=top;align=right;spacing=10;spacingRight=20;strokeWidth=6;strokeColor=light-dark(#FF9933,#FF9933);" vertex="1">
-            <mxGeometry height="1650" width="850" x="2800" y="-4000" as="geometry">
-              <mxRectangle height="1000" width="1300" x="2800" y="-4000" as="alternateBounds" />
+          <mxCell collapsed="1" parent="1" style="swimlane;startSize=600;fontSize=128;rotatable=0;foldingIconSize=600;swimlaneFillColor=light-dark(#FFFFFF,#1A1A1A);fillStyle=solid;opacity=60;opacityGroup=1;fontColor=light-dark(#994C00,#FF9933);labelBorderColor=none;textShadow=1;fontStyle=1;labelBackgroundColor=default;verticalAlign=top;align=right;spacing=10;spacingRight=20;strokeWidth=6;strokeColor=light-dark(#FF9933,#FF9933);" vertex="1">
+            <mxGeometry height="1000" width="1300" x="2800" y="-4000" as="geometry">
+              <mxRectangle height="1650" width="850" x="2800" y="-4000" as="alternateBounds" />
             </mxGeometry>
           </mxCell>
         </UserObject>
@@ -463,6 +463,31 @@
             <mxGeometry height="600" width="800" x="1400" as="geometry" />
           </mxCell>
         </UserObject>
+        <mxCell id="jpqqISWoHjknBPeyvbKS-20" edge="1" parent="1" source="jpqqISWoHjknBPeyvbKS-22" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;fontSize=12;strokeWidth=30;strokeColor=light-dark(#4D4D4D,#4D4D4D);endArrow=none;endFill=0;shape=pipe;entryX=1;entryY=1;entryDx=0;entryDy=0;exitX=0;exitY=0;exitDx=0;exitDy=0;" target="jpqqISWoHjknBPeyvbKS-23" value="">
+          <mxGeometry relative="1" width="120" x="0.4486" as="geometry">
+            <Array as="points">
+              <mxPoint x="1800" y="1400" />
+            </Array>
+            <mxPoint x="7850" y="1400" as="sourcePoint" />
+            <mxPoint x="1800" y="-11650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jpqqISWoHjknBPeyvbKS-21" edge="1" parent="1" source="jpqqISWoHjknBPeyvbKS-22" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;rounded=0;fontSize=12;strokeWidth=30;strokeColor=light-dark(#4D4D4D,#4D4D4D);endArrow=none;endFill=0;shape=pipe;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=1;entryDx=0;entryDy=0;" target="jpqqISWoHjknBPeyvbKS-23" value="">
+          <mxGeometry relative="1" width="120" x="0.2585" as="geometry">
+            <Array as="points">
+              <mxPoint x="8600" y="1400" />
+              <mxPoint x="8600" y="-11800" />
+            </Array>
+            <mxPoint x="8000" y="1250" as="sourcePoint" />
+            <mxPoint x="2750" y="-11750" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="jpqqISWoHjknBPeyvbKS-22" parent="1" style="whiteSpace=wrap;html=1;strokeWidth=30;fillStyle=solid;resizable=0;rotatable=0;" value="" vertex="1">
+          <mxGeometry height="600" width="600" x="8000" y="1400" as="geometry" />
+        </mxCell>
+        <mxCell id="jpqqISWoHjknBPeyvbKS-23" parent="1" style="whiteSpace=wrap;html=1;strokeWidth=30;fillStyle=solid;rotatable=0;resizable=0;" value="" vertex="1">
+          <mxGeometry height="600" width="600" x="1200" y="-12400" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
