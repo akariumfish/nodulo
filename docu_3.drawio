@@ -1,11 +1,11 @@
 <mxfile host="app.diagrams.net" pages="4">
   <diagram name="root" id="Wkpykkc9GwP7MDXB8yx8">
-    <mxGraphModel dx="926" dy="2797" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+    <mxGraphModel dx="1620" dy="4220" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="8e7DPJo_BcMe0NDpQiM2-3" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=150;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;foldingIconSize=150;rotatable=1;deletable=1;movable=1;resizable=1;editable=1;locked=0;connectable=1;" value="" vertex="1">
-          <mxGeometry height="2280" width="1560" x="20" y="-480" as="geometry">
+          <mxGeometry height="3030" width="1560" x="20" y="-480" as="geometry">
             <mxRectangle height="150" width="1570" x="10" y="-150" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
@@ -25,9 +25,9 @@
             <mxGeometry height="50" width="130" x="30" y="180" as="geometry" />
           </mxCell>
         </UserObject>
-        <mxCell id="VMvRc8jwAjRBSNfL5RKQ-1" collapsed="1" parent="8e7DPJo_BcMe0NDpQiM2-3" style="swimlane;whiteSpace=wrap;html=1;startSize=150;verticalAlign=middle;fontSize=72;foldingIconSize=150;align=left;spacingLeft=200;fillStyle=solid;fillColor=light-dark(#CCCCFF,#000033);fontColor=light-dark(#009900,#66FF66);strokeColor=default;rotatable=0;" value="SHEET" vertex="1">
-          <mxGeometry height="150" width="1560" y="1380" as="geometry">
-            <mxRectangle height="900" width="1560" y="1380" as="alternateBounds" />
+        <mxCell id="VMvRc8jwAjRBSNfL5RKQ-1" parent="8e7DPJo_BcMe0NDpQiM2-3" style="swimlane;whiteSpace=wrap;html=1;startSize=150;verticalAlign=middle;fontSize=72;foldingIconSize=150;align=left;spacingLeft=200;fillStyle=solid;fillColor=light-dark(#CCCCFF,#000033);fontColor=light-dark(#009900,#66FF66);strokeColor=default;rotatable=0;" value="SHEET" vertex="1">
+          <mxGeometry height="900" width="1560" y="1380" as="geometry">
+            <mxRectangle height="150" width="1560" y="1380" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
         <mxCell id="VMvRc8jwAjRBSNfL5RKQ-2" parent="VMvRc8jwAjRBSNfL5RKQ-1" style="whiteSpace=wrap;html=1;fontSize=72;strokeColor=none;rotatable=0;deletable=1;editIcon=0;align=left;resizable=0;movable=1;fontStyle=1;fillColor=inherit;fontColor=inherit;" value="SHEET" vertex="1">
@@ -60,7 +60,7 @@
           <mxGeometry height="113.46" width="230" y="246.54" as="geometry" />
         </mxCell>
         <mxCell id="VMvRc8jwAjRBSNfL5RKQ-14" collapsed="1" parent="8e7DPJo_BcMe0NDpQiM2-3" style="swimlane;whiteSpace=wrap;html=1;startSize=150;verticalAlign=middle;fontSize=72;foldingIconSize=150;align=left;spacingLeft=200;fillStyle=solid;fillColor=light-dark(#CCCCFF,#000033);fontColor=light-dark(#994C00,#FFB366);strokeColor=default;rotatable=0;" value="SHEET" vertex="1">
-          <mxGeometry height="150" width="1560" y="1530" as="geometry">
+          <mxGeometry height="150" width="1560" y="2280" as="geometry">
             <mxRectangle height="900" width="1560" y="1480" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
@@ -82,7 +82,7 @@
           <mxGeometry height="160" width="560" y="410" as="geometry" />
         </mxCell>
         <mxCell id="brTG8JibAx-om04ILl_k-7" collapsed="1" parent="8e7DPJo_BcMe0NDpQiM2-3" style="swimlane;whiteSpace=wrap;html=1;startSize=150;verticalAlign=middle;fontSize=72;foldingIconSize=150;align=left;spacingLeft=200;fillStyle=solid;fillColor=light-dark(#CCCCFF,#000033);fontColor=light-dark(#990000,#FF6666);strokeColor=default;rotatable=0;" value="EXE" vertex="1">
-          <mxGeometry height="150" width="1560" y="1680" as="geometry">
+          <mxGeometry height="150" width="1560" y="2430" as="geometry">
             <mxRectangle height="900" width="1560" y="1680" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
@@ -116,7 +116,7 @@
           <mxGeometry height="113.46" width="230" y="246.54" as="geometry" />
         </mxCell>
         <mxCell id="brTG8JibAx-om04ILl_k-1" collapsed="1" parent="8e7DPJo_BcMe0NDpQiM2-3" style="swimlane;whiteSpace=wrap;html=1;startSize=150;verticalAlign=middle;fontSize=72;foldingIconSize=150;align=left;spacingLeft=200;fillStyle=solid;fillColor=light-dark(#CCCCFF,#000033);fontColor=light-dark(#004C99,#66B2FF);strokeColor=default;rotatable=0;" value="SHEET" vertex="1">
-          <mxGeometry height="150" width="1560" y="1830" as="geometry">
+          <mxGeometry height="150" width="1560" y="2580" as="geometry">
             <mxRectangle height="900" width="1560" y="3280" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
@@ -138,7 +138,7 @@
           <mxGeometry height="160" width="560" y="410" as="geometry" />
         </mxCell>
         <mxCell id="brTG8JibAx-om04ILl_k-13" collapsed="1" parent="8e7DPJo_BcMe0NDpQiM2-3" style="swimlane;whiteSpace=wrap;html=1;startSize=150;verticalAlign=middle;fontSize=72;foldingIconSize=150;align=left;spacingLeft=200;fillStyle=solid;fillColor=light-dark(#CCCCFF,#000033);fontColor=light-dark(#990099,#FF66FF);strokeColor=default;rotatable=0;" value="SHEET" vertex="1">
-          <mxGeometry height="150" width="1560" y="1980" as="geometry">
+          <mxGeometry height="150" width="1560" y="2730" as="geometry">
             <mxRectangle height="900" width="1560" y="4180" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
@@ -160,7 +160,7 @@
           <mxGeometry height="160" width="560" y="410" as="geometry" />
         </mxCell>
         <mxCell id="VMvRc8jwAjRBSNfL5RKQ-26" collapsed="1" parent="8e7DPJo_BcMe0NDpQiM2-3" style="swimlane;whiteSpace=wrap;html=1;startSize=150;verticalAlign=middle;fontSize=72;foldingIconSize=150;align=left;spacingLeft=200;fillStyle=solid;fillColor=light-dark(#CCCCFF,#000033);fontColor=default;strokeColor=default;rotatable=0;" value="PAGE" vertex="1">
-          <mxGeometry height="150" width="1560" y="2130" as="geometry">
+          <mxGeometry height="150" width="1560" y="2880" as="geometry">
             <mxRectangle height="900" width="1560" y="3630" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
@@ -181,10 +181,70 @@
     </mxGraphModel>
   </diagram>
   <diagram id="GadqymL0BfwiKE2hplHM" name="bin">
-    <mxGraphModel dx="324" dy="664" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+    <mxGraphModel dx="500" dy="1044" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="eQkX35PZ-H6yQl0HqOuf-5" parent="1" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;startSize=200;html=1;fontSize=48;rotatable=0;swimlaneFillColor=light-dark(#FFFFFF,#1A1A1A);fillColor=light-dark(#FFFFFF,#333333);" value="CLASS" vertex="1">
+          <mxGeometry height="750" width="960" x="480" y="800" as="geometry" />
+        </mxCell>
+        <mxCell id="eQkX35PZ-H6yQl0HqOuf-1" parent="eQkX35PZ-H6yQl0HqOuf-5" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=120;fillColor=inherit;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;foldingIconSize=20;strokeColor=inherit;swimlaneBody=1;whiteSpace=wrap;fontSize=48;fontColor=inherit;rotatable=0;" value="Def" vertex="1">
+          <mxGeometry height="550" width="320" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="J828YDvCeUFMt4bCGCqo-8" parent="eQkX35PZ-H6yQl0HqOuf-1" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=1;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=24;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;" value="Description&amp;nbsp;" vertex="1">
+          <mxGeometry height="430" width="320" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="J828YDvCeUFMt4bCGCqo-6" parent="eQkX35PZ-H6yQl0HqOuf-5" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=120;fillColor=inherit;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;foldingIconSize=20;strokeColor=inherit;swimlaneBody=1;whiteSpace=wrap;fontSize=48;fontColor=inherit;rotatable=0;" value="Metodes" vertex="1">
+          <mxGeometry height="550" width="320" x="320" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="J828YDvCeUFMt4bCGCqo-7" parent="J828YDvCeUFMt4bCGCqo-6" style="text;html=1;whiteSpace=wrap;verticalAlign=top;overflow=hidden;fontSize=20;horizontal=1;labelPosition=center;verticalLabelPosition=middle;align=left;strokeColor=none;spacingLeft=-25;spacingTop=-15;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;ul&gt;&lt;li&gt;Entry&lt;/li&gt;&lt;li&gt;Entry&lt;/li&gt;&lt;li&gt;Entry&lt;/li&gt;&lt;li&gt;Entry&lt;/li&gt;&lt;/ul&gt;" vertex="1">
+          <mxGeometry height="430" width="320" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="J828YDvCeUFMt4bCGCqo-4" parent="eQkX35PZ-H6yQl0HqOuf-5" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=120;fillColor=inherit;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;foldingIconSize=20;strokeColor=inherit;swimlaneBody=1;whiteSpace=wrap;fontSize=48;fontColor=inherit;rotatable=0;" value="Field" vertex="1">
+          <mxGeometry height="550" width="320" x="640" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="J828YDvCeUFMt4bCGCqo-5" parent="J828YDvCeUFMt4bCGCqo-4" style="text;html=1;whiteSpace=wrap;verticalAlign=top;overflow=hidden;fontSize=20;horizontal=1;labelPosition=center;verticalLabelPosition=middle;align=left;strokeColor=none;spacingLeft=-25;spacingTop=-15;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;" value="&lt;ul&gt;&lt;li&gt;Entry&lt;/li&gt;&lt;li&gt;Entry&lt;/li&gt;&lt;li&gt;Entry&lt;/li&gt;&lt;li&gt;Entry&lt;/li&gt;&lt;/ul&gt;" vertex="1">
+          <mxGeometry height="430" width="320" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="J828YDvCeUFMt4bCGCqo-1" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=160;fillColor=default;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;foldingIconSize=20;strokeColor=default;swimlaneBody=1;whiteSpace=wrap;fontSize=48;fontColor=inherit;rotatable=0;" value="ENTITY" vertex="1">
+          <mxGeometry height="320" width="260" x="1550" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="J828YDvCeUFMt4bCGCqo-2" parent="J828YDvCeUFMt4bCGCqo-1" style="text;strokeColor=inherit;fillColor=inherit;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=1;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=20;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;" value="Object summary" vertex="1">
+          <mxGeometry height="46.54" width="260" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="J828YDvCeUFMt4bCGCqo-3" parent="J828YDvCeUFMt4bCGCqo-1" style="text;html=1;whiteSpace=wrap;verticalAlign=top;overflow=hidden;fontSize=20;horizontal=1;labelPosition=center;verticalLabelPosition=middle;align=left;strokeColor=inherit;spacingLeft=-25;spacingTop=-15;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fillColor=inherit;" value="&lt;ul&gt;&lt;li&gt;Entry&lt;/li&gt;&lt;li&gt;Entry&lt;/li&gt;&lt;li&gt;Entry&lt;/li&gt;&lt;li&gt;Entry&lt;/li&gt;&lt;/ul&gt;" vertex="1">
+          <mxGeometry height="113.46" width="260" y="206.54" as="geometry" />
+        </mxCell>
+        <mxCell id="J828YDvCeUFMt4bCGCqo-9" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;fontSize=20;spacing=5;strokeColor=default;fillColor=default;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Text title&lt;/h1&gt;&lt;p&gt;Long text long text&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;/p&gt;" vertex="1">
+          <mxGeometry height="260" width="320" x="1210" y="3080" as="geometry" />
+        </mxCell>
+        <mxCell id="J828YDvCeUFMt4bCGCqo-10" parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;" value="List" vertex="1">
+          <mxGeometry height="104" width="140" x="810" y="2840" as="geometry" />
+        </mxCell>
+        <mxCell id="J828YDvCeUFMt4bCGCqo-11" parent="J828YDvCeUFMt4bCGCqo-10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="Item 1" vertex="1">
+          <mxGeometry height="26" width="140" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="J828YDvCeUFMt4bCGCqo-12" parent="J828YDvCeUFMt4bCGCqo-10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="Item 2" vertex="1">
+          <mxGeometry height="26" width="140" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="J828YDvCeUFMt4bCGCqo-13" parent="J828YDvCeUFMt4bCGCqo-10" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="Item 3" vertex="1">
+          <mxGeometry height="26" width="140" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="J828YDvCeUFMt4bCGCqo-14" parent="1" style="swimlane;" value="Container" vertex="1">
+          <mxGeometry height="200" width="200" x="640" y="2430" as="geometry" />
+        </mxCell>
+        <mxCell id="J828YDvCeUFMt4bCGCqo-15" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Vertical Container" vertex="1">
+          <mxGeometry height="200" width="200" x="1070" y="2490" as="geometry" />
+        </mxCell>
+        <mxCell id="J828YDvCeUFMt4bCGCqo-16" parent="1" style="text;strokeColor=default;fillColor=default;html=1;whiteSpace=wrap;verticalAlign=top;overflow=hidden;fontSize=20;" value="&lt;ul&gt;&lt;li&gt;Entry&lt;/li&gt;&lt;li&gt;Multiple entry in list&lt;/li&gt;&lt;li&gt;Multiple entry in list&lt;/li&gt;&lt;li&gt;Multiple entry in list&lt;/li&gt;&lt;li&gt;Multiple entry in list&lt;/li&gt;&lt;/ul&gt;" vertex="1">
+          <mxGeometry height="250" width="320" x="1210" y="3940" as="geometry" />
+        </mxCell>
+        <mxCell id="J828YDvCeUFMt4bCGCqo-17" parent="1" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=1;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=20;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="&lt;span style=&quot;font-size: 16px;&quot;&gt;&amp;nbsp;long text&lt;/span&gt;&lt;span style=&quot;font-size: 16px;&quot;&gt; long text&lt;/span&gt;&lt;span style=&quot;font-size: 16px;&quot;&gt; long text&lt;/span&gt;&lt;span style=&quot;font-size: 16px;&quot;&gt; long text&lt;/span&gt;&lt;span style=&quot;font-size: 16px;&quot;&gt; long text&lt;/span&gt;&lt;span style=&quot;font-size: 16px;&quot;&gt; long text&lt;/span&gt;&lt;span style=&quot;font-size: 16px;&quot;&gt; long text&lt;/span&gt;" vertex="1">
+          <mxGeometry height="250" width="320" x="1210" y="3670" as="geometry" />
+        </mxCell>
+        <mxCell id="J828YDvCeUFMt4bCGCqo-18" parent="1" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;fontSize=20;spacing=5;strokeColor=default;fillColor=default;" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;&lt;font style=&quot;font-size: 32px;&quot;&gt;&lt;font style=&quot;&quot;&gt;Section&lt;/font&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;title&lt;/span&gt;&lt;/font&gt;&lt;/h1&gt;&lt;p&gt;Long text long text&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;long text&lt;/span&gt;&lt;/p&gt;" vertex="1">
+          <mxGeometry height="260" width="320" x="1210" y="3380" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
