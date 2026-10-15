@@ -5,9 +5,9 @@
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <UserObject label="     - BIN -     " tags="BIN_PAGE PAGE" id="v6V_Ixp-654C9olEGou_-35">
-          <mxCell collapsed="1" parent="1" style="swimlane;startSize=800;fontSize=128;rotatable=0;foldingIconSize=800;swimlaneFillColor=light-dark(#FFFFFF,#1A1A1A);fillStyle=solid;opacity=60;opacityGroup=1;fontColor=light-dark(#000000,#007FFF);labelBorderColor=none;textShadow=1;fontStyle=1;labelBackgroundColor=default;verticalAlign=top;align=right;spacing=10;spacingRight=20;strokeWidth=6;strokeColor=light-dark(#007FFF,#007FFF);" vertex="1">
-            <mxGeometry height="800" width="1600" x="5000" y="-10200" as="geometry">
-              <mxRectangle height="4050" width="2300" x="5000" y="-10200" as="alternateBounds" />
+          <mxCell parent="1" style="swimlane;startSize=800;fontSize=128;rotatable=0;foldingIconSize=800;swimlaneFillColor=light-dark(#FFFFFF,#1A1A1A);fillStyle=solid;opacity=60;opacityGroup=1;fontColor=light-dark(#000000,#007FFF);labelBorderColor=none;textShadow=1;fontStyle=1;labelBackgroundColor=default;verticalAlign=top;align=right;spacing=10;spacingRight=20;strokeWidth=6;strokeColor=light-dark(#007FFF,#007FFF);" vertex="1">
+            <mxGeometry height="4050" width="2300" x="5000" y="-10200" as="geometry">
+              <mxRectangle height="800" width="1600" x="5000" y="-10200" as="alternateBounds" />
             </mxGeometry>
           </mxCell>
         </UserObject>
@@ -316,9 +316,9 @@
           </mxCell>
         </UserObject>
         <UserObject label="     - HOME -     " tags="PAGE HOME_PAGE" id="h8aCak-TWN-9865rwDpR-36">
-          <mxCell collapsed="1" parent="1" style="swimlane;startSize=800;fontSize=128;rotatable=0;foldingIconSize=800;swimlaneFillColor=default;fillStyle=solid;opacity=60;opacityGroup=1;fontColor=light-dark(#000000,#80FF00);labelBorderColor=none;textShadow=1;fontStyle=1;labelBackgroundColor=default;verticalAlign=top;align=right;spacing=10;spacingRight=20;fillColor=light-dark(#FFFFFF,#666666);strokeWidth=5;strokeColor=light-dark(#99FF33,#B3FF66);" vertex="1">
-            <mxGeometry height="800" width="1800" x="2600" y="-9400" as="geometry">
-              <mxRectangle height="2600" width="2000" x="2600" y="-9400" as="alternateBounds" />
+          <mxCell parent="1" style="swimlane;startSize=800;fontSize=128;rotatable=0;foldingIconSize=800;swimlaneFillColor=default;fillStyle=solid;opacity=60;opacityGroup=1;fontColor=light-dark(#000000,#80FF00);labelBorderColor=none;textShadow=1;fontStyle=1;labelBackgroundColor=default;verticalAlign=top;align=right;spacing=10;spacingRight=20;fillColor=light-dark(#FFFFFF,#666666);strokeWidth=5;strokeColor=light-dark(#99FF33,#B3FF66);" vertex="1">
+            <mxGeometry height="2600" width="2000" x="2600" y="-9400" as="geometry">
+              <mxRectangle height="800" width="1800" x="2600" y="-9400" as="alternateBounds" />
             </mxGeometry>
           </mxCell>
         </UserObject>
