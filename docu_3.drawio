@@ -284,13 +284,13 @@
     </mxGraphModel>
   </diagram>
   <diagram id="GadqymL0BfwiKE2hplHM" name="bin">
-    <mxGraphModel dx="-1400" dy="16089" grid="1" gridSize="50" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+    <mxGraphModel dx="3680" dy="20880" grid="1" gridSize="50" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <UserObject label="     - BIN -     " tags="BIN_PAGE PAGE" id="v6V_Ixp-654C9olEGou_-35">
           <mxCell parent="1" style="swimlane;startSize=200;fontSize=128;rotatable=0;foldingIconSize=200;swimlaneFillColor=light-dark(#FFFFFF,#1A1A1A);fillStyle=solid;opacity=60;opacityGroup=1;fontColor=light-dark(#000000,#007FFF);labelBorderColor=none;textShadow=1;fontStyle=1;labelBackgroundColor=default;verticalAlign=top;align=right;spacing=10;spacingRight=20;" vertex="1">
-            <mxGeometry height="2600" width="1700" x="3350" y="-6750" as="geometry">
+            <mxGeometry height="2600" width="1700" x="3000" y="-7400" as="geometry">
               <mxRectangle height="200" width="980" x="3550" y="-5270" as="alternateBounds" />
             </mxGeometry>
           </mxCell>
@@ -374,7 +374,7 @@
         </mxCell>
         <UserObject label="     - PAGE A -     " tags="PAGE_A PAGE" id="h8aCak-TWN-9865rwDpR-2">
           <mxCell parent="1" style="swimlane;startSize=200;fontSize=128;rotatable=0;foldingIconSize=200;swimlaneFillColor=light-dark(#FFFFFF,#1A1A1A);fillStyle=solid;opacity=60;opacityGroup=1;fontColor=light-dark(#000000,#B266FF);labelBorderColor=none;textShadow=1;fontStyle=1;labelBackgroundColor=default;verticalAlign=top;align=right;spacing=10;spacingRight=20;" vertex="1">
-            <mxGeometry height="2400" width="2200" x="3600" y="-2000" as="geometry">
+            <mxGeometry height="2400" width="2200" x="3000" y="-4150" as="geometry">
               <mxRectangle height="200" width="980" x="4020" y="-690" as="alternateBounds" />
             </mxGeometry>
           </mxCell>
@@ -394,7 +394,7 @@
         </UserObject>
         <UserObject label="     - HOME -     " tags="PAGE HOME_PAGE" id="h8aCak-TWN-9865rwDpR-36">
           <mxCell parent="1" style="swimlane;startSize=200;fontSize=128;rotatable=0;foldingIconSize=200;swimlaneFillColor=default;fillStyle=solid;opacity=60;opacityGroup=1;fontColor=light-dark(#000000,#80FF00);labelBorderColor=none;textShadow=1;fontStyle=1;labelBackgroundColor=default;verticalAlign=top;align=right;spacing=10;spacingRight=20;fillColor=light-dark(#FFFFFF,#666666);strokeWidth=5;strokeColor=light-dark(#99FF33,#B3FF66);" vertex="1">
-            <mxGeometry height="2000" width="2000" x="7000" y="-3800" as="geometry">
+            <mxGeometry height="2000" width="2000" x="6200" y="-5000" as="geometry">
               <mxRectangle height="200" width="980" x="6200" y="-1950" as="alternateBounds" />
             </mxGeometry>
           </mxCell>
@@ -483,21 +483,10 @@
             <mxPoint x="2000" y="-1800" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <UserObject label="List" tags="" id="Jfz4mgrfD9D5-eKf58on-43">
-          <mxCell parent="1" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=120;fillColor=default;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;swimlaneFillColor=none;fontSize=32;rotatable=0;" vertex="1">
-            <mxGeometry height="760" width="320" x="11150" y="-4750" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <mxCell id="Jfz4mgrfD9D5-eKf58on-44" parent="Jfz4mgrfD9D5-eKf58on-43" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=20;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="&lt;font&gt;&amp;nbsp;long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text&lt;/font&gt;" vertex="1">
-          <mxGeometry height="320" width="320" y="120" as="geometry" />
-        </mxCell>
-        <mxCell id="Jfz4mgrfD9D5-eKf58on-45" parent="Jfz4mgrfD9D5-eKf58on-43" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=20;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="&lt;font&gt;&amp;nbsp;long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text long text&lt;/font&gt;" vertex="1">
-          <mxGeometry height="320" width="320" y="440" as="geometry" />
-        </mxCell>
-        <UserObject label="     - PAGE A -     " tags="PAGE_A PAGE" id="Jfz4mgrfD9D5-eKf58on-70">
+        <UserObject label="  BOOK  " tags="PAGE_A PAGE" id="Jfz4mgrfD9D5-eKf58on-70">
           <mxCell parent="1" style="swimlane;startSize=200;fontSize=128;rotatable=0;foldingIconSize=200;swimlaneFillColor=light-dark(#FFFFFF,#1A1A1A);fillStyle=solid;opacity=60;opacityGroup=1;fontColor=light-dark(#000000,#B266FF);labelBorderColor=none;textShadow=1;fontStyle=1;labelBackgroundColor=default;verticalAlign=top;align=right;spacing=10;spacingRight=20;" vertex="1">
-            <mxGeometry height="1650" width="850" x="5800" y="-12200" as="geometry">
-              <mxRectangle height="200" width="1300" x="5800" y="-12200" as="alternateBounds" />
+            <mxGeometry height="1650" width="850" x="9400" y="-7400" as="geometry">
+              <mxRectangle height="200" width="1300" x="9400" y="-7400" as="alternateBounds" />
             </mxGeometry>
           </mxCell>
         </UserObject>
