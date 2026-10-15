@@ -284,7 +284,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="GadqymL0BfwiKE2hplHM" name="bin">
-    <mxGraphModel dx="5700" dy="26200" grid="1" gridSize="50" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+    <mxGraphModel dx="-240" dy="14027" grid="1" gridSize="50" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -296,16 +296,21 @@
           </mxCell>
         </UserObject>
         <mxCell id="Jfz4mgrfD9D5-eKf58on-29" parent="v6V_Ixp-654C9olEGou_-35" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;startSize=200;horizontal=0;horizontalStack=1;collapsible=0;fontSize=32;rotatable=0;" value="JUMP" vertex="1">
-          <mxGeometry height="320" width="1400" y="200" as="geometry" />
+          <mxGeometry height="300" width="1400" y="200" as="geometry" />
         </mxCell>
         <UserObject label="HOME" link="data:action/json,{&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;tags&quot;:[&quot;HOME_PAGE&quot;,&quot;PAGE&quot;]}}],&quot;title&quot;:&quot;||||||||||||||||||          &quot;}" tags="TP TP_HOME" id="Jfz4mgrfD9D5-eKf58on-30">
           <mxCell parent="Jfz4mgrfD9D5-eKf58on-29" style="labelPosition=center;verticalLabelPosition=middle;align=center;html=1;shape=mxgraph.basic.shaded_button;dx=37.47;fillColor=#E6E6E6;strokeColor=none;whiteSpace=wrap;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;fontSize=72;fontStyle=1;fontColor=light-dark(#99FF33,#99FF33);" vertex="1">
-            <mxGeometry height="320" width="600" x="200" as="geometry" />
+            <mxGeometry height="300" width="400" x="200" as="geometry" />
           </mxCell>
         </UserObject>
-        <UserObject label="BIN" link="data:action/json,{&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;tags&quot;:[&quot;BIN_PAGE&quot;,&quot;PAGE&quot;]}}],&quot;title&quot;:&quot;||||||||||||||||||          &quot;}" tags="TP TP_BIN" id="Jfz4mgrfD9D5-eKf58on-31">
+        <UserObject label="BIN" link="data:action/json,{&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;tags&quot;:[&quot;BIN_PAGE&quot;,&quot;PAGE&quot;]}}],&quot;title&quot;:&quot;||||||||||||||||||          &quot;}" tags="TP TP_BIN" id="Jfz4mgrfD9D5-eKf58on-82">
           <mxCell parent="Jfz4mgrfD9D5-eKf58on-29" style="labelPosition=center;verticalLabelPosition=middle;align=center;html=1;shape=mxgraph.basic.shaded_button;dx=37.47;fillColor=#E6E6E6;strokeColor=none;whiteSpace=wrap;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;fontSize=72;fontStyle=1;fontColor=light-dark(#007FFF,#007FFF);" vertex="1">
-            <mxGeometry height="320" width="600" x="800" as="geometry" />
+            <mxGeometry height="300" width="400" x="600" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="BOOK" link="data:action/json,{&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;tags&quot;:[&quot;PAGE&quot;,&quot;BOOK_PAGE&quot;]}}],&quot;title&quot;:&quot;||||||||||||||||||          &quot;}" tags="TP TP_BOOK" id="Jfz4mgrfD9D5-eKf58on-81">
+          <mxCell parent="Jfz4mgrfD9D5-eKf58on-29" style="labelPosition=center;verticalLabelPosition=middle;align=center;html=1;shape=mxgraph.basic.shaded_button;dx=37.47;fillColor=#E6E6E6;strokeColor=none;whiteSpace=wrap;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;fontSize=72;fontStyle=1;fontColor=light-dark(#994C00,#FF9933);" vertex="1">
+            <mxGeometry height="300" width="400" x="1000" as="geometry" />
           </mxCell>
         </UserObject>
         <UserObject label="List" tags="" id="v6V_Ixp-654C9olEGou_-29">
@@ -409,7 +414,7 @@
           <mxGeometry height="320" width="1320" x="200" as="geometry" />
         </mxCell>
         <UserObject label="BIN" link="data:action/json,{&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;tags&quot;:[&quot;BIN_PAGE&quot;,&quot;PAGE&quot;]}}],&quot;title&quot;:&quot;||||||||||||||||||          &quot;}" tags="TP TP_BIN" id="Jfz4mgrfD9D5-eKf58on-11">
-          <mxCell parent="Jfz4mgrfD9D5-eKf58on-17" style="labelPosition=center;verticalLabelPosition=middle;align=center;html=1;shape=mxgraph.basic.shaded_button;dx=37.47;fillColor=#E6E6E6;strokeColor=none;whiteSpace=wrap;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=72;fontStyle=1;fontColor=light-dark(#007FFF,#007FFF);" vertex="1">
+          <mxCell parent="Jfz4mgrfD9D5-eKf58on-17" style="labelPosition=center;verticalLabelPosition=middle;align=center;html=1;shape=mxgraph.basic.shaded_button;dx=37.47;fillColor=#E6E6E6;strokeColor=none;whiteSpace=wrap;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;fontSize=72;fontStyle=1;fontColor=light-dark(#007FFF,#007FFF);" vertex="1">
             <mxGeometry height="320" width="600" x="120" as="geometry" />
           </mxCell>
         </UserObject>
@@ -497,24 +502,24 @@
         </UserObject>
         <UserObject label="Book Title" tags="" id="Jfz4mgrfD9D5-eKf58on-37">
           <mxCell parent="Jfz4mgrfD9D5-eKf58on-70" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=120;fillColor=default;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;swimlaneFillColor=none;fontSize=32;rotatable=0;" vertex="1">
-            <mxGeometry height="1680" width="650" x="50" y="250" as="geometry" />
+            <mxGeometry height="1560" width="650" x="50" y="250" as="geometry" />
           </mxCell>
         </UserObject>
         <mxCell id="Jfz4mgrfD9D5-eKf58on-71" parent="Jfz4mgrfD9D5-eKf58on-37" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;startSize=120;horizontal=0;horizontalStack=1;collapsible=0;fontSize=32;rotatable=0;" value="JUMP" vertex="1">
           <mxGeometry height="120" width="650" y="120" as="geometry" />
         </mxCell>
         <UserObject label="BOOK" link="data:action/json,{&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;tags&quot;:[&quot;PAGE&quot;,&quot;BOOK_PAGE&quot;]}}],&quot;title&quot;:&quot;||||||||||||||||||          &quot;}" tags="TP TP_BOOK" id="Jfz4mgrfD9D5-eKf58on-78">
-          <mxCell parent="Jfz4mgrfD9D5-eKf58on-71" style="labelPosition=center;verticalLabelPosition=middle;align=center;html=1;shape=mxgraph.basic.shaded_button;dx=37.47;fillColor=#E6E6E6;strokeColor=none;whiteSpace=wrap;movable=1;resizable=1;rotatable=0;deletable=1;editable=1;locked=0;connectable=1;fontSize=32;fontStyle=1;fontColor=light-dark(#994C00,#FF9933);" vertex="1">
+          <mxCell parent="Jfz4mgrfD9D5-eKf58on-71" style="labelPosition=center;verticalLabelPosition=middle;align=center;html=1;shape=mxgraph.basic.shaded_button;dx=37.47;fillColor=#E6E6E6;strokeColor=none;whiteSpace=wrap;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;fontSize=32;fontStyle=1;fontColor=light-dark(#994C00,#FF9933);" vertex="1">
             <mxGeometry height="120" width="160" x="120" as="geometry" />
           </mxCell>
         </UserObject>
         <UserObject label="HOME" link="data:action/json,{&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;tags&quot;:[&quot;HOME_PAGE&quot;,&quot;PAGE&quot;]}}],&quot;title&quot;:&quot;||||||||||||||||||          &quot;}" tags="TP TP_HOME" id="Jfz4mgrfD9D5-eKf58on-72">
-          <mxCell parent="Jfz4mgrfD9D5-eKf58on-71" style="labelPosition=center;verticalLabelPosition=middle;align=center;html=1;shape=mxgraph.basic.shaded_button;dx=37.47;fillColor=#E6E6E6;strokeColor=none;whiteSpace=wrap;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=32;fontStyle=1;fontColor=light-dark(#99FF33,#99FF33);" vertex="1">
+          <mxCell parent="Jfz4mgrfD9D5-eKf58on-71" style="labelPosition=center;verticalLabelPosition=middle;align=center;html=1;shape=mxgraph.basic.shaded_button;dx=37.47;fillColor=#E6E6E6;strokeColor=none;whiteSpace=wrap;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;fontSize=32;fontStyle=1;fontColor=light-dark(#99FF33,#99FF33);" vertex="1">
             <mxGeometry height="120" width="160" x="280" as="geometry" />
           </mxCell>
         </UserObject>
         <UserObject label="BIN" link="data:action/json,{&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;tags&quot;:[&quot;BIN_PAGE&quot;,&quot;PAGE&quot;]}}],&quot;title&quot;:&quot;||||||||||||||||||          &quot;}" tags="TP TP_BIN" id="Jfz4mgrfD9D5-eKf58on-73">
-          <mxCell parent="Jfz4mgrfD9D5-eKf58on-71" style="labelPosition=center;verticalLabelPosition=middle;align=center;html=1;shape=mxgraph.basic.shaded_button;dx=37.47;fillColor=#E6E6E6;strokeColor=none;whiteSpace=wrap;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=32;fontStyle=1;fontColor=light-dark(#007FFF,#007FFF);" vertex="1">
+          <mxCell parent="Jfz4mgrfD9D5-eKf58on-71" style="labelPosition=center;verticalLabelPosition=middle;align=center;html=1;shape=mxgraph.basic.shaded_button;dx=37.47;fillColor=#E6E6E6;strokeColor=none;whiteSpace=wrap;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;fontSize=32;fontStyle=1;fontColor=light-dark(#007FFF,#007FFF);" vertex="1">
             <mxGeometry height="120" width="160" x="440" as="geometry" />
           </mxCell>
         </UserObject>
@@ -541,24 +546,6 @@
         <mxCell id="Jfz4mgrfD9D5-eKf58on-74" parent="Jfz4mgrfD9D5-eKf58on-37" style="swimlane;startSize=120;fontSize=32;rotatable=0;foldingIconSize=120;swimlaneFillColor=light-dark(#1A1A1A,#000000);opacity=60;opacityGroup=1;fillStyle=solid;fillColor=light-dark(#C1C1C1,#333333);" value="Container : Chapter" vertex="1">
           <mxGeometry height="440" width="650" y="1120" as="geometry" />
         </mxCell>
-        <mxCell id="Jfz4mgrfD9D5-eKf58on-75" parent="Jfz4mgrfD9D5-eKf58on-37" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;startSize=120;horizontal=0;horizontalStack=1;collapsible=0;fontSize=32;rotatable=0;" value="JUMP" vertex="1">
-          <mxGeometry height="120" width="600" y="1560" as="geometry" />
-        </mxCell>
-        <UserObject label="BOOK" link="data:action/json,{&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;tags&quot;:[&quot;PAGE&quot;,&quot;BOOK_PAGE&quot;]}}],&quot;title&quot;:&quot;||||||||||||||||||          &quot;}" tags="TP TP_BOOK" id="Jfz4mgrfD9D5-eKf58on-80">
-          <mxCell parent="Jfz4mgrfD9D5-eKf58on-75" style="labelPosition=center;verticalLabelPosition=middle;align=center;html=1;shape=mxgraph.basic.shaded_button;dx=37.47;fillColor=#E6E6E6;strokeColor=none;whiteSpace=wrap;movable=1;resizable=1;rotatable=0;deletable=1;editable=1;locked=0;connectable=1;fontSize=32;fontStyle=1;fontColor=light-dark(#994C00,#FF9933);" vertex="1">
-            <mxGeometry height="120" width="160" x="120" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <UserObject label="HOME" link="data:action/json,{&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;tags&quot;:[&quot;HOME_PAGE&quot;,&quot;PAGE&quot;]}}],&quot;title&quot;:&quot;||||||||||||||||||          &quot;}" tags="TP TP_HOME" id="Jfz4mgrfD9D5-eKf58on-76">
-          <mxCell parent="Jfz4mgrfD9D5-eKf58on-75" style="labelPosition=center;verticalLabelPosition=middle;align=center;html=1;shape=mxgraph.basic.shaded_button;dx=37.47;fillColor=#E6E6E6;strokeColor=none;whiteSpace=wrap;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=32;fontStyle=1;fontColor=light-dark(#99FF33,#99FF33);" vertex="1">
-            <mxGeometry height="120" width="160" x="280" as="geometry" />
-          </mxCell>
-        </UserObject>
-        <UserObject label="BIN" link="data:action/json,{&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;tags&quot;:[&quot;BIN_PAGE&quot;,&quot;PAGE&quot;]}}],&quot;title&quot;:&quot;||||||||||||||||||          &quot;}" tags="TP TP_BIN" id="Jfz4mgrfD9D5-eKf58on-77">
-          <mxCell parent="Jfz4mgrfD9D5-eKf58on-75" style="labelPosition=center;verticalLabelPosition=middle;align=center;html=1;shape=mxgraph.basic.shaded_button;dx=37.47;fillColor=#E6E6E6;strokeColor=none;whiteSpace=wrap;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=32;fontStyle=1;fontColor=light-dark(#007FFF,#007FFF);" vertex="1">
-            <mxGeometry height="120" width="160" x="440" as="geometry" />
-          </mxCell>
-        </UserObject>
       </root>
     </mxGraphModel>
   </diagram>
