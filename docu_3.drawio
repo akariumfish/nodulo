@@ -428,14 +428,14 @@
     </mxGraphModel>
   </diagram>
   <diagram id="71KNeGuu4Nmp__-DLKbQ" name="bin">
-    <mxGraphModel dx="8100" dy="17800" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+    <mxGraphModel dx="5292" dy="7108" grid="1" gridSize="20" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <UserObject label="BUILDER" tags="BIN" id="I67CizVVkdBjJU1kQPds-1">
-          <mxCell parent="1" style="swimlane;startSize=200;fontSize=128;rotatable=0;foldingIconSize=200;swimlaneFillColor=light-dark(#FFFFFF,#1A1A1A);fillStyle=solid;opacity=60;opacityGroup=1;fontColor=light-dark(#000000,#007FFF);labelBorderColor=none;textShadow=1;fontStyle=1;labelBackgroundColor=default;verticalAlign=top;align=right;spacing=10;spacingRight=20;" vertex="1">
-            <mxGeometry height="1640" width="2180" x="170" y="140" as="geometry">
-              <mxRectangle height="700" width="1450" x="170" y="140" as="alternateBounds" />
+        <UserObject label="BUILDER" tags="BUILDER" id="I67CizVVkdBjJU1kQPds-1">
+          <mxCell parent="1" style="swimlane;startSize=200;fontSize=128;rotatable=0;foldingIconSize=200;swimlaneFillColor=light-dark(#FFFFFF,#1A1A1A);fillStyle=solid;opacity=60;opacityGroup=1;fontColor=default;labelBorderColor=none;textShadow=1;fontStyle=1;labelBackgroundColor=default;verticalAlign=top;align=right;spacing=10;spacingRight=20;" vertex="1">
+            <mxGeometry height="1640" width="2180" x="400" y="-560" as="geometry">
+              <mxRectangle height="700" width="2400" x="400" y="-560" as="alternateBounds" />
             </mxGeometry>
           </mxCell>
         </UserObject>
@@ -563,6 +563,36 @@
         <mxCell id="I67CizVVkdBjJU1kQPds-40" parent="I67CizVVkdBjJU1kQPds-1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;autosizeText=1;fontColor=#000000;darkOpacity=0.05;fillColor=default;strokeColor=#808080;fillStyle=solid;fontSize=54;direction=west;gradientDirection=north;gradientColor=light-dark(#D7D7D7,#1A1A1A);shadow=1;size=0;pointerEvents=1;strokeWidth=10;rotatable=0;" value="The size of the font in this note will change so that it fits within the note shape" vertex="1">
           <mxGeometry height="400" width="400" x="1750" y="2800" as="geometry" />
         </mxCell>
+        <UserObject label="" tags="" id="ldj0Mkke4xNYtkdI5SmH-1">
+          <mxCell parent="1" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;startSize=600;horizontal=0;horizontalStack=1;collapsible=0;fontSize=32;rotatable=0;" vertex="1">
+            <mxGeometry height="600" width="1400" x="-2680" y="-240" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="BUILDER" link="data:action/json,{&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;tags&quot;:[&quot;BUILDER&quot;]}}],&quot;title&quot;:&quot;||||||||||||||||||          &quot;}" tags="" id="ldj0Mkke4xNYtkdI5SmH-2">
+          <mxCell parent="ldj0Mkke4xNYtkdI5SmH-1" style="labelPosition=center;verticalLabelPosition=middle;align=center;html=1;shape=mxgraph.basic.shaded_button;dx=37.47;fillColor=#E6E6E6;strokeColor=none;whiteSpace=wrap;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;locked=0;connectable=1;fontSize=128;fontStyle=1;fontColor=default;labelBackgroundColor=none;" vertex="1">
+            <mxGeometry height="600" width="800" x="600" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" tags="" id="ldj0Mkke4xNYtkdI5SmH-4">
+          <mxCell parent="1" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;startSize=600;horizontal=0;horizontalStack=1;collapsible=0;fontSize=32;rotatable=0;" vertex="1">
+            <mxGeometry height="280" width="900" x="-140" y="-1460" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" link="data:action/json,{&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;tags&quot;:[&quot;BUILDER&quot;]}}],&quot;title&quot;:&quot;||||||||||||||||||          &quot;}" tags="" id="ldj0Mkke4xNYtkdI5SmH-5">
+          <mxCell parent="ldj0Mkke4xNYtkdI5SmH-4" style="labelPosition=center;verticalLabelPosition=middle;align=center;html=1;shape=mxgraph.basic.shaded_button;dx=37.47;fillColor=#E6E6E6;strokeColor=none;whiteSpace=wrap;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;fontSize=128;fontStyle=1;fontColor=default;labelBackgroundColor=none;" vertex="1">
+            <mxGeometry height="280" width="300" x="600" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" tags="" id="ldj0Mkke4xNYtkdI5SmH-6">
+          <mxCell parent="1" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;startSize=600;horizontal=0;horizontalStack=1;collapsible=0;fontSize=32;rotatable=0;" vertex="1">
+            <mxGeometry height="280" width="900" x="320" y="4880" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" link="data:action/json,{&quot;actions&quot;:[{&quot;viewbox&quot;:{&quot;tags&quot;:[&quot;BUILDER&quot;]}}],&quot;title&quot;:&quot;||||||||||||||||||          &quot;}" tags="" id="ldj0Mkke4xNYtkdI5SmH-7">
+          <mxCell parent="ldj0Mkke4xNYtkdI5SmH-6" style="labelPosition=center;verticalLabelPosition=middle;align=center;html=1;shape=mxgraph.basic.shaded_button;dx=37.47;fillColor=#E6E6E6;strokeColor=none;whiteSpace=wrap;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;locked=1;connectable=0;fontSize=128;fontStyle=1;fontColor=default;labelBackgroundColor=none;" vertex="1">
+            <mxGeometry height="280" width="300" x="600" as="geometry" />
+          </mxCell>
+        </UserObject>
       </root>
     </mxGraphModel>
   </diagram>
