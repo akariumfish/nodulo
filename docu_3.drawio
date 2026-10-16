@@ -983,6 +983,9 @@
         <mxCell id="Ar-iFNOCONQWnOGb_3OS-5" parent="1" style="html=1;shadow=0;dashed=0;align=center;verticalAlign=middle;shape=mxgraph.arrows2.stylisedArrow;dy=0.69;dx=188.43;notch=104.43;feather=0.07;direction=south;strokeColor=light-dark(#000000,#FF0000);fillStyle=solid;fillColor=light-dark(#FFFFFF,#FF3333);strokeWidth=50;" value="" vertex="1">
           <mxGeometry height="1560" width="520" x="4840" y="-720" as="geometry" />
         </mxCell>
+        <mxCell id="Ar-iFNOCONQWnOGb_3OS-6" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;autosizeText=1;fontColor=#000000;darkOpacity=0.05;fillColor=default;strokeColor=#808080;fillStyle=solid;fontSize=66;direction=west;gradientDirection=north;gradientColor=light-dark(#D7D7D7,#1A1A1A);shadow=1;size=0;pointerEvents=1;strokeWidth=10;rotatable=0;" value="Arrow to show relation :&lt;br&gt;Shuttle first/last/current &amp;gt; mem chunk&lt;br&gt;&lt;br&gt;Grid to show byte in chunk&lt;br&gt;&lt;br&gt;Show index displacement logic" vertex="1">
+          <mxGeometry height="600" width="920" x="3940" y="-160" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
