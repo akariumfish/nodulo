@@ -356,7 +356,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="71KNeGuu4Nmp__-DLKbQ" name="bin">
-    <mxGraphModel dx="5292" dy="9508" grid="1" gridSize="20" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+    <mxGraphModel dx="6040" dy="12240" grid="1" gridSize="20" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -568,12 +568,12 @@
         </UserObject>
         <UserObject label="" tags="BIN" id="Ar-iFNOCONQWnOGb_3OS-5">
           <mxCell parent="1" style="html=1;shadow=0;dashed=0;align=center;verticalAlign=middle;shape=mxgraph.arrows2.stylisedArrow;dy=0.69;dx=188.43;notch=104.43;feather=0.07;direction=south;strokeColor=light-dark(#000000,#FF0000);fillStyle=solid;fillColor=light-dark(#FFFFFF,#FF3333);strokeWidth=50;" vertex="1">
-            <mxGeometry height="1740" width="520" x="6160" y="-4160" as="geometry" />
+            <mxGeometry height="1740" width="520" x="7100" y="-5540" as="geometry" />
           </mxCell>
         </UserObject>
         <UserObject label="Arrow to show relation :&lt;br&gt;Shuttle first/last/current &amp;gt; mem chunk&lt;br&gt;&lt;br&gt;Grid to show byte in chunk&lt;br&gt;&lt;br&gt;Show index displacement logic" tags="BIN" id="Ar-iFNOCONQWnOGb_3OS-6">
           <mxCell parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;autosizeText=1;fontColor=#000000;darkOpacity=0.05;fillColor=default;strokeColor=#808080;fillStyle=solid;fontSize=66;direction=west;gradientDirection=north;gradientColor=light-dark(#D7D7D7,#1A1A1A);shadow=1;size=0;pointerEvents=1;strokeWidth=10;rotatable=0;" vertex="1">
-            <mxGeometry height="600" width="920" x="4640" y="-4340" as="geometry" />
+            <mxGeometry height="600" width="920" x="5580" y="-4440" as="geometry" />
           </mxCell>
         </UserObject>
         <UserObject label="Memory" tags="BIN" id="rOgBqIIWhIMjMsHnQtAp-14">
@@ -856,16 +856,8 @@
           </mxCell>
         </UserObject>
         <mxCell id="kbdGL8wONfuYSvBYF3ul-5" connectable="0" parent="1" style="group;strokeColor=default;dashed=1;dashPattern=12 12;strokeWidth=4;" value="" vertex="1">
-          <mxGeometry height="1910" width="860" x="7540" y="-3500" as="geometry" />
+          <mxGeometry height="1910" width="860" x="7880" y="1100" as="geometry" />
         </mxCell>
-        <UserObject label="" tags="BIN" id="rOgBqIIWhIMjMsHnQtAp-59">
-          <mxCell edge="1" parent="kbdGL8wONfuYSvBYF3ul-5" style="orthogonalLoop=1;jettySize=auto;html=1;rounded=1;fontSize=12;startSize=30;endSize=30;strokeWidth=10;strokeColor=#808080;startArrow=classic;startFill=1;flowAnimation=1;jumpStyle=gap;endArrow=oval;endFill=1;sourcePerimeterSpacing=30;fixedPointSpacing=1;jumpSize=26;libavoidSpacing=20;entryX=0;entryY=0;entryDx=400;entryDy=0;entryPerimeter=0;bendable=0;snapToPoint=1;ignoreEdge=1;" target="rOgBqIIWhIMjMsHnQtAp-63">
-            <mxGeometry relative="1" width="120" x="-0.32" as="geometry">
-              <mxPoint x="120" y="230" as="sourcePoint" />
-              <mxPoint x="810" y="-1080" as="targetPoint" />
-            </mxGeometry>
-          </mxCell>
-        </UserObject>
         <UserObject label="" tags="BIN" id="rOgBqIIWhIMjMsHnQtAp-62">
           <mxCell edge="1" parent="kbdGL8wONfuYSvBYF3ul-5" style="edgeStyle=none;orthogonalLoop=1;jettySize=auto;html=1;rounded=1;strokeColor=light-dark(#000000,#808080);strokeWidth=6;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=default;labelBackgroundColor=default;startArrow=box;startFill=0;startSize=10;endArrow=classic;endSize=10;curved=0;jumpSize=9;">
             <mxGeometry relative="1" width="120" as="geometry">
@@ -873,11 +865,6 @@
               <mxPoint x="450" as="sourcePoint" />
               <mxPoint x="850" as="targetPoint" />
             </mxGeometry>
-          </mxCell>
-        </UserObject>
-        <UserObject label="The size of the font in this note will change so that it fits within the note shape" tags="BIN" id="rOgBqIIWhIMjMsHnQtAp-63">
-          <mxCell parent="kbdGL8wONfuYSvBYF3ul-5" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;autosizeText=1;fontColor=#000000;darkOpacity=0.05;fillColor=default;strokeColor=#808080;fillStyle=solid;fontSize=54;direction=west;gradientDirection=north;gradientColor=light-dark(#D7D7D7,#1A1A1A);shadow=1;size=0;pointerEvents=1;strokeWidth=10;rotatable=0;" vertex="1">
-            <mxGeometry height="400" width="400" x="460" y="130" as="geometry" />
           </mxCell>
         </UserObject>
         <UserObject label="" tags="BIN" id="rOgBqIIWhIMjMsHnQtAp-67">
@@ -980,6 +967,22 @@
         <UserObject label="N" tags="BIN" id="rOgBqIIWhIMjMsHnQtAp-83">
           <mxCell connectable="0" parent="rOgBqIIWhIMjMsHnQtAp-81" style="resizable=0;html=1;whiteSpace=wrap;align=right;verticalAlign=bottom;" vertex="1">
             <mxGeometry relative="1" x="1" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="kbdGL8wONfuYSvBYF3ul-123" connectable="0" parent="kbdGL8wONfuYSvBYF3ul-5" style="group" value="" vertex="1">
+          <mxGeometry height="400" width="740" x="120" y="130" as="geometry" />
+        </mxCell>
+        <UserObject label="The size of the font in this note will change so that it fits within the note shape" tags="BIN" id="rOgBqIIWhIMjMsHnQtAp-63">
+          <mxCell parent="kbdGL8wONfuYSvBYF3ul-123" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;autosizeText=1;fontColor=#000000;darkOpacity=0.05;fillColor=default;strokeColor=#808080;fillStyle=solid;fontSize=54;direction=west;gradientDirection=north;gradientColor=light-dark(#D7D7D7,#1A1A1A);shadow=1;size=0;pointerEvents=1;strokeWidth=10;rotatable=0;" vertex="1">
+            <mxGeometry height="400" width="400" x="340" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" tags="BIN" id="rOgBqIIWhIMjMsHnQtAp-59">
+          <mxCell edge="1" parent="kbdGL8wONfuYSvBYF3ul-123" style="orthogonalLoop=1;jettySize=auto;html=1;rounded=1;fontSize=12;startSize=30;endSize=30;strokeWidth=10;strokeColor=#808080;startArrow=classic;startFill=1;flowAnimation=1;jumpStyle=gap;endArrow=oval;endFill=1;sourcePerimeterSpacing=30;fixedPointSpacing=1;jumpSize=26;libavoidSpacing=20;bendable=0;snapToPoint=1;ignoreEdge=1;" target="rOgBqIIWhIMjMsHnQtAp-63">
+            <mxGeometry relative="1" width="120" x="-0.32" as="geometry">
+              <mxPoint y="100" as="sourcePoint" />
+              <mxPoint x="690" y="-1210" as="targetPoint" />
+            </mxGeometry>
           </mxCell>
         </UserObject>
         <mxCell id="kbdGL8wONfuYSvBYF3ul-6" connectable="0" parent="1" style="group;strokeColor=default;dashed=1;dashPattern=12 12;strokeWidth=4;" value="" vertex="1">
@@ -1208,7 +1211,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="kbdGL8wONfuYSvBYF3ul-8" parent="1" style="whiteSpace=wrap;html=1;fontSize=48;rotatable=0;fontStyle=1;strokeColor=light-dark(#000000,#808080);strokeWidth=6;" value="EXECUTOR" vertex="1">
-          <mxGeometry height="400" width="400" x="6120" y="-2280" as="geometry" />
+          <mxGeometry height="400" width="400" x="7080" y="-2900" as="geometry" />
         </mxCell>
         <mxCell id="kbdGL8wONfuYSvBYF3ul-60" edge="1" parent="1" source="kbdGL8wONfuYSvBYF3ul-73" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;edgeStyle=sequenceEdgeStyle;libavoidRouting=0;curved=0;rounded=0;exitX=1;exitY=1;exitDx=0;exitDy=-5;strokeColor=#808080;strokeWidth=10;align=center;fontFamily=Helvetica;fontSize=12;fontColor=default;labelBackgroundColor=default;jumpStyle=gap;jumpSize=26;flowAnimation=1;sourcePerimeterSpacing=30;fixedPointSpacing=1;libavoidSpacing=20;" value="return">
           <mxGeometry relative="1" as="geometry">
@@ -1467,6 +1470,24 @@
         <mxCell id="kbdGL8wONfuYSvBYF3ul-122" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br/&gt;&lt;b&gt;Interface&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ field1: Type&lt;br/&gt;+ field2: Type&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;/&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ method1(Type): Type&lt;br/&gt;+ method2(Type, Type): Type&lt;/p&gt;" vertex="1">
           <mxGeometry height="252" width="380" x="6180" y="1748" as="geometry" />
         </mxCell>
+        <UserObject label="Texttexttexrtext" tags="BIN" id="kbdGL8wONfuYSvBYF3ul-125">
+          <mxCell parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;autosizeText=1;fontColor=#000000;darkOpacity=0.05;fillColor=light-dark(#333333,#333333);strokeColor=none;fillStyle=solid;fontSize=53;direction=west;gradientDirection=north;gradientColor=none;shadow=1;size=0;pointerEvents=1;strokeWidth=10;rotatable=0;" vertex="1">
+            <mxGeometry height="180" width="380" x="6680" y="-2380" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" tags="BIN" id="kbdGL8wONfuYSvBYF3ul-126">
+          <mxCell edge="1" parent="1" source="kbdGL8wONfuYSvBYF3ul-127" style="orthogonalLoop=1;jettySize=auto;html=1;rounded=1;fontSize=12;startSize=30;endSize=30;strokeWidth=10;strokeColor=#808080;startArrow=classic;startFill=1;flowAnimation=1;jumpStyle=gap;endArrow=oval;endFill=1;sourcePerimeterSpacing=30;fixedPointSpacing=1;jumpSize=26;libavoidSpacing=20;bendable=0;snapToPoint=1;ignoreEdge=1;" target="kbdGL8wONfuYSvBYF3ul-125">
+            <mxGeometry relative="1" width="120" x="-0.32" as="geometry">
+              <mxPoint x="6720" y="-1580" as="sourcePoint" />
+              <mxPoint x="7471.8600953895075" y="-3248" as="targetPoint" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="Texttexttexrtext" tags="BIN" id="kbdGL8wONfuYSvBYF3ul-127">
+          <mxCell parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;autosizeText=1;fontColor=#000000;darkOpacity=0.05;fillColor=light-dark(#333333,#333333);strokeColor=none;fillStyle=solid;fontSize=44;direction=west;gradientDirection=north;gradientColor=none;shadow=1;size=0;pointerEvents=1;strokeWidth=10;rotatable=0;" vertex="1">
+            <mxGeometry height="320" width="320" x="7340" y="-1760" as="geometry" />
+          </mxCell>
+        </UserObject>
       </root>
     </mxGraphModel>
   </diagram>
