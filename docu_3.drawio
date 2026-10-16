@@ -353,12 +353,14 @@
     </mxGraphModel>
   </diagram>
   <diagram id="i-XYcSf5d1Klp0RrDW1r" name="txt">
-    <mxGraphModel grid="0" page="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+    <mxGraphModel dx="22600" dy="28400" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="haRiOk46paRb2S4CdXZ4-1" parent="1" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;startSize=1200;html=1;collapsible=0;fontSize=32;rotatable=0;strokeWidth=10;" value="Column&amp;nbsp;" vertex="1">
-          <mxGeometry height="61367" width="22135" x="-11150" y="2516" as="geometry" />
+        <mxCell id="haRiOk46paRb2S4CdXZ4-1" collapsed="1" parent="1" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;startSize=1200;html=1;collapsible=1;fontSize=32;rotatable=0;strokeWidth=30;foldingIconSize=800;" value="Column&amp;nbsp;" vertex="1">
+          <mxGeometry height="2650" width="14970" x="-6025" y="4916" as="geometry">
+            <mxRectangle height="61367" width="22135" x="-6025" y="4916" as="alternateBounds" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="haRiOk46paRb2S4CdXZ4-2" parent="haRiOk46paRb2S4CdXZ4-1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=150;spacing=50;" value="&amp;nbsp;Work" vertex="1">
           <mxGeometry height="60167" width="720" y="1200" as="geometry" />
@@ -396,7 +398,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="71KNeGuu4Nmp__-DLKbQ" name="bld">
-    <mxGraphModel dx="9280" dy="17680" grid="1" gridSize="20" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+    <mxGraphModel grid="1" page="0" gridSize="20" guides="0" tooltips="1" connect="0" arrows="0" fold="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
