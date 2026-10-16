@@ -356,7 +356,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="71KNeGuu4Nmp__-DLKbQ" name="bin">
-    <mxGraphModel dx="3257" dy="3413" grid="1" gridSize="20" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+    <mxGraphModel dx="4505" dy="5495" grid="1" gridSize="20" guides="0" tooltips="1" connect="0" arrows="0" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -979,6 +979,9 @@
         </mxCell>
         <mxCell id="rOgBqIIWhIMjMsHnQtAp-160" parent="1" style="shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;" value="frame" vertex="1">
           <mxGeometry height="200" width="300" x="7040" y="5360" as="geometry" />
+        </mxCell>
+        <mxCell id="Ar-iFNOCONQWnOGb_3OS-5" parent="1" style="html=1;shadow=0;dashed=0;align=center;verticalAlign=middle;shape=mxgraph.arrows2.stylisedArrow;dy=0.69;dx=188.43;notch=104.43;feather=0.07;direction=south;strokeColor=light-dark(#000000,#FF0000);fillStyle=solid;fillColor=light-dark(#FFFFFF,#FF3333);strokeWidth=50;" value="" vertex="1">
+          <mxGeometry height="1560" width="520" x="4840" y="-720" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
