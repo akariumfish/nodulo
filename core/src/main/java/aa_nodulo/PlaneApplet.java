@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.noodle.nodulo.GdxApp;
 import com.noodle.nodulo.Main;
 
+import aa_term.pTerm;
 import app.App;
 import app.AppConfig;
 import box2d.pBox2d;
@@ -152,6 +153,8 @@ public class PlaneApplet extends App {
 		public boolean DRAW_VISION = true;
 
 		public boolean POP_BODY_EDITOR = false;
+		public boolean POP_TERMINAL = false;
+		public boolean TEST_TERMINAL = false;
 
 		public boolean SETUP_NEW_RENDER = false;
 		public boolean USE_NEW_RENDER = false;
@@ -208,7 +211,7 @@ public class PlaneApplet extends App {
 	
 	public pBox2d box;
 	
-//	public pTerm term;
+	public pTerm term;
 //	
 //	public Plane plane;
 
@@ -309,7 +312,7 @@ public class PlaneApplet extends App {
 		patch = new pPatch(this);
 		net = new pNet(this);
 		space = new pSpace(this);
-//		term = new pTerm(this);
+		term = new pTerm(this);
 //		
 //		plane = new Plane(this);
 
@@ -318,7 +321,7 @@ public class PlaneApplet extends App {
 		net.system_load();
 		space.system_load();
 		patch.system_load();
-//		term.system_load();
+		term.system_load();
 //		
 //		plane.finish();
 
@@ -390,12 +393,12 @@ public class PlaneApplet extends App {
 
 	@Override 
 	public void draw_start() {
-//		term.do_frame(1);
+		term.do_frame(1);
 		super.draw_start();
 	}
 	@Override 
 	public void draw_end() {
-//		term.draw();
+		term.draw();
 	}
 	
 	
