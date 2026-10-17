@@ -3,7 +3,7 @@
 <br/>
 <br/>
 <br/>
-Nodulo is a 2D action / platformer sandbox with node based scripting.  
+Nodulo is a 2D action / shooter sandbox environment with node based visual scripting.  
 <br/>
 <br/>
 At its core nodulo is just a basic 2D action game. Top down camera, tiled level, basic lighting. Use wasd to move and the mouse to shoot mobs. Thats it. The difference is that in nodulo you can modify however you want every single system that compose the game. Want to see what append when you shoot 600 bullet each sec ? Or make mobs fight each other ? Change the movement speed, modify the level design, you can even tincker with the game main process to play with the fundamental rules of the world. You will maybe create an awesome effect nobody thought about before ! Or, more realistically, everything will crash. Fun !  
