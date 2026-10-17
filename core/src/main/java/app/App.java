@@ -13,7 +13,6 @@ import com.noodle.nodulo.GdxApp;
 import com.noodle.nodulo.GdxApp.nAppListener;
 
 import aa_nodulo.PlaneApplet;
-import aa_steam.SteamNetworkingTest;
 import data.sData;
 import gui.nAlign;
 import gui.nGUI;
@@ -68,8 +67,6 @@ public class App implements nAppListener, Runner, nDrawer.Drawer {
 			}
 		}
 		
-//		new SteamNetworkingTest().clientMain(new String[0]);
-
 	    data = new sData(this);
 	    
 		input = new nInput(this);

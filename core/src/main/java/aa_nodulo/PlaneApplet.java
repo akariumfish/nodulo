@@ -5,32 +5,22 @@ import java.util.HashMap;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.noodle.nodulo.GdxApp;
 import com.noodle.nodulo.Main;
 
-import aa_term.pTerm;
 import app.App;
 import app.AppConfig;
 import box2d.pBox2d;
 import data.sValueBloc;
 import gui.nGUI;
-import gui.nGUIBook;
 import gui.nInterface;
 import gui.nWidgetGroup;
 import patch.pPatch;
-import patch.pStandard;
 import util.T;
 import util.Utl;
 import util.nMap;
-import util.nPainting;
 import util.nRun;
-import util.nScripted;
 
 public class PlaneApplet extends App {
 
@@ -44,11 +34,11 @@ public class PlaneApplet extends App {
 //	public static boolean NETWORK = true; 
 	public static boolean NETWORK = false;
 
-//	public static boolean TITLE_SCREEN = true; 
-	public static boolean TITLE_SCREEN = false;
+	public static boolean TITLE_SCREEN = true; 
+//	public static boolean TITLE_SCREEN = false;
 
-//	public static boolean START_FULLSCREEN = true;
-	public static boolean START_FULLSCREEN = false;
+	public static boolean START_FULLSCREEN = true;
+//	public static boolean START_FULLSCREEN = false;
 
 //	public static boolean RELEASE = true;
 	public static boolean RELEASE = false;
@@ -59,14 +49,14 @@ public class PlaneApplet extends App {
 //	public static boolean USE_STEAM = true;
 	public static boolean USE_STEAM = false;
 
-	public static boolean USE_GLPROFILER = true;
-//	public static boolean USE_GLPROFILER = false;
+//	public static boolean USE_GLPROFILER = true;
+	public static boolean USE_GLPROFILER = false;
 
 //	public static boolean PROFILER_FOCUS_VIEW = true;
 	public static boolean PROFILER_FOCUS_VIEW = false;
 	
-//	public static boolean CATCH_THROW = true;
-	public static boolean CATCH_THROW = false;
+	public static boolean CATCH_THROW = true;
+//	public static boolean CATCH_THROW = false;
 
 //	public static boolean PRINT_TIMETRACK = true;
 	public static boolean PRINT_TIMETRACK = false;
@@ -146,7 +136,7 @@ public class PlaneApplet extends App {
 		public Vector2 FS_DEF_PATCH_WIN_POS = new Vector2(60f,1030f);
 		public Vector2 FS_DEF_PATCH_WIN_SZ = new Vector2(1800f,400f);
 //		public boolean PATCH_TOOL_AUTOCOLLAPSE = true;
-		public boolean PATCH_SHEET_COLLAPSE = true;
+		public boolean PATCH_SHEET_COLLAPSE = false;
 		public boolean TOOLBOX_OPEN = true;
 		public boolean DRAW_GROUND = true;
 		public boolean DRAW_FOG = true;
@@ -211,33 +201,17 @@ public class PlaneApplet extends App {
 	
 	public pBox2d box;
 	
-	public pTerm term;
-//	
-//	public Plane plane;
-
 	public boolean NET_CTRL = false;
-	
-//	nPainting paint;
 	
 	public sValueBloc bloc;
 	
 	@Override
 	public void setInputProcessor() {
-//		if (term != null) term.setInputProcessor();
-//		else 
-			Gdx.input.setInputProcessor(input);
+		Gdx.input.setInputProcessor(input);
 	}
-	
-	/* static construct :
-	 * 
-	 * static {
-	 * 		...
-	 * }
-	 * */
 	
 	public static void build_setup() {
 		pPatch.build_setup();
-
 	}
 	
 
@@ -312,35 +286,12 @@ public class PlaneApplet extends App {
 		patch = new pPatch(this);
 		net = new pNet(this);
 		space = new pSpace(this);
-		term = new pTerm(this);
-//		
-//		plane = new Plane(this);
-
+		
 		view.system_load();
 		time.system_load();
 		net.system_load();
 		space.system_load();
 		patch.system_load();
-		term.system_load();
-//		
-//		plane.finish();
-
-//		paint = new nPainting();
-//		
-//		paint.rect(300,380,480,250);
-//		paint.rect(150,300,300,250);
-//		paint.stroke(255,255,0,255,8f);
-//		paint.rect(300,250,350,300);
-//		paint.rect(180,0,200,380);
-//		
-//		Object[] scr = paint.getScript();
-//		
-//		paint.clear();
-//		
-//		nScripted.buildScript(paint, scr);
-//		
-//		Utl.logn(nScripted.buildCodeFromScript(nPainting.class, scr));
-		
 		if (config.STARTUP_LOAD) addEventInitEnd(new nRun() { public void run(Object o) {
 			sValueBloc b = (sValueBloc)o; data.full_load(); }});
 		
@@ -351,9 +302,7 @@ public class PlaneApplet extends App {
 	@Override
 	public void closing() {
 		super.closing();
-
-//		plane.dispose();
-
+		
 		app = null; 
 	}
 	
@@ -362,8 +311,6 @@ public class PlaneApplet extends App {
 		float delta = Gdx.graphics.getDeltaTime();
 		
 		frame_inputs();
-
-//		plane.frame_start(delta);
 		
 		net.frame(delta);
 		time.do_frame(delta);
@@ -377,29 +324,11 @@ public class PlaneApplet extends App {
 		nRun.runEvents(eventFrameRun, delta);
 
 		space.do_frame(delta);
-
-//		plane.frame_end();
 		
 		view.frame(delta);
 		
 	}
 	
-	@Override 
-	protected void gui_draw() { 
-		
-//		paint.draw(gdx.drawer);
-		
-	}
-
-	@Override 
-	public void draw_start() {
-		term.do_frame(1);
-		super.draw_start();
-	}
-	@Override 
-	public void draw_end() {
-		term.draw();
-	}
 	
 	
 	
