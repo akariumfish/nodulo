@@ -19,6 +19,12 @@ Please be aware that this project is only a prototype and is currently barely fo
 <br/>
 <br/>
 <br/>
+- Documentation :
+<br/>
+https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&link-icons=1&tooltip-icons=1&nav=1&title=doc_v0.drawio&dark=1#Uhttps%3A%2F%2Fraw.githubusercontent.com%2Fakariumfish%2Fnodulo%2Fmain%2Fdoc%2Fdoc_v0.drawio
+<br/>
+<br/>
+<br/>
  - Dependencies :  
 <br/>
 Nodulo is build in java using the libgdx environment and is using the following libgdx libraries as it or as exemple :

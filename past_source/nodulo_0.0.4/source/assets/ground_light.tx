@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object type="ground">
+  <properties>
+   <property name="color" type="color" value="#beffffff"/>
+   <property name="colorLayer" type="bool" value="true"/>
+   <property name="dist" type="float" value="7000"/>
+   <property name="lightLayer" type="bool" value="true"/>
+   <property name="pointlight" type="bool" value="true"/>
+  </properties>
+  <point/>
+ </object>
+</template>

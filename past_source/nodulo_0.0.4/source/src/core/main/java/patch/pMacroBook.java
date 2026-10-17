@@ -1,0 +1,716 @@
+package patch;
+
+import java.util.ArrayList;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
+
+import aa_nodulo.PlaneApplet;
+import app.App;
+import patch.pMacro.Macro;
+import patch.pMacro.MacroScript;
+import util.Utl;
+import util.nMap;
+import util.nRun;
+
+public class pMacroBook {
+
+	
+	private static ArrayList<String> funcs = new ArrayList<String>();
+	private static MacroScript newMacroScript(String r) {
+		funcs.add(r);
+		return new MacroScript(r);
+	}
+	private static Macro addMacroScript(Macro m) {
+		int n = 0;
+		int c = 0;
+		for (String r : funcs) {
+			m.addNode(r, "function", 	(n * -1200f) -2400f, c*-2400f)
+			.addSetVar("func_ref", "func_"+r)
+			.addTileScript(r).getMacro();
+			n++; if (n > 4) { n = 0; c++; }
+		}
+		return m;
+	}
+	
+	public static void build() {
+		
+		build_tile_scripts();
+		
+
+		Macro common_param = new Macro("common_param")
+		.addNode("particleDef", "particleDef", 	0f, 	2100f).getMacro()
+		.addNode("particleDef2", "particleDef", 	600f, 	2100f)
+			.addSetVar("dispertion", 0.5f)
+			.addSetVar("radiusB", 30f)
+			.addSetVar("greenB", (int)5)
+			.addSetVar("name", "particle2")
+			.getMacro()
+		.addNode("space", "space", 				0f, 	1200f).getMacro()
+		.addNode("bullet_def", "bullet", 		0f, 	600f)
+			.addSetVar("len", 90f)
+			.addSetVar("damage", (int)3)
+			.addSetVar("r", (int)50)
+			.addSetVar("g", (int)255)
+			.addSetVar("b", (int)255)
+			.getMacro()
+		.addNode("bullet_mob", "bullet", 		0f, 	0f)
+			.addSetVar("filter", (int)1).getMacro()
+		.addNode("shape", "shape", 		0f, 	-600f).getMacro()
+		.addNode("geom", "geom", 		0f, 	-1200f).getMacro()
+//		.addNode("joint_def", "joint_def", 		0f, 	-1800f).getMacro()
+		.addRun(new nRun() { public void run() {
+			nMap<pInstance> list = arg(0, nMap.class);
+			list.get("bullet_def").setVar("name", "bullet_def");
+			list.get("bullet_mob").setVar("name", "bullet_mob");
+			list.get("geom").setVar("name", "geom_def");
+//			list.get("particleDef2").setVar("name", "particle2");
+
+			list.get("geom").patch.app.addDelayEvent(2, new nRun() { public void run() {
+				list.get("geom").run("empty_geom");
+				list.get("geom").run("set_line_thick",-1f);
+				list.get("geom").run("set_fill_color",new Color(0.75f,0.8f,0.85f,0.95f));
+				list.get("geom").run("new_face",40f,0f,-30f,-10f,-30f,10f);
+				list.get("geom").run("set_fill_color",new Color(0.5f,0.5f,0.5f,0.7f));
+				list.get("geom").run("new_face",-50f,0f,40f,20f,40f,-20f);
+			}});
+		}})
+		;
+
+		
+
+		Macro mob_blueprint = new Macro("mob_blueprint")
+		.addNode("blueprint1", "blueprint", 	600f, 		-600f).getMacro()
+		.addNode("blueprint2", "blueprint", 	600f, 		0f).getMacro()
+		.addNode("blueprint3", "blueprint", 	600f, 		600f).getMacro()
+		.addNode("blueprint4", "blueprint", 	600f, 		1200f).getMacro()
+		.addNode("coordinate", "coordinate", -600f, 	600f)
+			.addSetVar("use_ctrl_mob", true)
+//			.addSetVar("def_ctrl_mob_bullet_par", "bullet_mob")
+			.getMacro()
+		.addNode("interactif", "interactif", -600f, 	300f).getMacro()
+		.addNode("geom", "geom", 			-600f, 	0f).getMacro()
+		.addNode("geom2", "geom", 			-600f, 	-600f).getMacro()
+		.addNode("physic", "physic", 		-600f, 	1800f)
+		.addSetVar("filter", (int)0)
+		.addSetVar("dynamic", true).addSetVar("use_ctrl_box", true).addSetVar("aura", true)
+		.getMacro()
+		.addNode("physic2", "physic", 		-1200f, 	750f)
+		.addSetVar("filter", (int)0)
+		.addSetVar("dynamic", true).addSetVar("use_ctrl_box", true).addSetVar("aura", true)
+		.addSetVar("r", 0.2f).addSetVar("g", 0.8f).addSetVar("b", 1f)
+		.getMacro()
+		.addNode("physic3", "physic", 		-600f, 	-1050f)
+		.addSetVar("filter", (int)0)
+		.addSetVar("dynamic", true).addSetVar("use_ctrl_box", true).addSetVar("aura", true)
+		.addSetVar("r", 1f).addSetVar("g", 1f).addSetVar("b", 0.4f)
+		.getMacro()
+		.addNode("hitpoint", "hitpoint", 	-600f, 	1050f).getMacro()
+		.addLink("coordinate", "param", 	"blueprint1", "param_in")
+		.addLink("interactif", "param", 	"blueprint1", "param_in")
+		.addLink("geom", "param", 		"blueprint1", "param_in")
+		.addLink("physic", "param", 		"blueprint1", "param_in")
+		.addLink("hitpoint", "param", 	"blueprint1", "param_in")
+		.addLink("coordinate", "param", 	"blueprint2", "param_in")
+		.addLink("interactif", "param", 	"blueprint2", "param_in")
+		.addLink("geom2", "param", 		"blueprint2", "param_in")
+		.addLink("physic", "param", 		"blueprint2", "param_in")
+		.addLink("hitpoint", "param", 	"blueprint2", "param_in")
+		.addLink("coordinate", "param", 	"blueprint3", "param_in")
+		.addLink("interactif", "param", 	"blueprint3", "param_in")
+		.addLink("geom", "param", 		"blueprint3", "param_in")
+		.addLink("physic2", "param", 	"blueprint3", "param_in")
+		.addLink("hitpoint", "param", 	"blueprint3", "param_in")
+		.addLink("coordinate", "param", 	"blueprint4", "param_in")
+		.addLink("interactif", "param", 	"blueprint4", "param_in")
+		.addLink("geom2", "param", 		"blueprint4", "param_in")
+		.addLink("physic3", "param", 	"blueprint4", "param_in")
+		.addLink("hitpoint", "param", 	"blueprint4", "param_in")
+		.addRun(new nRun() { public void run() {
+			nMap<pInstance> list = arg(0, nMap.class);
+			pInstance geom = list.get("geom");
+			pInstance geom2 = list.get("geom2");
+
+			list.get("blueprint1").setVar("name", "mob_print_1");
+			list.get("blueprint2").setVar("name", "mob_print_2");
+			list.get("blueprint3").setVar("name", "mob_print_3");
+			list.get("blueprint4").setVar("name", "mob_print_4");
+			
+			list.get("geom").patch.app.addDelayEvent(2, new nRun() { public void run() {
+				geom.run("empty_geom");
+				geom.run("set_line_color",new Color(1f,1f,1f,1f));
+				geom.run("set_line_thick",10f);
+				geom.run("new_trig",0f,0f,80f,0f);
+				geom.run("set_line_color",new Color(0f,0f,0f,1f));
+				geom.run("set_fill_color",new Color(0.8f,0.8f,0.8f,1f));
+				geom.run("new_trig",0f,0f,30f,Utl.PI);
+				geom2.run("empty_geom");
+				geom2.run("set_line_thick",10f);
+				geom2.run("set_line_color",new Color(0.87f,0.9f,0.9f,0.9f));
+				geom2.run("set_fill_color",new Color(0.1f,0.1f,0.1f,1f));
+				geom2.run("new_trig",0f,0f,80f,0f);
+				geom2.run("set_line_thick",0f);
+				geom2.run("set_fill_color",new Color(0.7f,0.7f,0.7f,1f));
+				geom2.run("new_trig",0f,0f,30f,0f);
+				geom2.run("new_trig",0f,0f,30f,Utl.PI);
+			}});
+		}})
+		;
+
+		Macro body_blueprint = new Macro("body_blueprint")
+		.addNode("blueprint", "blueprint", 	600f, 	0f).getMacro()
+		.addNode("coordinate", "coordinate", -600f, 	600f)
+			.addSetVar("use_ctrl_bullet", true)
+//			.addSetVar("def_ctrl_bullet_bullet_par", "bullet_def")
+			.addSetVar("use_ctrl_time", true)
+			.getMacro()
+		.addNode("interactif", "interactif", -600f, 	300f)
+//			.addSetVar("use_ank", true)
+			.getMacro()
+		.addNode("logic", "logic", 			-600f, 	-300f)
+			.addSetVar("use_ctrl_func", true)
+			.addSetVar("tick_func_ref", "func_avatar")
+			.getMacro()
+		.addNode("geom", "geom", 			-600f, 	-600f).getMacro()
+		.addNode("physic", "physic", 		-1200f, 	900f)
+			.addSetVar("dynamic", true)
+			.addSetVar("use_ctrl_box", true)
+			.addSetVar("view_light", true)
+			.addSetVar("filter", (int)1)
+			.addSetVar("aura", true)
+			.addSetVar("aura_dist", 800f)
+			.addSetVar("light_dist", 600f)
+			.addSetVar("r", 0.2f)
+			.addSetVar("g", 1f)
+			.addSetVar("b", 0.7f)
+		.getMacro()
+		.addNode("hitpoint", "hitpoint", 	-600f, 	1050f)
+			.addSetVar("avatar", true)
+			.addSetVar("def_hp_hp", (int)50)
+		.getMacro()
+		.addNode("member", "member", 		-600f, 	-1200f).getMacro()
+		.addLink("member", "param", "blueprint", "param_in")
+		.addLink("coordinate", "param", "blueprint", "param_in")
+		.addLink("interactif", "param", "blueprint", "param_in")
+		.addLink("geom", "param", "blueprint", "param_in")
+		.addLink("physic", "param", "blueprint", "param_in")
+		.addLink("hitpoint", "param", "blueprint", "param_in")
+		.addLink("logic", "param", "blueprint", "param_in")
+
+		.addNode("ui", "UI", 								-2400f,		-300f)
+			.addRunPop("ui_switch", "pop_plug_node", 
+					"UI_widg_out", "UI_switch", "UI_widg_in").getMacro()
+			.addSetVar("ui_ui_switch", "state", PlaneApplet.app.config.AVATAR_VIEW_MODE)
+			.addSetVar("ui_ui_switch", "widg_text", "view")
+		.addNode("ui2", "UI", 								-2400f,		300f)
+			.addRunPop("ui_switch", "pop_plug_node", 
+					"UI_widg_out", "UI_switch", "UI_widg_in").getMacro()
+			.addSetVar("ui2_ui_switch", "state", PlaneApplet.app.config.AVATAR_CAM)
+			.addSetVar("ui2_ui_switch", "widg_text", "cam")
+			.addSetVar("ui2", "view_pos", new Vector2(100,60))
+		.addNode("reg_in_mode", "reg_in", 					-1500f,	-300f)
+			.addSetVar("reg_ref", "mode").getMacro()
+		.addNode("reg_in_cam", "reg_in", 					-1500f,	300f)
+			.addSetVar("reg_ref", "cam").getMacro()
+		.addLink("reg_in_mode", "co_reg", "logic", "co_reg")
+		.addLink("ui_ui_switch", "out", "reg_in_mode", "co_in")
+		.addLink("reg_in_cam", "co_reg", "logic", "co_reg")
+		.addLink("ui2_ui_switch", "out", "reg_in_cam", "co_in")
+			
+		.addRun(new nRun() { public void run() {
+			nMap<pInstance> list = arg(0, nMap.class);
+			pInstance geom = list.get("geom");
+			
+			list.get("blueprint").setVar("name", "body_print");
+			
+			list.get("geom").patch.app.addDelayEvent(2, new nRun() { public void run() {
+				geom.run("empty_geom");
+				geom.run("set_line_thick",-1f);
+				geom.run("set_fill_color",new Color(1f,1f,1f,1f));
+				geom.run("new_face",-40f,20f,80f,20f,-40f,40f);
+				geom.run("new_face",-40f,-20f,80f,-20f,-40f,-40f);
+				geom.run("set_fill_color",new Color(0.3f,0.3f,0.3f,1f));
+				geom.run("new_trig",-15f,50f,35f,0f);
+				geom.run("new_trig",-15f,-50f,35f,0f);
+				geom.run("set_line_thick",5f);
+				geom.run("set_line_color",new Color(0.1f,0.1f,0.1f,1f));
+				geom.run("set_fill_color",new Color(0.65f,0.65f,0.65f,1f));
+				geom.run("new_trig",0f,0f,80f,0f);
+				geom.run("set_line_thick",10f);
+				geom.run("set_line_color",new Color(0.4f,0.85f,0.9f,1f));
+				geom.run("set_fill_color",new Color(0.2f,0.2f,0.2f,1f));
+				geom.run("new_trig",-10f,0f,35f,0f);
+			}});
+			
+			App.ap.addDelayEvent(60, new nRun() { public void run() {
+				if (PlaneApplet.app.config.POP_BODY_EDITOR) 
+					geom.run("pop_editor");
+			}});
+		}})
+		;
+
+		
+		
+
+		new Macro("PARAM_SETUP")
+		.addMacro("mob_blueprint", mob_blueprint, 0f, 0f)
+		.addMacro("body_blueprint", body_blueprint, -1800f, 0f)
+		.addMacro("common_param", common_param, 1800f, 0f)
+		.addRun(new nRun() { public void run() {
+			nMap<pInstance> list = arg(0, nMap.class);
+		}})
+		;
+
+		
+		
+		Macro func_exemple = addMacroScript(new Macro("func_exemple"))
+			.addNode("avatar", "function", 						0f, 		0f)
+			.addSetVar("func_ref", "func_avatar").addTileScript("avatar").getMacro()
+			.addNode("startup", "function", 						-1200f, 		0f)
+			.addSetVar("func_ref", "func_start").addTileScript("startup").getMacro()
+			.addNode("gameover", "function", 					-1200f, 		-2400f)
+			.addSetVar("func_ref", "func_gameover").addTileScript("gameover").getMacro()
+			.addRun(new nRun() { public void run() {
+				nMap<pInstance> list = arg(0, nMap.class);
+				if (Utl.plane.config.SCRIPT_ALL_FUNC) {
+					list.get("startup").setVar("script", true);
+					list.get("avatar").setVar("script", true);
+					list.get("gameover").setVar("script", true);
+					for (String r : funcs) { list.get(r).setVar("script", true); }
+				}
+			}})
+			;
+
+
+//		Macro executor = new Macro("executor")
+//		.addNode("exec", "executor", 	0f, 	0f).getMacro()
+//		.addNode("time", "time", 		-450f, 	0f)
+//			.addSetVar("tick", true).addSetVar("state", true).getMacro()
+//		.addLink("exec", "co_run", "time", "out")
+//		;
+//
+//		Macro exec_actor = new Macro("exec_actor")
+//		.addNode("exec", "executor", 	300f, 	150f).getMacro()
+//		.addNode("time", "time", 		-300f, 	150f)
+//			.addSetVar("tick", true).addSetVar("state", true).getMacro()
+//		.addNode("actor", "actor", 		-300f,	-150f).getMacro()
+//		.addLink("exec", "co_run", "time", "out")
+//		.addLink("actor", "co_register", "exec", "co_reg")
+//		;
+
+		
+//		Macro main_exemple = new Macro("main_exemple")
+//			
+////			.addNode("startup_run", "space_init", 	0f, 	500f).getMacro()
+////			.addNode("startup_exec", "executor", 	450f, 	500f)
+////			.addSetVar("target_ref", "func_start").getMacro()
+////			.addLink("startup_exec", "co_run", "startup_run", "start_run")
+////			
+////			.addNode("setup_run", "space_init", 	-300f, 	-500f)
+////				.addSetVar("setup", true).getMacro()
+////			.addNode("setup", "function", 						300f, 		-500f)
+////			.addSetVar("func_ref", "func_setup").addTileScript("setup").getMacro()
+////			.addLink("setup", "co_run", "setup_run", "start_run")
+//			
+////			.addNode("text", "text", 				-450f,		500f).getMacro()
+//			.addRun(new nRun() { public void run() {
+//				nMap<pInstance> list = arg(0, nMap.class);
+//
+////				list.get("setup").setVar("script", true);
+//				
+//			}})
+//			;
+		
+
+	}
+	
+
+	
+	
+	
+	
+	
+	private static void build_tile_scripts() {
+		
+
+		new MacroScript("gameover")
+			.com("add_set_val", "time_bloc", "val_pause")
+			.com("add_boo_at", "data", true)
+		;
+
+		new MacroScript("startup")
+			
+		.com("add_func","func_pop_body")
+			.com("add_arr_at", "arg")
+				.com("add_new_body_at","entry","body_print")
+				.com("add_arr_at", "array")
+					.com("add_get_input_at", "entry", "avatar_spawn_pos")
+					.com("add_arr_at", "array")
+						.com("add_get_input_at", "entry", "avatar_spawn_rot")
+					.com("get_last", (int)3)
+//				.com("get_last")
+//			.com("get_last")
+		
+		.com("add_set_output", "reset_mob_spawn")
+			.com("add_boo_at", "data", true)
+		.com("add_func","func_test_mob")
+		
+		;
+
+		newMacroScript("tick")
+		
+		;
+
+		newMacroScript("frame")
+
+		.com("add_if")
+			.com("add_get_input_at", "test", "key_i_click")
+
+			.com("add_set_output", "screenshot")
+			.com("add_boo_at", "data", true)
+			
+		.com("add_close")
+
+		;
+
+		newMacroScript("pop_body")
+		.com("add_set_param", "ref", "pos")
+			.com("add_get_pass_at", "body", (int)0)
+			.com("add_get_pass_at", "data", (int)1)
+		.com("add_set_param", "ref", "rot")
+			.com("add_get_pass_at", "body", (int)0)
+			.com("add_get_pass_at", "data", (int)2)
+		;
+
+		newMacroScript("test_mob")
+		.com("add_if")
+			.com("add_get_input_at", "test", "has_mob_spawn")
+
+			.com("add_func","func_choose_mob_print")
+				
+			.com("add_set_output", "next_mob_spawn")
+				.com("add_boo_at", "data", true)
+		
+		.com("add_close")
+		
+		.com("add_if")
+			.com("add_get_input_at", "test", "has_mob_spawn")
+			
+			.com("add_func","func_test_mob")
+		
+		.com("add_close")
+		;
+		newMacroScript("choose_mob_print")
+		.com("add_if")
+			.com("add_eq_at", "test")
+				.com("add_get_input_at", "in1", "get_mob_spawn_print")
+				.com("add_flt_at", "in2", 1f)
+				.com("get_last")
+	
+			.com("add_func","func_pop_mob_print1")
+		.com("add_close")
+		.com("add_if")
+			.com("add_eq_at", "test")
+				.com("add_get_input_at", "in1", "get_mob_spawn_print")
+				.com("add_flt_at", "in2", 2f)
+				.com("get_last")
+	
+			.com("add_func","func_pop_mob_print2")
+		.com("add_close")
+		.com("add_if")
+			.com("add_eq_at", "test")
+				.com("add_get_input_at", "in1", "get_mob_spawn_print")
+				.com("add_flt_at", "in2", 3f)
+				.com("get_last")
+	
+			.com("add_func","func_pop_mob_print3")
+		.com("add_close")
+		.com("add_if")
+			.com("add_eq_at", "test")
+				.com("add_get_input_at", "in1", "get_mob_spawn_print")
+				.com("add_flt_at", "in2", 4f)
+				.com("get_last")
+	
+			.com("add_func","func_pop_mob_print4")
+		.com("add_close")
+		;
+
+		newMacroScript("pop_mob_print1")
+		.com("add_func","func_pop_mob")
+			.com("add_arr_at", "arg")
+				.com("add_new_body_at","entry","mob_print_1")
+				.com("add_arr_at", "array")
+					.com("add_get_input_at", "entry", "get_mob_spawn_pos")
+					.com("add_arr_at", "array")
+						.com("add_get_input_at", "entry", "get_mob_spawn_rot")
+						.com("add_arr_at", "array")
+							.com("add_get_input_at", "entry", "get_mob_spawn_id")
+			.com("get_last", (int)4)//.com("get_last").com("get_last").com("get_last")
+		;
+
+		newMacroScript("pop_mob_print2")
+		.com("add_func","func_pop_mob")
+			.com("add_arr_at", "arg")
+				.com("add_new_body_at","entry","mob_print_2")
+				.com("add_arr_at", "array")
+					.com("add_get_input_at", "entry", "get_mob_spawn_pos")
+					.com("add_arr_at", "array")
+						.com("add_get_input_at", "entry", "get_mob_spawn_rot")
+						.com("add_arr_at", "array")
+							.com("add_get_input_at", "entry", "get_mob_spawn_id")
+			.com("get_last", (int)4)//.com("get_last").com("get_last").com("get_last")
+		;
+
+		newMacroScript("pop_mob_print3")
+		.com("add_func","func_pop_mob")
+			.com("add_arr_at", "arg")
+				.com("add_new_body_at","entry","mob_print_3")
+				.com("add_arr_at", "array")
+					.com("add_get_input_at", "entry", "get_mob_spawn_pos")
+					.com("add_arr_at", "array")
+						.com("add_get_input_at", "entry", "get_mob_spawn_rot")
+						.com("add_arr_at", "array")
+							.com("add_get_input_at", "entry", "get_mob_spawn_id")
+			.com("get_last", (int)4)//.com("get_last").com("get_last").com("get_last")
+		;
+
+		newMacroScript("pop_mob_print4")
+		.com("add_func","func_pop_mob")
+			.com("add_arr_at", "arg")
+				.com("add_new_body_at","entry","mob_print_4")
+				.com("add_arr_at", "array")
+					.com("add_get_input_at", "entry", "get_mob_spawn_pos")
+					.com("add_arr_at", "array")
+						.com("add_get_input_at", "entry", "get_mob_spawn_rot")
+						.com("add_arr_at", "array")
+							.com("add_get_input_at", "entry", "get_mob_spawn_id")
+			.com("get_last", (int)4)//.com("get_last").com("get_last").com("get_last")
+		;
+
+		newMacroScript("pop_mob")
+		.com("add_set_param", "ctrl_mob", "spawn_pos")
+			.com("add_get_pass_at", "body", (int)0)
+			.com("add_get_pass_at", "data", (int)1)
+		.com("add_set_param", "ctrl_mob", "spawn_rot")
+			.com("add_get_pass_at", "body", (int)0)
+			.com("add_get_pass_at", "data", (int)2)
+		.com("add_set_param", "ctrl_mob", "spawn_id")
+			.com("add_get_pass_at", "body", (int)0)
+			.com("add_get_pass_at", "data", (int)3)
+		;
+
+
+
+		
+		
+		
+		new MacroScript("avatar")
+
+		.com("add_set_param", "ctrl_box", "accel_move")
+		.com("add_get_pass_at", "body", (int)0)
+		.com("add_get_input_at", "data", "keycross_press")
+
+		.com("add_set_param", "ctrl_box", "accel_dir")
+		.com("add_get_pass_at", "body", (int)0)
+		.com("add_get_input_at", "data", "keycross_dir")
+
+		.com("add_set_param", "ctrl_box", "decel_move")
+		.com("add_get_pass_at", "body", (int)0)
+		.com("add_not_at", "data")
+		.com("add_get_input_at", "in", "keycross_press")
+		.com("get_last")
+
+//		.com("add_if")
+//			.com("add_get_input_at", "test", "key_i_click")
+//
+//			.com("add_set_output", "screenshot")
+//			.com("add_boo_at", "data", true)
+//			
+//		.com("add_close")
+
+		.com("add_if")
+			.com("add_not_at", "test")
+				.com("add_get_reg_in_at", "in", "mode")
+				.com("get_last")
+
+			.com("add_set_param", "ctrl_box", "rot_to_target")
+			.com("add_get_pass_at", "body", (int)0)
+			.com("add_get_input_at", "data", "mouse_hover_view")
+			
+			.com("add_set_param", "ctrl_box", "decel_rot")
+			.com("add_get_pass_at", "body", (int)0)
+			.com("add_at", "data", "not", "out")
+			.com("add_get_input_at", "in", "mouse_hover_view")
+			.com("get_last")
+			
+			.com("add_set_param", "ctrl_box", "rot_target")
+			.com("add_get_pass_at", "body", (int)0)
+			.com("add_dir_at", "data")
+			.com("add_get_param_at", "in", "mouse", "mousepos")
+			.com("add_get_pass_at", "body", (int)0).com("get_last")
+			.com("get_last")
+			
+			.com("add_set_param", "ctrl_box", "global_ref")
+			.com("add_get_pass_at", "body", (int)0)
+			.com("add_boo_at", "data", true)
+	
+		.com("add_close")
+
+		.com("add_if")
+			.com("add_and_at", "test")
+				.com("add_get_reg_in_at", "in1", "cam")
+				.com("add_not_at", "in2")
+					.com("add_get_reg_in_at", "in", "mode")
+					.com("get_last")
+				.com("get_last")
+			
+			.com("add_set_output", "cam_pos")
+			.com("add_get_param_at", "data", "ref", "pos")
+			.com("add_get_pass_at", "body", (int)0).com("get_last")
+			
+			.com("add_set_output", "cam_rot")
+			.com("add_flt_at", "data", 0f)
+			
+		.com("add_close")
+			
+		.com("add_if")
+			.com("add_get_reg_in_at", "test", "mode")
+
+			.com("add_set_param", "ctrl_box", "rot_to_target")
+			.com("add_get_pass_at", "body", (int)0)
+			.com("add_boo_at", "data", true)
+
+			.com("add_set_param", "ctrl_box", "global_ref")
+			.com("add_get_pass_at", "body", (int)0)
+			.com("add_boo_at", "data", false)
+
+		.com("add_close")
+
+		.com("add_if")
+			.com("add_and_at", "test")
+				.com("add_get_input_at", "in1", "keycross_cw_state")
+				.com("add_get_reg_in_at", "in2", "mode")
+				.com("get_last")
+
+			.com("add_set_param", "ctrl_box", "rot_target")
+			.com("add_get_pass_at", "body", (int)0)
+			.com("add_add_at", "data")
+			.com("add_get_param_at", "in", "ctrl_box", "rot_target")
+			.com("add_get_pass_at", "body", (int)0).com("get_last")
+			.com("add_flt_at", "fact", -0.02f)
+			.com("get_last")
+				
+		.com("add_close")
+
+		.com("add_if")
+			.com("add_and_at", "test")
+				.com("add_get_input_at", "in1", "keycross_ccw_state")
+				.com("add_get_reg_in_at", "in2", "mode")
+				.com("get_last")
+
+			.com("add_set_param", "ctrl_box", "rot_target")
+			.com("add_get_pass_at", "body", (int)0)
+			.com("add_add_at", "data")
+			.com("add_get_param_at", "in", "ctrl_box", "rot_target")
+			.com("add_get_pass_at", "body", (int)0).com("get_last")
+			.com("add_flt_at", "fact", 0.02f)
+			.com("get_last")
+				
+		.com("add_close")
+
+		.com("add_if")
+			.com("add_and_at", "test")
+				.com("add_get_reg_in_at", "in1", "cam")
+				.com("add_get_reg_in_at", "in2", "mode")
+				.com("get_last")
+
+			.com("add_set_output", "cam_pos")
+				.com("add_add_vec_at", "data")
+					.com("add_rot_at", "fact")
+						.com("add_axe_vec_at", "in")
+						.com("add_flt_at", "y", 0f)
+							.com("add_mult_at", "x")
+								.com("add_mult_at", "in")
+									.com("add_get_input_at", "in", "cam_height")
+									.com("add_flt_at", "fact", 1f/3f)
+									.com("get_last")
+								.com("add_get_input_at", "fact", "cam_scale_inv")
+								.com("get_last")
+							.com("get_last")
+						.com("add_get_param_at", "rot", "ctrl_box", "rot_target")
+						.com("add_get_pass_at", "body", (int)0).com("get_last")
+						.com("get_last")
+					.com("add_get_param_at", "in", "ref", "pos")
+					.com("add_get_pass_at", "body", (int)0).com("get_last")
+				.com("get_last")
+			
+			.com("add_set_output", "cam_rot")
+				.com("add_add_at", "data")
+					.com("add_flt_at", "fact", -((float)Math.PI) / 2f)
+					.com("add_get_param_at", "in", "ctrl_box", "rot_target")
+					.com("add_get_pass_at", "body", (int)0).com("get_last")
+				.com("get_last")
+				
+		.com("add_close")
+
+		.com("add_set_param", "ctrl_bullet", "pop")
+		.com("add_get_pass_at", "body", (int)0)
+		.com("add_get_input_at", "data", "mouse_right_click")
+
+		.com("add_set_param", "ctrl_bullet", "shoot")
+		.com("add_get_pass_at", "body", (int)0)
+		.com("add_get_input_at", "data", "mouse_right_state")
+
+//		.com("add_set_param", "ctrl_bullet", "shoot")
+//		.com("add_get_pass_at", "body", (int)0)
+//		.com("add_boo_at", "data", true)
+
+		.com("add_set_param", "ctrl_time", "activate")
+		.com("add_get_pass_at", "body", (int)0)
+		.com("add_get_input_at", "data", "key_space_state")
+
+//		.com("add_set_param", "ctrl_pop", "pop")
+//		.com("add_get_pass_at", "body", (int)0)
+//		.com("add_get_input_at", "data", "mouse_right_click")
+//		
+//		.com("add_set_param", "ctrl_pop", "throw")
+//		.com("add_get_pass_at", "body", (int)0)
+//		.com("add_get_input_at", "data", "mouse_right_unclick")
+//
+//		.com("add_set_param", "ctrl_pop", "blueprint_par")
+//		.com("add_get_pass_at", "body", (int)0)
+//		.com("add_str_at", "data", "bullet_print")
+//		
+//		.com("add_set_param", "ctrl_pop", "pop_pos")
+//		.com("add_get_pass_at", "body", (int)0)
+//		.com("add_mag_at", "data")
+//		.com("add_flt_at", "mag", 180f)
+//		.com("add_get_param_at", "in", "mouse", "mousepos")
+//		.com("add_get_pass_at", "body", (int)0).com("get_last")
+//		.com("get_last")
+//		
+//		.com("add_set_param", "ctrl_pop", "acc_pos")
+//		.com("add_get_pass_at", "body", (int)0)
+//		.com("add_mag_at", "data")
+//		.com("add_flt_at", "mag", 1f)
+//		.com("add_get_param_at", "in", "mouse", "mousepos")
+//		.com("add_get_pass_at", "body", (int)0).com("get_last")
+//		.com("get_last")
+		
+//		.com("add_set_param", "ctrl_move", "trg_pos")
+//		.com("add_get_pass_at", "body", (int)0)
+//		.com("add_get_input_at", "data", "mouse_pos")	
+//		
+//		.com("add_set_param", "ctrl_move", "teleport")
+//		.com("add_get_pass_at", "body", (int)0)
+//		.com("add_and_at", "data")
+//		.com("add_get_input_at", "in1", "key_shift_state")
+//		.com("add_get_input_at", "in2", "mouse_left_click")
+//		.com("get_last")
+
+		;
+
+		
+	}
+
+}

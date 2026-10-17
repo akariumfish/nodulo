@@ -1,0 +1,176 @@
+{
+    "activeFile": "small_map.tmx",
+    "automapping.whileDrawing": true,
+    "expandedProjectPaths": [
+        "."
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 3
+        },
+        ":/automap-tiles.tsx": {
+            "scaleInDock": 1
+        },
+        "Map.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 997,
+                "y": 833
+            }
+        },
+        "Map.tmx#Lighting": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Map.tmx#Tilemap": {
+            "scaleInDock": 2,
+            "scaleInEditor": 4
+        },
+        "Map.tmx#tileset_flags": {
+            "scaleInEditor": 8
+        },
+        "Map.tmx#tileset_flags2": {
+            "scaleInDock": 1
+        },
+        "Map2.tmx": {
+            "scale": 1,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 416.5,
+                "y": 600.5
+            }
+        },
+        "Map2.tmx#Lighting": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "Map2.tmx#Tilemap": {
+            "scaleInDock": 2,
+            "scaleInEditor": 4
+        },
+        "Map2.tmx#tileset_flags2": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 1
+        },
+        "Map3.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 484.99999999999994,
+                "y": 469.66666666666663
+            }
+        },
+        "Map3.tmx#Lighting": {
+            "scaleInDock": 1
+        },
+        "Map3.tmx#Tilemap": {
+            "scaleInDock": 1.5
+        },
+        "Map3.tmx#tileset_flags2": {
+            "scaleInDock": 1.5
+        },
+        "Map4.tmx": {
+            "scale": 2,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 400.75,
+                "y": 292.75
+            }
+        },
+        "Map4.tmx#Lighting": {
+            "scaleInDock": 1
+        },
+        "Map4.tmx#Tilemap": {
+            "scaleInDock": 1
+        },
+        "map.tmx": {
+            "expandedObjectLayers": [
+                14
+            ],
+            "scale": 0.75,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 512,
+                "y": 511.33333333333326
+            }
+        },
+        "map2.tmx": {
+            "expandedObjectLayers": [
+                14
+            ],
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 384,
+                "y": 384.5
+            }
+        },
+        "map3.tmx": {
+            "expandedGroupLayers": [
+                19
+            ],
+            "scale": 1.0662760416666666,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 383.5779704481622,
+                "y": 384.04689217242645
+            }
+        },
+        "small_map.tmx": {
+            "scale": 1.0662760416666666,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 296.82745145927464,
+                "y": 158.9644645255831
+            }
+        },
+        "tileset.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 3
+        },
+        "tileset_flags2.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 3
+        }
+    },
+    "last.externalTilesetPath": "C:/Users/user/Desktop/code/java/libgdx/nodulo/assets",
+    "last.imagePath": "C:/Users/user/Desktop/code/java/libgdx/nodulo/assets",
+    "last.objectTemplatePath": "C:/Users/user/Desktop/code/java/libgdx/nodulo/assets",
+    "map.height": 128,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 128,
+    "openFiles": [
+        "map.tmx",
+        "map2.tmx",
+        "map3.tmx",
+        "small_map.tmx"
+    ],
+    "project": "tiled_project.tiled-project",
+    "property.type": "string",
+    "recentFiles": [
+        "map.tmx",
+        "map2.tmx",
+        "map3.tmx",
+        "small_map.tmx",
+        "tileset_flags2.tsx",
+        "Map2.tmx",
+        "Map.tmx",
+        "Map3.tmx",
+        "tileset.tsx",
+        "Map4.tmx"
+    ],
+    "resizeMap.removeObjects": false,
+    "tileset.embedInMap": true,
+    "tileset.margin": 0,
+    "tileset.spacing": 1,
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    },
+    "tileset.useTransparentColor": false
+}
