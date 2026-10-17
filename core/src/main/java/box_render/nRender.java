@@ -635,7 +635,7 @@ public class nRender {
 		}
 		Gdx.gl20.glEnable(GL20.GL_BLEND);
 	}
-
+	
 	private final ArrayList<Rectangle> scissors = new ArrayList<Rectangle>();
 	private void removeScissors() {
 		for (Rectangle r : Utl.duplic(box.app.gui.scissors)) {

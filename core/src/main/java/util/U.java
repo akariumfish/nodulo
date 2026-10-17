@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ServiceLoader;
 
@@ -55,11 +57,76 @@ public class U {
 	}
 
 	public interface Makeable { public void make(Object...a); public void clear(); }
+
 	
 	
 	
 	
 	
+	
+	
+	
+	
+	public interface Supplier <K> { K alloc(); K[] array(int l); Collec<K> collec(); }
+
+	public interface Collec <K> extends Iterator<K> {
+		public int len();
+		public void add(K k);
+		public K first();
+		public K last();
+		public K removeFirst();
+		public K removeLast();
+		public K removeIndex(int i);
+		public K removeValue(K k);
+	}
+
+	public static class Pool <K> {
+		final Collec<K> used, free;
+		final Supplier<K> supplier;
+		Pool(Supplier<K> _supplier) { supplier = _supplier; 
+			used = supplier.collec(); free = supplier.collec(); }
+		K take() { 
+			used.add(free.len() > 0 ? free.removeLast() : supplier.alloc()); 
+			return used.last(); }
+		void put(K k) { free.add(used.removeValue(k)); }
+		int _used() { return used.len(); }
+		int _free() { return free.len(); }
+	}
+	
+	public static class PoolCollec <K> implements Collec<K> {
+		final Supplier<K> supplier;
+		PoolCollec(Supplier<K> _supplier) { supplier = _supplier; }
+
+		@Override public boolean hasNext() { return false; }
+		@Override public K next() { return null; }
+		@Override public int len() { return 0; }
+		@Override public void add(K k) { }
+		@Override public K first() { return null; }
+		@Override public K last() { return null; }
+		@Override public K removeFirst() { return null; }
+		@Override public K removeLast() { return null; }
+		@Override public K removeIndex(int i) { return null; }
+		@Override public K removeValue(K k) { return null; }
+		
+	}
+	
+	public static class QuadF extends Pool<float[]>{
+
+		static { new QuadF(); }
+		
+		QuadF() { super(new Supplier<float[]>() {
+			@Override public float[] alloc() { return new float[4]; }
+			@Override public float[][] array(int l) { return new float[l][4]; }
+			@Override public Collec<float[]> collec() { 
+				return new PoolCollec<float[]>(this); } }); 
+			pool = this; }
+		
+		static QuadF pool;
+		static float[] obtain() { return pool.take(); }
+		static void free(float[] k) { pool.put(k); }
+		static int used() { return pool._used(); }
+		static int free() { return pool._free(); }
+	}
 	
 	
 	
@@ -122,83 +189,104 @@ public class U {
 	static { build(); }
 
 	public static void build() {
-		TEST(); //TODO to del
+//		TEST(); //TODO to del
 		
 		//TODO //Prepare Primitive
-		Tag.build(); //Prepare tags (unique int id)
-		Txt.build(); //Load Texts
+//		Tag.build(); //Prepare tags (unique int id)
+//		Txt.build(); //Load Texts
 		//TODO //Load Config
-		for (Setup p : ServiceLoader.load(Setup.class)) p.build();
+		for (Setup p : ServiceLoader.load(Setup.class)) p.alloc();
 	}
 	
-	public static interface Setup { public void build(); }
+	public static interface Setup { public void alloc(); }
 
 	// to run static block at setup
 	public static class SetupModule implements Setup {
 		public SetupModule() {}
-		@Override public void build() { new SetupModule(); }
+		@Override public void alloc() { new SetupModule(); }
 		static {
 			
 		}
 	}
-
-	//-------------------------------------------------
-	//--					TAGS							--
-	//-------------------------------------------------
-
-	public static class TaggedModule implements Tag.Creator {
-		@Tag.Tagged public static final int TAGGED_FIELD = Tag.newTag();
+	
+	public static Applet app;
+	
+	public static class Applet {
 		
-		public TaggedModule() {}
-		@Override public void loadClass() { new TaggedModule(); }
-		@Override public Class<?> getTaggedClass() { return TaggedModule.class; }
-	}
-
-	// for automatic unique global final int key
-	public static class Tag {
-
-		public static interface Creator { 
-			public void loadClass(); // should instanciate one to run statics
-			public Class<?> getTaggedClass(); }
-
-		@Documented @Target(ElementType.FIELD) @Inherited @Retention(RetentionPolicy.RUNTIME) 
-		public @interface Tagged {}
-		
-		public static int newTag() { cnt++; return cnt-1; }
-		
-		private static int cnt = 0;
-		private static IntStringMap map;
-		public static void build() {
+		Module[] mod;
+		public Applet() {
+			app = this;
+			ServiceLoader<Module> services = ServiceLoader.load(Module.class);
+			int i = 0; for (Module m : services) i++;
+			mod = new Module[i];
+			i = 0; for (Module m : services) { mod[i] = m.alloc(); i++; }
 			
-			//TODO map = new Map()
-			if (map == null) return;
-			ServiceLoader<Creator> services = ServiceLoader.load(Creator.class);
-			for (Creator p : services) p.loadClass();
-			for (Creator p : services) {
-				Class<?> clazz = p.getTaggedClass();
-				for (Field f : clazz.getFields()) {
-					Annotation annotation = f.getDeclaredAnnotation(Tagged.class);
-					if (annotation != null ) {
-						try { map.put(f.getInt(null), f.getName()); } 
-						catch (IllegalArgumentException | IllegalAccessException e) {
-							e.printStackTrace(); }
-					}
-				}
-			}
 		}
-		public static int key(String tag) { return map.key(tag); }
-		public static String tag(int key) { return map.val(key); }
+		
 	}
 	
-	//TODO for storing Tags
-	public interface IntStringMap {
-		public void put (int key, String val);
-		public int key(String v);
-		public String val(int k);
-		public boolean hasKey(int k);
-		public boolean hasVal(String v);
-		public int size();
+	public static abstract class Module {
+		public abstract <K extends Module> K alloc(); 
+		public abstract void make(); public abstract void finish(); 
 	}
+
+//	//-------------------------------------------------
+//	//--					TAGS							--
+//	//-------------------------------------------------
+//
+//	public static class TaggedModule implements Tag.Creator {
+//		@Tag.Tagged public static final int TAGGED_FIELD = Tag.newTag();
+//		
+//		public TaggedModule() {}
+//		@Override public void loadClass() { new TaggedModule(); }
+//		@Override public Class<?> getTaggedClass() { return TaggedModule.class; }
+//	}
+//
+//	// for automatic unique global final int key
+//	public static class Tag {
+//
+//		public static interface Creator { 
+//			public void loadClass(); // should instanciate one to run statics
+//			public Class<?> getTaggedClass(); }
+//
+//		@Documented @Target(ElementType.FIELD) @Inherited @Retention(RetentionPolicy.RUNTIME) 
+//		public @interface Tagged {}
+//		
+//		public static int newTag() { cnt++; return cnt-1; }
+//		
+//		private static int cnt = 0;
+//		private static IntStringMap map;
+//		public static void build() {
+//			
+//			//TODO map = new Map()
+//			if (map == null) return;
+//			ServiceLoader<Creator> services = ServiceLoader.load(Creator.class);
+//			for (Creator p : services) p.loadClass();
+//			for (Creator p : services) {
+//				Class<?> clazz = p.getTaggedClass();
+//				for (Field f : clazz.getFields()) {
+//					Annotation annotation = f.getDeclaredAnnotation(Tagged.class);
+//					if (annotation != null ) {
+//						try { map.put(f.getInt(null), f.getName()); } 
+//						catch (IllegalArgumentException | IllegalAccessException e) {
+//							e.printStackTrace(); }
+//					}
+//				}
+//			}
+//		}
+//		public static int key(String tag) { return map.key(tag); }
+//		public static String tag(int key) { return map.val(key); }
+//	}
+//	
+//	//TODO for storing Tags
+//	public interface IntStringMap {
+//		public void put (int key, String val);
+//		public int key(String v);
+//		public String val(int k);
+//		public boolean hasKey(int k);
+//		public boolean hasVal(String v);
+//		public int size();
+//	}
 	
 	//-------------------------------------------------
 	//--					TEXTS						--
@@ -206,7 +294,7 @@ public class U {
 
 	public static class Txt {
 		
-		public static final String TEXT_FILE_PATH = "text.txt";
+		public static final String TEXT_FILE_PATH = "alltext.txt";
 
 		private static FileHandle fl;
 		private static String tmp = "";

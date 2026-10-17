@@ -1,5 +1,5 @@
 void void
-plane_startup_map_path small_map.tmx
+plane_startup_map_path map.tmx
 mainmenu_exit_bp Exit
 mainmenu_fullscreen_switch Fs
 mainmenu_collapse_menu_switch Mn

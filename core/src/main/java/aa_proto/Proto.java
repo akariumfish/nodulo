@@ -4,8 +4,6 @@ import static com.badlogic.gdx.graphics.profiling.GLInterceptor.resolveErrorNumb
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Mesh;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.profiling.GLErrorListener;
 import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.math.Rectangle;
@@ -16,19 +14,6 @@ import util.*;
 public class Proto implements Screen {
 	
 
-	
-	
-	
-
-	
-	
-	
-	
-	
-	
-	
-	public ShaderProgram shader;
-	Mesh mesh;
 	
 	
 	
