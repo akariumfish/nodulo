@@ -42,11 +42,17 @@
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="q9pam-ESV1rmc7cM59g_" name="Overview">
-    <mxGraphModel dx="324" dy="664" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+  <diagram name="Overview" id="DX4U1VQzfitZJWcSnBnS">
+    <mxGraphModel dx="1473" dy="3018" grid="1" gridSize="10" guides="1" tooltips="1" connect="0" arrows="0" fold="1" page="1" pageScale="1" pageWidth="1000" pageHeight="1900" math="0" shadow="0">
       <root>
-        <mxCell id="0" />
-        <mxCell id="1" parent="0" />
+        <mxCell id="bDxgFQHa5ZKHrVCKQ5M1-0" />
+        <mxCell id="bDxgFQHa5ZKHrVCKQ5M1-1" parent="bDxgFQHa5ZKHrVCKQ5M1-0" />
+        <mxCell id="bDxgFQHa5ZKHrVCKQ5M1-3" parent="bDxgFQHa5ZKHrVCKQ5M1-1" style="whiteSpace=wrap;html=1;" value="Game screen" vertex="1">
+          <mxGeometry height="440" width="670" x="210" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="bDxgFQHa5ZKHrVCKQ5M1-4" parent="bDxgFQHa5ZKHrVCKQ5M1-1" style="text;strokeColor=none;fillColor=none;html=1;fontSize=63;fontStyle=0;verticalAlign=middle;align=center;autosizeText=1;fontColor=light-dark(#272727,#E6E6E6);whiteSpace=wrap;" value="Work in progress ...&lt;br&gt;Sorry&amp;nbsp;" vertex="1">
+          <mxGeometry height="200" width="550" x="120" y="300" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
