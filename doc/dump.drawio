@@ -597,6 +597,9 @@
         <mxCell id="U10lqVlo7zrVvJeMXRss-21" parent="1" style="whiteSpace=wrap;html=1;strokeColor=light-dark(#959595,#666666);strokeWidth=4;" value="" vertex="1">
           <mxGeometry height="100" width="120" x="610" y="110" as="geometry" />
         </mxCell>
+        <mxCell id="U10lqVlo7zrVvJeMXRss-22" parent="1" style="shape=mxgraph.basic.polygon;polyCoords=[[0,0],[1,0.5],[0,1]];polyCurves=[[],[]];polyline=0;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="80" width="80" x="630" y="120" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
