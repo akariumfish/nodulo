@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net">
   <diagram id="KvNZPLkSKud1hmQO5d83" name="Page-1">
-    <mxGraphModel dx="9000" dy="11067" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1600" math="0" shadow="0">
+    <mxGraphModel dx="10080" dy="13280" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1600" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -9,21 +9,6 @@
             <mxGeometry height="150" width="760" x="-340" y="140" as="geometry" />
           </mxCell>
         </UserObject>
-        <mxCell id="1GGwF-RKERXe5NT1_8yr-5" parent="1" style="swimlane;startSize=60;rotatable=0;collapsible=0;fontSize=18;fontStyle=0;fixedWidth=1;expand=0;" value="Container" vertex="1">
-          <mxGeometry height="260" width="160" x="-1770" y="200" as="geometry" />
-        </mxCell>
-        <mxCell id="1GGwF-RKERXe5NT1_8yr-6" parent="1GGwF-RKERXe5NT1_8yr-5" style="swimlane;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;startSize=80;horizontal=0;horizontalStack=1;collapsible=0;fontSize=18;rotatable=0;" value="Array" vertex="1">
-          <mxGeometry height="140" width="400" x="-20" y="80" as="geometry" />
-        </mxCell>
-        <mxCell id="1GGwF-RKERXe5NT1_8yr-7" parent="1GGwF-RKERXe5NT1_8yr-6" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=60;fillColor=default;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;swimlaneFillColor=none;fontSize=18;rotatable=0;" value="List" vertex="1">
-          <mxGeometry height="160" width="160" x="80" as="geometry" />
-        </mxCell>
-        <mxCell id="1GGwF-RKERXe5NT1_8yr-8" parent="1GGwF-RKERXe5NT1_8yr-7" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=18;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="Vas-y, écris-moi un petit truc en vitesse là, juste pour rembiaire." vertex="1">
-          <mxGeometry height="100" width="160" y="60" as="geometry" />
-        </mxCell>
-        <mxCell id="1GGwF-RKERXe5NT1_8yr-9" parent="1GGwF-RKERXe5NT1_8yr-6" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=18;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="Ok, est-ce que tu me comprends ? Ok, est-ce que tu me comprends ? Oui, à bonjour !" vertex="1">
-          <mxGeometry height="140" width="160" x="240" as="geometry" />
-        </mxCell>
         <mxCell id="1GGwF-RKERXe5NT1_8yr-41" edge="1" parent="1" source="1GGwF-RKERXe5NT1_8yr-67" style="edgeStyle=none;shape=connector;curved=0;rounded=1;jumpStyle=gap;jumpSize=9;libavoidSpacing=20;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=default;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=24;fontColor=default;labelBackgroundColor=default;defaultLabelBackgroundColor=gap;startSize=20;endArrow=classic;endSize=20;flowAnimation=1;sourcePerimeterSpacing=5;targetPerimeterSpacing=5;fixedPointSpacing=1;followTerminals=1;" target="1GGwF-RKERXe5NT1_8yr-33" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
@@ -341,7 +326,7 @@
           <mxGeometry height="60" width="400" y="260" as="geometry" />
         </mxCell>
         <mxCell id="1GGwF-RKERXe5NT1_8yr-116" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=60;fillColor=default;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;swimlaneFillColor=none;fontSize=24;rotatable=0;" value="GUI FRAME" vertex="1">
-          <mxGeometry height="460" width="400" x="-890" y="3620" as="geometry" />
+          <mxGeometry height="460" width="400" x="-780" y="3270" as="geometry" />
         </mxCell>
         <mxCell id="1GGwF-RKERXe5NT1_8yr-141" parent="1GGwF-RKERXe5NT1_8yr-116" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=20;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="External datas gathering" vertex="1">
           <mxGeometry height="50" width="400" y="60" as="geometry" />
