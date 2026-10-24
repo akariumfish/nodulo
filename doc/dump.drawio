@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" pages="4">
   <diagram id="0kO4pXXA2kUiFf1UvnwE" name="Dump">
-    <mxGraphModel dx="2492" dy="5108" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1600" math="0" shadow="0">
+    <mxGraphModel dx="2700" dy="5533" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1600" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -597,6 +597,72 @@
         </mxCell>
         <mxCell id="suim64Io3Ea6Mmf4PohN-67" parent="1" style="whiteSpace=wrap;html=1;fontSize=18;fontStyle=0;startSize=60;horizontal=1;swimlaneFillColor=none;" value="metode1(Obj ..&lt;span style=&quot;background-color: transparent; color: light-dark(#000000, var(--ge-light-color, #ffffff));&quot;&gt;. args)&amp;nbsp;&lt;/span&gt;" vertex="1">
           <mxGeometry height="60" width="200" x="1290" y="3660" as="geometry" />
+        </mxCell>
+        <mxCell id="AMGNECg-gnsjwD6z3um_-37" connectable="0" parent="1" style="group" value="" vertex="1">
+          <mxGeometry height="270" width="510" x="2050" y="1240" as="geometry" />
+        </mxCell>
+        <mxCell id="AMGNECg-gnsjwD6z3um_-5" parent="AMGNECg-gnsjwD6z3um_-37" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=60;fillColor=default;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;swimlaneFillColor=none;fontSize=18;rotatable=0;" value="Data" vertex="1">
+          <mxGeometry height="100" width="160" as="geometry" />
+        </mxCell>
+        <mxCell id="AMGNECg-gnsjwD6z3um_-6" parent="AMGNECg-gnsjwD6z3um_-5" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=18;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="StructPool" vertex="1">
+          <mxGeometry height="40" width="160" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="AMGNECg-gnsjwD6z3um_-11" edge="1" parent="AMGNECg-gnsjwD6z3um_-37" source="AMGNECg-gnsjwD6z3um_-9" style="edgeStyle=orthogonalEdgeStyle;shape=connector;rounded=1;jumpStyle=gap;jumpSize=10;libavoidSpacing=20;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=light-dark(#808080,#E6E6E6);strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=default;labelBackgroundColor=default;defaultLabelBackgroundColor=gap;startArrow=box;startFill=0;startSize=20;endArrow=diamond;endFill=1;endSize=20;flowAnimation=0;sourcePerimeterSpacing=0;targetPerimeterSpacing=-12;fixedPointSpacing=1;followTerminals=1;" target="AMGNECg-gnsjwD6z3um_-10" value="">
+          <mxGeometry relative="1" x="0.1538" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="120" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AMGNECg-gnsjwD6z3um_-16" connectable="0" parent="AMGNECg-gnsjwD6z3um_-11" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=fontFamily,fontColor,fontStyle,textOpacity;fontSize=16;labelBorderColor=default;labelPadding=10;labelBorderWidth=2;labelBackgroundColor=default;" value="KEY1" vertex="1">
+          <mxGeometry relative="1" x="0.2304" y="1" as="geometry">
+            <mxPoint x="-2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AMGNECg-gnsjwD6z3um_-13" edge="1" parent="AMGNECg-gnsjwD6z3um_-37" source="AMGNECg-gnsjwD6z3um_-9" style="edgeStyle=orthogonalEdgeStyle;shape=connector;rounded=1;jumpStyle=gap;jumpSize=10;libavoidSpacing=20;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=light-dark(#808080,#E6E6E6);strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=16;fontColor=default;labelBackgroundColor=default;defaultLabelBackgroundColor=gap;startArrow=box;startFill=0;startSize=20;endArrow=diamond;endFill=1;endSize=20;flowAnimation=0;sourcePerimeterSpacing=0;targetPerimeterSpacing=-12;fixedPointSpacing=1;followTerminals=1;fontStyle=0;labelBorderColor=default;labelBorderWidth=2;labelPadding=10;" target="AMGNECg-gnsjwD6z3um_-12" value="KEY2">
+          <mxGeometry relative="1" x="0.405" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="280" y="180" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AMGNECg-gnsjwD6z3um_-15" edge="1" parent="AMGNECg-gnsjwD6z3um_-37" source="AMGNECg-gnsjwD6z3um_-9" style="edgeStyle=orthogonalEdgeStyle;shape=connector;rounded=1;jumpStyle=gap;jumpSize=10;libavoidRouting=1;libavoidSpacing=20;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=light-dark(#808080,#E6E6E6);strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=default;labelBackgroundColor=default;defaultLabelBackgroundColor=gap;startArrow=box;startFill=0;startSize=20;endArrow=diamond;endFill=1;endSize=20;flowAnimation=0;sourcePerimeterSpacing=0;targetPerimeterSpacing=-12;fixedPointSpacing=1;followTerminals=1;" target="AMGNECg-gnsjwD6z3um_-14" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="280" y="240" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AMGNECg-gnsjwD6z3um_-9" parent="AMGNECg-gnsjwD6z3um_-37" style="whiteSpace=wrap;html=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=18;fontColor=default;fillColor=default;" value="Standard" vertex="1">
+          <mxGeometry height="60" width="120" x="220" as="geometry" />
+        </mxCell>
+        <mxCell id="AMGNECg-gnsjwD6z3um_-10" parent="AMGNECg-gnsjwD6z3um_-37" style="whiteSpace=wrap;html=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=18;fontColor=default;fillColor=default;" value="StructModel" vertex="1">
+          <mxGeometry height="60" width="120" x="390" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="AMGNECg-gnsjwD6z3um_-12" parent="AMGNECg-gnsjwD6z3um_-37" style="whiteSpace=wrap;html=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=18;fontColor=default;fillColor=default;" value="StructModel" vertex="1">
+          <mxGeometry height="60" width="120" x="390" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="AMGNECg-gnsjwD6z3um_-14" parent="AMGNECg-gnsjwD6z3um_-37" style="whiteSpace=wrap;html=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=18;fontColor=default;fillColor=default;" value="...&amp;nbsp;" vertex="1">
+          <mxGeometry height="60" width="120" x="390" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="AMGNECg-gnsjwD6z3um_-34" edge="1" parent="AMGNECg-gnsjwD6z3um_-37" source="AMGNECg-gnsjwD6z3um_-9" style="endArrow=classic;html=1;rounded=1;strokeColor=default;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=24;fontColor=default;labelBackgroundColor=default;edgeStyle=none;jumpStyle=gap;jumpSize=9;startSize=20;endSize=20;flowAnimation=1;sourcePerimeterSpacing=5;targetPerimeterSpacing=5;fixedPointSpacing=1;libavoidSpacing=20;defaultLabelBackgroundColor=gap;curved=0;followTerminals=1;" target="AMGNECg-gnsjwD6z3um_-5" value="">
+          <mxGeometry relative="1" x="0.3353" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="220" />
+              <mxPoint x="110" y="220" />
+            </Array>
+            <mxPoint x="120" y="495" as="sourcePoint" />
+            <mxPoint x="265" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AMGNECg-gnsjwD6z3um_-35" connectable="0" parent="AMGNECg-gnsjwD6z3um_-34" style="edgeLabel;resizable=0;html=1;;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=18;fontColor=default;labelBackgroundColor=default;strokeColor=inherit;fillColor=inherit;labelBorderColor=default;defaultLabelBackgroundColor=gap;spacing=10;labelPadding=10;" value="" vertex="1">
+          <mxGeometry relative="1" x="0.3353" as="geometry" />
+        </mxCell>
+        <mxCell id="AMGNECg-gnsjwD6z3um_-36" connectable="0" parent="AMGNECg-gnsjwD6z3um_-34" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=18;fontFamily=Helvetica;fontColor=default;labelBackgroundColor=default;defaultLabelBackgroundColor=gap;fontStyle=0;spacing=10;labelBorderColor=default;labelPadding=10;" value="Interpret" vertex="1">
+          <mxGeometry relative="1" x="0.4784" y="8" as="geometry">
+            <mxPoint x="61" y="-1" as="offset" />
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>
