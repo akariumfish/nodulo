@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Page-1" id="JeMre5AGdQD0Rq3LGasC">
-    <mxGraphModel dx="704" dy="1443" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1600" math="0" shadow="0">
+    <mxGraphModel dx="1321" dy="862" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1600" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -187,6 +187,36 @@
             <mxGeometry height="320" width="340" x="70" y="170" as="geometry" />
           </mxCell>
         </UserObject>
+        <mxCell id="hE0v4sO0SDhd-ZCMcQvp-79" edge="1" parent="1" source="hE0v4sO0SDhd-ZCMcQvp-77" style="edgeStyle=orthogonalEdgeStyle;shape=connector;curved=1;rounded=1;jumpStyle=gap;jumpSize=10;libavoidSpacing=10;curveGeometry=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ff0000;strokeWidth=2;align=center;verticalAlign=bottom;fontFamily=Helvetica;fontSize=12;fontColor=default;labelBackgroundColor=default;defaultLabelBackgroundColor=gap;startSize=8;endArrow=open;endSize=8;flowAnimation=0;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;fixedPointSpacing=1;followTerminals=1;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-300" y="870" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hE0v4sO0SDhd-ZCMcQvp-77" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=0;resizeLast=1;container=0;fontColor=#000000;collapsible=0;rounded=1;arcSize=30;strokeColor=#ff0000;fillColor=#ffffc0;swimlaneFillColor=#ffffc0;dropTarget=0;rotatable=0;" value="Main Task Sequance&#xa;Iteration" vertex="1">
+          <mxGeometry height="60" width="160" x="-370" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="hE0v4sO0SDhd-ZCMcQvp-78" parent="hE0v4sO0SDhd-ZCMcQvp-77" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;whiteSpace=wrap;overflow=hidden;rotatable=0;fontColor=#000000;" value="Complete&amp;nbsp;" vertex="1">
+          <mxGeometry height="30" width="160" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="hE0v4sO0SDhd-ZCMcQvp-80" parent="1" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;" value="" vertex="1">
+          <mxGeometry height="40" width="40" x="-320" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="hE0v4sO0SDhd-ZCMcQvp-82" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=40;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;rotatable=0;" value="Sleep 1ms" vertex="1">
+          <mxGeometry height="40" width="120" x="-530" y="1160" as="geometry" />
+        </mxCell>
+        <mxCell id="hE0v4sO0SDhd-ZCMcQvp-83" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontColor=#000000;fillColor=#ffffc0;strokeColor=#ff0000;" value="Last Task" vertex="1">
+          <mxGeometry height="60" width="120" x="-340" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="hE0v4sO0SDhd-ZCMcQvp-84" edge="1" parent="1" source="hE0v4sO0SDhd-ZCMcQvp-83" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=1;strokeWidth=2;fontFamily=Helvetica;fontSize=12;fontColor=default;labelBackgroundColor=default;defaultLabelBackgroundColor=gap;jumpStyle=gap;jumpSize=10;flowAnimation=0;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;fixedPointSpacing=1;curved=1;libavoidSpacing=10;followTerminals=1;" value="no">
+          <mxGeometry relative="1" x="-1" as="geometry">
+            <mxPoint x="-280" y="1160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hE0v4sO0SDhd-ZCMcQvp-85" edge="1" parent="1" source="hE0v4sO0SDhd-ZCMcQvp-83" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;verticalAlign=top;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=1;strokeWidth=2;fontFamily=Helvetica;fontSize=12;fontColor=default;labelBackgroundColor=default;defaultLabelBackgroundColor=gap;jumpStyle=gap;jumpSize=10;flowAnimation=0;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;fixedPointSpacing=1;curved=1;libavoidSpacing=10;followTerminals=1;" value="yes">
+          <mxGeometry relative="1" x="-1" as="geometry">
+            <mxPoint x="-150" y="1070" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
