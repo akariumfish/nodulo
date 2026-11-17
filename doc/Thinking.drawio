@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net">
+<mxfile host="app.diagrams.net" pages="2">
   <diagram name="Page-1" id="1w1F5nvJLkud4hWD29s-">
-    <mxGraphModel dx="1479" dy="1186" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1600" math="0" shadow="0">
+    <mxGraphModel dx="2250" dy="2767" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1600" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -55,6 +55,60 @@
         <mxCell id="msJTq5ikifDozMo9BgzY-6" parent="1" style="whiteSpace=wrap;html=1;" value="Frontground" vertex="1">
           <mxGeometry height="60" width="120" x="80" y="1200" as="geometry" />
         </mxCell>
+        <mxCell id="MHEO26nuIZO-m2Qf02cf-10" connectable="0" parent="1" style="group" value="" vertex="1">
+          <mxGeometry height="180" width="360" x="-220" y="1540" as="geometry" />
+        </mxCell>
+        <mxCell id="MHEO26nuIZO-m2Qf02cf-5" parent="MHEO26nuIZO-m2Qf02cf-10" style="whiteSpace=wrap;html=1;newEdgeStyle=%7B%22edgeStyle%22%3A%22orthogonalEdgeStyle%22%2C%22shape%22%3A%22connector%22%2C%22rounded%22%3A%221%22%2C%22jumpStyle%22%3A%22gap%22%2C%22jumpSize%22%3A%2210%22%2C%22libavoidSpacing%22%3A%2210%22%2C%22orthogonalLoop%22%3A%221%22%2C%22jettySize%22%3A%22auto%22%2C%22html%22%3A%221%22%2C%22strokeColor%22%3A%22%23ff0000%22%2C%22strokeWidth%22%3A%222%22%2C%22align%22%3A%22center%22%2C%22verticalAlign%22%3A%22middle%22%2C%22fontFamily%22%3A%22Helvetica%22%2C%22fontSize%22%3A%2212%22%2C%22fontColor%22%3A%22default%22%2C%22labelBackgroundColor%22%3A%22default%22%2C%22defaultLabelBackgroundColor%22%3A%22gap%22%2C%22labelPadding%22%3A%221%205%22%2C%22startSize%22%3A%228%22%2C%22endArrow%22%3A%22open%22%2C%22endSize%22%3A%228%22%2C%22flowAnimation%22%3A%220%22%2C%22sourcePerimeterSpacing%22%3A%220%22%2C%22targetPerimeterSpacing%22%3A%220%22%2C%22fixedPointSpacing%22%3A%221%22%2C%22followTerminals%22%3A%221%22%2C%22labelBorderColor%22%3A%22default%22%2C%22libavoidRouting%22%3A%221%22%2C%22curved%22%3Anull%7D;" value="Blueprint" vertex="1">
+          <mxGeometry height="60" width="120" as="geometry" />
+        </mxCell>
+        <mxCell id="MHEO26nuIZO-m2Qf02cf-6" parent="MHEO26nuIZO-m2Qf02cf-10" style="whiteSpace=wrap;html=1;" value="Entity" vertex="1">
+          <mxGeometry height="60" width="120" x="240" as="geometry" />
+        </mxCell>
+        <mxCell id="MHEO26nuIZO-m2Qf02cf-9" parent="MHEO26nuIZO-m2Qf02cf-10" style="whiteSpace=wrap;html=1;newEdgeStyle=%7B%22edgeStyle%22%3A%22orthogonalEdgeStyle%22%2C%22shape%22%3A%22connector%22%2C%22rounded%22%3A%221%22%2C%22jumpStyle%22%3A%22gap%22%2C%22jumpSize%22%3A%2210%22%2C%22libavoidSpacing%22%3A%2210%22%2C%22orthogonalLoop%22%3A%221%22%2C%22jettySize%22%3A%22auto%22%2C%22html%22%3A%221%22%2C%22strokeColor%22%3A%22%23ff0000%22%2C%22strokeWidth%22%3A%222%22%2C%22align%22%3A%22center%22%2C%22verticalAlign%22%3A%22middle%22%2C%22fontFamily%22%3A%22Helvetica%22%2C%22fontSize%22%3A%2212%22%2C%22fontColor%22%3A%22default%22%2C%22labelBackgroundColor%22%3A%22default%22%2C%22defaultLabelBackgroundColor%22%3A%22gap%22%2C%22labelPadding%22%3A%221%205%22%2C%22startSize%22%3A%228%22%2C%22endArrow%22%3A%22open%22%2C%22endSize%22%3A%228%22%2C%22flowAnimation%22%3A%220%22%2C%22sourcePerimeterSpacing%22%3A%220%22%2C%22targetPerimeterSpacing%22%3A%220%22%2C%22fixedPointSpacing%22%3A%221%22%2C%22followTerminals%22%3A%221%22%2C%22labelBorderColor%22%3A%22default%22%2C%22libavoidRouting%22%3A%221%22%2C%22curved%22%3Anull%7D;" value="Asset" vertex="1">
+          <mxGeometry height="60" width="120" x="60" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="MHEO26nuIZO-m2Qf02cf-1" edge="1" parent="MHEO26nuIZO-m2Qf02cf-10" source="MHEO26nuIZO-m2Qf02cf-5" style="edgeStyle=orthogonalEdgeStyle;shape=connector;rounded=1;jumpStyle=gap;jumpSize=10;libavoidSpacing=10;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ff0000;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=default;labelBackgroundColor=default;defaultLabelBackgroundColor=gap;labelPadding=1 5;startSize=8;endArrow=open;endSize=8;flowAnimation=0;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;fixedPointSpacing=1;followTerminals=1;labelBorderColor=default;libavoidRouting=1;" target="MHEO26nuIZO-m2Qf02cf-6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="MHEO26nuIZO-m2Qf02cf-2" connectable="0" parent="MHEO26nuIZO-m2Qf02cf-1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;fontSize=12;labelBorderColor=default;defaultLabelBackgroundColor=gap;labelPadding=1 5;" value="Create" vertex="1">
+          <mxGeometry relative="1" x="-0.2167" y="2" as="geometry">
+            <mxPoint y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MHEO26nuIZO-m2Qf02cf-7" edge="1" parent="MHEO26nuIZO-m2Qf02cf-10" source="MHEO26nuIZO-m2Qf02cf-9" style="edgeStyle=orthogonalEdgeStyle;shape=connector;rounded=1;jumpStyle=gap;jumpSize=10;libavoidSpacing=10;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ff0000;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=default;labelBackgroundColor=default;defaultLabelBackgroundColor=gap;labelPadding=1 5;startSize=8;endArrow=open;endSize=8;flowAnimation=0;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;fixedPointSpacing=1;followTerminals=1;labelBorderColor=default;libavoidRouting=1;" target="MHEO26nuIZO-m2Qf02cf-6" value="">
+          <mxGeometry relative="1" x="-0.4545" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="150" />
+            </Array>
+            <mxPoint x="300.0000000000001" y="210" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MHEO26nuIZO-m2Qf02cf-8" connectable="0" parent="MHEO26nuIZO-m2Qf02cf-7" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;fontSize=12;labelBorderColor=default;defaultLabelBackgroundColor=gap;labelPadding=1 5;" value="Shared&lt;div&gt;Component&lt;/div&gt;&lt;div&gt;Of&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.2168" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MHEO26nuIZO-m2Qf02cf-3" edge="1" parent="MHEO26nuIZO-m2Qf02cf-10" source="MHEO26nuIZO-m2Qf02cf-5" style="edgeStyle=orthogonalEdgeStyle;shape=connector;rounded=1;jumpStyle=gap;jumpSize=10;libavoidSpacing=10;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ff0000;strokeWidth=2;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=default;labelBackgroundColor=default;defaultLabelBackgroundColor=gap;labelPadding=1 5;startSize=8;endArrow=open;endSize=8;flowAnimation=0;sourcePerimeterSpacing=0;targetPerimeterSpacing=0;fixedPointSpacing=1;followTerminals=1;labelBorderColor=default;libavoidRouting=1;" target="MHEO26nuIZO-m2Qf02cf-9" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="60" y="90" />
+              <mxPoint x="120" y="90" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MHEO26nuIZO-m2Qf02cf-4" connectable="0" parent="MHEO26nuIZO-m2Qf02cf-3" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;fontSize=12;labelBorderColor=default;defaultLabelBackgroundColor=gap;labelPadding=1 5;" value="Set of" vertex="1">
+          <mxGeometry relative="1" x="-0.0426" y="4" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="_2ZjKSRJotqcSW3rEbQb" name="Page-2">
+    <mxGraphModel dx="568" dy="1165" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
       </root>
     </mxGraphModel>
   </diagram>
