@@ -1,0 +1,43 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="1w1F5nvJLkud4hWD29s-">
+    <mxGraphModel dx="421" dy="862" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="6a8_ZdePbbavF3QG2RX4-1" parent="1" style="whiteSpace=wrap;html=1;" value="Room" vertex="1">
+          <mxGeometry height="60" width="120" x="280" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="6a8_ZdePbbavF3QG2RX4-2" parent="1" style="whiteSpace=wrap;html=1;" value="Camera" vertex="1">
+          <mxGeometry height="60" width="120" x="480" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="6a8_ZdePbbavF3QG2RX4-3" parent="1" style="whiteSpace=wrap;html=1;" value="Render Window" vertex="1">
+          <mxGeometry height="60" width="120" x="480" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="6a8_ZdePbbavF3QG2RX4-4" parent="1" style="whiteSpace=wrap;html=1;" value="TileMap&lt;div&gt;TileSet&lt;/div&gt;&lt;div&gt;Map Object&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="280" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="6a8_ZdePbbavF3QG2RX4-5" parent="1" style="whiteSpace=wrap;html=1;" value="Entity" vertex="1">
+          <mxGeometry height="60" width="120" x="480" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="6a8_ZdePbbavF3QG2RX4-6" parent="1" style="whiteSpace=wrap;html=1;" value="Blueprint&amp;nbsp;" vertex="1">
+          <mxGeometry height="60" width="120" x="480" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="6a8_ZdePbbavF3QG2RX4-7" parent="1" style="whiteSpace=wrap;html=1;" value="Asset" vertex="1">
+          <mxGeometry height="60" width="120" x="480" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="6a8_ZdePbbavF3QG2RX4-8" parent="1" style="whiteSpace=wrap;html=1;" value="Ground&lt;div&gt;Wall&lt;/div&gt;&lt;div&gt;Void&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="280" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="6a8_ZdePbbavF3QG2RX4-9" parent="1" style="whiteSpace=wrap;html=1;" value="Lighting&lt;div&gt;Vision&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="120" x="280" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="6a8_ZdePbbavF3QG2RX4-10" parent="1" style="whiteSpace=wrap;html=1;" value="Script" vertex="1">
+          <mxGeometry height="60" width="120" x="280" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="6a8_ZdePbbavF3QG2RX4-11" parent="1" style="whiteSpace=wrap;html=1;" value="Event" vertex="1">
+          <mxGeometry height="60" width="120" x="280" y="800" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
