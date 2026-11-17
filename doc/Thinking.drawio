@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Page-1" id="1w1F5nvJLkud4hWD29s-">
-    <mxGraphModel dx="1535" dy="1302" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1600" math="0" shadow="0">
+    <mxGraphModel dx="1479" dy="1186" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1600" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -32,19 +32,28 @@
           <mxGeometry height="60" width="120" x="-120" y="960" as="geometry" />
         </mxCell>
         <mxCell id="6a8_ZdePbbavF3QG2RX4-10" parent="1" style="whiteSpace=wrap;html=1;" value="Script" vertex="1">
-          <mxGeometry height="60" width="120" x="280" y="720" as="geometry" />
+          <mxGeometry height="60" width="120" x="-320" y="800" as="geometry" />
         </mxCell>
         <mxCell id="6a8_ZdePbbavF3QG2RX4-11" parent="1" style="whiteSpace=wrap;html=1;" value="Event" vertex="1">
-          <mxGeometry height="60" width="120" x="280" y="1040" as="geometry" />
+          <mxGeometry height="60" width="120" x="-320" y="1120" as="geometry" />
         </mxCell>
         <mxCell id="msJTq5ikifDozMo9BgzY-1" parent="1" style="whiteSpace=wrap;html=1;" value="Operation" vertex="1">
-          <mxGeometry height="60" width="120" x="280" y="800" as="geometry" />
+          <mxGeometry height="60" width="120" x="-320" y="880" as="geometry" />
         </mxCell>
         <mxCell id="msJTq5ikifDozMo9BgzY-2" parent="1" style="whiteSpace=wrap;html=1;" value="Parameter Values" vertex="1">
-          <mxGeometry height="60" width="120" x="280" y="960" as="geometry" />
+          <mxGeometry height="60" width="120" x="-320" y="1040" as="geometry" />
         </mxCell>
         <mxCell id="msJTq5ikifDozMo9BgzY-3" parent="1" style="whiteSpace=wrap;html=1;" value="GUI" vertex="1">
           <mxGeometry height="60" width="120" x="80" y="960" as="geometry" />
+        </mxCell>
+        <mxCell id="msJTq5ikifDozMo9BgzY-4" parent="1" style="whiteSpace=wrap;html=1;" value="Toolbox" vertex="1">
+          <mxGeometry height="60" width="120" x="80" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="msJTq5ikifDozMo9BgzY-5" parent="1" style="whiteSpace=wrap;html=1;" value="In game" vertex="1">
+          <mxGeometry height="60" width="120" x="80" y="1120" as="geometry" />
+        </mxCell>
+        <mxCell id="msJTq5ikifDozMo9BgzY-6" parent="1" style="whiteSpace=wrap;html=1;" value="Frontground" vertex="1">
+          <mxGeometry height="60" width="120" x="80" y="1200" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
