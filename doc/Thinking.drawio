@@ -105,7 +105,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="_2ZjKSRJotqcSW3rEbQb" name="Page-2">
-    <mxGraphModel dx="790" dy="1620" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1600" math="0" shadow="0">
+    <mxGraphModel dx="523" dy="1071" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1600" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -125,31 +125,37 @@
           <mxGeometry height="140" width="160" x="240" as="geometry" />
         </mxCell>
         <mxCell id="mOOjoJzekMzfIuySRRSC-7" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=60;fillColor=default;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;swimlaneFillColor=none;fontSize=18;rotatable=0;" value="Asset Objects :&amp;nbsp;" vertex="1">
-          <mxGeometry height="380" width="160" x="240" y="600" as="geometry" />
+          <mxGeometry height="460" width="200" x="240" y="600" as="geometry" />
         </mxCell>
         <mxCell id="mOOjoJzekMzfIuySRRSC-8" parent="mOOjoJzekMzfIuySRRSC-7" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=18;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="TileMap" vertex="1">
-          <mxGeometry height="40" width="160" y="60" as="geometry" />
+          <mxGeometry height="40" width="200" y="60" as="geometry" />
         </mxCell>
         <mxCell id="mOOjoJzekMzfIuySRRSC-9" parent="mOOjoJzekMzfIuySRRSC-7" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=18;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="TileSet" vertex="1">
-          <mxGeometry height="40" width="160" y="100" as="geometry" />
+          <mxGeometry height="40" width="200" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="mOOjoJzekMzfIuySRRSC-18" parent="mOOjoJzekMzfIuySRRSC-7" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=18;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="Room Blueprint&amp;nbsp;" vertex="1">
+          <mxGeometry height="40" width="200" y="140" as="geometry" />
         </mxCell>
         <mxCell id="mOOjoJzekMzfIuySRRSC-10" parent="mOOjoJzekMzfIuySRRSC-7" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=18;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="Entity Blueprint&amp;nbsp;" vertex="1">
-          <mxGeometry height="40" width="160" y="140" as="geometry" />
+          <mxGeometry height="40" width="200" y="180" as="geometry" />
         </mxCell>
-        <mxCell id="mOOjoJzekMzfIuySRRSC-11" parent="mOOjoJzekMzfIuySRRSC-7" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=18;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="Body Property&amp;nbsp;" vertex="1">
-          <mxGeometry height="40" width="160" y="180" as="geometry" />
+        <mxCell id="mOOjoJzekMzfIuySRRSC-11" parent="mOOjoJzekMzfIuySRRSC-7" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=18;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="Body / Joint Model" vertex="1">
+          <mxGeometry height="40" width="200" y="220" as="geometry" />
         </mxCell>
         <mxCell id="mOOjoJzekMzfIuySRRSC-12" parent="mOOjoJzekMzfIuySRRSC-7" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=18;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="Shape Geometry&amp;nbsp;" vertex="1">
-          <mxGeometry height="40" width="160" y="220" as="geometry" />
+          <mxGeometry height="40" width="200" y="260" as="geometry" />
         </mxCell>
         <mxCell id="mOOjoJzekMzfIuySRRSC-13" parent="mOOjoJzekMzfIuySRRSC-7" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=18;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="Light/Vfx Model" vertex="1">
-          <mxGeometry height="40" width="160" y="260" as="geometry" />
+          <mxGeometry height="40" width="200" y="300" as="geometry" />
         </mxCell>
-        <mxCell id="mOOjoJzekMzfIuySRRSC-14" parent="mOOjoJzekMzfIuySRRSC-7" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=18;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="Script" vertex="1">
-          <mxGeometry height="40" width="160" y="300" as="geometry" />
+        <mxCell id="mOOjoJzekMzfIuySRRSC-14" parent="mOOjoJzekMzfIuySRRSC-7" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=18;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="Script Source&amp;nbsp;" vertex="1">
+          <mxGeometry height="40" width="200" y="340" as="geometry" />
         </mxCell>
-        <mxCell id="mOOjoJzekMzfIuySRRSC-15" parent="mOOjoJzekMzfIuySRRSC-7" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=18;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="GUI Tool / Object" vertex="1">
-          <mxGeometry height="40" width="160" y="340" as="geometry" />
+        <mxCell id="mOOjoJzekMzfIuySRRSC-16" parent="mOOjoJzekMzfIuySRRSC-7" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=18;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="Patch Template" vertex="1">
+          <mxGeometry height="40" width="200" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="mOOjoJzekMzfIuySRRSC-15" parent="mOOjoJzekMzfIuySRRSC-7" style="text;strokeColor=inherit;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontSize=18;movable=1;resizable=1;deletable=1;editable=1;locked=0;connectable=1;spacing=5;fillColor=default;" value="GUI Object Model" vertex="1">
+          <mxGeometry height="40" width="200" y="420" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
